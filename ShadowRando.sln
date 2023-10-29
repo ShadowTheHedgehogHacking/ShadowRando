@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.33529.622
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShadowRando", "ShadowRando\ShadowRando.csproj", "{B94D57AC-598A-44ED-A2B7-EB11DC03D22B}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B94D57AC-598A-44ED-A2B7-EB11DC03D22B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B94D57AC-598A-44ED-A2B7-EB11DC03D22B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B94D57AC-598A-44ED-A2B7-EB11DC03D22B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B94D57AC-598A-44ED-A2B7-EB11DC03D22B}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DA1E0120-EA8D-4F2B-88B8-E2088A792109}
+	EndGlobalSection
+EndGlobal
