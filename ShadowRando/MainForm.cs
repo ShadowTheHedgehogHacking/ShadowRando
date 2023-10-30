@@ -31,15 +31,55 @@ namespace ShadowRando
 			includeLast.Checked = settings.IncludeLast;
 			randomMusic.Checked = settings.RandomMusic;
 			randomFNT.Checked = settings.RandomFNT;
-			using (var dlg = new Ookii.Dialogs.WinForms.VistaFolderBrowserDialog()) {
+			using (var dlg = new Ookii.Dialogs.WinForms.VistaFolderBrowserDialog() { Description = "Select the root folder of an extracted Shadow the Hedgehog disc image." }) {
 				if (!string.IsNullOrEmpty(settings.GamePath))
 					dlg.SelectedPath = settings.GamePath;
 				if (dlg.ShowDialog(this) == DialogResult.OK)
+				{
+					if (settings.GamePath != dlg.SelectedPath && Directory.Exists("backup"))
+						switch (MessageBox.Show(this, "New game directory selected!\n\nDo you wish to erase the previous backup data and use the new data as a base?", "Shadow Randomizer", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1))
+						{
+							case DialogResult.Yes:
+								Directory.Delete("backup", true);
+								break;
+							case DialogResult.No:
+								break;
+							default:
+								Close();
+								return;
+						}
 					settings.GamePath = dlg.SelectedPath;
+					if (!Directory.Exists("backup"))
+						Directory.CreateDirectory("backup");
+					if (!File.Exists(Path.Combine("backup", "main.dol")))
+						File.Copy(Path.Combine(settings.GamePath, "sys", "main.dol"), Path.Combine("backup", "main.dol"));
+					if (!Directory.Exists(Path.Combine("backup", "fonts")))
+						CopyDirectory(Path.Combine(settings.GamePath, "files", "fonts"), Path.Combine("backup", "fonts"));
+					if (!Directory.Exists(Path.Combine("backup", "music")))
+					{
+						Directory.CreateDirectory(Path.Combine("backup", "music"));
+						foreach (var fil in Directory.EnumerateFiles(Path.Combine(settings.GamePath, "files"), "*.adx"))
+							File.Copy(fil, Path.Combine("backup", "music", Path.GetFileName(fil)));
+					}
+				}
 				else
+				{
+					Close();
 					return;
+				}
 			}
 		}
+
+		private void CopyDirectory(DirectoryInfo srcDir, string dstDir)
+		{
+			Directory.CreateDirectory(dstDir);
+			foreach (var dir in srcDir.EnumerateDirectories())
+				CopyDirectory(dir, Path.Combine(dstDir, dir.Name));
+			foreach (var fil in srcDir.EnumerateFiles())
+				fil.CopyTo(Path.Combine(dstDir, fil.Name));
+		}
+
+		private void CopyDirectory(string srcDir, string dstDir) => CopyDirectory(new DirectoryInfo(srcDir), dstDir);
 
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
 			settings.Seed = (int)seedSelector.Value;
@@ -166,9 +206,7 @@ namespace ShadowRando
 		int[] stageids;
 		readonly Stage[] stages = new Stage[totalstagecount];
 		private void randomizeButton_Click(object sender, EventArgs e) {
-			if (!File.Exists(Path.Combine(settings.GamePath, "sys", "main.orig.dol")))
-				File.Copy(Path.Combine(settings.GamePath, "sys", "main.dol"), Path.Combine(settings.GamePath, "sys", "main.orig.dol"));
-			byte[] dolfile = File.ReadAllBytes(Path.Combine(settings.GamePath, "sys", "main.orig.dol"));
+			byte[] dolfile = File.ReadAllBytes(Path.Combine("backup", "main.dol"));
 			int seed;
 			if (randomSeed.Checked) {
 				seed = (int)DateTime.Now.Ticks;
@@ -530,71 +568,32 @@ namespace ShadowRando
 			Array.Reverse(buf);
 			buf.CopyTo(dolfile, storyModeStartAddress);
 			File.WriteAllBytes(Path.Combine(settings.GamePath, "sys", "main.dol"), dolfile);
-			/*if (randomMusic.Checked)
+			if (randomMusic.Checked)
 			{
-				var scripts = new List<(VirtualFile file, string script)>();
-				Dictionary<string, string> musicFiles = new Dictionary<string, string>();
-				foreach (var file in vdir.GetDirectory("Scripts").GetAllFiles().Where(a => a.Name.EndsWith(".txt")))
+				Dictionary<MusicCategory, List<string>> musicFiles = new Dictionary<MusicCategory, List<string>>()
 				{
-					string script = File.ReadAllText(file.SourcePath);
-					MatchCollection matches = musregex.Matches(script);
-					if (matches.Count > 0)
-					{
-						scripts.Add((file, script));
-						foreach (Match match in matches)
-							if (!musicFiles.ContainsKey(match.Groups[1].Value))
-								musicFiles.Add(match.Groups[1].Value, match.Groups[3].Value);
-					}
-				}
+					{ MusicCategory.Stage, new List<string>(Directory.EnumerateFiles(Path.Combine("backup", "music"), "sng_stg*.adx")) },
+					{ MusicCategory.Jingle, new List<string>(Directory.EnumerateFiles(Path.Combine("backup", "music"), "sng_jin*.adx")) },
+					{ MusicCategory.Menu, new List<string>(Directory.EnumerateFiles(Path.Combine("backup", "music"), "sng_sys*.adx")) },
+					{ MusicCategory.Credits, new List<string>(Directory.EnumerateFiles(Path.Combine("backup", "music"), "sng_vox*.adx")) }
+				};
+				var outfiles = musicFiles.ToDictionary(a => a.Key, b => b.Value.Select(c => Path.GetFileName(c)).ToArray());
 				if (Directory.Exists("RandoMusic"))
+					foreach (var file in Directory.EnumerateFiles("RandoMusic", "*.txt", SearchOption.AllDirectories))
+						if (Enum.TryParse<MusicCategory>(Path.GetFileNameWithoutExtension(file), out var cat))
+						{
+							string dir = Path.GetDirectoryName(file);
+							musicFiles[cat].AddRange(File.ReadAllLines(file).Select(a => Path.Combine(dir, a)));
+						}
+				foreach (var cat in outfiles.Keys)
 				{
-					foreach (var file in Directory.GetFiles("RandoMusic", "*.ogg", SearchOption.AllDirectories))
-					{
-						string relpath = file.Substring(file.IndexOf("RandoMusic") + 11);
-						if (relpath.IndexOfAny(new[] { '/', '\\' }) != -1)
-							Directory.CreateDirectory(Path.Combine(path, @"Data\Music", Path.GetDirectoryName(relpath)));
-						File.Copy(Path.Combine("RandoMusic", relpath), Path.Combine(path, @"Data\Music", relpath));
-						musicFiles[$"\"{relpath.Replace('\\', '/')}\""] = "0";
-					}
-					if (File.Exists("RandoMusic\\MusicLoops.ini"))
-					{
-						Dictionary<string, int> musicLoops = IniSerializer.Deserialize<Dictionary<string, int>>("RandoMusic/MusicLoops.ini");
-						foreach (var item in musicLoops)
-							musicFiles[$"\"{item.Key}\""] = item.Value.ToString();
-					}
+					var pool = musicFiles[cat].ToArray();
+					Shuffle(r, pool);
+					var files = outfiles[cat];
+					for (int i = 0; i < files.Length; i++)
+						File.Copy(pool[i % pool.Length], Path.Combine(settings.GamePath, "files", files[i]), true);
 				}
-				var loopmuslist = musicFiles.Where(a => a.Value != "0").ToArray();
-				var muslist = musicFiles.Where(a => a.Value == "0").ToArray();
-				var loopmuslistjp = loopmuslist.Where(a => !a.Key.StartsWith("\"US/", StringComparison.OrdinalIgnoreCase)).ToArray();
-				var loopmuslistus = loopmuslist.Where(a => !a.Key.StartsWith("\"JP/", StringComparison.OrdinalIgnoreCase)).ToArray();
-				var muslistjp = muslist.Where(a => !a.Key.StartsWith("\"US/", StringComparison.OrdinalIgnoreCase)).ToArray();
-				var muslistus = muslist.Where(a => !a.Key.StartsWith("\"JP/", StringComparison.OrdinalIgnoreCase)).ToArray();
-				foreach (var script in scripts)
-				{
-					script.file.SourcePath = Path.Combine(path, script.file.FullName);
-					Directory.CreateDirectory(Path.GetDirectoryName(script.file.SourcePath));
-					File.WriteAllText(script.file.SourcePath, musregex.Replace(script.script, m =>
-					{
-						if (separateSoundtracks.Checked)
-							if (m.Groups[1].Value.StartsWith("\"JP/", StringComparison.OrdinalIgnoreCase))
-							{
-								loopmuslist = loopmuslistjp;
-								muslist = muslistjp;
-							}
-							else if (m.Groups[1].Value.StartsWith("\"US/", StringComparison.OrdinalIgnoreCase))
-							{
-								loopmuslist = loopmuslistus;
-								muslist = muslistus;
-							}
-						KeyValuePair<string, string> mus;
-						if (m.Groups[3].Value == "0")
-							mus = muslist[r.Next(muslist.Length)];
-						else
-							mus = loopmuslist[r.Next(loopmuslist.Length)];
-						return $"SetMusicTrack({mus.Key},{m.Groups[2].Value},{mus.Value})";
-					}));
-				}
-			}*/
+			}
 
 			if (randomFNT.Checked)
 				RandomizeFNTs(r);
@@ -640,7 +639,7 @@ namespace ShadowRando
             var openedFnts = new List<FNT>();
 			AfsArchive currentAfs = null;
 
-			var fontDirectory = Path.Combine(settings.GamePath, "files", "fonts");
+			var fontDirectory = Path.Combine("backup", "fonts");
             string[] foundFnts = Directory.GetFiles(fontDirectory, "*_" + localeOverride + ".fnt", SearchOption.AllDirectories);
             for (int i = 0; i < foundFnts.Length; i++) {
                 byte[] readFile = File.ReadAllBytes(foundFnts[i]);
@@ -673,8 +672,9 @@ namespace ShadowRando
             foreach (FNT fnt in filesToWrite) {
                 try {
                     fnt.RecomputeAllSubtitleAddresses();
-                    File.WriteAllBytes(fnt.fileName, fnt.ToBytes());
-                    string prec = fnt.fileName.Remove(fnt.fileName.Length - 4);
+					string outfn = Path.Combine(settings.GamePath, "files", fnt.fileName.Substring(fnt.fileName.IndexOf("fonts")));
+                    File.WriteAllBytes(outfn, fnt.ToBytes());
+                    string prec = outfn.Remove(outfn.Length - 4);
                     File.Copy(AppDomain.CurrentDomain.BaseDirectory + "res/EN.txd", prec + ".txd", true);
                     File.Copy(AppDomain.CurrentDomain.BaseDirectory + "res/EN00.met", prec + "00.met", true);
                 } catch (Exception ex) {
@@ -1733,5 +1733,13 @@ namespace ShadowRando
 	{
 		ActClear,
 		AnyExit
+	}
+
+	enum MusicCategory
+	{
+		Stage,
+		Jingle,
+		Menu,
+		Credits
 	}
 }
