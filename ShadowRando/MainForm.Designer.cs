@@ -168,7 +168,6 @@ namespace ShadowRando
 			this.mainPathSelector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
 			this.mainPathSelector.Items.AddRange(new object[] {
             "Act Clear",
-            "Time Travel",
             "Any Exit"});
 			this.mainPathSelector.Location = new System.Drawing.Point(67, 3);
 			this.mainPathSelector.Name = "mainPathSelector";
