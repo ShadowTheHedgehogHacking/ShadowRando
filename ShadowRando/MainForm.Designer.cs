@@ -355,6 +355,7 @@ namespace ShadowRando
 			this.includeLast.Size = new System.Drawing.Size(111, 17);
 			this.includeLast.TabIndex = 6;
 			this.includeLast.Text = "Include Last Story";
+			this.toolTip1.SetToolTip(this.includeLast, "If checked, the levels from the Last Story will also be randomized.");
 			this.includeLast.UseVisualStyleBackColor = true;
 			// 
 			// label7
