@@ -802,7 +802,7 @@ namespace ShadowRando
 			if (stage.Neutral != -1 && !path.Contains(stage.Neutral))
 			{
 				path.Push(stage.Neutral);
-				if (stage.Neutral == stagecount)
+				if (stage.Neutral == totalstagecount)
 				{
 					if (shortestPath == null || path.Count < shortestPath.Length)
 					{
@@ -819,7 +819,7 @@ namespace ShadowRando
 			if (stage.Hero != -1 && !path.Contains(stage.Hero))
 			{
 				path.Push(stage.Hero);
-				if (stage.Hero == stagecount)
+				if (stage.Hero == totalstagecount)
 				{
 					if (shortestPath == null || path.Count < shortestPath.Length)
 					{
@@ -836,7 +836,7 @@ namespace ShadowRando
 			if (stage.Dark != -1 && !path.Contains(stage.Dark))
 			{
 				path.Push(stage.Dark);
-				if (stage.Dark == stagecount)
+				if (stage.Dark == totalstagecount)
 				{
 					if (shortestPath == null || path.Count < shortestPath.Length)
 					{
