@@ -447,7 +447,7 @@ namespace ShadowRando
 						Stack<int> stagepool = new Stack<int>(stageids.Take(stagecount));
 						List<int> usedstg = new List<int>(stagecount + 1) { totalstagecount };
 						List<int> orphans = new List<int>();
-						int[] stagedepths = new int[stagecount + 1];
+						int[] stagedepths = new int[totalstagecount + 1];
 						List<List<int>> depthstages = new List<List<int>>() { new List<int>() { totalstagecount } };
 						while (orphans.Count < exitcnt - stages[stagepool.Peek()].CountExits()) {
 							int stgid = stagepool.Pop();
