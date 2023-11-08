@@ -928,7 +928,7 @@ namespace ShadowRando
 				case Modes.ReverseBranching: // reverse branching
 					{
 						List<List<int>> depthstages = new List<List<int>>() { new List<int>() { totalstagecount } };
-						List<Stage> stages2 = new List<Stage>(stages);
+						List<Stage> stages2 = new List<Stage>(stageids.Take(stagecount).Select(a => stages[a]));
 						while (stages2.Count > 0)
 						{
 							var next = stages2.Where(a => depthstages[depthstages.Count - 1].Contains(a.Neutral) || depthstages[depthstages.Count - 1].Contains(a.Hero) || depthstages[depthstages.Count - 1].Contains(a.Dark)).Select(a => a.ID).ToList();
