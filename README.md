@@ -25,8 +25,13 @@ I would pick that folder, not the `..\Desktop\ShadowExtracted\sys` folder, unlik
 
 ### Route Randomization Options
 
-Note: This section is incomplete. TODO.
+* **Shuffle All Stages w/ Warps**: this mode works by first shuffling all stages in the game into a random order, called the "main path". You can set it so you will always progress along the main path by clearing stages normally or if other missions may be involved. The remaining exits that are not on the main path will cause you to jump backwards or forwards along the main path, constrained by the "Max Backwards Jump" and "Max Forwards Jump" settings. In general, increasing the backwards jump makes it harder, increasing the forwards jump makes it easier.
+* **Vanilla Structure**: this mode will leave the general structure of the original game intact, but which level/boss you will find in each place will be different.
+* **Branching Paths**: this mode makes each exit from a level send you to a different level, giving you multiple routes through the game on the same seed without getting stuck in a loop.
+* **Reverse Branching**: this mode works like Branching Paths, but it constructs the level order in reverse, which allows for more freedom in how many paths there can be, and allows for exits to warp you forwards and backwards in the tree.
+* **Wild**: no rules, any exit from a stage can lead to any other stage. The ending might not even be accessible!
 
+#### Main Path Options
 `Act Clear` -  clearing a stage through the neutral path (or the hero path if there is no neutral path) will always advance you by one level in the level order.
 
 `Any Exit` - randomly selects one of the available exits from a level to take you to the next stage in the order.
