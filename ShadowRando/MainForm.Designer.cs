@@ -79,51 +79,57 @@ namespace ShadowRando
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(6, 8);
+            label1.Location = new System.Drawing.Point(8, 10);
+            label1.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             label1.Name = "label1";
-            label1.Size = new System.Drawing.Size(35, 13);
+            label1.Size = new System.Drawing.Size(43, 16);
             label1.TabIndex = 0;
             label1.Text = "Seed:";
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new System.Drawing.Point(3, 6);
+            label2.Location = new System.Drawing.Point(4, 7);
+            label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             label2.Name = "label2";
-            label2.Size = new System.Drawing.Size(58, 13);
+            label2.Size = new System.Drawing.Size(69, 16);
             label2.TabIndex = 0;
             label2.Text = "Main Path:";
             // 
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new System.Drawing.Point(3, 32);
+            label3.Location = new System.Drawing.Point(4, 39);
+            label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             label3.Name = "label3";
-            label3.Size = new System.Drawing.Size(114, 13);
+            label3.Size = new System.Drawing.Size(141, 16);
             label3.TabIndex = 2;
             label3.Text = "Max Backwards Jump:";
             // 
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new System.Drawing.Point(3, 58);
+            label4.Location = new System.Drawing.Point(4, 71);
+            label4.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             label4.Name = "label4";
-            label4.Size = new System.Drawing.Size(104, 13);
+            label4.Size = new System.Drawing.Size(130, 16);
             label4.TabIndex = 4;
             label4.Text = "Max Forwards Jump:";
             // 
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new System.Drawing.Point(3, 87);
+            label6.Location = new System.Drawing.Point(4, 107);
+            label6.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             label6.Name = "label6";
-            label6.Size = new System.Drawing.Size(142, 13);
+            label6.Size = new System.Drawing.Size(180, 16);
             label6.TabIndex = 6;
             label6.Text = "Backwards Jump Probability:";
             // 
             // seedSelector
             // 
-            this.seedSelector.Location = new System.Drawing.Point(47, 6);
+            this.seedSelector.Location = new System.Drawing.Point(63, 7);
+            this.seedSelector.Margin = new System.Windows.Forms.Padding(4);
             this.seedSelector.Maximum = new decimal(new int[] {
             2147483647,
             0,
@@ -135,16 +141,17 @@ namespace ShadowRando
             0,
             -2147483648});
             this.seedSelector.Name = "seedSelector";
-            this.seedSelector.Size = new System.Drawing.Size(120, 20);
+            this.seedSelector.Size = new System.Drawing.Size(160, 22);
             this.seedSelector.TabIndex = 1;
             this.toolTip1.SetToolTip(this.seedSelector, "This value controls how things are randomized.");
             // 
             // randomSeed
             // 
             this.randomSeed.AutoSize = true;
-            this.randomSeed.Location = new System.Drawing.Point(173, 7);
+            this.randomSeed.Location = new System.Drawing.Point(231, 9);
+            this.randomSeed.Margin = new System.Windows.Forms.Padding(4);
             this.randomSeed.Name = "randomSeed";
-            this.randomSeed.Size = new System.Drawing.Size(66, 17);
+            this.randomSeed.Size = new System.Drawing.Size(81, 20);
             this.randomSeed.TabIndex = 2;
             this.randomSeed.Text = "Random";
             this.toolTip1.SetToolTip(this.randomSeed, "Check this box to have the randomizer generate a seed for you based on the curren" +
@@ -155,9 +162,10 @@ namespace ShadowRando
             // randomMusic
             // 
             this.randomMusic.AutoSize = true;
-            this.randomMusic.Location = new System.Drawing.Point(8, 6);
+            this.randomMusic.Location = new System.Drawing.Point(11, 7);
+            this.randomMusic.Margin = new System.Windows.Forms.Padding(4);
             this.randomMusic.Name = "randomMusic";
-            this.randomMusic.Size = new System.Drawing.Size(110, 17);
+            this.randomMusic.Size = new System.Drawing.Size(136, 20);
             this.randomMusic.TabIndex = 6;
             this.randomMusic.Text = "Randomize Music";
             this.toolTip1.SetToolTip(this.randomMusic, "Check this box to shuffle the music that\'s played in each area of the game.");
@@ -169,15 +177,17 @@ namespace ShadowRando
             this.mainPathSelector.Items.AddRange(new object[] {
             "Act Clear",
             "Any Exit"});
-            this.mainPathSelector.Location = new System.Drawing.Point(67, 3);
+            this.mainPathSelector.Location = new System.Drawing.Point(89, 4);
+            this.mainPathSelector.Margin = new System.Windows.Forms.Padding(4);
             this.mainPathSelector.Name = "mainPathSelector";
-            this.mainPathSelector.Size = new System.Drawing.Size(121, 21);
+            this.mainPathSelector.Size = new System.Drawing.Size(160, 24);
             this.mainPathSelector.TabIndex = 1;
             this.toolTip1.SetToolTip(this.mainPathSelector, "Which exits from a level are allowed to be part of the main path.");
             // 
             // maxBackJump
             // 
-            this.maxBackJump.Location = new System.Drawing.Point(123, 30);
+            this.maxBackJump.Location = new System.Drawing.Point(164, 37);
+            this.maxBackJump.Margin = new System.Windows.Forms.Padding(4);
             this.maxBackJump.Maximum = new decimal(new int[] {
             69,
             0,
@@ -189,7 +199,7 @@ namespace ShadowRando
             0,
             0});
             this.maxBackJump.Name = "maxBackJump";
-            this.maxBackJump.Size = new System.Drawing.Size(41, 20);
+            this.maxBackJump.Size = new System.Drawing.Size(55, 22);
             this.maxBackJump.TabIndex = 3;
             this.toolTip1.SetToolTip(this.maxBackJump, "The maximum number of stages along the main path that you can get sent backwards." +
         "");
@@ -201,7 +211,8 @@ namespace ShadowRando
             // 
             // maxForwJump
             // 
-            this.maxForwJump.Location = new System.Drawing.Point(113, 56);
+            this.maxForwJump.Location = new System.Drawing.Point(151, 69);
+            this.maxForwJump.Margin = new System.Windows.Forms.Padding(4);
             this.maxForwJump.Maximum = new decimal(new int[] {
             70,
             0,
@@ -213,7 +224,7 @@ namespace ShadowRando
             0,
             0});
             this.maxForwJump.Name = "maxForwJump";
-            this.maxForwJump.Size = new System.Drawing.Size(41, 20);
+            this.maxForwJump.Size = new System.Drawing.Size(55, 22);
             this.maxForwJump.TabIndex = 5;
             this.toolTip1.SetToolTip(this.maxForwJump, "The maximum number of stages along the main path that you can get sent forwards.");
             this.maxForwJump.Value = new decimal(new int[] {
@@ -225,9 +236,10 @@ namespace ShadowRando
             // randomizeButton
             // 
             this.randomizeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.randomizeButton.Location = new System.Drawing.Point(416, 224);
+            this.randomizeButton.Location = new System.Drawing.Point(555, 276);
+            this.randomizeButton.Margin = new System.Windows.Forms.Padding(4);
             this.randomizeButton.Name = "randomizeButton";
-            this.randomizeButton.Size = new System.Drawing.Size(75, 23);
+            this.randomizeButton.Size = new System.Drawing.Size(100, 28);
             this.randomizeButton.TabIndex = 7;
             this.randomizeButton.Text = "Randomize!";
             this.toolTip1.SetToolTip(this.randomizeButton, "Click this button to randomize the game with these settings.");
@@ -236,9 +248,10 @@ namespace ShadowRando
             // 
             // backJumpProb
             // 
-            this.backJumpProb.Location = new System.Drawing.Point(151, 82);
+            this.backJumpProb.Location = new System.Drawing.Point(201, 101);
+            this.backJumpProb.Margin = new System.Windows.Forms.Padding(4);
             this.backJumpProb.Name = "backJumpProb";
-            this.backJumpProb.Size = new System.Drawing.Size(45, 20);
+            this.backJumpProb.Size = new System.Drawing.Size(60, 22);
             this.backJumpProb.TabIndex = 7;
             this.toolTip1.SetToolTip(this.backJumpProb, "The probability that a backwards jump will be chosen instead of a forwards jump.");
             this.backJumpProb.Value = new decimal(new int[] {
@@ -250,9 +263,10 @@ namespace ShadowRando
             // allowSameLevel
             // 
             this.allowSameLevel.AutoSize = true;
-            this.allowSameLevel.Location = new System.Drawing.Point(202, 83);
+            this.allowSameLevel.Location = new System.Drawing.Point(269, 102);
+            this.allowSameLevel.Margin = new System.Windows.Forms.Padding(4);
             this.allowSameLevel.Name = "allowSameLevel";
-            this.allowSameLevel.Size = new System.Drawing.Size(155, 17);
+            this.allowSameLevel.Size = new System.Drawing.Size(193, 20);
             this.allowSameLevel.TabIndex = 8;
             this.allowSameLevel.Text = "Allow Jumps to Same Level";
             this.toolTip1.SetToolTip(this.allowSameLevel, "If checked, warps may take you to the start of the level you\'re in currently.");
@@ -269,9 +283,10 @@ namespace ShadowRando
             "Branching Paths",
             "Reverse Branching",
             "Wild"});
-            this.modeSelector.Location = new System.Drawing.Point(49, 32);
+            this.modeSelector.Location = new System.Drawing.Point(65, 39);
+            this.modeSelector.Margin = new System.Windows.Forms.Padding(4);
             this.modeSelector.Name = "modeSelector";
-            this.modeSelector.Size = new System.Drawing.Size(190, 21);
+            this.modeSelector.Size = new System.Drawing.Size(252, 24);
             this.modeSelector.TabIndex = 4;
             this.toolTip1.SetToolTip(this.modeSelector, "If you don\'t know what this is, please read the mod\'s description.");
             this.modeSelector.SelectedIndexChanged += new System.EventHandler(this.modeSelector_SelectedIndexChanged);
@@ -282,9 +297,10 @@ namespace ShadowRando
             this.saveLogButton.AutoSize = true;
             this.saveLogButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.saveLogButton.Enabled = false;
-            this.saveLogButton.Location = new System.Drawing.Point(417, 163);
+            this.saveLogButton.Location = new System.Drawing.Point(568, 203);
+            this.saveLogButton.Margin = new System.Windows.Forms.Padding(4);
             this.saveLogButton.Name = "saveLogButton";
-            this.saveLogButton.Size = new System.Drawing.Size(72, 23);
+            this.saveLogButton.Size = new System.Drawing.Size(84, 26);
             this.saveLogButton.TabIndex = 2;
             this.saveLogButton.Text = "Save Log...";
             this.toolTip1.SetToolTip(this.saveLogButton, "Click this button to generate a text log containing your settings and the level p" +
@@ -298,9 +314,10 @@ namespace ShadowRando
             this.makeChartButton.AutoSize = true;
             this.makeChartButton.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.makeChartButton.Enabled = false;
-            this.makeChartButton.Location = new System.Drawing.Point(330, 163);
+            this.makeChartButton.Location = new System.Drawing.Point(454, 203);
+            this.makeChartButton.Margin = new System.Windows.Forms.Padding(4);
             this.makeChartButton.Name = "makeChartButton";
-            this.makeChartButton.Size = new System.Drawing.Size(81, 23);
+            this.makeChartButton.Size = new System.Drawing.Size(94, 26);
             this.makeChartButton.TabIndex = 3;
             this.makeChartButton.Text = "Make Chart...";
             this.toolTip1.SetToolTip(this.makeChartButton, "Click this button to generate an image showing the progression between levels.");
@@ -310,9 +327,10 @@ namespace ShadowRando
             // randomFNT
             // 
             this.randomFNT.AutoSize = true;
-            this.randomFNT.Location = new System.Drawing.Point(8, 28);
+            this.randomFNT.Location = new System.Drawing.Point(11, 34);
+            this.randomFNT.Margin = new System.Windows.Forms.Padding(4);
             this.randomFNT.Name = "randomFNT";
-            this.randomFNT.Size = new System.Drawing.Size(181, 17);
+            this.randomFNT.Size = new System.Drawing.Size(225, 20);
             this.randomFNT.TabIndex = 7;
             this.randomFNT.Text = "Randomize Subtitles / Voicelines";
             this.toolTip1.SetToolTip(this.randomFNT, "Check this box to shuffle the subtitles played.");
@@ -321,9 +339,10 @@ namespace ShadowRando
             // includeLast
             // 
             this.includeLast.AutoSize = true;
-            this.includeLast.Location = new System.Drawing.Point(9, 164);
+            this.includeLast.Location = new System.Drawing.Point(12, 202);
+            this.includeLast.Margin = new System.Windows.Forms.Padding(4);
             this.includeLast.Name = "includeLast";
-            this.includeLast.Size = new System.Drawing.Size(111, 17);
+            this.includeLast.Size = new System.Drawing.Size(134, 20);
             this.includeLast.TabIndex = 6;
             this.includeLast.Text = "Include Last Story";
             this.toolTip1.SetToolTip(this.includeLast, "If checked, the levels from the Last Story will also be randomized.");
@@ -336,9 +355,10 @@ namespace ShadowRando
             this.tabControl1.Controls.Add(this.tabPage2);
             this.tabControl1.Dock = System.Windows.Forms.DockStyle.Top;
             this.tabControl1.Location = new System.Drawing.Point(0, 0);
+            this.tabControl1.Margin = new System.Windows.Forms.Padding(4);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(503, 218);
+            this.tabControl1.Size = new System.Drawing.Size(671, 268);
             this.tabControl1.TabIndex = 0;
             // 
             // tabPage1
@@ -350,10 +370,11 @@ namespace ShadowRando
             this.tabPage1.Controls.Add(label1);
             this.tabPage1.Controls.Add(this.seedSelector);
             this.tabPage1.Controls.Add(this.randomSeed);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
+            this.tabPage1.Location = new System.Drawing.Point(4, 25);
+            this.tabPage1.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(495, 192);
+            this.tabPage1.Padding = new System.Windows.Forms.Padding(4);
+            this.tabPage1.Size = new System.Drawing.Size(663, 239);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Level Order";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -361,9 +382,10 @@ namespace ShadowRando
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(6, 35);
+            this.label7.Location = new System.Drawing.Point(8, 43);
+            this.label7.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(37, 13);
+            this.label7.Size = new System.Drawing.Size(45, 16);
             this.label7.TabIndex = 3;
             this.label7.Text = "Mode:";
             // 
@@ -380,20 +402,21 @@ namespace ShadowRando
             this.panel1.Controls.Add(this.maxBackJump);
             this.panel1.Controls.Add(label4);
             this.panel1.Controls.Add(this.maxForwJump);
-            this.panel1.Location = new System.Drawing.Point(3, 56);
+            this.panel1.Location = new System.Drawing.Point(4, 69);
             this.panel1.Margin = new System.Windows.Forms.Padding(0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(360, 105);
+            this.panel1.Size = new System.Drawing.Size(466, 127);
             this.panel1.TabIndex = 5;
             // 
             // tabPage3
             // 
             this.tabPage3.Controls.Add(this.randomFNT);
             this.tabPage3.Controls.Add(this.randomMusic);
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Location = new System.Drawing.Point(4, 25);
+            this.tabPage3.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(495, 192);
+            this.tabPage3.Padding = new System.Windows.Forms.Padding(4);
+            this.tabPage3.Size = new System.Drawing.Size(663, 239);
             this.tabPage3.TabIndex = 2;
             this.tabPage3.Text = "Misc";
             this.tabPage3.UseVisualStyleBackColor = true;
@@ -404,10 +427,11 @@ namespace ShadowRando
             this.tabPage2.Controls.Add(this.saveLogButton);
             this.tabPage2.Controls.Add(this.spoilerLevelInfo);
             this.tabPage2.Controls.Add(this.spoilerLevelList);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Location = new System.Drawing.Point(4, 25);
+            this.tabPage2.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(495, 192);
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(4);
+            this.tabPage2.Size = new System.Drawing.Size(663, 239);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Spoilers";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -417,12 +441,13 @@ namespace ShadowRando
             this.spoilerLevelInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.spoilerLevelInfo.Location = new System.Drawing.Point(225, 6);
+            this.spoilerLevelInfo.Location = new System.Drawing.Point(300, 7);
+            this.spoilerLevelInfo.Margin = new System.Windows.Forms.Padding(4);
             this.spoilerLevelInfo.Multiline = true;
             this.spoilerLevelInfo.Name = "spoilerLevelInfo";
             this.spoilerLevelInfo.ReadOnly = true;
             this.spoilerLevelInfo.ScrollBars = System.Windows.Forms.ScrollBars.Horizontal;
-            this.spoilerLevelInfo.Size = new System.Drawing.Size(264, 151);
+            this.spoilerLevelInfo.Size = new System.Drawing.Size(351, 185);
             this.spoilerLevelInfo.TabIndex = 1;
             this.spoilerLevelInfo.WordWrap = false;
             // 
@@ -430,9 +455,11 @@ namespace ShadowRando
             // 
             this.spoilerLevelList.Enabled = false;
             this.spoilerLevelList.FormattingEnabled = true;
-            this.spoilerLevelList.Location = new System.Drawing.Point(6, 6);
+            this.spoilerLevelList.ItemHeight = 16;
+            this.spoilerLevelList.Location = new System.Drawing.Point(8, 7);
+            this.spoilerLevelList.Margin = new System.Windows.Forms.Padding(4);
             this.spoilerLevelList.Name = "spoilerLevelList";
-            this.spoilerLevelList.Size = new System.Drawing.Size(213, 173);
+            this.spoilerLevelList.Size = new System.Drawing.Size(283, 212);
             this.spoilerLevelList.TabIndex = 0;
             this.spoilerLevelList.SelectedIndexChanged += new System.EventHandler(this.spoilerLevelList_SelectedIndexChanged);
             // 
@@ -450,15 +477,16 @@ namespace ShadowRando
             // MainForm
             // 
             this.AcceptButton = this.randomizeButton;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(503, 259);
+            this.ClientSize = new System.Drawing.Size(671, 319);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.randomizeButton);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "MainForm";
             this.ShowIcon = false;
-            this.Text = "Shadow the Hedgehog Randomizer 0.2.0";
+            this.Text = "Shadow the Hedgehog Randomizer ";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.seedSelector)).EndInit();

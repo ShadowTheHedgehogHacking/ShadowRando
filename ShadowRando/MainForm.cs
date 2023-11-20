@@ -16,10 +16,12 @@ namespace ShadowRando
 			InitializeComponent();
 		}
 
-		Settings settings;
+        const string programVersion = "0.3.0-dev";
+        Settings settings;
 
 		private void MainForm_Load(object sender, EventArgs e) {
 			settings = Settings.Load();
+			this.Text = this.Text + programVersion;
 			seedSelector.Value = settings.Seed;
 			randomSeed.Checked = settings.RandomSeed;
 			modeSelector.SelectedIndex = (int)settings.Mode;
@@ -859,6 +861,7 @@ namespace ShadowRando
 			if (saveFileDialog1.ShowDialog(this) == DialogResult.OK)
 				using (StreamWriter sw = File.CreateText(saveFileDialog1.FileName))
 				{
+					sw.WriteLine($"ShadowRando Version: {programVersion}");
 					sw.WriteLine($"Seed: {seedSelector.Value}");
 					sw.WriteLine($"Mode: {settings.Mode}");
 					if (settings.Mode == Modes.AllStagesWarps)
@@ -869,7 +872,9 @@ namespace ShadowRando
 						sw.WriteLine($"Backwards Jump Probability: {backJumpProb.Value}");
 						sw.WriteLine($"Allow Same Level: {allowSameLevel.Checked}");
 					}
+					sw.WriteLine($"Include Last Story: {includeLast.Checked}");
 					sw.WriteLine($"Random Music: {randomMusic.Checked}");
+					sw.WriteLine($"Random Subtitles / Voicelines: {randomFNT.Checked}");
 					sw.WriteLine();
 					for (int i = 0; i < stagecount; i++)
 					{
