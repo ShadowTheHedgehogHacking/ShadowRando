@@ -11,14 +11,17 @@ using System.Windows.Forms;
 
 namespace ShadowRando
 {
-	public partial class MainForm : Form {
-		public MainForm() {
+	public partial class MainForm : Form
+	{
+		public MainForm()
+		{
 			InitializeComponent();
 		}
 
 		Settings settings;
 
-		private void MainForm_Load(object sender, EventArgs e) {
+		private void MainForm_Load(object sender, EventArgs e)
+		{
 			settings = Settings.Load();
 			seedSelector.Value = settings.Seed;
 			randomSeed.Checked = settings.RandomSeed;
@@ -31,7 +34,8 @@ namespace ShadowRando
 			includeLast.Checked = settings.IncludeLast;
 			randomMusic.Checked = settings.RandomMusic;
 			randomFNT.Checked = settings.RandomFNT;
-			using (var dlg = new Ookii.Dialogs.WinForms.VistaFolderBrowserDialog() { Description = "Select the root folder of an extracted Shadow the Hedgehog disc image." }) {
+			using (var dlg = new Ookii.Dialogs.WinForms.VistaFolderBrowserDialog() { Description = "Select the root folder of an extracted Shadow the Hedgehog disc image." })
+			{
 				if (!string.IsNullOrEmpty(settings.GamePath))
 					dlg.SelectedPath = settings.GamePath;
 				if (dlg.ShowDialog(this) == DialogResult.OK)
@@ -81,7 +85,8 @@ namespace ShadowRando
 
 		private void CopyDirectory(string srcDir, string dstDir) => CopyDirectory(new DirectoryInfo(srcDir), dstDir);
 
-		private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
+		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+		{
 			settings.Seed = (int)seedSelector.Value;
 			settings.RandomSeed = randomSeed.Checked;
 			settings.Mode = (Modes)modeSelector.SelectedIndex;
@@ -95,15 +100,18 @@ namespace ShadowRando
 			settings.Save();
 		}
 
-		private void randomSeed_CheckedChanged(object sender, EventArgs e) {
+		private void randomSeed_CheckedChanged(object sender, EventArgs e)
+		{
 			seedSelector.Enabled = !randomSeed.Checked;
 		}
 
-		private void modeSelector_SelectedIndexChanged(object sender, EventArgs e) {
+		private void modeSelector_SelectedIndexChanged(object sender, EventArgs e)
+		{
 			panel1.Enabled = modeSelector.SelectedIndex == 0;
 		}
 
-		private void allowSameLevel_CheckedChanged(object sender, EventArgs e) {
+		private void allowSameLevel_CheckedChanged(object sender, EventArgs e)
+		{
 			maxBackJump.Minimum = maxForwJump.Minimum = allowSameLevel.Checked ? 0 : 1;
 		}
 
@@ -161,7 +169,7 @@ namespace ShadowRando
 		static readonly Dictionary<int, int> stageAssociationIDMap = new Dictionary<int, int>
 		{
 			{ 5, 100 }, // first stage
-            { 6, 200 },
+			{ 6, 200 },
 			{ 7, 201 },
 			{ 8, 202 },
 			{ 9, 300 },
@@ -183,15 +191,15 @@ namespace ShadowRando
 			{ 25, 603 },
 			{ 26, 604 },
 			{ 27, 700 }, // last stage
-            { 28, 210 }, // first sub boss
-            { 29, 310 },
+			{ 28, 210 }, // first sub boss
+			{ 29, 310 },
 			{ 30, 410 },
 			{ 31, 411 },
 			{ 32, 412 },
 			{ 33, 510 },
 			{ 34, 511 }, // last sub boss
-            { 35, 610 }, // first boss
-            { 36, 611 },
+			{ 35, 610 }, // first boss
+			{ 36, 611 },
 			{ 37, 612 },
 			{ 38, 613 },
 			{ 39, 614 },
@@ -200,23 +208,27 @@ namespace ShadowRando
 			{ 42, 617 },
 			{ 43, 618 },
 			{ 44, 710 } // last boss
-        };
+		};
 		const int totalstagecount = 40;
 		static int stagecount = 40;
 		int[] stageids;
 		readonly Stage[] stages = new Stage[totalstagecount];
-		private void randomizeButton_Click(object sender, EventArgs e) {
+		private void randomizeButton_Click(object sender, EventArgs e)
+		{
 			byte[] dolfile = File.ReadAllBytes(Path.Combine("backup", "main.dol"));
 			int seed;
-			if (randomSeed.Checked) {
+			if (randomSeed.Checked)
+			{
 				seed = (int)DateTime.Now.Ticks;
 				seedSelector.Value = seed;
-			} else
+			}
+			else
 				seed = (int)seedSelector.Value;
 			Random r = new Random(seed);
 			byte[] buf;
 			List<int> tmpids = new List<int>(totalstagecount + 1);
-			for (int i = 0; i < totalstagecount; i++) {
+			for (int i = 0; i < totalstagecount; i++)
+			{
 				stages[i] = new Stage(i);
 				buf = new byte[4];
 				Array.Copy(dolfile, firstStageOffset + (i * stageOffset) + modeOffset, buf, 0, 4);
@@ -224,14 +236,18 @@ namespace ShadowRando
 				int mode = BitConverter.ToInt32(buf, 0);
 				if ((mode & 0x10) == 0x10)
 					stages[i].IsLast = true;
-				if ((mode & 1) == 0) {
-					if (!stages[i].IsLast) {
+				if ((mode & 1) == 0)
+				{
+					if (!stages[i].IsLast)
+					{
 						stages[i].HasDark = BitConverter.ToInt32(dolfile, firstStageOffset + (i * stageOffset) + darkOffset + 4) != -1;
 						stages[i].HasNeutral = BitConverter.ToInt32(dolfile, firstStageOffset + (i * stageOffset) + neutOffset + 4) != -1;
 						stages[i].HasHero = BitConverter.ToInt32(dolfile, firstStageOffset + (i * stageOffset) + heroOffset + 4) != -1;
-					} else
+					}
+					else
 						stages[i].HasNeutral = true;
-				} else
+				}
+				else
 					stages[i].IsBoss = true;
 				if (!stages[i].IsLast || includeLast.Checked)
 					tmpids.Add(i);
@@ -240,10 +256,13 @@ namespace ShadowRando
 			tmpids.Add(totalstagecount);
 			stageids = tmpids.ToArray();
 			settings.Mode = (Modes)modeSelector.SelectedIndex;
-			switch (settings.Mode) {
-				case Modes.AllStagesWarps: {
+			switch (settings.Mode)
+			{
+				case Modes.AllStagesWarps:
+					{
 						Shuffle(r, stageids, stagecount);
-						switch ((MainPath)mainPathSelector.SelectedIndex) {
+						switch ((MainPath)mainPathSelector.SelectedIndex)
+						{
 							case MainPath.ActClear:
 								for (int i = 0; i < stagecount; i++)
 									stages[stageids[i]].SetExit(0, stageids[i + 1]);
@@ -253,34 +272,47 @@ namespace ShadowRando
 									stages[stageids[i]].SetExit(r.Next(stages[stageids[i]].CountExits()), stageids[i + 1]);
 								break;
 						}
-						for (int i = 0; i < stagecount; i++) {
+						for (int i = 0; i < stagecount; i++)
+						{
 							Stage stg = stages[stageids[i]];
 							int min, max;
-							if (stg.HasNeutral && stg.Neutral == -1) {
-								if (r.Next(100) < backJumpProb.Value && (i > 0 || backJumpProb.Value == 100)) {
+							if (stg.HasNeutral && stg.Neutral == -1)
+							{
+								if (r.Next(100) < backJumpProb.Value && (i > 0 || backJumpProb.Value == 100))
+								{
 									min = Math.Max(i - (int)maxBackJump.Value, 0);
 									max = Math.Max(i - (int)maxBackJump.Minimum + 1, 0);
-								} else {
+								}
+								else
+								{
 									min = i + (int)maxForwJump.Minimum;
 									max = Math.Min(i + (int)maxForwJump.Value + 1, stagecount + 1);
 								}
 								stg.Neutral = stageids[r.Next(min, max)];
 							}
-							if (stg.HasHero && stg.Hero == -1) {
-								if (r.Next(100) < backJumpProb.Value && (i > 0 || backJumpProb.Value == 100)) {
+							if (stg.HasHero && stg.Hero == -1)
+							{
+								if (r.Next(100) < backJumpProb.Value && (i > 0 || backJumpProb.Value == 100))
+								{
 									min = Math.Max(i - (int)maxBackJump.Value, 0);
 									max = Math.Max(i - (int)maxBackJump.Minimum + 1, 0);
-								} else {
+								}
+								else
+								{
 									min = i + (int)maxForwJump.Minimum;
 									max = Math.Min(i + (int)maxForwJump.Value + 1, stagecount + 1);
 								}
 								stg.Hero = stageids[r.Next(min, max)];
 							}
-							if (stg.HasDark && stg.Dark == -1) {
-								if (r.Next(100) < backJumpProb.Value && (i > 0 || backJumpProb.Value == 100)) {
+							if (stg.HasDark && stg.Dark == -1)
+							{
+								if (r.Next(100) < backJumpProb.Value && (i > 0 || backJumpProb.Value == 100))
+								{
 									min = Math.Max(i - (int)maxBackJump.Value, 0);
 									max = Math.Max(i - (int)maxBackJump.Minimum + 1, 0);
-								} else {
+								}
+								else
+								{
 									min = i + (int)maxForwJump.Minimum;
 									max = Math.Min(i + (int)maxForwJump.Value + 1, stagecount + 1);
 								}
@@ -289,12 +321,14 @@ namespace ShadowRando
 						}
 					}
 					break;
-				case Modes.VanillaStructure: {
+				case Modes.VanillaStructure:
+					{
 						List<int> twoexitlst = new List<int>();
 						List<int> threeexitlst = new List<int>();
 						List<int> bosslst = new List<int>();
 						List<int> last = new List<int>();
-						for (int i = 0; i < stagecount; i++) {
+						for (int i = 0; i < stagecount; i++)
+						{
 							var stg = stages[stageids[i]];
 							if (stg.IsLast)
 								last.Add(stageids[i]);
@@ -315,9 +349,11 @@ namespace ShadowRando
 						Queue<int> threeq = new Queue<int>(threeexit);
 						Queue<int> bossq = new Queue<int>(boss);
 						List<int> neword = new List<int>(stagecount);
-						foreach (var set in ShadowStageSet.StageList) {
+						foreach (var set in ShadowStageSet.StageList)
+						{
 							foreach (var stg in set.stages)
-								switch (stg.stageType) {
+								switch (stg.stageType)
+								{
 									case StageType.Neutral:
 										neword.Add(threeq.Dequeue());
 										break;
@@ -332,21 +368,27 @@ namespace ShadowRando
 						}
 						neword.AddRange(last);
 						int ind = 0;
-						foreach (var set in ShadowStageSet.StageList) {
+						foreach (var set in ShadowStageSet.StageList)
+						{
 							int bossind = ind + set.stages.Count;
 							int next = set.stages.Count + set.bossCount;
 							if (set.stages[0].stageType == StageType.Neutral)
 								++next;
-							foreach (var item in set.stages) {
+							foreach (var item in set.stages)
+							{
 								Stage stg = stages[neword[ind]];
-								if (item.bossCount == 2) {
+								if (item.bossCount == 2)
+								{
 									stg.Dark = neword[bossind];
 									stages[neword[bossind++]].Neutral = totalstagecount;
 									stg.Hero = neword[bossind];
 									stages[neword[bossind++]].Neutral = totalstagecount;
-								} else if (item.bossCount == 1) {
+								}
+								else if (item.bossCount == 1)
+								{
 									Stage bossstg = stages[neword[bossind]];
-									switch (item.stageType) {
+									switch (item.stageType)
+									{
 										case StageType.Neutral:
 											bossstg.Dark = neword[ind + next - 1];
 											bossstg.Neutral = neword[ind + next];
@@ -378,8 +420,11 @@ namespace ShadowRando
 									if (stg.HasDark)
 										stg.Dark = neword[bossind];
 									bossind++;
-								} else {
-									switch (item.stageType) {
+								}
+								else
+								{
+									switch (item.stageType)
+									{
 										case StageType.Neutral:
 											stg.Dark = neword[ind + next - 1];
 											stg.Neutral = neword[ind + next];
@@ -408,25 +453,30 @@ namespace ShadowRando
 						neword.CopyTo(stageids);
 					}
 					break;
-				case Modes.BranchingPaths: {
+				case Modes.BranchingPaths:
+					{
 						List<int> stagepool = new List<int>(stageids.Take(stagecount));
 						List<int> curset = new List<int>() { r.Next(stagecount) };
 						stagepool.Remove(curset[0]);
 						List<int> ids2 = new List<int>() { curset[0] };
-						while (stagepool.Count > 0) {
+						while (stagepool.Count > 0)
+						{
 							List<int> newset = new List<int>();
-							for (int i = 0; i < curset.Count; i++) {
+							for (int i = 0; i < curset.Count; i++)
+							{
 								Stage stg = stages[curset[i]];
 								int next = GetStageFromLists(r, newset, stagepool, stagepool.Count / 6);
 								stg.SetExit(0, next);
 								if (!newset.Contains(next))
 									newset.Add(next);
-								if (stg.HasHero && stg.Hero == -1) {
+								if (stg.HasHero && stg.Hero == -1)
+								{
 									stg.Hero = GetStageFromLists(r, newset, stagepool, stagepool.Count / 6);
 									if (!newset.Contains(stg.Hero))
 										newset.Add(stg.Hero);
 								}
-								if (stg.HasDark && stg.Dark == -1) {
+								if (stg.HasDark && stg.Dark == -1)
+								{
 									stg.Dark = GetStageFromLists(r, newset, stagepool, stagepool.Count / 6);
 									if (!newset.Contains(stg.Dark))
 										newset.Add(stg.Dark);
@@ -441,7 +491,8 @@ namespace ShadowRando
 						ids2.CopyTo(stageids);
 					}
 					break;
-				case Modes.ReverseBranching: {
+				case Modes.ReverseBranching:
+					{
 						int exitcnt = stages.Sum(a => a.CountExits()) - stages.Count(a => a.CountExits() == 1);
 						Shuffle(r, stageids, stagecount);
 						Stack<int> stagepool = new Stack<int>(stageids.Take(stagecount));
@@ -449,7 +500,8 @@ namespace ShadowRando
 						List<int> orphans = new List<int>();
 						int[] stagedepths = new int[totalstagecount + 1];
 						List<List<int>> depthstages = new List<List<int>>() { new List<int>() { totalstagecount } };
-						while (orphans.Count < exitcnt - stages[stagepool.Peek()].CountExits()) {
+						while (orphans.Count < exitcnt - stages[stagepool.Peek()].CountExits())
+						{
 							int stgid = stagepool.Pop();
 							Stage stg = stages[stgid];
 							exitcnt -= stg.CountExits();
@@ -464,24 +516,28 @@ namespace ShadowRando
 							usedstg.Add(stgid);
 							orphans.Add(stgid);
 						}
-						while (stagepool.Count > 0) {
+						while (stagepool.Count > 0)
+						{
 							int stgid = stagepool.Pop();
 							Stage stg = stages[stgid];
 							int next;
 							int depth = 0;
-							if (stg.IsBoss || stg.HasNeutral) {
+							if (stg.IsBoss || stg.HasNeutral)
+							{
 								next = orphans[r.Next(orphans.Count)];
 								stg.Neutral = next;
 								orphans.Remove(next);
 								depth = stagedepths[next] + 1;
 							}
-							if (orphans.Count > 0 && stg.HasHero) {
+							if (orphans.Count > 0 && stg.HasHero)
+							{
 								next = orphans[r.Next(orphans.Count)];
 								stg.Hero = next;
 								orphans.Remove(next);
 								depth = Math.Max(depth, stagedepths[next] + 1);
 							}
-							if (orphans.Count > 0 && stg.HasDark) {
+							if (orphans.Count > 0 && stg.HasDark)
+							{
 								next = orphans[r.Next(orphans.Count)];
 								stg.Dark = next;
 								orphans.Remove(next);
@@ -493,30 +549,37 @@ namespace ShadowRando
 							depthstages[depth].Add(stgid);
 							orphans.Add(stgid);
 						}
-						foreach (Stage stg in stages) {
+						foreach (Stage stg in stages)
+						{
 							if (!includeLast.Checked && stg.IsLast)
 								continue;
-							if ((stg.IsBoss || stg.HasNeutral) && stg.Neutral == -1) {
+							if ((stg.IsBoss || stg.HasNeutral) && stg.Neutral == -1)
+							{
 								var pool = depthstages[Math.Min(stagedepths[stg.ID] + r.Next(-1, 2), depthstages.Count - 1)];
 								stg.Neutral = pool[r.Next(pool.Count)];
 							}
-							if (stg.HasHero && stg.Hero == -1) {
+							if (stg.HasHero && stg.Hero == -1)
+							{
 								var pool = depthstages[Math.Min(stagedepths[stg.ID] + r.Next(-1, 2), depthstages.Count - 1)];
 								stg.Hero = pool[r.Next(pool.Count)];
 							}
-							if (stg.HasDark && stg.Dark == -1) {
+							if (stg.HasDark && stg.Dark == -1)
+							{
 								var pool = depthstages[Math.Min(stagedepths[stg.ID] + r.Next(-1, 2), depthstages.Count - 1)];
 								stg.Dark = pool[r.Next(pool.Count)];
 							}
 						}
 					}
 					break;
-				case Modes.Wild: {
+				case Modes.Wild:
+					{
 						Queue<int> stgq = new Queue<int>();
 						stgq.Enqueue(stageids[r.Next(stagecount)]);
 						List<int> neword = new List<int>(stagecount);
-						while (neword.Count < stagecount) {
-							if (stgq.Count == 0) {
+						while (neword.Count < stagecount)
+						{
+							if (stgq.Count == 0)
+							{
 								foreach (var id in stageids.Except(neword))
 									if (id != totalstagecount)
 										stgq.Enqueue(id);
@@ -524,17 +587,20 @@ namespace ShadowRando
 							int i = stgq.Dequeue();
 							neword.Add(i);
 							Stage stg = stages[i];
-							if (stg.IsBoss || stg.HasNeutral) {
+							if (stg.IsBoss || stg.HasNeutral)
+							{
 								stg.Neutral = stageids[r.Next(stagecount + 1)];
 								if (stg.Neutral != totalstagecount && !neword.Contains(stg.Neutral) && !stgq.Contains(stg.Neutral))
 									stgq.Enqueue(stg.Neutral);
 							}
-							if (stg.HasHero) {
+							if (stg.HasHero)
+							{
 								stg.Hero = stageids[r.Next(stagecount + 1)];
 								if (stg.Hero != totalstagecount && !neword.Contains(stg.Hero) && !stgq.Contains(stg.Hero))
 									stgq.Enqueue(stg.Hero);
 							}
-							if (stg.HasDark) {
+							if (stg.HasDark)
+							{
 								stg.Dark = stageids[r.Next(stagecount + 1)];
 								if (stg.Dark != totalstagecount && !neword.Contains(stg.Dark) && !stgq.Contains(stg.Dark))
 									stgq.Enqueue(stg.Dark);
@@ -544,21 +610,25 @@ namespace ShadowRando
 					}
 					break;
 			}
-			for (int i = 0; i < totalstagecount; i++) {
+			for (int i = 0; i < totalstagecount; i++)
+			{
 				Stage stg = stages[i];
 				if (stg.IsBoss && stg.Hero == -1 && stg.Dark == -1)
 					stg.Dark = stg.Hero = stg.Neutral;
-				if (stg.Dark != -1) {
+				if (stg.Dark != -1)
+				{
 					buf = BitConverter.GetBytes(stg.Dark == totalstagecount ? -2 : stg.Dark + stagefirst);
 					Array.Reverse(buf);
 					buf.CopyTo(dolfile, firstStageOffset + (i * stageOffset) + darkOffset);
 				}
-				if (stg.Neutral != -1) {
+				if (stg.Neutral != -1)
+				{
 					buf = BitConverter.GetBytes(stg.Neutral == totalstagecount ? -2 : stg.Neutral + stagefirst);
 					Array.Reverse(buf);
 					buf.CopyTo(dolfile, firstStageOffset + (i * stageOffset) + neutOffset);
 				}
-				if (stg.Hero != -1) {
+				if (stg.Hero != -1)
+				{
 					buf = BitConverter.GetBytes(stg.Hero == totalstagecount ? -2 : stg.Hero + stagefirst);
 					Array.Reverse(buf);
 					buf.CopyTo(dolfile, firstStageOffset + (i * stageOffset) + heroOffset);
@@ -609,20 +679,26 @@ namespace ShadowRando
 			makeChartButton.Enabled = true;
 		}
 
-		private void RandomizeFNTs(Random r) {
+		private void RandomizeFNTs(Random r)
+		{
 			var fontAndAudioData = LoadFNTsAndAFS(true);
 			// TODO: Add BACKUP feature so we can re-use the original FNTs/restore them instead of basing randomization off last randomization
 
-			for (int i = 0; i < fontAndAudioData.mutatedFnt.Count; i++) {
-                for (int j = 0; j < fontAndAudioData.mutatedFnt[i].GetEntryTableCount(); j++) {
+			for (int i = 0; i < fontAndAudioData.mutatedFnt.Count; i++)
+			{
+				for (int j = 0; j < fontAndAudioData.mutatedFnt[i].GetEntryTableCount(); j++)
+				{
 					// for now we simply swap everything without caring. We probably have to be careful about final entry etc.
 					// Chained entries not accounted for, so may produce wacky results
 					int donorFNTIndex = r.Next(0, fontAndAudioData.mutatedFnt.Count - 1);
 					int donotFNTEntryIndex = r.Next(0, fontAndAudioData.initialFntState[donorFNTIndex].GetEntryTableCount() - 1);
-					if (fontAndAudioData.initialFntState[donorFNTIndex].GetEntryAudioId(donotFNTEntryIndex) == -1) {
+					if (fontAndAudioData.initialFntState[donorFNTIndex].GetEntryAudioId(donotFNTEntryIndex) == -1)
+					{
 						int audio = r.Next(0, fontAndAudioData.afs.Files.Count - 1);
 						fontAndAudioData.mutatedFnt[i].SetEntryAudioId(j, audio);
-					} else {
+					}
+					else
+					{
 						fontAndAudioData.mutatedFnt[i].SetEntryAudioId(j, fontAndAudioData.initialFntState[donorFNTIndex].GetEntryAudioId(donotFNTEntryIndex));
 					}
 
@@ -633,59 +709,69 @@ namespace ShadowRando
 			ExportChangedFNTs(fontAndAudioData.mutatedFnt, fontAndAudioData.initialFntState);
 		}
 
-		private (List<FNT> mutatedFnt, List<FNT> initialFntState, AfsArchive afs) LoadFNTsAndAFS(bool loadAFS, string localeOverride = "EN") {
-            // Load all target FNTs
-            var initialFntsOpenedState = new List<FNT>();
-            var openedFnts = new List<FNT>();
+		private (List<FNT> mutatedFnt, List<FNT> initialFntState, AfsArchive afs) LoadFNTsAndAFS(bool loadAFS, string localeOverride = "EN")
+		{
+			// Load all target FNTs
+			var initialFntsOpenedState = new List<FNT>();
+			var openedFnts = new List<FNT>();
 			AfsArchive currentAfs = null;
 
 			var fontDirectory = Path.Combine("backup", "fonts");
-            string[] foundFnts = Directory.GetFiles(fontDirectory, "*_" + localeOverride + ".fnt", SearchOption.AllDirectories);
-            for (int i = 0; i < foundFnts.Length; i++) {
-                byte[] readFile = File.ReadAllBytes(foundFnts[i]);
-                FNT newFnt = FNT.ParseFNTFile(foundFnts[i], ref readFile, fontDirectory);
-                FNT mutatedFnt = FNT.ParseFNTFile(foundFnts[i], ref readFile, fontDirectory);
+			string[] foundFnts = Directory.GetFiles(fontDirectory, "*_" + localeOverride + ".fnt", SearchOption.AllDirectories);
+			for (int i = 0; i < foundFnts.Length; i++)
+			{
+				byte[] readFile = File.ReadAllBytes(foundFnts[i]);
+				FNT newFnt = FNT.ParseFNTFile(foundFnts[i], ref readFile, fontDirectory);
+				FNT mutatedFnt = FNT.ParseFNTFile(foundFnts[i], ref readFile, fontDirectory);
 
-                openedFnts.Add(newFnt);
-                initialFntsOpenedState.Add(mutatedFnt);
-            }
+				openedFnts.Add(newFnt);
+				initialFntsOpenedState.Add(mutatedFnt);
+			}
 
-            if (!loadAFS)
-                return (initialFntsOpenedState, openedFnts, null);
+			if (!loadAFS)
+				return (initialFntsOpenedState, openedFnts, null);
 
-            // Should probably find a different way to peak at total size, because each time mem footprint increases w/AFS size
-            var data = File.ReadAllBytes(Path.Combine(settings.GamePath, "files", "PRS_VOICE_E.afs"));
-            if (AfsArchive.TryFromFile(data, out var afsArchive)) {
-                currentAfs = afsArchive;
-                data = null; // for GC purpose
-            };
-            return (mutatedFnt: initialFntsOpenedState, initialFntState: openedFnts, afs: currentAfs);
-        }
+			// Should probably find a different way to peak at total size, because each time mem footprint increases w/AFS size
+			var data = File.ReadAllBytes(Path.Combine(settings.GamePath, "files", "PRS_VOICE_E.afs"));
+			if (AfsArchive.TryFromFile(data, out var afsArchive))
+			{
+				currentAfs = afsArchive;
+				data = null; // for GC purpose
+			};
+			return (mutatedFnt: initialFntsOpenedState, initialFntState: openedFnts, afs: currentAfs);
+		}
 
-        private void ExportChangedFNTs(List<FNT> mutatedFnt, List<FNT> initialFntState) {
-            List<FNT> filesToWrite = new List<FNT>();
-            for (int i = 0; i < initialFntState.Count; i++) {
-                if (initialFntState[i].Equals(mutatedFnt[i]) == false) {
-                    filesToWrite.Add(mutatedFnt[i]);
-                }
-            }
-            foreach (FNT fnt in filesToWrite) {
-                try {
-                    fnt.RecomputeAllSubtitleAddresses();
+		private void ExportChangedFNTs(List<FNT> mutatedFnt, List<FNT> initialFntState)
+		{
+			List<FNT> filesToWrite = new List<FNT>();
+			for (int i = 0; i < initialFntState.Count; i++)
+			{
+				if (initialFntState[i].Equals(mutatedFnt[i]) == false)
+				{
+					filesToWrite.Add(mutatedFnt[i]);
+				}
+			}
+			foreach (FNT fnt in filesToWrite)
+			{
+				try
+				{
+					fnt.RecomputeAllSubtitleAddresses();
 					string outfn = Path.Combine(settings.GamePath, "files", fnt.fileName.Substring(fnt.fileName.IndexOf("fonts")));
-                    File.WriteAllBytes(outfn, fnt.ToBytes());
-                    string prec = outfn.Remove(outfn.Length - 4);
-                    File.Copy(AppDomain.CurrentDomain.BaseDirectory + "res/EN.txd", prec + ".txd", true);
-                    File.Copy(AppDomain.CurrentDomain.BaseDirectory + "res/EN00.met", prec + "00.met", true);
-                } catch (Exception ex) {
-                    MessageBox.Show("Failed on " + fnt.ToString(), "An Exception Occurred");
-                    MessageBox.Show(ex.Message, "An Exception Occurred");
-                }
-            }
-            MessageBox.Show("Completed FNT Exports", "Report");
-        }
+					File.WriteAllBytes(outfn, fnt.ToBytes());
+					string prec = outfn.Remove(outfn.Length - 4);
+					File.Copy(AppDomain.CurrentDomain.BaseDirectory + "res/EN.txd", prec + ".txd", true);
+					File.Copy(AppDomain.CurrentDomain.BaseDirectory + "res/EN00.met", prec + "00.met", true);
+				}
+				catch (Exception ex)
+				{
+					MessageBox.Show("Failed on " + fnt.ToString(), "An Exception Occurred");
+					MessageBox.Show(ex.Message, "An Exception Occurred");
+				}
+			}
+			MessageBox.Show("Completed FNT Exports", "Report");
+		}
 
-        private static void Shuffle<T>(Random r, T[] array, int count)
+		private static void Shuffle<T>(Random r, T[] array, int count)
 		{
 			int[] order = new int[count];
 			for (int i = 0; i < count; i++)
@@ -1468,9 +1554,9 @@ namespace ShadowRando
 				r = a.MaxX.CompareTo(b.MaxX);
 			return r;
 		}
-    }
+	}
 
-    static class Extensions
+	static class Extensions
 	{
 		public static void Deconstruct<TKey, TValue>(this KeyValuePair<TKey, TValue> kvp, out TKey key, out TValue value)
 		{
