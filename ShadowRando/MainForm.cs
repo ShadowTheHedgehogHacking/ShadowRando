@@ -6,7 +6,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace ShadowRando
@@ -24,7 +23,7 @@ namespace ShadowRando
 		private void MainForm_Load(object sender, EventArgs e)
 		{
 			settings = Settings.Load();
-			this.Text = this.Text + programVersion;
+			Text += programVersion;
 			seedSelector.Value = settings.Seed;
 			randomSeed.Checked = settings.RandomSeed;
 			modeSelector.SelectedIndex = (int)settings.Mode;
@@ -34,6 +33,7 @@ namespace ShadowRando
 			backJumpProb.Value = settings.BackJumpProb;
 			allowSameLevel.Checked = settings.AllowSameLevel;
 			includeLast.Checked = settings.IncludeLast;
+			includeBosses.Checked = settings.IncludeBosses;
 			randomMusic.Checked = settings.RandomMusic;
 			randomFNT.Checked = settings.RandomFNT;
 			using (var dlg = new Ookii.Dialogs.WinForms.VistaFolderBrowserDialog() { Description = "Select the root folder of an extracted Shadow the Hedgehog disc image." })
@@ -98,6 +98,7 @@ namespace ShadowRando
 			settings.BackJumpProb = (int)backJumpProb.Value;
 			settings.AllowSameLevel = allowSameLevel.Checked;
 			settings.IncludeLast = includeLast.Checked;
+			settings.IncludeBosses = includeBosses.Checked;
 			settings.RandomMusic = randomMusic.Checked;
 			settings.Save();
 		}
@@ -226,6 +227,7 @@ namespace ShadowRando
 			}
 			else
 				seed = (int)seedSelector.Value;
+			settings.Mode = (Modes)modeSelector.SelectedIndex;
 			Random r = new Random(seed);
 			byte[] buf;
 			List<int> tmpids = new List<int>(totalstagecount + 1);
@@ -251,13 +253,19 @@ namespace ShadowRando
 				}
 				else
 					stages[i].IsBoss = true;
-				if (!stages[i].IsLast || includeLast.Checked)
+				bool include = true;
+				if (!includeLast.Checked)
+					include = !stages[i].IsLast;
+				if (settings.Mode == Modes.BossRush)
+					include &= stages[i].IsBoss;
+				else if (!includeBosses.Checked)
+					include &= !stages[i].IsBoss;
+				if (include)
 					tmpids.Add(i);
 			}
 			stagecount = tmpids.Count;
 			tmpids.Add(totalstagecount);
 			stageids = tmpids.ToArray();
-			settings.Mode = (Modes)modeSelector.SelectedIndex;
 			switch (settings.Mode)
 			{
 				case Modes.AllStagesWarps:
@@ -365,28 +373,30 @@ namespace ShadowRando
 										neword.Add(twoq.Dequeue());
 										break;
 								}
-							for (int i = 0; i < set.bossCount; i++)
-								neword.Add(bossq.Dequeue());
+							if (includeBosses.Checked)
+								for (int i = 0; i < set.bossCount; i++)
+									neword.Add(bossq.Dequeue());
 						}
 						neword.AddRange(last);
 						int ind = 0;
 						foreach (var set in ShadowStageSet.StageList)
 						{
 							int bossind = ind + set.stages.Count;
-							int next = set.stages.Count + set.bossCount;
+							int next = set.stages.Count + (includeBosses.Checked ? set.bossCount : 0);
 							if (set.stages[0].stageType == StageType.Neutral)
 								++next;
 							foreach (var item in set.stages)
 							{
 								Stage stg = stages[neword[ind]];
-								if (item.bossCount == 2)
+								int bosscnt = includeBosses.Checked ? item.bossCount : 0;
+								if (bosscnt == 2)
 								{
 									stg.Dark = neword[bossind];
 									stages[neword[bossind++]].Neutral = totalstagecount;
 									stg.Hero = neword[bossind];
 									stages[neword[bossind++]].Neutral = totalstagecount;
 								}
-								else if (item.bossCount == 1)
+								else if (bosscnt == 1)
 								{
 									Stage bossstg = stages[neword[bossind]];
 									switch (item.stageType)
@@ -446,11 +456,16 @@ namespace ShadowRando
 											else
 												stg.Dark = neword[ind + next - 1];
 											break;
+										case StageType.End:
+											stg.Hero = totalstagecount;
+											stg.Dark = totalstagecount;
+											break;
 									}
 								}
 								++ind;
 							}
-							ind += set.bossCount;
+							if (includeBosses.Checked)
+								ind += set.bossCount;
 						}
 						neword.CopyTo(stageids);
 					}
@@ -572,6 +587,11 @@ namespace ShadowRando
 							}
 						}
 					}
+					break;
+				case Modes.BossRush:
+					Shuffle(r, stageids, stagecount);
+					for (int i = 0; i < stagecount; i++)
+						stages[stageids[i]].Neutral = stageids[i + 1];
 					break;
 				case Modes.Wild:
 					{
@@ -988,6 +1008,7 @@ namespace ShadowRando
 			switch (settings.Mode)
 			{
 				case Modes.AllStagesWarps: // stages + warps
+				case Modes.BossRush: // boss rush
 				case Modes.Wild: // wild
 					gridmaxh = 1;
 					gridmaxv = stagecount + 2;
@@ -1043,6 +1064,7 @@ namespace ShadowRando
 					}
 					break;
 				default: // normal game structure
+					if (includeBosses.Checked)
 					{
 						gridmaxh = 1;
 						gridmaxv = 11;
@@ -1061,6 +1083,22 @@ namespace ShadowRando
 						}
 						levels[totalstagecount] = new ChartNode(gridmaxh++, 5);
 						levels[totalstagecount + 1] = new ChartNode(0, 5);
+					}
+					else
+					{
+						gridmaxh = 1;
+						gridmaxv = 5;
+						int[] stgcnts = { 1, 3, 3, 5, 5, 5 };
+						int ind = 0;
+						for (int i = 0; i < stgcnts.Length; i++)
+						{
+							int y = gridmaxv / 2 - stgcnts[i] / 2;
+							for (int j = 0; j < stgcnts[i]; j++)
+								levels[stageids[ind++]] = new ChartNode(gridmaxh, y++);
+							gridmaxh++;
+						}
+						levels[totalstagecount] = new ChartNode(gridmaxh++, 2);
+						levels[totalstagecount + 1] = new ChartNode(0, 2);
 					}
 					break;
 			}
@@ -1793,6 +1831,9 @@ namespace ShadowRando
 		public bool AllowSameLevel { get; set; }
 		[IniAlwaysInclude]
 		public bool IncludeLast { get; set; }
+		[System.ComponentModel.DefaultValue(true)]
+		[IniAlwaysInclude]
+		public bool IncludeBosses { get; set; } = true;
 		[IniAlwaysInclude]
 		public bool RandomMusic { get; set; }
 
@@ -1817,6 +1858,7 @@ namespace ShadowRando
 		VanillaStructure,
 		BranchingPaths,
 		ReverseBranching,
+		BossRush,
 		Wild
 	}
 
