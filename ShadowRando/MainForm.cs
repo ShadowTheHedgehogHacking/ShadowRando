@@ -19,8 +19,8 @@ namespace ShadowRando
 			InitializeComponent();
 		}
 
-        const string programVersion = "0.3.0-dev";
-        Settings settings;
+		const string programVersion = "0.3.0-dev";
+		Settings settings;
 
 		private void MainForm_Load(object sender, EventArgs e)
 		{
@@ -236,7 +236,8 @@ namespace ShadowRando
 			if (randomSeed.Checked)
 			{
 				var randomBytes = new byte[10];
-				using (var rng = new RNGCryptoServiceProvider()) {
+				using (var rng = new RNGCryptoServiceProvider())
+				{
 					rng.GetBytes(randomBytes);
 				}
 				seedTextBox.Text = Convert.ToBase64String(randomBytes);
@@ -723,32 +724,46 @@ namespace ShadowRando
 			var fntRandomPool = new List<TableEntry>();
 			var uniqueAudioIDs = new Dictionary<int, bool>();
 			var uniqueSubtitles = new Dictionary<string, bool>();
-			if (FNTCheckBox_OnlyLinkedAudio.Checked || FNTCheckBox_NoDuplicatesPreRandomization.Checked || FNTCheckBox_NoSystemMessages.Checked || FNTCheckBox_OnlyShadow.Checked) {
-				for (int i = 0; i < fontAndAudioData.initialFntState.Count; i++) {
-					for (int j = 0; j < fontAndAudioData.initialFntState[i].GetEntryTableCount(); j++) {
+			if (FNTCheckBox_OnlyLinkedAudio.Checked || FNTCheckBox_NoDuplicatesPreRandomization.Checked || FNTCheckBox_NoSystemMessages.Checked || FNTCheckBox_OnlyShadow.Checked)
+			{
+				for (int i = 0; i < fontAndAudioData.initialFntState.Count; i++)
+				{
+					for (int j = 0; j < fontAndAudioData.initialFntState[i].GetEntryTableCount(); j++)
+					{
 						var entry = fontAndAudioData.initialFntState[i].GetEntryTable()[j];
-						if (FNTCheckBox_OnlyLinkedAudio.Checked && entry.audioId == -1) {
+						if (FNTCheckBox_OnlyLinkedAudio.Checked && entry.audioId == -1)
+						{
 							continue;
 						}
-						if (FNTCheckBox_NoSystemMessages.Checked && (entry.entryType == EntryType.MENU || entry.entryType == EntryType.FINAL_ENTRY || entry.messageIdBranchSequence == 9998100)) {
+						if (FNTCheckBox_NoSystemMessages.Checked && (entry.entryType == EntryType.MENU || entry.entryType == EntryType.FINAL_ENTRY || entry.messageIdBranchSequence == 9998100))
+						{
 							continue;
 						}
-						if (FNTCheckBox_OnlyShadow.Checked && entry.audioId != -1 && !fontAndAudioData.afs.Files[entry.audioId].Name.EndsWith("_sd.adx")) {
+						if (FNTCheckBox_OnlyShadow.Checked && entry.audioId != -1 && !fontAndAudioData.afs.Files[entry.audioId].Name.EndsWith("_sd.adx"))
+						{
 							continue;
 						}
-						try {
-							if (FNTCheckBox_NoDuplicatesPreRandomization.Checked && entry.audioId != -1 && uniqueAudioIDs[entry.audioId]) {
+						try
+						{
+							if (FNTCheckBox_NoDuplicatesPreRandomization.Checked && entry.audioId != -1 && uniqueAudioIDs[entry.audioId])
+							{
 								continue;
 							}
-						} catch (KeyNotFoundException e) {
+						}
+						catch (KeyNotFoundException e)
+						{
 							// good, we continue the flow
 						}
-						try {
-							if (FNTCheckBox_NoDuplicatesPreRandomization.Checked && entry.audioId == -1 && uniqueSubtitles[entry.subtitle]) {
+						try
+						{
+							if (FNTCheckBox_NoDuplicatesPreRandomization.Checked && entry.audioId == -1 && uniqueSubtitles[entry.subtitle])
+							{
 								// this covers chained entries and any repeating messages with -1; Such as system dialogs if the user is not using that filter
 								continue;
 							}
-						} catch (KeyNotFoundException e) {
+						}
+						catch (KeyNotFoundException e)
+						{
 							// good, we continue the flow
 						}
 						uniqueAudioIDs[entry.audioId] = true;
@@ -757,30 +772,42 @@ namespace ShadowRando
 					}
 				}
 				// customized fnt pool built; begin applying
-				for (int i = 0; i < fontAndAudioData.mutatedFnt.Count; i++) {
-					for (int j = 0; j < fontAndAudioData.mutatedFnt[i].GetEntryTableCount(); j++) {
+				for (int i = 0; i < fontAndAudioData.mutatedFnt.Count; i++)
+				{
+					for (int j = 0; j < fontAndAudioData.mutatedFnt[i].GetEntryTableCount(); j++)
+					{
 						// Chained entries not accounted for, so may produce wacky results
 						int donotFNTEntryIndex = r.Next(0, fntRandomPool.Count - 1);
-						if (FNTCheckBox_GiveAudioToNoLinkedAudio.Checked && fntRandomPool[donotFNTEntryIndex].audioId == -1) {
+						if (FNTCheckBox_GiveAudioToNoLinkedAudio.Checked && fntRandomPool[donotFNTEntryIndex].audioId == -1)
+						{
 							int audio = r.Next(0, fontAndAudioData.afs.Files.Count - 1);
 							fontAndAudioData.mutatedFnt[i].SetEntryAudioId(j, audio);
-						} else {
+						}
+						else
+						{
 							fontAndAudioData.mutatedFnt[i].SetEntryAudioId(j, fntRandomPool[donotFNTEntryIndex].audioId);
 						}
 						fontAndAudioData.mutatedFnt[i].SetEntrySubtitle(j, fntRandomPool[donotFNTEntryIndex].subtitle);
 						fontAndAudioData.mutatedFnt[i].SetEntrySubtitleActiveTime(j, fntRandomPool[donotFNTEntryIndex].subtitleActiveTime);
 					}
 				}
-			} else {
-				for (int i = 0; i < fontAndAudioData.mutatedFnt.Count; i++) {
-					for (int j = 0; j < fontAndAudioData.mutatedFnt[i].GetEntryTableCount(); j++) {
+			}
+			else
+			{
+				for (int i = 0; i < fontAndAudioData.mutatedFnt.Count; i++)
+				{
+					for (int j = 0; j < fontAndAudioData.mutatedFnt[i].GetEntryTableCount(); j++)
+					{
 						// Chained entries not accounted for, so may produce wacky results
 						int donorFNTIndex = r.Next(0, fontAndAudioData.mutatedFnt.Count - 1);
 						int donotFNTEntryIndex = r.Next(0, fontAndAudioData.initialFntState[donorFNTIndex].GetEntryTableCount() - 1);
-						if (FNTCheckBox_GiveAudioToNoLinkedAudio.Checked && fontAndAudioData.initialFntState[donorFNTIndex].GetEntryAudioId(donotFNTEntryIndex) == -1) {
+						if (FNTCheckBox_GiveAudioToNoLinkedAudio.Checked && fontAndAudioData.initialFntState[donorFNTIndex].GetEntryAudioId(donotFNTEntryIndex) == -1)
+						{
 							int audio = r.Next(0, fontAndAudioData.afs.Files.Count - 1);
 							fontAndAudioData.mutatedFnt[i].SetEntryAudioId(j, audio);
-						} else {
+						}
+						else
+						{
 							fontAndAudioData.mutatedFnt[i].SetEntryAudioId(j, fontAndAudioData.initialFntState[donorFNTIndex].GetEntryAudioId(donotFNTEntryIndex));
 						}
 
@@ -1658,15 +1685,19 @@ namespace ShadowRando
 			return r;
 		}
 
-		private void randomFNT_CheckedChanged(object sender, EventArgs e) {
-			if (randomFNT.Checked) {
+		private void randomFNT_CheckedChanged(object sender, EventArgs e)
+		{
+			if (randomFNT.Checked)
+			{
 				subtitleAndVoicelineGroupBox.Enabled = true;
 				FNTCheckBox_NoDuplicatesPreRandomization.Enabled = true;
 				FNTCheckBox_NoSystemMessages.Enabled = true;
 				FNTCheckBox_OnlyLinkedAudio.Enabled = true;
 				FNTCheckBox_OnlyShadow.Enabled = true;
 				FNTCheckBox_GiveAudioToNoLinkedAudio.Enabled = true;
-			} else {
+			}
+			else
+			{
 				subtitleAndVoicelineGroupBox.Enabled = false;
 				FNTCheckBox_NoDuplicatesPreRandomization.Enabled = false;
 				FNTCheckBox_NoSystemMessages.Enabled = false;
@@ -1676,20 +1707,26 @@ namespace ShadowRando
 			}
 		}
 
-		private void FNTCheckBox_OnlyLinkedAudio_CheckedChanged(object sender, EventArgs e) {
-			if (FNTCheckBox_OnlyLinkedAudio.Checked) {
+		private void FNTCheckBox_OnlyLinkedAudio_CheckedChanged(object sender, EventArgs e)
+		{
+			if (FNTCheckBox_OnlyLinkedAudio.Checked)
+			{
 				FNTCheckBox_GiveAudioToNoLinkedAudio.Checked = false;
 			}
 		}
 
-		private void FNTCheckBox_GiveAudioToNoLinkedAudio_CheckedChanged(object sender, EventArgs e) {
-			if (FNTCheckBox_GiveAudioToNoLinkedAudio.Checked) {
+		private void FNTCheckBox_GiveAudioToNoLinkedAudio_CheckedChanged(object sender, EventArgs e)
+		{
+			if (FNTCheckBox_GiveAudioToNoLinkedAudio.Checked)
+			{
 				FNTCheckBox_OnlyLinkedAudio.Checked = false;
 			}
 		}
 
-		static int CalculateSeed(string seedString) {
-			using (SHA256 sha256 = SHA256.Create()) {
+		static int CalculateSeed(string seedString)
+		{
+			using (SHA256 sha256 = SHA256.Create())
+			{
 				return BitConverter.ToInt32(sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(seedString)), 0);
 			}
 		}
