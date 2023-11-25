@@ -35,7 +35,6 @@ namespace ShadowRando
             System.Windows.Forms.Label label3;
             System.Windows.Forms.Label label4;
             System.Windows.Forms.Label label6;
-            this.seedSelector = new System.Windows.Forms.NumericUpDown();
             this.randomSeed = new System.Windows.Forms.CheckBox();
             this.randomMusic = new System.Windows.Forms.CheckBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
@@ -56,6 +55,7 @@ namespace ShadowRando
             this.FNTCheckBox_NoSystemMessages = new System.Windows.Forms.CheckBox();
             this.FNTCheckBox_NoDuplicatesPreRandomization = new System.Windows.Forms.CheckBox();
             this.FNTCheckBox_GiveAudioToNoLinkedAudio = new System.Windows.Forms.CheckBox();
+            this.seedTextBox = new System.Windows.Forms.TextBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.label7 = new System.Windows.Forms.Label();
@@ -72,7 +72,6 @@ namespace ShadowRando
             label3 = new System.Windows.Forms.Label();
             label4 = new System.Windows.Forms.Label();
             label6 = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.seedSelector)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.maxBackJump)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.maxForwJump)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.backJumpProb)).BeginInit();
@@ -129,28 +128,10 @@ namespace ShadowRando
             label6.TabIndex = 6;
             label6.Text = "Backwards Jump Probability:";
             // 
-            // seedSelector
-            // 
-            this.seedSelector.Location = new System.Drawing.Point(47, 6);
-            this.seedSelector.Maximum = new decimal(new int[] {
-            2147483647,
-            0,
-            0,
-            0});
-            this.seedSelector.Minimum = new decimal(new int[] {
-            -2147483648,
-            0,
-            0,
-            -2147483648});
-            this.seedSelector.Name = "seedSelector";
-            this.seedSelector.Size = new System.Drawing.Size(120, 20);
-            this.seedSelector.TabIndex = 1;
-            this.toolTip1.SetToolTip(this.seedSelector, "This value controls how things are randomized.");
-            // 
             // randomSeed
             // 
             this.randomSeed.AutoSize = true;
-            this.randomSeed.Location = new System.Drawing.Point(173, 7);
+            this.randomSeed.Location = new System.Drawing.Point(205, 9);
             this.randomSeed.Name = "randomSeed";
             this.randomSeed.Size = new System.Drawing.Size(66, 17);
             this.randomSeed.TabIndex = 2;
@@ -413,6 +394,15 @@ namespace ShadowRando
             this.FNTCheckBox_GiveAudioToNoLinkedAudio.UseVisualStyleBackColor = true;
             this.FNTCheckBox_GiveAudioToNoLinkedAudio.CheckedChanged += new System.EventHandler(this.FNTCheckBox_GiveAudioToNoLinkedAudio_CheckedChanged);
             // 
+            // seedTextBox
+            // 
+            this.seedTextBox.Location = new System.Drawing.Point(47, 6);
+            this.seedTextBox.Name = "seedTextBox";
+            this.seedTextBox.Size = new System.Drawing.Size(152, 20);
+            this.seedTextBox.TabIndex = 8;
+            this.toolTip1.SetToolTip(this.seedTextBox, "This value controls how things are randomized.");
+            this.seedTextBox.WordWrap = false;
+            // 
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPage1);
@@ -427,13 +417,13 @@ namespace ShadowRando
             // 
             // tabPage1
             // 
+            this.tabPage1.Controls.Add(this.seedTextBox);
             this.tabPage1.Controls.Add(this.includeBosses);
             this.tabPage1.Controls.Add(this.includeLast);
             this.tabPage1.Controls.Add(this.modeSelector);
             this.tabPage1.Controls.Add(this.label7);
             this.tabPage1.Controls.Add(this.panel1);
             this.tabPage1.Controls.Add(label1);
-            this.tabPage1.Controls.Add(this.seedSelector);
             this.tabPage1.Controls.Add(this.randomSeed);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
@@ -562,7 +552,6 @@ namespace ShadowRando
             this.Text = "Shadow the Hedgehog Randomizer ";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
             this.Load += new System.EventHandler(this.MainForm_Load);
-            ((System.ComponentModel.ISupportInitialize)(this.seedSelector)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.maxBackJump)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.maxForwJump)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.backJumpProb)).EndInit();
@@ -582,8 +571,6 @@ namespace ShadowRando
 		}
 
 		#endregion
-
-		private System.Windows.Forms.NumericUpDown seedSelector;
 		private System.Windows.Forms.CheckBox randomSeed;
 		private System.Windows.Forms.CheckBox randomMusic;
 		private System.Windows.Forms.ToolTip toolTip1;
@@ -615,5 +602,6 @@ namespace ShadowRando
 		private System.Windows.Forms.CheckBox FNTCheckBox_NoSystemMessages;
 		private System.Windows.Forms.CheckBox FNTCheckBox_OnlyLinkedAudio;
 		private System.Windows.Forms.CheckBox FNTCheckBox_GiveAudioToNoLinkedAudio;
+		private System.Windows.Forms.TextBox seedTextBox;
 	}
 }

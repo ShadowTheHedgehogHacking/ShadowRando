@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Windows.Forms;
 
 namespace ShadowRando
@@ -25,7 +26,7 @@ namespace ShadowRando
 		{
 			settings = Settings.Load();
 			Text += programVersion;
-			seedSelector.Value = settings.Seed;
+			seedTextBox.Text = settings.Seed;
 			randomSeed.Checked = settings.RandomSeed;
 			modeSelector.SelectedIndex = (int)settings.Mode;
 			mainPathSelector.SelectedIndex = (int)settings.MainPath;
@@ -95,7 +96,7 @@ namespace ShadowRando
 
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
-			settings.Seed = (int)seedSelector.Value;
+			settings.Seed = seedTextBox.Text;
 			settings.RandomSeed = randomSeed.Checked;
 			settings.Mode = (Modes)modeSelector.SelectedIndex;
 			settings.MainPath = (MainPath)mainPathSelector.SelectedIndex;
@@ -117,7 +118,7 @@ namespace ShadowRando
 
 		private void randomSeed_CheckedChanged(object sender, EventArgs e)
 		{
-			seedSelector.Enabled = !randomSeed.Checked;
+			seedTextBox.Enabled = !randomSeed.Checked;
 		}
 
 		private void modeSelector_SelectedIndexChanged(object sender, EventArgs e)
@@ -234,11 +235,13 @@ namespace ShadowRando
 			int seed;
 			if (randomSeed.Checked)
 			{
-				seed = (int)DateTime.Now.Ticks;
-				seedSelector.Value = seed;
+				var randomBytes = new byte[10];
+				using (var rng = new RNGCryptoServiceProvider()) {
+					rng.GetBytes(randomBytes);
+				}
+				seedTextBox.Text = Convert.ToBase64String(randomBytes);
 			}
-			else
-				seed = (int)seedSelector.Value;
+			seed = CalculateSeed(seedTextBox.Text);
 			settings.Mode = (Modes)modeSelector.SelectedIndex;
 			Random r = new Random(seed);
 			byte[] buf;
@@ -1025,7 +1028,7 @@ namespace ShadowRando
 				using (StreamWriter sw = File.CreateText(saveFileDialog1.FileName))
 				{
 					sw.WriteLine($"ShadowRando Version: {programVersion}");
-					sw.WriteLine($"Seed: {seedSelector.Value}");
+					sw.WriteLine($"Seed: {seedTextBox.Text}");
 					sw.WriteLine($"Mode: {settings.Mode}");
 					if (settings.Mode == Modes.AllStagesWarps)
 					{
@@ -1684,6 +1687,12 @@ namespace ShadowRando
 				FNTCheckBox_OnlyLinkedAudio.Checked = false;
 			}
 		}
+
+		static int CalculateSeed(string seedString) {
+			using (SHA256 sha256 = SHA256.Create()) {
+				return BitConverter.ToInt32(sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(seedString)), 0);
+			}
+		}
 	}
 
 	static class Extensions
@@ -1898,7 +1907,7 @@ namespace ShadowRando
 	{
 		public string GamePath { get; set; }
 		[IniAlwaysInclude]
-		public int Seed { get; set; }
+		public string Seed { get; set; }
 		[IniAlwaysInclude]
 		public bool RandomSeed { get; set; }
 		[IniAlwaysInclude]
