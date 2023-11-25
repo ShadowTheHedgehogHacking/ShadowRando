@@ -50,7 +50,7 @@ namespace ShadowRando
             this.randomFNT = new System.Windows.Forms.CheckBox();
             this.includeLast = new System.Windows.Forms.CheckBox();
             this.includeBosses = new System.Windows.Forms.CheckBox();
-            this.FNTCheckBox_OnlyShadow = new System.Windows.Forms.CheckBox();
+            this.FNTCheckBox_SpecificCharacters = new System.Windows.Forms.CheckBox();
             this.FNTCheckBox_OnlyLinkedAudio = new System.Windows.Forms.CheckBox();
             this.FNTCheckBox_NoSystemMessages = new System.Windows.Forms.CheckBox();
             this.FNTCheckBox_NoDuplicatesPreRandomization = new System.Windows.Forms.CheckBox();
@@ -61,7 +61,25 @@ namespace ShadowRando
             this.label7 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
             this.tabPage3 = new System.Windows.Forms.TabPage();
-            this.subtitleAndVoicelineGroupBox = new System.Windows.Forms.GroupBox();
+            this.subtitleAndVoicelineSpecifiedCharactersGroupBox = new System.Windows.Forms.GroupBox();
+            this.FNTCheckBox_Chars_GUNSoldier = new System.Windows.Forms.CheckBox();
+            this.FNTCheckBox_Chars_GUNCommander = new System.Windows.Forms.CheckBox();
+            this.FNTCheckBox_Chars_BlackDoom = new System.Windows.Forms.CheckBox();
+            this.FNTCheckBox_Chars_Cheese = new System.Windows.Forms.CheckBox();
+            this.FNTCheckBox_Chars_Maria = new System.Windows.Forms.CheckBox();
+            this.FNTCheckBox_Chars_Cream = new System.Windows.Forms.CheckBox();
+            this.FNTCheckBox_Chars_Eggman = new System.Windows.Forms.CheckBox();
+            this.FNTCheckBox_Chars_Charmy = new System.Windows.Forms.CheckBox();
+            this.FNTCheckBox_Chars_Espio = new System.Windows.Forms.CheckBox();
+            this.FNTCheckBox_Chars_Vector = new System.Windows.Forms.CheckBox();
+            this.FNTCheckBox_Chars_Omega = new System.Windows.Forms.CheckBox();
+            this.FNTCheckBox_Chars_Rouge = new System.Windows.Forms.CheckBox();
+            this.FNTCheckBox_Chars_Amy = new System.Windows.Forms.CheckBox();
+            this.FNTCheckBox_Chars_Knuckles = new System.Windows.Forms.CheckBox();
+            this.FNTCheckBox_Chars_Tails = new System.Windows.Forms.CheckBox();
+            this.FNTCheckBox_Chars_Sonic = new System.Windows.Forms.CheckBox();
+            this.FNTCheckBox_Chars_Shadow = new System.Windows.Forms.CheckBox();
+            this.subtitleAndVoicelineConfigurationGroupBox = new System.Windows.Forms.GroupBox();
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.spoilerLevelInfo = new System.Windows.Forms.TextBox();
             this.spoilerLevelList = new System.Windows.Forms.ListBox();
@@ -79,14 +97,15 @@ namespace ShadowRando
             this.tabPage1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.tabPage3.SuspendLayout();
-            this.subtitleAndVoicelineGroupBox.SuspendLayout();
+            this.subtitleAndVoicelineSpecifiedCharactersGroupBox.SuspendLayout();
+            this.subtitleAndVoicelineConfigurationGroupBox.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new System.Drawing.Point(6, 8);
+            label1.Location = new System.Drawing.Point(8, 10);
             label1.Name = "label1";
             label1.Size = new System.Drawing.Size(35, 13);
             label1.TabIndex = 0;
@@ -131,7 +150,7 @@ namespace ShadowRando
             // randomSeed
             // 
             this.randomSeed.AutoSize = true;
-            this.randomSeed.Location = new System.Drawing.Point(205, 9);
+            this.randomSeed.Location = new System.Drawing.Point(205, 8);
             this.randomSeed.Name = "randomSeed";
             this.randomSeed.Size = new System.Drawing.Size(66, 17);
             this.randomSeed.TabIndex = 2;
@@ -144,7 +163,7 @@ namespace ShadowRando
             // randomMusic
             // 
             this.randomMusic.AutoSize = true;
-            this.randomMusic.Location = new System.Drawing.Point(8, 6);
+            this.randomMusic.Location = new System.Drawing.Point(14, 6);
             this.randomMusic.Name = "randomMusic";
             this.randomMusic.Size = new System.Drawing.Size(110, 17);
             this.randomMusic.TabIndex = 6;
@@ -300,7 +319,7 @@ namespace ShadowRando
             // randomFNT
             // 
             this.randomFNT.AutoSize = true;
-            this.randomFNT.Location = new System.Drawing.Point(8, 29);
+            this.randomFNT.Location = new System.Drawing.Point(14, 22);
             this.randomFNT.Name = "randomFNT";
             this.randomFNT.Size = new System.Drawing.Size(181, 17);
             this.randomFNT.TabIndex = 7;
@@ -331,23 +350,24 @@ namespace ShadowRando
             this.toolTip1.SetToolTip(this.includeBosses, "If unchecked, boss fights will not be included in the game.");
             this.includeBosses.UseVisualStyleBackColor = true;
             // 
-            // FNTCheckBox_OnlyShadow
+            // FNTCheckBox_SpecificCharacters
             // 
-            this.FNTCheckBox_OnlyShadow.AutoSize = true;
-            this.FNTCheckBox_OnlyShadow.Enabled = false;
-            this.FNTCheckBox_OnlyShadow.Location = new System.Drawing.Point(6, 19);
-            this.FNTCheckBox_OnlyShadow.Name = "FNTCheckBox_OnlyShadow";
-            this.FNTCheckBox_OnlyShadow.Size = new System.Drawing.Size(89, 17);
-            this.FNTCheckBox_OnlyShadow.TabIndex = 8;
-            this.FNTCheckBox_OnlyShadow.Text = "Only Shadow";
-            this.toolTip1.SetToolTip(this.FNTCheckBox_OnlyShadow, "Only Shadow\'s voicelines are used");
-            this.FNTCheckBox_OnlyShadow.UseVisualStyleBackColor = true;
+            this.FNTCheckBox_SpecificCharacters.AutoSize = true;
+            this.FNTCheckBox_SpecificCharacters.Enabled = false;
+            this.FNTCheckBox_SpecificCharacters.Location = new System.Drawing.Point(6, 19);
+            this.FNTCheckBox_SpecificCharacters.Name = "FNTCheckBox_SpecificCharacters";
+            this.FNTCheckBox_SpecificCharacters.Size = new System.Drawing.Size(148, 17);
+            this.FNTCheckBox_SpecificCharacters.TabIndex = 8;
+            this.FNTCheckBox_SpecificCharacters.Text = "Only Specified Characters";
+            this.toolTip1.SetToolTip(this.FNTCheckBox_SpecificCharacters, "Only characters specified are used");
+            this.FNTCheckBox_SpecificCharacters.UseVisualStyleBackColor = true;
+            this.FNTCheckBox_SpecificCharacters.CheckedChanged += new System.EventHandler(this.FNTCheckBox_SpecificCharacters_CheckedChanged);
             // 
             // FNTCheckBox_OnlyLinkedAudio
             // 
             this.FNTCheckBox_OnlyLinkedAudio.AutoSize = true;
             this.FNTCheckBox_OnlyLinkedAudio.Enabled = false;
-            this.FNTCheckBox_OnlyLinkedAudio.Location = new System.Drawing.Point(6, 42);
+            this.FNTCheckBox_OnlyLinkedAudio.Location = new System.Drawing.Point(6, 34);
             this.FNTCheckBox_OnlyLinkedAudio.Name = "FNTCheckBox_OnlyLinkedAudio";
             this.FNTCheckBox_OnlyLinkedAudio.Size = new System.Drawing.Size(134, 17);
             this.FNTCheckBox_OnlyLinkedAudio.TabIndex = 9;
@@ -360,7 +380,7 @@ namespace ShadowRando
             // 
             this.FNTCheckBox_NoSystemMessages.AutoSize = true;
             this.FNTCheckBox_NoSystemMessages.Enabled = false;
-            this.FNTCheckBox_NoSystemMessages.Location = new System.Drawing.Point(6, 88);
+            this.FNTCheckBox_NoSystemMessages.Location = new System.Drawing.Point(6, 65);
             this.FNTCheckBox_NoSystemMessages.Name = "FNTCheckBox_NoSystemMessages";
             this.FNTCheckBox_NoSystemMessages.Size = new System.Drawing.Size(164, 17);
             this.FNTCheckBox_NoSystemMessages.TabIndex = 10;
@@ -372,7 +392,7 @@ namespace ShadowRando
             // 
             this.FNTCheckBox_NoDuplicatesPreRandomization.AutoSize = true;
             this.FNTCheckBox_NoDuplicatesPreRandomization.Enabled = false;
-            this.FNTCheckBox_NoDuplicatesPreRandomization.Location = new System.Drawing.Point(6, 111);
+            this.FNTCheckBox_NoDuplicatesPreRandomization.Location = new System.Drawing.Point(6, 80);
             this.FNTCheckBox_NoDuplicatesPreRandomization.Name = "FNTCheckBox_NoDuplicatesPreRandomization";
             this.FNTCheckBox_NoDuplicatesPreRandomization.Size = new System.Drawing.Size(129, 17);
             this.FNTCheckBox_NoDuplicatesPreRandomization.TabIndex = 11;
@@ -385,7 +405,7 @@ namespace ShadowRando
             // 
             this.FNTCheckBox_GiveAudioToNoLinkedAudio.AutoSize = true;
             this.FNTCheckBox_GiveAudioToNoLinkedAudio.Enabled = false;
-            this.FNTCheckBox_GiveAudioToNoLinkedAudio.Location = new System.Drawing.Point(6, 65);
+            this.FNTCheckBox_GiveAudioToNoLinkedAudio.Location = new System.Drawing.Point(6, 49);
             this.FNTCheckBox_GiveAudioToNoLinkedAudio.Name = "FNTCheckBox_GiveAudioToNoLinkedAudio";
             this.FNTCheckBox_GiveAudioToNoLinkedAudio.Size = new System.Drawing.Size(172, 17);
             this.FNTCheckBox_GiveAudioToNoLinkedAudio.TabIndex = 12;
@@ -396,7 +416,7 @@ namespace ShadowRando
             // 
             // seedTextBox
             // 
-            this.seedTextBox.Location = new System.Drawing.Point(47, 6);
+            this.seedTextBox.Location = new System.Drawing.Point(49, 6);
             this.seedTextBox.Name = "seedTextBox";
             this.seedTextBox.Size = new System.Drawing.Size(152, 20);
             this.seedTextBox.TabIndex = 8;
@@ -463,7 +483,8 @@ namespace ShadowRando
             // 
             // tabPage3
             // 
-            this.tabPage3.Controls.Add(this.subtitleAndVoicelineGroupBox);
+            this.tabPage3.Controls.Add(this.subtitleAndVoicelineSpecifiedCharactersGroupBox);
+            this.tabPage3.Controls.Add(this.subtitleAndVoicelineConfigurationGroupBox);
             this.tabPage3.Controls.Add(this.randomMusic);
             this.tabPage3.Controls.Add(this.randomFNT);
             this.tabPage3.Location = new System.Drawing.Point(4, 22);
@@ -474,20 +495,216 @@ namespace ShadowRando
             this.tabPage3.Text = "Misc";
             this.tabPage3.UseVisualStyleBackColor = true;
             // 
-            // subtitleAndVoicelineGroupBox
+            // subtitleAndVoicelineSpecifiedCharactersGroupBox
             // 
-            this.subtitleAndVoicelineGroupBox.Controls.Add(this.FNTCheckBox_GiveAudioToNoLinkedAudio);
-            this.subtitleAndVoicelineGroupBox.Controls.Add(this.FNTCheckBox_NoDuplicatesPreRandomization);
-            this.subtitleAndVoicelineGroupBox.Controls.Add(this.FNTCheckBox_NoSystemMessages);
-            this.subtitleAndVoicelineGroupBox.Controls.Add(this.FNTCheckBox_OnlyLinkedAudio);
-            this.subtitleAndVoicelineGroupBox.Controls.Add(this.FNTCheckBox_OnlyShadow);
-            this.subtitleAndVoicelineGroupBox.Enabled = false;
-            this.subtitleAndVoicelineGroupBox.Location = new System.Drawing.Point(8, 52);
-            this.subtitleAndVoicelineGroupBox.Name = "subtitleAndVoicelineGroupBox";
-            this.subtitleAndVoicelineGroupBox.Size = new System.Drawing.Size(203, 134);
-            this.subtitleAndVoicelineGroupBox.TabIndex = 8;
-            this.subtitleAndVoicelineGroupBox.TabStop = false;
-            this.subtitleAndVoicelineGroupBox.Text = "Subtitles / Voicelines Configuration";
+            this.subtitleAndVoicelineSpecifiedCharactersGroupBox.Controls.Add(this.FNTCheckBox_Chars_GUNSoldier);
+            this.subtitleAndVoicelineSpecifiedCharactersGroupBox.Controls.Add(this.FNTCheckBox_Chars_GUNCommander);
+            this.subtitleAndVoicelineSpecifiedCharactersGroupBox.Controls.Add(this.FNTCheckBox_Chars_BlackDoom);
+            this.subtitleAndVoicelineSpecifiedCharactersGroupBox.Controls.Add(this.FNTCheckBox_Chars_Cheese);
+            this.subtitleAndVoicelineSpecifiedCharactersGroupBox.Controls.Add(this.FNTCheckBox_Chars_Maria);
+            this.subtitleAndVoicelineSpecifiedCharactersGroupBox.Controls.Add(this.FNTCheckBox_Chars_Cream);
+            this.subtitleAndVoicelineSpecifiedCharactersGroupBox.Controls.Add(this.FNTCheckBox_Chars_Eggman);
+            this.subtitleAndVoicelineSpecifiedCharactersGroupBox.Controls.Add(this.FNTCheckBox_Chars_Charmy);
+            this.subtitleAndVoicelineSpecifiedCharactersGroupBox.Controls.Add(this.FNTCheckBox_Chars_Espio);
+            this.subtitleAndVoicelineSpecifiedCharactersGroupBox.Controls.Add(this.FNTCheckBox_Chars_Vector);
+            this.subtitleAndVoicelineSpecifiedCharactersGroupBox.Controls.Add(this.FNTCheckBox_Chars_Omega);
+            this.subtitleAndVoicelineSpecifiedCharactersGroupBox.Controls.Add(this.FNTCheckBox_Chars_Rouge);
+            this.subtitleAndVoicelineSpecifiedCharactersGroupBox.Controls.Add(this.FNTCheckBox_Chars_Amy);
+            this.subtitleAndVoicelineSpecifiedCharactersGroupBox.Controls.Add(this.FNTCheckBox_Chars_Knuckles);
+            this.subtitleAndVoicelineSpecifiedCharactersGroupBox.Controls.Add(this.FNTCheckBox_Chars_Tails);
+            this.subtitleAndVoicelineSpecifiedCharactersGroupBox.Controls.Add(this.FNTCheckBox_Chars_Sonic);
+            this.subtitleAndVoicelineSpecifiedCharactersGroupBox.Controls.Add(this.FNTCheckBox_Chars_Shadow);
+            this.subtitleAndVoicelineSpecifiedCharactersGroupBox.Location = new System.Drawing.Point(217, 6);
+            this.subtitleAndVoicelineSpecifiedCharactersGroupBox.Name = "subtitleAndVoicelineSpecifiedCharactersGroupBox";
+            this.subtitleAndVoicelineSpecifiedCharactersGroupBox.Size = new System.Drawing.Size(183, 151);
+            this.subtitleAndVoicelineSpecifiedCharactersGroupBox.TabIndex = 9;
+            this.subtitleAndVoicelineSpecifiedCharactersGroupBox.TabStop = false;
+            this.subtitleAndVoicelineSpecifiedCharactersGroupBox.Text = "Specified Characters";
+            // 
+            // FNTCheckBox_Chars_GUNSoldier
+            // 
+            this.FNTCheckBox_Chars_GUNSoldier.AutoSize = true;
+            this.FNTCheckBox_Chars_GUNSoldier.Location = new System.Drawing.Point(77, 94);
+            this.FNTCheckBox_Chars_GUNSoldier.Name = "FNTCheckBox_Chars_GUNSoldier";
+            this.FNTCheckBox_Chars_GUNSoldier.Size = new System.Drawing.Size(85, 17);
+            this.FNTCheckBox_Chars_GUNSoldier.TabIndex = 16;
+            this.FNTCheckBox_Chars_GUNSoldier.Text = "GUN Soldier";
+            this.FNTCheckBox_Chars_GUNSoldier.UseVisualStyleBackColor = true;
+            // 
+            // FNTCheckBox_Chars_GUNCommander
+            // 
+            this.FNTCheckBox_Chars_GUNCommander.AutoSize = true;
+            this.FNTCheckBox_Chars_GUNCommander.Location = new System.Drawing.Point(77, 111);
+            this.FNTCheckBox_Chars_GUNCommander.Name = "FNTCheckBox_Chars_GUNCommander";
+            this.FNTCheckBox_Chars_GUNCommander.Size = new System.Drawing.Size(109, 17);
+            this.FNTCheckBox_Chars_GUNCommander.TabIndex = 15;
+            this.FNTCheckBox_Chars_GUNCommander.Text = "GUN Commander";
+            this.FNTCheckBox_Chars_GUNCommander.UseVisualStyleBackColor = true;
+            // 
+            // FNTCheckBox_Chars_BlackDoom
+            // 
+            this.FNTCheckBox_Chars_BlackDoom.AutoSize = true;
+            this.FNTCheckBox_Chars_BlackDoom.Location = new System.Drawing.Point(77, 61);
+            this.FNTCheckBox_Chars_BlackDoom.Name = "FNTCheckBox_Chars_BlackDoom";
+            this.FNTCheckBox_Chars_BlackDoom.Size = new System.Drawing.Size(84, 17);
+            this.FNTCheckBox_Chars_BlackDoom.TabIndex = 14;
+            this.FNTCheckBox_Chars_BlackDoom.Text = "Black Doom";
+            this.FNTCheckBox_Chars_BlackDoom.UseVisualStyleBackColor = true;
+            // 
+            // FNTCheckBox_Chars_Cheese
+            // 
+            this.FNTCheckBox_Chars_Cheese.AutoSize = true;
+            this.FNTCheckBox_Chars_Cheese.Location = new System.Drawing.Point(77, 47);
+            this.FNTCheckBox_Chars_Cheese.Name = "FNTCheckBox_Chars_Cheese";
+            this.FNTCheckBox_Chars_Cheese.Size = new System.Drawing.Size(62, 17);
+            this.FNTCheckBox_Chars_Cheese.TabIndex = 13;
+            this.FNTCheckBox_Chars_Cheese.Text = "Cheese";
+            this.FNTCheckBox_Chars_Cheese.UseVisualStyleBackColor = true;
+            // 
+            // FNTCheckBox_Chars_Maria
+            // 
+            this.FNTCheckBox_Chars_Maria.AutoSize = true;
+            this.FNTCheckBox_Chars_Maria.Location = new System.Drawing.Point(77, 77);
+            this.FNTCheckBox_Chars_Maria.Name = "FNTCheckBox_Chars_Maria";
+            this.FNTCheckBox_Chars_Maria.Size = new System.Drawing.Size(52, 17);
+            this.FNTCheckBox_Chars_Maria.TabIndex = 9;
+            this.FNTCheckBox_Chars_Maria.Text = "Maria";
+            this.FNTCheckBox_Chars_Maria.UseVisualStyleBackColor = true;
+            // 
+            // FNTCheckBox_Chars_Cream
+            // 
+            this.FNTCheckBox_Chars_Cream.AutoSize = true;
+            this.FNTCheckBox_Chars_Cream.Location = new System.Drawing.Point(77, 33);
+            this.FNTCheckBox_Chars_Cream.Name = "FNTCheckBox_Chars_Cream";
+            this.FNTCheckBox_Chars_Cream.Size = new System.Drawing.Size(56, 17);
+            this.FNTCheckBox_Chars_Cream.TabIndex = 12;
+            this.FNTCheckBox_Chars_Cream.Text = "Cream";
+            this.FNTCheckBox_Chars_Cream.UseVisualStyleBackColor = true;
+            // 
+            // FNTCheckBox_Chars_Eggman
+            // 
+            this.FNTCheckBox_Chars_Eggman.AutoSize = true;
+            this.FNTCheckBox_Chars_Eggman.Location = new System.Drawing.Point(77, 19);
+            this.FNTCheckBox_Chars_Eggman.Name = "FNTCheckBox_Chars_Eggman";
+            this.FNTCheckBox_Chars_Eggman.Size = new System.Drawing.Size(65, 17);
+            this.FNTCheckBox_Chars_Eggman.TabIndex = 11;
+            this.FNTCheckBox_Chars_Eggman.Text = "Eggman";
+            this.FNTCheckBox_Chars_Eggman.UseVisualStyleBackColor = true;
+            // 
+            // FNTCheckBox_Chars_Charmy
+            // 
+            this.FNTCheckBox_Chars_Charmy.AutoSize = true;
+            this.FNTCheckBox_Chars_Charmy.Location = new System.Drawing.Point(77, 131);
+            this.FNTCheckBox_Chars_Charmy.Name = "FNTCheckBox_Chars_Charmy";
+            this.FNTCheckBox_Chars_Charmy.Size = new System.Drawing.Size(61, 17);
+            this.FNTCheckBox_Chars_Charmy.TabIndex = 10;
+            this.FNTCheckBox_Chars_Charmy.Text = "Charmy";
+            this.FNTCheckBox_Chars_Charmy.UseVisualStyleBackColor = true;
+            // 
+            // FNTCheckBox_Chars_Espio
+            // 
+            this.FNTCheckBox_Chars_Espio.AutoSize = true;
+            this.FNTCheckBox_Chars_Espio.Location = new System.Drawing.Point(6, 131);
+            this.FNTCheckBox_Chars_Espio.Name = "FNTCheckBox_Chars_Espio";
+            this.FNTCheckBox_Chars_Espio.Size = new System.Drawing.Size(52, 17);
+            this.FNTCheckBox_Chars_Espio.TabIndex = 8;
+            this.FNTCheckBox_Chars_Espio.Text = "Espio";
+            this.FNTCheckBox_Chars_Espio.UseVisualStyleBackColor = true;
+            // 
+            // FNTCheckBox_Chars_Vector
+            // 
+            this.FNTCheckBox_Chars_Vector.AutoSize = true;
+            this.FNTCheckBox_Chars_Vector.Location = new System.Drawing.Point(6, 117);
+            this.FNTCheckBox_Chars_Vector.Name = "FNTCheckBox_Chars_Vector";
+            this.FNTCheckBox_Chars_Vector.Size = new System.Drawing.Size(57, 17);
+            this.FNTCheckBox_Chars_Vector.TabIndex = 7;
+            this.FNTCheckBox_Chars_Vector.Text = "Vector";
+            this.FNTCheckBox_Chars_Vector.UseVisualStyleBackColor = true;
+            // 
+            // FNTCheckBox_Chars_Omega
+            // 
+            this.FNTCheckBox_Chars_Omega.AutoSize = true;
+            this.FNTCheckBox_Chars_Omega.Location = new System.Drawing.Point(6, 103);
+            this.FNTCheckBox_Chars_Omega.Name = "FNTCheckBox_Chars_Omega";
+            this.FNTCheckBox_Chars_Omega.Size = new System.Drawing.Size(60, 17);
+            this.FNTCheckBox_Chars_Omega.TabIndex = 6;
+            this.FNTCheckBox_Chars_Omega.Text = "Omega";
+            this.FNTCheckBox_Chars_Omega.UseVisualStyleBackColor = true;
+            // 
+            // FNTCheckBox_Chars_Rouge
+            // 
+            this.FNTCheckBox_Chars_Rouge.AutoSize = true;
+            this.FNTCheckBox_Chars_Rouge.Location = new System.Drawing.Point(6, 89);
+            this.FNTCheckBox_Chars_Rouge.Name = "FNTCheckBox_Chars_Rouge";
+            this.FNTCheckBox_Chars_Rouge.Size = new System.Drawing.Size(58, 17);
+            this.FNTCheckBox_Chars_Rouge.TabIndex = 5;
+            this.FNTCheckBox_Chars_Rouge.Text = "Rouge";
+            this.FNTCheckBox_Chars_Rouge.UseVisualStyleBackColor = true;
+            // 
+            // FNTCheckBox_Chars_Amy
+            // 
+            this.FNTCheckBox_Chars_Amy.AutoSize = true;
+            this.FNTCheckBox_Chars_Amy.Location = new System.Drawing.Point(6, 75);
+            this.FNTCheckBox_Chars_Amy.Name = "FNTCheckBox_Chars_Amy";
+            this.FNTCheckBox_Chars_Amy.Size = new System.Drawing.Size(46, 17);
+            this.FNTCheckBox_Chars_Amy.TabIndex = 4;
+            this.FNTCheckBox_Chars_Amy.Text = "Amy";
+            this.FNTCheckBox_Chars_Amy.UseVisualStyleBackColor = true;
+            // 
+            // FNTCheckBox_Chars_Knuckles
+            // 
+            this.FNTCheckBox_Chars_Knuckles.AutoSize = true;
+            this.FNTCheckBox_Chars_Knuckles.Location = new System.Drawing.Point(6, 61);
+            this.FNTCheckBox_Chars_Knuckles.Name = "FNTCheckBox_Chars_Knuckles";
+            this.FNTCheckBox_Chars_Knuckles.Size = new System.Drawing.Size(70, 17);
+            this.FNTCheckBox_Chars_Knuckles.TabIndex = 3;
+            this.FNTCheckBox_Chars_Knuckles.Text = "Knuckles";
+            this.FNTCheckBox_Chars_Knuckles.UseVisualStyleBackColor = true;
+            // 
+            // FNTCheckBox_Chars_Tails
+            // 
+            this.FNTCheckBox_Chars_Tails.AutoSize = true;
+            this.FNTCheckBox_Chars_Tails.Location = new System.Drawing.Point(6, 47);
+            this.FNTCheckBox_Chars_Tails.Name = "FNTCheckBox_Chars_Tails";
+            this.FNTCheckBox_Chars_Tails.Size = new System.Drawing.Size(48, 17);
+            this.FNTCheckBox_Chars_Tails.TabIndex = 2;
+            this.FNTCheckBox_Chars_Tails.Text = "Tails";
+            this.FNTCheckBox_Chars_Tails.UseVisualStyleBackColor = true;
+            // 
+            // FNTCheckBox_Chars_Sonic
+            // 
+            this.FNTCheckBox_Chars_Sonic.AutoSize = true;
+            this.FNTCheckBox_Chars_Sonic.Location = new System.Drawing.Point(6, 33);
+            this.FNTCheckBox_Chars_Sonic.Name = "FNTCheckBox_Chars_Sonic";
+            this.FNTCheckBox_Chars_Sonic.Size = new System.Drawing.Size(53, 17);
+            this.FNTCheckBox_Chars_Sonic.TabIndex = 1;
+            this.FNTCheckBox_Chars_Sonic.Text = "Sonic";
+            this.FNTCheckBox_Chars_Sonic.UseVisualStyleBackColor = true;
+            // 
+            // FNTCheckBox_Chars_Shadow
+            // 
+            this.FNTCheckBox_Chars_Shadow.AutoSize = true;
+            this.FNTCheckBox_Chars_Shadow.Location = new System.Drawing.Point(6, 19);
+            this.FNTCheckBox_Chars_Shadow.Name = "FNTCheckBox_Chars_Shadow";
+            this.FNTCheckBox_Chars_Shadow.Size = new System.Drawing.Size(65, 17);
+            this.FNTCheckBox_Chars_Shadow.TabIndex = 0;
+            this.FNTCheckBox_Chars_Shadow.Text = "Shadow";
+            this.FNTCheckBox_Chars_Shadow.UseVisualStyleBackColor = true;
+            // 
+            // subtitleAndVoicelineConfigurationGroupBox
+            // 
+            this.subtitleAndVoicelineConfigurationGroupBox.Controls.Add(this.FNTCheckBox_GiveAudioToNoLinkedAudio);
+            this.subtitleAndVoicelineConfigurationGroupBox.Controls.Add(this.FNTCheckBox_NoDuplicatesPreRandomization);
+            this.subtitleAndVoicelineConfigurationGroupBox.Controls.Add(this.FNTCheckBox_NoSystemMessages);
+            this.subtitleAndVoicelineConfigurationGroupBox.Controls.Add(this.FNTCheckBox_OnlyLinkedAudio);
+            this.subtitleAndVoicelineConfigurationGroupBox.Controls.Add(this.FNTCheckBox_SpecificCharacters);
+            this.subtitleAndVoicelineConfigurationGroupBox.Enabled = false;
+            this.subtitleAndVoicelineConfigurationGroupBox.Location = new System.Drawing.Point(8, 38);
+            this.subtitleAndVoicelineConfigurationGroupBox.Name = "subtitleAndVoicelineConfigurationGroupBox";
+            this.subtitleAndVoicelineConfigurationGroupBox.Size = new System.Drawing.Size(203, 102);
+            this.subtitleAndVoicelineConfigurationGroupBox.TabIndex = 8;
+            this.subtitleAndVoicelineConfigurationGroupBox.TabStop = false;
+            this.subtitleAndVoicelineConfigurationGroupBox.Text = "Subtitles / Voicelines Configuration";
             // 
             // tabPage2
             // 
@@ -562,8 +779,10 @@ namespace ShadowRando
             this.panel1.PerformLayout();
             this.tabPage3.ResumeLayout(false);
             this.tabPage3.PerformLayout();
-            this.subtitleAndVoicelineGroupBox.ResumeLayout(false);
-            this.subtitleAndVoicelineGroupBox.PerformLayout();
+            this.subtitleAndVoicelineSpecifiedCharactersGroupBox.ResumeLayout(false);
+            this.subtitleAndVoicelineSpecifiedCharactersGroupBox.PerformLayout();
+            this.subtitleAndVoicelineConfigurationGroupBox.ResumeLayout(false);
+            this.subtitleAndVoicelineConfigurationGroupBox.PerformLayout();
             this.tabPage2.ResumeLayout(false);
             this.tabPage2.PerformLayout();
             this.ResumeLayout(false);
@@ -596,12 +815,30 @@ namespace ShadowRando
 		private System.Windows.Forms.CheckBox includeLast;
         private System.Windows.Forms.CheckBox randomFNT;
 		private System.Windows.Forms.CheckBox includeBosses;
-		private System.Windows.Forms.GroupBox subtitleAndVoicelineGroupBox;
-		private System.Windows.Forms.CheckBox FNTCheckBox_OnlyShadow;
+		private System.Windows.Forms.GroupBox subtitleAndVoicelineConfigurationGroupBox;
+		private System.Windows.Forms.CheckBox FNTCheckBox_SpecificCharacters;
 		private System.Windows.Forms.CheckBox FNTCheckBox_NoDuplicatesPreRandomization;
 		private System.Windows.Forms.CheckBox FNTCheckBox_NoSystemMessages;
 		private System.Windows.Forms.CheckBox FNTCheckBox_OnlyLinkedAudio;
 		private System.Windows.Forms.CheckBox FNTCheckBox_GiveAudioToNoLinkedAudio;
 		private System.Windows.Forms.TextBox seedTextBox;
+		private System.Windows.Forms.GroupBox subtitleAndVoicelineSpecifiedCharactersGroupBox;
+		private System.Windows.Forms.CheckBox FNTCheckBox_Chars_Shadow;
+		private System.Windows.Forms.CheckBox FNTCheckBox_Chars_Espio;
+		private System.Windows.Forms.CheckBox FNTCheckBox_Chars_Vector;
+		private System.Windows.Forms.CheckBox FNTCheckBox_Chars_Omega;
+		private System.Windows.Forms.CheckBox FNTCheckBox_Chars_Rouge;
+		private System.Windows.Forms.CheckBox FNTCheckBox_Chars_Amy;
+		private System.Windows.Forms.CheckBox FNTCheckBox_Chars_Knuckles;
+		private System.Windows.Forms.CheckBox FNTCheckBox_Chars_Tails;
+		private System.Windows.Forms.CheckBox FNTCheckBox_Chars_Sonic;
+		private System.Windows.Forms.CheckBox FNTCheckBox_Chars_Maria;
+		private System.Windows.Forms.CheckBox FNTCheckBox_Chars_Charmy;
+		private System.Windows.Forms.CheckBox FNTCheckBox_Chars_Eggman;
+		private System.Windows.Forms.CheckBox FNTCheckBox_Chars_GUNCommander;
+		private System.Windows.Forms.CheckBox FNTCheckBox_Chars_BlackDoom;
+		private System.Windows.Forms.CheckBox FNTCheckBox_Chars_Cheese;
+		private System.Windows.Forms.CheckBox FNTCheckBox_Chars_Cream;
+		private System.Windows.Forms.CheckBox FNTCheckBox_Chars_GUNSoldier;
 	}
 }

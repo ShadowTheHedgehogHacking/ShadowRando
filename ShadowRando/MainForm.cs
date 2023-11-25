@@ -38,11 +38,33 @@ namespace ShadowRando
 			includeBosses.Checked = settings.IncludeBosses;
 			randomMusic.Checked = settings.RandomMusic;
 			randomFNT.Checked = settings.RandomFNT;
+
+			// FNT Configuration
 			FNTCheckBox_NoDuplicatesPreRandomization.Checked = settings.FNTNoDuplicatesPreRandomization;
 			FNTCheckBox_NoSystemMessages.Checked = settings.FNTNoSystemMessages;
 			FNTCheckBox_OnlyLinkedAudio.Checked = settings.FNTOnlyLinkedAudio;
-			FNTCheckBox_OnlyShadow.Checked = settings.FNTOnlyShadow;
+			FNTCheckBox_SpecificCharacters.Checked = settings.FNTSpecificCharacters;
 			FNTCheckBox_GiveAudioToNoLinkedAudio.Checked = settings.FNTGiveAudioToNoLinkedAudio;
+
+			// FNT Configuration Specific Characters
+			FNTCheckBox_Chars_Shadow.Checked = settings.FNTShadowSelected;
+			FNTCheckBox_Chars_Sonic.Checked = settings.FNTSonicSelected;
+			FNTCheckBox_Chars_Tails.Checked = settings.FNTTailsSelected;
+			FNTCheckBox_Chars_Knuckles.Checked = settings.FNTKnucklesSelected;
+			FNTCheckBox_Chars_Amy.Checked = settings.FNTAmySelected;
+			FNTCheckBox_Chars_Rouge.Checked = settings.FNTRougeSelected;
+			FNTCheckBox_Chars_Omega.Checked = settings.FNTOmegaSelected;
+			FNTCheckBox_Chars_Vector.Checked = settings.FNTVectorSelected;
+			FNTCheckBox_Chars_Espio.Checked = settings.FNTEspioSelected;
+			FNTCheckBox_Chars_Maria.Checked = settings.FNTMariaSelected;
+			FNTCheckBox_Chars_Charmy.Checked = settings.FNTCharmySelected;
+			FNTCheckBox_Chars_Eggman.Checked = settings.FNTEggmanSelected;
+			FNTCheckBox_Chars_BlackDoom.Checked = settings.FNTBlackDoomSelected;
+			FNTCheckBox_Chars_Cream.Checked = settings.FNTCreamSelected;
+			FNTCheckBox_Chars_Cheese.Checked = settings.FNTCheeseSelected;
+			FNTCheckBox_Chars_GUNCommander.Checked = settings.FNTGUNCommanderSelected;
+			FNTCheckBox_Chars_GUNSoldier.Checked = settings.FNTGUNSoldierSelected;
+
 			using (var dlg = new Ookii.Dialogs.WinForms.VistaFolderBrowserDialog() { Description = "Select the root folder of an extracted Shadow the Hedgehog disc image." })
 			{
 				if (!string.IsNullOrEmpty(settings.GamePath))
@@ -108,11 +130,30 @@ namespace ShadowRando
 			settings.IncludeBosses = includeBosses.Checked;
 			settings.RandomMusic = randomMusic.Checked;
 			settings.RandomFNT = randomFNT.Checked;
+			// FNT Configuration
 			settings.FNTNoDuplicatesPreRandomization = FNTCheckBox_NoDuplicatesPreRandomization.Checked;
 			settings.FNTNoSystemMessages = FNTCheckBox_NoSystemMessages.Checked;
 			settings.FNTOnlyLinkedAudio = FNTCheckBox_OnlyLinkedAudio.Checked;
-			settings.FNTOnlyShadow = FNTCheckBox_OnlyShadow.Checked;
+			settings.FNTSpecificCharacters = FNTCheckBox_SpecificCharacters.Checked;
 			settings.FNTGiveAudioToNoLinkedAudio = FNTCheckBox_GiveAudioToNoLinkedAudio.Checked;
+			// FNT Configuration Specific Characters
+			settings.FNTShadowSelected = FNTCheckBox_Chars_Shadow.Checked;
+			settings.FNTSonicSelected = FNTCheckBox_Chars_Sonic.Checked;
+			settings.FNTTailsSelected = FNTCheckBox_Chars_Tails.Checked;
+			settings.FNTKnucklesSelected = FNTCheckBox_Chars_Knuckles.Checked;
+			settings.FNTAmySelected = FNTCheckBox_Chars_Amy.Checked;
+			settings.FNTRougeSelected = FNTCheckBox_Chars_Rouge.Checked;
+			settings.FNTOmegaSelected = FNTCheckBox_Chars_Omega.Checked;
+			settings.FNTVectorSelected = FNTCheckBox_Chars_Vector.Checked;
+			settings.FNTEspioSelected = FNTCheckBox_Chars_Espio.Checked;
+			settings.FNTMariaSelected = FNTCheckBox_Chars_Maria.Checked;
+			settings.FNTCharmySelected = FNTCheckBox_Chars_Charmy.Checked;
+			settings.FNTEggmanSelected = FNTCheckBox_Chars_Eggman.Checked;
+			settings.FNTBlackDoomSelected = FNTCheckBox_Chars_BlackDoom.Checked;
+			settings.FNTCreamSelected = FNTCheckBox_Chars_Cream.Checked;
+			settings.FNTCheeseSelected = FNTCheckBox_Chars_Cheese.Checked;
+			settings.FNTGUNCommanderSelected = FNTCheckBox_Chars_GUNCommander.Checked;
+			settings.FNTGUNSoldierSelected = FNTCheckBox_Chars_GUNSoldier.Checked;
 			settings.Save();
 		}
 
@@ -229,6 +270,7 @@ namespace ShadowRando
 		static int stagecount = 40;
 		int[] stageids;
 		readonly Stage[] stages = new Stage[totalstagecount];
+
 		private void randomizeButton_Click(object sender, EventArgs e)
 		{
 			byte[] dolfile = File.ReadAllBytes(Path.Combine("backup", "main.dol"));
@@ -724,7 +766,7 @@ namespace ShadowRando
 			var fntRandomPool = new List<TableEntry>();
 			var uniqueAudioIDs = new Dictionary<int, bool>();
 			var uniqueSubtitles = new Dictionary<string, bool>();
-			if (FNTCheckBox_OnlyLinkedAudio.Checked || FNTCheckBox_NoDuplicatesPreRandomization.Checked || FNTCheckBox_NoSystemMessages.Checked || FNTCheckBox_OnlyShadow.Checked)
+			if (FNTCheckBox_OnlyLinkedAudio.Checked || FNTCheckBox_NoDuplicatesPreRandomization.Checked || FNTCheckBox_NoSystemMessages.Checked || FNTCheckBox_SpecificCharacters.Checked)
 			{
 				for (int i = 0; i < fontAndAudioData.initialFntState.Count; i++)
 				{
@@ -732,39 +774,33 @@ namespace ShadowRando
 					{
 						var entry = fontAndAudioData.initialFntState[i].GetEntryTable()[j];
 						if (FNTCheckBox_OnlyLinkedAudio.Checked && entry.audioId == -1)
-						{
 							continue;
-						}
 						if (FNTCheckBox_NoSystemMessages.Checked && (entry.entryType == EntryType.MENU || entry.entryType == EntryType.FINAL_ENTRY || entry.messageIdBranchSequence == 9998100))
-						{
 							continue;
-						}
-						if (FNTCheckBox_OnlyShadow.Checked && entry.audioId != -1 && !fontAndAudioData.afs.Files[entry.audioId].Name.EndsWith("_sd.adx"))
-						{
+						if (FNTCheckBox_SpecificCharacters.Checked && entry.audioId != -1 && !CharacterPicked(fontAndAudioData.afs.Files[entry.audioId].Name))
 							continue;
-						}
-						try
-						{
-							if (FNTCheckBox_NoDuplicatesPreRandomization.Checked && entry.audioId != -1 && uniqueAudioIDs[entry.audioId])
+
+						if (FNTCheckBox_NoDuplicatesPreRandomization.Checked) {
+							try
 							{
-								continue;
+								if (entry.audioId != -1 && uniqueAudioIDs[entry.audioId])
+									continue;
 							}
-						}
-						catch (KeyNotFoundException e)
-						{
-							// good, we continue the flow
-						}
-						try
-						{
-							if (FNTCheckBox_NoDuplicatesPreRandomization.Checked && entry.audioId == -1 && uniqueSubtitles[entry.subtitle])
+							catch (KeyNotFoundException)
+							{
+								// not previously seen, we continue the flow
+							}
+
+							try
 							{
 								// this covers chained entries and any repeating messages with -1; Such as system dialogs if the user is not using that filter
-								continue;
+								if (entry.audioId == -1 && uniqueSubtitles[entry.subtitle])
+									continue;
 							}
-						}
-						catch (KeyNotFoundException e)
-						{
-							// good, we continue the flow
+							catch (KeyNotFoundException)
+							{
+								// not previously seen, we reach the end and add to the list
+							}
 						}
 						uniqueAudioIDs[entry.audioId] = true;
 						uniqueSubtitles[entry.subtitle] = true;
@@ -878,6 +914,45 @@ namespace ShadowRando
 					MessageBox.Show(ex.Message, "An Exception Occurred");
 				}
 			}
+		}
+
+		private bool CharacterPicked(string audioName)
+		{
+			if (FNTCheckBox_Chars_Shadow.Checked && audioName.EndsWith("_sd.adx"))
+				return true;
+			if (FNTCheckBox_Chars_Sonic.Checked && audioName.EndsWith("_sn.adx"))
+				return true;
+			if (FNTCheckBox_Chars_Tails.Checked && audioName.EndsWith("_tl.adx"))
+				return true;
+			if (FNTCheckBox_Chars_Knuckles.Checked && audioName.EndsWith("_kn.adx"))
+				return true;
+			if (FNTCheckBox_Chars_Amy.Checked && audioName.EndsWith("_am.adx"))
+				return true;
+			if (FNTCheckBox_Chars_Rouge.Checked && audioName.EndsWith("_rg.adx"))
+				return true;
+			if (FNTCheckBox_Chars_Omega.Checked && audioName.EndsWith("_om.adx"))
+				return true;
+			if (FNTCheckBox_Chars_Vector.Checked && audioName.EndsWith("_vc.adx"))
+				return true;
+			if (FNTCheckBox_Chars_Espio.Checked && audioName.EndsWith("_es.adx"))
+				return true;
+			if (FNTCheckBox_Chars_Maria.Checked && (audioName.EndsWith("_mr.adx") || audioName.EndsWith("_mr2.adx")))
+				return true;
+			if (FNTCheckBox_Chars_Charmy.Checked && audioName.EndsWith("_ch.adx"))
+				return true;
+			if (FNTCheckBox_Chars_Eggman.Checked && audioName.EndsWith("_eg.adx"))
+				return true;
+			if (FNTCheckBox_Chars_BlackDoom.Checked && audioName.EndsWith("_bd.adx"))
+				return true;
+			if (FNTCheckBox_Chars_Cream.Checked && audioName.EndsWith("_cr.adx"))
+				return true;
+			if (FNTCheckBox_Chars_Cheese.Checked && audioName.EndsWith("_co.adx"))
+				return true;
+			if (FNTCheckBox_Chars_GUNCommander.Checked && audioName.EndsWith("_cm.adx"))
+				return true;
+			if (FNTCheckBox_Chars_GUNSoldier.Checked && audioName.EndsWith("_sl.adx"))
+				return true;
+			return false;
 		}
 
 		private static void Shuffle<T>(Random r, T[] array, int count)
@@ -1687,40 +1762,23 @@ namespace ShadowRando
 
 		private void randomFNT_CheckedChanged(object sender, EventArgs e)
 		{
-			if (randomFNT.Checked)
-			{
-				subtitleAndVoicelineGroupBox.Enabled = true;
-				FNTCheckBox_NoDuplicatesPreRandomization.Enabled = true;
-				FNTCheckBox_NoSystemMessages.Enabled = true;
-				FNTCheckBox_OnlyLinkedAudio.Enabled = true;
-				FNTCheckBox_OnlyShadow.Enabled = true;
-				FNTCheckBox_GiveAudioToNoLinkedAudio.Enabled = true;
-			}
-			else
-			{
-				subtitleAndVoicelineGroupBox.Enabled = false;
-				FNTCheckBox_NoDuplicatesPreRandomization.Enabled = false;
-				FNTCheckBox_NoSystemMessages.Enabled = false;
-				FNTCheckBox_OnlyLinkedAudio.Enabled = false;
-				FNTCheckBox_OnlyShadow.Enabled = false;
-				FNTCheckBox_GiveAudioToNoLinkedAudio.Enabled = false;
-			}
+			subtitleAndVoicelineConfigurationGroupBox.Enabled = randomFNT.Checked;
+			FNTCheckBox_NoDuplicatesPreRandomization.Enabled = randomFNT.Checked;
+			FNTCheckBox_NoSystemMessages.Enabled = randomFNT.Checked;
+			FNTCheckBox_OnlyLinkedAudio.Enabled = randomFNT.Checked;
+			FNTCheckBox_SpecificCharacters.Enabled = randomFNT.Checked;
+			FNTCheckBox_GiveAudioToNoLinkedAudio.Enabled = randomFNT.Checked;
+			SetEnabledStateSpecifiedCharGroup(randomFNT.Checked && FNTCheckBox_SpecificCharacters.Checked);
 		}
 
 		private void FNTCheckBox_OnlyLinkedAudio_CheckedChanged(object sender, EventArgs e)
 		{
-			if (FNTCheckBox_OnlyLinkedAudio.Checked)
-			{
-				FNTCheckBox_GiveAudioToNoLinkedAudio.Checked = false;
-			}
+			FNTCheckBox_GiveAudioToNoLinkedAudio.Checked = !FNTCheckBox_OnlyLinkedAudio.Checked;
 		}
 
 		private void FNTCheckBox_GiveAudioToNoLinkedAudio_CheckedChanged(object sender, EventArgs e)
 		{
-			if (FNTCheckBox_GiveAudioToNoLinkedAudio.Checked)
-			{
-				FNTCheckBox_OnlyLinkedAudio.Checked = false;
-			}
+			FNTCheckBox_OnlyLinkedAudio.Checked = !FNTCheckBox_GiveAudioToNoLinkedAudio.Checked;
 		}
 
 		static int CalculateSeed(string seedString)
@@ -1729,6 +1787,33 @@ namespace ShadowRando
 			{
 				return BitConverter.ToInt32(sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(seedString)), 0);
 			}
+		}
+
+		private void FNTCheckBox_SpecificCharacters_CheckedChanged(object sender, EventArgs e)
+		{
+			SetEnabledStateSpecifiedCharGroup(randomFNT.Checked && FNTCheckBox_SpecificCharacters.Checked);
+		}
+
+		private void SetEnabledStateSpecifiedCharGroup(bool enable)
+		{
+			subtitleAndVoicelineSpecifiedCharactersGroupBox.Enabled = enable;
+			FNTCheckBox_Chars_Shadow.Enabled = enable;
+			FNTCheckBox_Chars_Sonic.Enabled = enable;
+			FNTCheckBox_Chars_Tails.Enabled = enable;
+			FNTCheckBox_Chars_Knuckles.Enabled = enable;
+			FNTCheckBox_Chars_Amy.Enabled = enable;
+			FNTCheckBox_Chars_Rouge.Enabled = enable;
+			FNTCheckBox_Chars_Omega.Enabled = enable;
+			FNTCheckBox_Chars_Vector.Enabled = enable;
+			FNTCheckBox_Chars_Espio.Enabled = enable;
+			FNTCheckBox_Chars_Maria.Enabled = enable;
+			FNTCheckBox_Chars_Charmy.Enabled = enable;
+			FNTCheckBox_Chars_Eggman.Enabled = enable;
+			FNTCheckBox_Chars_BlackDoom.Enabled = enable;
+			FNTCheckBox_Chars_Cream.Enabled = enable;
+			FNTCheckBox_Chars_Cheese.Enabled = enable;
+			FNTCheckBox_Chars_GUNCommander.Enabled = enable;
+			FNTCheckBox_Chars_GUNSoldier.Enabled = enable;
 		}
 	}
 
@@ -1978,9 +2063,45 @@ namespace ShadowRando
 		[IniAlwaysInclude]
 		public bool FNTOnlyLinkedAudio;
 		[IniAlwaysInclude]
-		public bool FNTOnlyShadow;
+		public bool FNTSpecificCharacters;
 		[IniAlwaysInclude]
 		public bool FNTGiveAudioToNoLinkedAudio;
+		// FNT Specific Chars Section
+		[IniAlwaysInclude]
+		public bool FNTShadowSelected;
+		[IniAlwaysInclude]
+		public bool FNTSonicSelected;
+		[IniAlwaysInclude]
+		public bool FNTTailsSelected;
+		[IniAlwaysInclude]
+		public bool FNTKnucklesSelected;
+		[IniAlwaysInclude]
+		public bool FNTAmySelected;
+		[IniAlwaysInclude]
+		public bool FNTRougeSelected;
+		[IniAlwaysInclude]
+		public bool FNTOmegaSelected;
+		[IniAlwaysInclude]
+		public bool FNTVectorSelected;
+		[IniAlwaysInclude]
+		public bool FNTEspioSelected;
+		[IniAlwaysInclude]
+		public bool FNTMariaSelected;
+		[IniAlwaysInclude]
+		public bool FNTCharmySelected;
+		[IniAlwaysInclude]
+		public bool FNTEggmanSelected;
+		[IniAlwaysInclude]
+		public bool FNTCreamSelected;
+		[IniAlwaysInclude]
+		public bool FNTCheeseSelected;
+		[IniAlwaysInclude]
+		public bool FNTBlackDoomSelected;
+		[IniAlwaysInclude]
+		public bool FNTGUNCommanderSelected;
+		[IniAlwaysInclude]
+		public bool FNTGUNSoldierSelected;
+
 
 		public static Settings Load()
 		{
