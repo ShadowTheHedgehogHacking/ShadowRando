@@ -100,6 +100,7 @@ namespace ShadowRando
 			settings.IncludeLast = includeLast.Checked;
 			settings.IncludeBosses = includeBosses.Checked;
 			settings.RandomMusic = randomMusic.Checked;
+			settings.RandomFNT = randomFNT.Checked;
 			settings.Save();
 		}
 
@@ -699,13 +700,12 @@ namespace ShadowRando
 			spoilerLevelList.SelectedIndex = 0;
 			saveLogButton.Enabled = true;
 			makeChartButton.Enabled = true;
+			MessageBox.Show("Randomization Complete", "Report");
 		}
 
 		private void RandomizeFNTs(Random r)
 		{
 			var fontAndAudioData = LoadFNTsAndAFS(true);
-			// TODO: Add BACKUP feature so we can re-use the original FNTs/restore them instead of basing randomization off last randomization
-
 			for (int i = 0; i < fontAndAudioData.mutatedFnt.Count; i++)
 			{
 				for (int j = 0; j < fontAndAudioData.mutatedFnt[i].GetEntryTableCount(); j++)
@@ -790,7 +790,6 @@ namespace ShadowRando
 					MessageBox.Show(ex.Message, "An Exception Occurred");
 				}
 			}
-			MessageBox.Show("Completed FNT Exports", "Report");
 		}
 
 		private static void Shuffle<T>(Random r, T[] array, int count)
@@ -1836,7 +1835,7 @@ namespace ShadowRando
 		public bool IncludeBosses { get; set; } = true;
 		[IniAlwaysInclude]
 		public bool RandomMusic { get; set; }
-
+		[IniAlwaysInclude]
 		public bool RandomFNT { get; set; }
 
 		public static Settings Load()
