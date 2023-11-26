@@ -55,6 +55,7 @@ namespace ShadowRando
             this.FNTCheckBox_NoDuplicatesPreRandomization = new System.Windows.Forms.CheckBox();
             this.FNTCheckBox_GiveAudioToNoLinkedAudio = new System.Windows.Forms.CheckBox();
             this.seedTextBox = new System.Windows.Forms.TextBox();
+            this.randomMusic = new System.Windows.Forms.CheckBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPageLevelOrder = new System.Windows.Forms.TabPage();
             this.label7 = new System.Windows.Forms.Label();
@@ -79,15 +80,14 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_Sonic = new System.Windows.Forms.CheckBox();
             this.FNTCheckBox_Chars_Shadow = new System.Windows.Forms.CheckBox();
             this.subtitleAndVoicelineConfigurationGroupBox = new System.Windows.Forms.GroupBox();
+            this.tabPageMusic = new System.Windows.Forms.TabPage();
             this.tabPageSpoilers = new System.Windows.Forms.TabPage();
             this.spoilerLevelInfo = new System.Windows.Forms.TextBox();
             this.spoilerLevelList = new System.Windows.Forms.ListBox();
-            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
-            this.saveFileDialog2 = new System.Windows.Forms.SaveFileDialog();
-            this.tabPageMusic = new System.Windows.Forms.TabPage();
-            this.randomMusic = new System.Windows.Forms.CheckBox();
             this.tabPageProgramOptions = new System.Windows.Forms.TabPage();
             this.checkBoxProgramSound = new System.Windows.Forms.CheckBox();
+            this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
+            this.saveFileDialog2 = new System.Windows.Forms.SaveFileDialog();
             label1 = new System.Windows.Forms.Label();
             label2 = new System.Windows.Forms.Label();
             label3 = new System.Windows.Forms.Label();
@@ -102,8 +102,8 @@ namespace ShadowRando
             this.tabPageSubtitles.SuspendLayout();
             this.subtitleAndVoicelineSpecifiedCharactersGroupBox.SuspendLayout();
             this.subtitleAndVoicelineConfigurationGroupBox.SuspendLayout();
-            this.tabPageSpoilers.SuspendLayout();
             this.tabPageMusic.SuspendLayout();
+            this.tabPageSpoilers.SuspendLayout();
             this.tabPageProgramOptions.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -454,6 +454,17 @@ namespace ShadowRando
             this.seedTextBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
             this.seedTextBox.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
+            // randomMusic
+            // 
+            this.randomMusic.AutoSize = true;
+            this.randomMusic.Location = new System.Drawing.Point(14, 6);
+            this.randomMusic.Name = "randomMusic";
+            this.randomMusic.Size = new System.Drawing.Size(110, 17);
+            this.randomMusic.TabIndex = 7;
+            this.randomMusic.Text = "Randomize Music";
+            this.toolTip1.SetToolTip(this.randomMusic, "Check this box to shuffle the music that\'s played in each area of the game.");
+            this.randomMusic.UseVisualStyleBackColor = true;
+            // 
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPageLevelOrder);
@@ -467,6 +478,7 @@ namespace ShadowRando
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.Size = new System.Drawing.Size(503, 218);
             this.tabControl1.TabIndex = 0;
+            this.tabControl1.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
             this.tabControl1.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // tabPageLevelOrder
@@ -791,6 +803,16 @@ namespace ShadowRando
             this.subtitleAndVoicelineConfigurationGroupBox.TabStop = false;
             this.subtitleAndVoicelineConfigurationGroupBox.Text = "Subtitles / Voicelines Configuration";
             // 
+            // tabPageMusic
+            // 
+            this.tabPageMusic.Controls.Add(this.randomMusic);
+            this.tabPageMusic.Location = new System.Drawing.Point(4, 22);
+            this.tabPageMusic.Name = "tabPageMusic";
+            this.tabPageMusic.Size = new System.Drawing.Size(495, 192);
+            this.tabPageMusic.TabIndex = 3;
+            this.tabPageMusic.Text = "Music";
+            this.tabPageMusic.UseVisualStyleBackColor = true;
+            // 
             // tabPageSpoilers
             // 
             this.tabPageSpoilers.Controls.Add(this.makeChartButton);
@@ -833,38 +855,6 @@ namespace ShadowRando
             this.spoilerLevelList.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
             this.spoilerLevelList.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
-            // saveFileDialog1
-            // 
-            this.saveFileDialog1.DefaultExt = "txt";
-            this.saveFileDialog1.Filter = "Text Files|*.txt;*.log";
-            this.saveFileDialog1.RestoreDirectory = true;
-            // 
-            // saveFileDialog2
-            // 
-            this.saveFileDialog2.DefaultExt = "png";
-            this.saveFileDialog2.Filter = "PNG Files|*.png";
-            // 
-            // tabPageMusic
-            // 
-            this.tabPageMusic.Controls.Add(this.randomMusic);
-            this.tabPageMusic.Location = new System.Drawing.Point(4, 22);
-            this.tabPageMusic.Name = "tabPageMusic";
-            this.tabPageMusic.Size = new System.Drawing.Size(495, 192);
-            this.tabPageMusic.TabIndex = 3;
-            this.tabPageMusic.Text = "Music";
-            this.tabPageMusic.UseVisualStyleBackColor = true;
-            // 
-            // randomMusic
-            // 
-            this.randomMusic.AutoSize = true;
-            this.randomMusic.Location = new System.Drawing.Point(14, 6);
-            this.randomMusic.Name = "randomMusic";
-            this.randomMusic.Size = new System.Drawing.Size(110, 17);
-            this.randomMusic.TabIndex = 7;
-            this.randomMusic.Text = "Randomize Music";
-            this.toolTip1.SetToolTip(this.randomMusic, "Check this box to shuffle the music that\'s played in each area of the game.");
-            this.randomMusic.UseVisualStyleBackColor = true;
-            // 
             // tabPageProgramOptions
             // 
             this.tabPageProgramOptions.Controls.Add(this.checkBoxProgramSound);
@@ -886,6 +876,17 @@ namespace ShadowRando
             this.checkBoxProgramSound.TabIndex = 10;
             this.checkBoxProgramSound.Text = "Sound";
             this.checkBoxProgramSound.UseVisualStyleBackColor = true;
+            // 
+            // saveFileDialog1
+            // 
+            this.saveFileDialog1.DefaultExt = "txt";
+            this.saveFileDialog1.Filter = "Text Files|*.txt;*.log";
+            this.saveFileDialog1.RestoreDirectory = true;
+            // 
+            // saveFileDialog2
+            // 
+            this.saveFileDialog2.DefaultExt = "png";
+            this.saveFileDialog2.Filter = "PNG Files|*.png";
             // 
             // MainForm
             // 
@@ -915,10 +916,10 @@ namespace ShadowRando
             this.subtitleAndVoicelineSpecifiedCharactersGroupBox.PerformLayout();
             this.subtitleAndVoicelineConfigurationGroupBox.ResumeLayout(false);
             this.subtitleAndVoicelineConfigurationGroupBox.PerformLayout();
-            this.tabPageSpoilers.ResumeLayout(false);
-            this.tabPageSpoilers.PerformLayout();
             this.tabPageMusic.ResumeLayout(false);
             this.tabPageMusic.PerformLayout();
+            this.tabPageSpoilers.ResumeLayout(false);
+            this.tabPageSpoilers.PerformLayout();
             this.tabPageProgramOptions.ResumeLayout(false);
             this.tabPageProgramOptions.PerformLayout();
             this.ResumeLayout(false);

@@ -20,7 +20,7 @@ namespace ShadowRando
 			InitializeComponent();
 		}
 
-		const string programVersion = "0.3.0-dev";
+		const string programVersion = "0.3.0";
 		private static string hoverSoundPath = AppDomain.CurrentDomain.BaseDirectory + "res/hover.wav";
 		private static string selectSoundPath = AppDomain.CurrentDomain.BaseDirectory + "res/select.wav";
 		Settings settings;
