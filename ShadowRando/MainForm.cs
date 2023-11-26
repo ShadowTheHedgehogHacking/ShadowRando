@@ -566,8 +566,14 @@ namespace ShadowRando
 							curset = newset;
 							ids2.AddRange(newset);
 						}
-						foreach (int item in curset)
-							stages[item].Neutral = totalstagecount;
+						foreach (Stage stg in curset.Select(a => stages[a]))
+						{
+							stg.SetExit(0, totalstagecount);
+							if (stg.HasHero)
+								stg.Hero = totalstagecount;
+							if (stg.HasDark)
+								stg.Dark = totalstagecount;
+						}
 						ids2.CopyTo(stageids);
 					}
 					break;
