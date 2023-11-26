@@ -1784,12 +1784,14 @@ namespace ShadowRando
 
 		private void FNTCheckBox_OnlyLinkedAudio_CheckedChanged(object sender, EventArgs e)
 		{
-			FNTCheckBox_GiveAudioToNoLinkedAudio.Checked = !FNTCheckBox_OnlyLinkedAudio.Checked;
+			if (FNTCheckBox_OnlyLinkedAudio.Checked)
+				FNTCheckBox_GiveAudioToNoLinkedAudio.Checked = false;
 		}
 
 		private void FNTCheckBox_GiveAudioToNoLinkedAudio_CheckedChanged(object sender, EventArgs e)
 		{
-			FNTCheckBox_OnlyLinkedAudio.Checked = !FNTCheckBox_GiveAudioToNoLinkedAudio.Checked;
+			if (FNTCheckBox_GiveAudioToNoLinkedAudio.Checked)
+				FNTCheckBox_OnlyLinkedAudio.Checked = false;
 		}
 
 		static int CalculateSeed(string seedString)
