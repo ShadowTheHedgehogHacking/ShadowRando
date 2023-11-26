@@ -1,5 +1,6 @@
 ﻿using AFSLib;
 using IniFile;
+using NAudio.Wave;
 using ShadowFNT;
 using ShadowFNT.Structures;
 using System;
@@ -20,12 +21,15 @@ namespace ShadowRando
 		}
 
 		const string programVersion = "0.3.0-dev";
+		private static string hoverSoundPath = AppDomain.CurrentDomain.BaseDirectory + "res/hover.wav";
+		private static string selectSoundPath = AppDomain.CurrentDomain.BaseDirectory + "res/select.wav";
 		Settings settings;
 
 		private void MainForm_Load(object sender, EventArgs e)
 		{
 			settings = Settings.Load();
 			Text += programVersion;
+			checkBoxProgramSound.Checked = settings.ProgramSound;
 			seedTextBox.Text = settings.Seed;
 			randomSeed.Checked = settings.RandomSeed;
 			modeSelector.SelectedIndex = (int)settings.Mode;
@@ -118,6 +122,7 @@ namespace ShadowRando
 
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
 		{
+			settings.ProgramSound = checkBoxProgramSound.Checked;
 			settings.Seed = seedTextBox.Text;
 			settings.RandomSeed = randomSeed.Checked;
 			settings.Mode = (Modes)modeSelector.SelectedIndex;
@@ -1815,6 +1820,42 @@ namespace ShadowRando
 			FNTCheckBox_Chars_GUNCommander.Enabled = enable;
 			FNTCheckBox_Chars_GUNSoldier.Enabled = enable;
 		}
+
+		private void SharedMouseEnter(object sender, EventArgs e)
+		{
+			PlayAudio(hoverSoundPath);
+		}
+
+		private void SharedMouseDown(object sender, MouseEventArgs e)
+		{
+			PlayAudio(selectSoundPath);
+		}
+
+		private void SharedMouseDown(object sender, EventArgs e)
+		{
+			PlayAudio(selectSoundPath);
+		}
+
+		private void PlayAudio(string soundPath)
+		{
+			if (!checkBoxProgramSound.Checked)
+				return;
+
+			var outputDevice = new WaveOutEvent();
+
+			// Create a new instance of WaveFileReader for each call to playsound
+			WaveFileReader reader = new WaveFileReader(soundPath);
+
+			outputDevice.Init(reader);
+			outputDevice.Play();
+
+			// Hook the PlaybackStopped event to dispose of resources when playback is finished
+			outputDevice.PlaybackStopped += (sender, args) =>
+			{
+				outputDevice.Dispose();
+				reader.Dispose();
+			};
+		}
 	}
 
 	static class Extensions
@@ -2027,6 +2068,9 @@ namespace ShadowRando
 
 	class Settings
 	{
+		[IniAlwaysInclude]
+		public bool ProgramSound { get; set; } = true;
+		[IniAlwaysInclude]
 		public string GamePath { get; set; }
 		[IniAlwaysInclude]
 		public string Seed { get; set; }
@@ -2042,9 +2086,9 @@ namespace ShadowRando
 		[System.ComponentModel.DefaultValue(22)]
 		[IniAlwaysInclude]
 		public int MaxForwJump { get; set; } = 22;
-		[System.ComponentModel.DefaultValue(50)]
+		[System.ComponentModel.DefaultValue(10)]
 		[IniAlwaysInclude]
-		public int BackJumpProb { get; set; } = 50;
+		public int BackJumpProb { get; set; } = 10;
 		[IniAlwaysInclude]
 		public bool AllowSameLevel { get; set; }
 		[IniAlwaysInclude]
