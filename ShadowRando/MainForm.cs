@@ -20,7 +20,7 @@ namespace ShadowRando
 			InitializeComponent();
 		}
 
-		const string programVersion = "0.3.0";
+		const string programVersion = "0.3.1";
 		private static string hoverSoundPath = AppDomain.CurrentDomain.BaseDirectory + "res/hover.wav";
 		private static string selectSoundPath = AppDomain.CurrentDomain.BaseDirectory + "res/select.wav";
 		Settings settings;
@@ -221,6 +221,8 @@ namespace ShadowRando
 			"Sonic & Diablon (FH)",
 			"Devil Doom"
 		};
+		const int routeMenu6xxStagePreviewBlockerOffset = 0xB48B8;
+		const int routeMenu6xxStagePreviewPatchValue = 0x48000110;
 		const int storyModeStartAddress = 0x2CB9F0;
 		const int firstStageOffset = 0x4C1BA8;
 		const int modeOffset = 8;
@@ -728,6 +730,13 @@ namespace ShadowRando
 			buf = BitConverter.GetBytes(0x38000000 | stageAssociationIDMap[stageids[0] + stagefirst]);
 			Array.Reverse(buf);
 			buf.CopyTo(dolfile, storyModeStartAddress);
+
+			// patch the route menu to allow stg06xx+ to display next stages
+			buf = BitConverter.GetBytes(routeMenu6xxStagePreviewPatchValue);
+			Array.Reverse(buf);
+			buf.CopyTo(dolfile, routeMenu6xxStagePreviewBlockerOffset);
+			// end patch
+
 			File.WriteAllBytes(Path.Combine(settings.GamePath, "sys", "main.dol"), dolfile);
 			if (randomMusic.Checked)
 			{
