@@ -3,6 +3,7 @@ using IniFile;
 using NAudio.Wave;
 using ShadowFNT;
 using ShadowFNT.Structures;
+using ShadowSET;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -799,6 +800,9 @@ namespace ShadowRando
 			if (randomFNT.Checked)
 				RandomizeFNTs(r);
 
+			if (randomSET.Checked)
+				RandomizeSETs(r);
+
 			spoilerLevelList.BeginUpdate();
 			spoilerLevelList.Items.Clear();
 			for (int i = 0; i < stagecount; i++)
@@ -1004,6 +1008,81 @@ namespace ShadowRando
 			if (FNTCheckBox_Chars_GUNSoldier.Checked && audioName.EndsWith("_sl.adx"))
 				return true;
 			return false;
+		}
+
+		private void RandomizeSETs(Random r)
+		{
+			ShadowSET.LayoutEditorSystem.SetupLayoutEditorSystem();
+			//for (int i = 5; i < 45; i++) {
+				stageAssociationIDMap.TryGetValue(5, out var stageId);
+				var stageDataIdentifier = "stg0" + stageId.ToString();
+				var cmnLayout = stageDataIdentifier + "_cmn.dat";
+				var cmnLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, cmnLayout);
+				var cmnLayoutData = LayoutEditorFunctions.GetShadowLayout(cmnLayoutPath, out var result);
+
+			// iterate whatever rules we want, look into making this more efficient as well...
+			// for testing, lets get all breakable boxes and make them contain random weapons
+
+			List<(Object0009_WoodBox item, int index)> woodBoxItems = cmnLayoutData
+				.Select((item, index) => new { Item = item, Index = index })
+				.Where(pair => pair.Item is Object0009_WoodBox)
+				.Select(pair => (Item: (Object0009_WoodBox)pair.Item, Index: pair.Index))
+				.ToList();
+
+			List<(Object000C_WeaponBox item, int index)> weaponBoxItems = cmnLayoutData
+				.Select((item, index) => new { Item = item, Index = index })
+				.Where(pair => pair.Item is Object000C_WeaponBox)
+				.Select(pair => (Item: (Object000C_WeaponBox)pair.Item, Index: pair.Index))
+				.ToList();
+
+			List<(Object000A_MetalBox item, int index)> metalBoxItems = cmnLayoutData
+				.Select((item, index) => new { Item = item, Index = index })
+				.Where(pair => pair.Item is Object000A_MetalBox)
+				.Select(pair => (Item: (Object000A_MetalBox)pair.Item, Index: pair.Index))
+				.ToList();
+
+
+			// valid weapons are 0x0 - 0x21
+
+			foreach (var woodbox in woodBoxItems)
+			{
+				woodbox.item.BoxItem = EBoxItem.Weapon;
+				woodbox.item.ModifierWeapon = (EWeapon)r.Next(0x21);
+				cmnLayoutData[woodbox.index] = woodbox.item;
+			}
+
+			foreach (var weaponbox in weaponBoxItems)
+			{
+				weaponbox.item.Weapon = (EWeapon)r.Next(0x21);
+				cmnLayoutData[weaponbox.index] = weaponbox.item;
+			}
+
+			foreach (var metalbox in metalBoxItems)
+			{
+				metalbox.item.BoxItem = EBoxItem.Weapon;
+				metalbox.item.ModifierWeapon = (EWeapon)r.Next(0x21);
+				cmnLayoutData[metalbox.index] = metalbox.item;
+			}
+
+			// give GUN soldiers random weapons, randomize shields, and set to attack shadow with large range
+			List<(Object0064_GUNSoldier item, int index)> gunsoldiers = cmnLayoutData
+			.Select((item, index) => new { Item = item, Index = index })
+			.Where(pair => pair.Item is Object0064_GUNSoldier)
+			.Select(pair => (Item: (Object0064_GUNSoldier)pair.Item, Index: pair.Index))
+			.ToList();
+
+			foreach (var gunsoldier in gunsoldiers)
+			{
+				gunsoldier.item.WeaponType = (Object0064_GUNSoldier.EWeapon)r.Next(0x6);
+				gunsoldier.item.HaveShield = (ENoYes)r.Next(1);
+				gunsoldier.item.SearchRange = 300;
+				gunsoldier.item.SearchWidth = 300;
+				gunsoldier.item.SearchHeight = 100;
+				cmnLayoutData[gunsoldier.index] = gunsoldier.item;
+			}
+
+			LayoutEditorFunctions.SaveShadowLayout(cmnLayoutData, cmnLayoutPath, false);
+			//}
 		}
 
 		private static void Shuffle<T>(Random r, T[] array, int count)
