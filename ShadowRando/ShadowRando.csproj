@@ -147,5 +147,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\ShadowSET\ShadowSET\ShadowSET.csproj">
+      <Project>{e6c0cdfd-f6bb-4bff-863c-1025624d6889}</Project>
+      <Name>ShadowSET</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
