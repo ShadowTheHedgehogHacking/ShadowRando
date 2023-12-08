@@ -20,7 +20,7 @@ namespace ShadowRando
 			InitializeComponent();
 		}
 
-		const string programVersion = "0.3.1";
+		const string programVersion = "0.3.2";
 		private static string hoverSoundPath = AppDomain.CurrentDomain.BaseDirectory + "res/hover.wav";
 		private static string selectSoundPath = AppDomain.CurrentDomain.BaseDirectory + "res/select.wav";
 		Settings settings;
@@ -456,9 +456,9 @@ namespace ShadowRando
 								int bosscnt = includeBosses.Checked ? item.bossCount : 0;
 								if (bosscnt == 2)
 								{
-									stg.Dark = neword[bossind];
+									stg.SetExit(0, neword[bossind]);
 									stages[neword[bossind++]].Neutral = totalstagecount;
-									stg.Hero = neword[bossind];
+									stg.SetExit(1, neword[bossind]);
 									stages[neword[bossind++]].Neutral = totalstagecount;
 								}
 								else if (bosscnt == 1)
@@ -472,22 +472,37 @@ namespace ShadowRando
 											bossstg.Hero = neword[ind + next + 1];
 											break;
 										case StageType.Dark:
-											bossstg.Dark = neword[ind + next];
-											if (stg.HasNeutral)
-												bossstg.Neutral = neword[ind + next + 1];
+											if (stg.HasDark)
+											{
+												bossstg.Dark = neword[ind + next];
+												if (stg.HasNeutral)
+													bossstg.Neutral = neword[ind + next + 1];
+												else
+													bossstg.Hero = neword[ind + next + 1];
+											}
 											else
+											{
+												bossstg.Neutral = neword[ind + next];
 												bossstg.Hero = neword[ind + next + 1];
+											}
 											break;
 										case StageType.Hero:
-											bossstg.Hero = neword[ind + next];
-											if (stg.HasNeutral)
-												bossstg.Neutral = neword[ind + next - 1];
+											if (stg.HasHero)
+											{
+												bossstg.Hero = neword[ind + next];
+												if (stg.HasNeutral)
+													bossstg.Neutral = neword[ind + next - 1];
+												else
+													bossstg.Dark = neword[ind + next - 1];
+											}
 											else
+											{
+												bossstg.Neutral = neword[ind + next];
 												bossstg.Dark = neword[ind + next - 1];
+											}
 											break;
 										case StageType.End:
-											bossstg.Hero = totalstagecount;
-											bossstg.Dark = totalstagecount;
+											bossstg.Neutral = totalstagecount;
 											break;
 									}
 									if (stg.HasNeutral)
@@ -508,18 +523,34 @@ namespace ShadowRando
 											stg.Hero = neword[ind + next + 1];
 											break;
 										case StageType.Dark:
-											stg.Dark = neword[ind + next];
-											if (stg.HasNeutral)
-												stg.Neutral = neword[ind + next + 1];
+											if (stg.HasDark)
+											{
+												stg.Dark = neword[ind + next];
+												if (stg.HasNeutral)
+													stg.Neutral = neword[ind + next + 1];
+												else
+													stg.Hero = neword[ind + next + 1];
+											}
 											else
+											{
+												stg.Neutral = neword[ind + next];
 												stg.Hero = neword[ind + next + 1];
+											}
 											break;
 										case StageType.Hero:
-											stg.Hero = neword[ind + next];
-											if (stg.HasNeutral)
-												stg.Neutral = neword[ind + next - 1];
+											if (stg.HasHero)
+											{
+												stg.Hero = neword[ind + next];
+												if (stg.HasNeutral)
+													stg.Neutral = neword[ind + next - 1];
+												else
+													stg.Dark = neword[ind + next - 1];
+											}
 											else
+											{
+												stg.Neutral = neword[ind + next];
 												stg.Dark = neword[ind + next - 1];
+											}
 											break;
 										case StageType.End:
 											stg.Hero = totalstagecount;
