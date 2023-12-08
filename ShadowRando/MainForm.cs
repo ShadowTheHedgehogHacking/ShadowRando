@@ -1162,6 +1162,18 @@ namespace ShadowRando
 					}
 				}
 
+				for (int i = 0; i < nrmLayoutData.Count(); i++)
+				{
+					if (nrmLayoutData[i].List == 0x00 &&
+							(
+								(nrmLayoutData[i].Type >= 0x64 && nrmLayoutData[i].Type <= 0x93)
+							)
+						)
+					{
+						CloneObjectOverIndex(i, soldier, ref nrmLayoutData, true, r);
+					}
+				}
+
 				// make all objects a gun soldier
 				/*			for (int i = 0; i < nrmLayoutData.Count(); i++)
 							{
