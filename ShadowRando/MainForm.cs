@@ -4,6 +4,7 @@ using NAudio.Wave;
 using ShadowFNT;
 using ShadowFNT.Structures;
 using ShadowSET;
+using ShadowSET.SETIDBIN;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -819,7 +820,7 @@ namespace ShadowRando
 		private void RandomizeFNTs(Random r)
 		{
 			var fontAndAudioData = LoadFNTsAndAFS(true);
-			var fntRandomPool = new List<TableEntry>();
+			var fntRandomPool = new List<ShadowFNT.Structures.TableEntry>();
 			var uniqueAudioIDs = new Dictionary<int, bool>();
 			var uniqueSubtitles = new Dictionary<string, bool>();
 			if (FNTCheckBox_OnlyLinkedAudio.Checked || FNTCheckBox_NoDuplicatesPreRandomization.Checked || FNTCheckBox_NoSystemMessages.Checked || FNTCheckBox_SpecificCharacters.Checked)
@@ -1013,17 +1014,17 @@ namespace ShadowRando
 
 		private void RandomizeSETs(Random r)
 		{
-			ShadowSET.LayoutEditorSystem.SetupLayoutEditorSystem();
-			//for (int i = 5; i < 45; i++) {
-			stageAssociationIDMap.TryGetValue(5, out var stageId);
+			ShadowSET.LayoutEditorSystem.SetupLayoutEditorSystem(); // Critical to load relevent data
+			for (int stageIdToModify = 5; stageIdToModify < 45; stageIdToModify++) {
+			stageAssociationIDMap.TryGetValue(stageIdToModify, out var stageId);
 			var stageDataIdentifier = "stg0" + stageId.ToString();
 			var cmnLayout = stageDataIdentifier + "_cmn.dat";
 			var cmnLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, cmnLayout);
 			var cmnLayoutData = LayoutEditorFunctions.GetShadowLayout(cmnLayoutPath, out var resultcmn);
 
-			var nrmLayout = stageDataIdentifier + "_nrm.dat";
+/*			var nrmLayout = stageDataIdentifier + "_nrm.dat";
 			var nrmLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, nrmLayout);
-			var nrmLayoutData = LayoutEditorFunctions.GetShadowLayout(nrmLayoutPath, out var resultnrm);
+			var nrmLayoutData = LayoutEditorFunctions.GetShadowLayout(nrmLayoutPath, out var resultnrm);*/
 
 			// iterate whatever rules we want, look into making this more efficient as well...
 			// for testing, lets get all breakable boxes and make them contain random weapons
@@ -1137,15 +1138,9 @@ namespace ShadowRando
 			.Select(pair => (Item: (Object0064_GUNSoldier)pair.Item, Index: pair.Index))
 			.ToList();
 
-			gunsoldiers[0].item.WeaponType = (Object0064_GUNSoldier.EWeapon)r.Next(0x6);
-			gunsoldiers[0].item.HaveShield = (ENoYes)r.Next(1);
-			gunsoldiers[0].item.SearchRange = 300;
-			gunsoldiers[0].item.SearchWidth = 300;
-			gunsoldiers[0].item.SearchHeight = 100;
-			cmnLayoutData[gunsoldiers[0].index] = gunsoldiers[0].item;
-
-
-			var soldier = gunsoldiers[0].item;
+				var soldier = new Object0064_GUNSoldier();
+				soldier.List = 0x00;
+				soldier.Type = 0x64;
 
 			// make all objects a gun soldier
 			for (int i = 0; i < cmnLayoutData.Count(); i++)
@@ -1158,17 +1153,56 @@ namespace ShadowRando
 
 
 			// make all objects a gun soldier
-			for (int i = 0; i < nrmLayoutData.Count(); i++)
+/*			for (int i = 0; i < nrmLayoutData.Count(); i++)
 			{
 				// skip springs/dashramps/checkpoints
 				if (cmnLayoutData[i].List == 0x00 && (cmnLayoutData[i].Type == 0x01 || (cmnLayoutData[i].Type > 0x00 && cmnLayoutData[i].Type < 0x07)))
 					continue;
 				CloneObjectOverIndex(i, soldier, ref nrmLayoutData, true, r);
-			}
+			}*/
 
 			LayoutEditorFunctions.SaveShadowLayout(cmnLayoutData, cmnLayoutPath, false);
-			LayoutEditorFunctions.SaveShadowLayout(nrmLayoutData, nrmLayoutPath, false);
-			//}
+			//LayoutEditorFunctions.SaveShadowLayout(nrmLayoutData, nrmLayoutPath, false);
+			}
+
+			// setIdBin operations
+			var setIdBINPath = Path.Combine(settings.GamePath, "files", "setid.bin");
+			var setIdTable = ShadowSET.SETIDBIN.SetIdTableFunctions.LoadTable(setIdBINPath, true, LayoutEditorSystem.shadowObjectEntries);
+
+			
+			// 00 - 0x0C
+			// 00, 0x64 = gun soldier | 0x93 = BkNinja (last enemy type)
+			foreach (ShadowSET.SETIDBIN.TableEntry entry in setIdTable)
+			{
+				if (entry.objectEntry.List == 0x00 && 
+					(
+						(entry.objectEntry.Type >= 0x00 && entry.objectEntry.Type <= 0x0C) || // is a box/spring
+						(entry.objectEntry.Type >= 0x64 && entry.objectEntry.Type <= 0x93) ||  // is an enemy
+						(entry.objectEntry.Type >= 0xC8 && entry.objectEntry.Type <= 0xFD) || // is a weapon
+						(entry.objectEntry.Type >= 0x46 && entry.objectEntry.Type <= 0x4E) // is a vehicle
+					)
+				)
+				{
+					foreach (StageEntry stage in LayoutEditorSystem.shadowStageEntries)
+					{
+						entry.values0 |= stage.flag0;
+						entry.values1 |= stage.flag1;
+						entry.values2 |= stage.flag2;
+					}
+				}
+			}
+
+			SetIdTableFunctions.SaveTable(setIdBINPath, true, setIdTable);
+
+			// lastly, patch bi2.bin since we require 64MB Dolphin
+			var bi2binPath = Path.Combine(settings.GamePath, "sys", "bi2.bin");
+			var buf = BitConverter.GetBytes(0);
+			var bi2 = File.ReadAllBytes(bi2binPath);
+			buf.CopyTo(bi2, 0x4);
+			File.WriteAllBytes(bi2binPath, bi2);
+			// end patch
+
+			MessageBox.Show("WARNING: You must set Dolphin -> Config -> Advanced -> MEM1 value to 64MB!");
 		}
 
 		// TODO move this to ShadowSET library?
