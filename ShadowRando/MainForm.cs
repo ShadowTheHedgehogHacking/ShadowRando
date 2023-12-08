@@ -1025,7 +1025,14 @@ namespace ShadowRando
 
 				var nrmLayout = stageDataIdentifier + "_nrm.dat";
 				var nrmLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, nrmLayout);
-				var nrmLayoutData = LayoutEditorFunctions.GetShadowLayout(nrmLayoutPath, out var resultnrm);
+				List<SetObjectShadow> nrmLayoutData = null;
+				try
+				{
+					nrmLayoutData = LayoutEditorFunctions.GetShadowLayout(nrmLayoutPath, out var resultnrm);
+				} catch (FileNotFoundException e)
+				{
+					// some stages don't have nrm
+				}
 
 				// iterate whatever rules we want, look into making this more efficient as well...
 				// for testing, lets get all breakable boxes and make them contain random weapons
@@ -1054,26 +1061,27 @@ namespace ShadowRando
 					foreach (var woodbox in woodBoxItems)
 					{
 						woodbox.item.BoxItem = EBoxItem.Weapon;
-						woodbox.item.ModifierWeapon = (EWeapon)r.Next(0x21);
+						woodbox.item.ModifierWeapon = (EWeapon)r.Next(0x22);
 						cmnLayoutData[woodbox.index] = woodbox.item;
 					}
 
 					foreach (var weaponbox in weaponBoxItems)
 					{
-						weaponbox.item.Weapon = (EWeapon)r.Next(0x21);
+						weaponbox.item.Weapon = (EWeapon)r.Next(0x22);
 						cmnLayoutData[weaponbox.index] = weaponbox.item;
 					}
 
 					foreach (var metalbox in metalBoxItems)
 					{
 						metalbox.item.BoxItem = EBoxItem.Weapon;
-						metalbox.item.ModifierWeapon = (EWeapon)r.Next(0x21);
+						metalbox.item.ModifierWeapon = (EWeapon)r.Next(0x22);
 						cmnLayoutData[metalbox.index] = metalbox.item;
 					}
 
 				} // cmn scope boxes
 				  // and for nrm now...
-				{
+				  if (nrmLayoutData != null)
+					{
 					List<(Object0009_WoodBox item, int index)> woodBoxItems = nrmLayoutData
 						.Select((item, index) => new { Item = item, Index = index })
 						.Where(pair => pair.Item is Object0009_WoodBox)
@@ -1097,21 +1105,21 @@ namespace ShadowRando
 					foreach (var woodbox in woodBoxItems)
 					{
 						woodbox.item.BoxItem = EBoxItem.Weapon;
-						woodbox.item.ModifierWeapon = (EWeapon)r.Next(0x21);
-						cmnLayoutData[woodbox.index] = woodbox.item;
+						woodbox.item.ModifierWeapon = (EWeapon)r.Next(0x22);
+						nrmLayoutData[woodbox.index] = woodbox.item;
 					}
 
 					foreach (var weaponbox in weaponBoxItems)
 					{
-						weaponbox.item.Weapon = (EWeapon)r.Next(0x21);
-						cmnLayoutData[weaponbox.index] = weaponbox.item;
+						weaponbox.item.Weapon = (EWeapon)r.Next(0x22);
+						nrmLayoutData[weaponbox.index] = weaponbox.item;
 					}
 
 					foreach (var metalbox in metalBoxItems)
 					{
 						metalbox.item.BoxItem = EBoxItem.Weapon;
-						metalbox.item.ModifierWeapon = (EWeapon)r.Next(0x21);
-						cmnLayoutData[metalbox.index] = metalbox.item;
+						metalbox.item.ModifierWeapon = (EWeapon)r.Next(0x22);
+						nrmLayoutData[metalbox.index] = metalbox.item;
 					}
 				} // nrm scope boxes
 
@@ -1144,7 +1152,6 @@ namespace ShadowRando
 				// make all enemies a gun soldier
 				for (int i = 0; i < cmnLayoutData.Count(); i++)
 				{
-					// skip springs/dashramps/checkpoints
 					if (cmnLayoutData[i].List == 0x00 &&
 							(
 								(cmnLayoutData[i].Type >= 0x64 && cmnLayoutData[i].Type <= 0x93)
@@ -1165,7 +1172,8 @@ namespace ShadowRando
 							}*/
 
 				LayoutEditorFunctions.SaveShadowLayout(cmnLayoutData, cmnLayoutPath, false);
-			//LayoutEditorFunctions.SaveShadowLayout(nrmLayoutData, nrmLayoutPath, false);
+				if (nrmLayoutData != null)
+					LayoutEditorFunctions.SaveShadowLayout(nrmLayoutData, nrmLayoutPath, false);
 			} // end of layout operations
 
 			// setIdBin operations
@@ -1218,11 +1226,12 @@ namespace ShadowRando
 				oldEntry.PosZ, oldEntry.RotX, oldEntry.RotY, oldEntry.RotZ, oldEntry.Link, oldEntry.Rend, oldEntry.UnkBytes); // :
 			var modifier = (Object0064_GUNSoldier)newEntry;                                                                                                                                    //LayoutEditorFunctions.CreateHeroesObject(newEntry.List, newEntry.Type, pos, rot, link, rend, unkb);
 
-			modifier.WeaponType = (Object0064_GUNSoldier.EWeapon)r.Next(0x6);
-			modifier.HaveShield = (ENoYes)r.Next(1);
-			modifier.SearchRange = 300;
-			modifier.SearchWidth = 300;
-			modifier.SearchHeight = 100;
+			modifier.WeaponType = (Object0064_GUNSoldier.EWeapon)r.Next(0x7);
+			modifier.HaveShield = (ENoYes)r.Next(2);
+			modifier.SearchRange = 500;
+			modifier.SearchWidth = 500;
+			modifier.SearchHeight = 200;
+			modifier.MoveRange = 2000;
 
 			setData[index] = modifier;
 		}
