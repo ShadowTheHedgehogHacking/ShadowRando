@@ -165,7 +165,6 @@ namespace ShadowRando
             this.randomSeed.UseVisualStyleBackColor = true;
             this.randomSeed.CheckedChanged += new System.EventHandler(this.randomSeed_CheckedChanged);
             this.randomSeed.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.randomSeed.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // mainPathSelector
             // 
@@ -180,7 +179,6 @@ namespace ShadowRando
             this.toolTip1.SetToolTip(this.mainPathSelector, "Which exits from a level are allowed to be part of the main path.");
             this.mainPathSelector.DropDownClosed += new System.EventHandler(this.SharedMouseDown);
             this.mainPathSelector.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.mainPathSelector.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // maxBackJump
             // 
@@ -271,7 +269,6 @@ namespace ShadowRando
             this.allowSameLevel.UseVisualStyleBackColor = true;
             this.allowSameLevel.CheckedChanged += new System.EventHandler(this.allowSameLevel_CheckedChanged);
             this.allowSameLevel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.allowSameLevel.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // modeSelector
             // 
@@ -292,7 +289,6 @@ namespace ShadowRando
             this.modeSelector.SelectedIndexChanged += new System.EventHandler(this.modeSelector_SelectedIndexChanged);
             this.modeSelector.DropDownClosed += new System.EventHandler(this.SharedMouseDown);
             this.modeSelector.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.modeSelector.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // saveLogButton
             // 
@@ -310,7 +306,6 @@ namespace ShadowRando
             this.saveLogButton.UseVisualStyleBackColor = true;
             this.saveLogButton.Click += new System.EventHandler(this.saveLogButton_Click);
             this.saveLogButton.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.saveLogButton.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // makeChartButton
             // 
@@ -327,7 +322,6 @@ namespace ShadowRando
             this.makeChartButton.UseVisualStyleBackColor = true;
             this.makeChartButton.Click += new System.EventHandler(this.makeChartButton_Click);
             this.makeChartButton.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.makeChartButton.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // randomFNT
             // 
@@ -341,7 +335,6 @@ namespace ShadowRando
             this.randomFNT.UseVisualStyleBackColor = true;
             this.randomFNT.CheckedChanged += new System.EventHandler(this.randomFNT_CheckedChanged);
             this.randomFNT.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.randomFNT.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // includeLast
             // 
@@ -354,7 +347,6 @@ namespace ShadowRando
             this.toolTip1.SetToolTip(this.includeLast, "If checked, the levels from the Last Story will also be randomized.");
             this.includeLast.UseVisualStyleBackColor = true;
             this.includeLast.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.includeLast.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // includeBosses
             // 
@@ -367,7 +359,6 @@ namespace ShadowRando
             this.toolTip1.SetToolTip(this.includeBosses, "If unchecked, boss fights will not be included in the game.");
             this.includeBosses.UseVisualStyleBackColor = true;
             this.includeBosses.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.includeBosses.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // FNTCheckBox_SpecificCharacters
             // 
@@ -382,7 +373,6 @@ namespace ShadowRando
             this.FNTCheckBox_SpecificCharacters.UseVisualStyleBackColor = true;
             this.FNTCheckBox_SpecificCharacters.CheckedChanged += new System.EventHandler(this.FNTCheckBox_SpecificCharacters_CheckedChanged);
             this.FNTCheckBox_SpecificCharacters.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.FNTCheckBox_SpecificCharacters.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // FNTCheckBox_OnlyLinkedAudio
             // 
@@ -397,7 +387,6 @@ namespace ShadowRando
             this.FNTCheckBox_OnlyLinkedAudio.UseVisualStyleBackColor = true;
             this.FNTCheckBox_OnlyLinkedAudio.CheckedChanged += new System.EventHandler(this.FNTCheckBox_OnlyLinkedAudio_CheckedChanged);
             this.FNTCheckBox_OnlyLinkedAudio.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.FNTCheckBox_OnlyLinkedAudio.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // FNTCheckBox_NoSystemMessages
             // 
@@ -411,7 +400,6 @@ namespace ShadowRando
             this.toolTip1.SetToolTip(this.FNTCheckBox_NoSystemMessages, "No system messages will be used in the random pool");
             this.FNTCheckBox_NoSystemMessages.UseVisualStyleBackColor = true;
             this.FNTCheckBox_NoSystemMessages.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.FNTCheckBox_NoSystemMessages.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // FNTCheckBox_NoDuplicatesPreRandomization
             // 
@@ -426,7 +414,6 @@ namespace ShadowRando
         "ible to get the same entry multiple times.");
             this.FNTCheckBox_NoDuplicatesPreRandomization.UseVisualStyleBackColor = true;
             this.FNTCheckBox_NoDuplicatesPreRandomization.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.FNTCheckBox_NoDuplicatesPreRandomization.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // FNTCheckBox_GiveAudioToNoLinkedAudio
             // 
@@ -441,7 +428,6 @@ namespace ShadowRando
             this.FNTCheckBox_GiveAudioToNoLinkedAudio.UseVisualStyleBackColor = true;
             this.FNTCheckBox_GiveAudioToNoLinkedAudio.CheckedChanged += new System.EventHandler(this.FNTCheckBox_GiveAudioToNoLinkedAudio_CheckedChanged);
             this.FNTCheckBox_GiveAudioToNoLinkedAudio.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.FNTCheckBox_GiveAudioToNoLinkedAudio.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // seedTextBox
             // 
@@ -451,6 +437,7 @@ namespace ShadowRando
             this.seedTextBox.TabIndex = 8;
             this.toolTip1.SetToolTip(this.seedTextBox, "This value controls how things are randomized.");
             this.seedTextBox.WordWrap = false;
+            this.seedTextBox.TextChanged += new System.EventHandler(this.SharedMouseDown);
             this.seedTextBox.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
             this.seedTextBox.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
@@ -464,6 +451,7 @@ namespace ShadowRando
             this.randomMusic.Text = "Randomize Music";
             this.toolTip1.SetToolTip(this.randomMusic, "Check this box to shuffle the music that\'s played in each area of the game.");
             this.randomMusic.UseVisualStyleBackColor = true;
+            this.randomMusic.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
             // 
             // tabControl1
             // 
@@ -578,7 +566,6 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_GUNSoldier.Text = "GUN Soldier";
             this.FNTCheckBox_Chars_GUNSoldier.UseVisualStyleBackColor = true;
             this.FNTCheckBox_Chars_GUNSoldier.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.FNTCheckBox_Chars_GUNSoldier.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // FNTCheckBox_Chars_GUNCommander
             // 
@@ -591,7 +578,6 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_GUNCommander.Text = "GUN Commander";
             this.FNTCheckBox_Chars_GUNCommander.UseVisualStyleBackColor = true;
             this.FNTCheckBox_Chars_GUNCommander.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.FNTCheckBox_Chars_GUNCommander.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // FNTCheckBox_Chars_BlackDoom
             // 
@@ -604,7 +590,6 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_BlackDoom.Text = "Black Doom";
             this.FNTCheckBox_Chars_BlackDoom.UseVisualStyleBackColor = true;
             this.FNTCheckBox_Chars_BlackDoom.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.FNTCheckBox_Chars_BlackDoom.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // FNTCheckBox_Chars_Cheese
             // 
@@ -617,7 +602,6 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_Cheese.Text = "Cheese";
             this.FNTCheckBox_Chars_Cheese.UseVisualStyleBackColor = true;
             this.FNTCheckBox_Chars_Cheese.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.FNTCheckBox_Chars_Cheese.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // FNTCheckBox_Chars_Maria
             // 
@@ -630,7 +614,6 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_Maria.Text = "Maria";
             this.FNTCheckBox_Chars_Maria.UseVisualStyleBackColor = true;
             this.FNTCheckBox_Chars_Maria.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.FNTCheckBox_Chars_Maria.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // FNTCheckBox_Chars_Cream
             // 
@@ -643,7 +626,6 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_Cream.Text = "Cream";
             this.FNTCheckBox_Chars_Cream.UseVisualStyleBackColor = true;
             this.FNTCheckBox_Chars_Cream.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.FNTCheckBox_Chars_Cream.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // FNTCheckBox_Chars_Eggman
             // 
@@ -656,7 +638,6 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_Eggman.Text = "Eggman";
             this.FNTCheckBox_Chars_Eggman.UseVisualStyleBackColor = true;
             this.FNTCheckBox_Chars_Eggman.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.FNTCheckBox_Chars_Eggman.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // FNTCheckBox_Chars_Charmy
             // 
@@ -669,7 +650,6 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_Charmy.Text = "Charmy";
             this.FNTCheckBox_Chars_Charmy.UseVisualStyleBackColor = true;
             this.FNTCheckBox_Chars_Charmy.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.FNTCheckBox_Chars_Charmy.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // FNTCheckBox_Chars_Espio
             // 
@@ -682,7 +662,6 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_Espio.Text = "Espio";
             this.FNTCheckBox_Chars_Espio.UseVisualStyleBackColor = true;
             this.FNTCheckBox_Chars_Espio.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.FNTCheckBox_Chars_Espio.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // FNTCheckBox_Chars_Vector
             // 
@@ -695,7 +674,6 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_Vector.Text = "Vector";
             this.FNTCheckBox_Chars_Vector.UseVisualStyleBackColor = true;
             this.FNTCheckBox_Chars_Vector.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.FNTCheckBox_Chars_Vector.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // FNTCheckBox_Chars_Omega
             // 
@@ -708,7 +686,6 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_Omega.Text = "Omega";
             this.FNTCheckBox_Chars_Omega.UseVisualStyleBackColor = true;
             this.FNTCheckBox_Chars_Omega.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.FNTCheckBox_Chars_Omega.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // FNTCheckBox_Chars_Rouge
             // 
@@ -721,7 +698,6 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_Rouge.Text = "Rouge";
             this.FNTCheckBox_Chars_Rouge.UseVisualStyleBackColor = true;
             this.FNTCheckBox_Chars_Rouge.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.FNTCheckBox_Chars_Rouge.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // FNTCheckBox_Chars_Amy
             // 
@@ -734,7 +710,6 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_Amy.Text = "Amy";
             this.FNTCheckBox_Chars_Amy.UseVisualStyleBackColor = true;
             this.FNTCheckBox_Chars_Amy.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.FNTCheckBox_Chars_Amy.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // FNTCheckBox_Chars_Knuckles
             // 
@@ -747,7 +722,6 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_Knuckles.Text = "Knuckles";
             this.FNTCheckBox_Chars_Knuckles.UseVisualStyleBackColor = true;
             this.FNTCheckBox_Chars_Knuckles.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.FNTCheckBox_Chars_Knuckles.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // FNTCheckBox_Chars_Tails
             // 
@@ -760,7 +734,6 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_Tails.Text = "Tails";
             this.FNTCheckBox_Chars_Tails.UseVisualStyleBackColor = true;
             this.FNTCheckBox_Chars_Tails.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.FNTCheckBox_Chars_Tails.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // FNTCheckBox_Chars_Sonic
             // 
@@ -773,7 +746,6 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_Sonic.Text = "Sonic";
             this.FNTCheckBox_Chars_Sonic.UseVisualStyleBackColor = true;
             this.FNTCheckBox_Chars_Sonic.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.FNTCheckBox_Chars_Sonic.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // FNTCheckBox_Chars_Shadow
             // 
@@ -786,7 +758,6 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_Shadow.Text = "Shadow";
             this.FNTCheckBox_Chars_Shadow.UseVisualStyleBackColor = true;
             this.FNTCheckBox_Chars_Shadow.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.FNTCheckBox_Chars_Shadow.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // subtitleAndVoicelineConfigurationGroupBox
             // 
@@ -840,8 +811,6 @@ namespace ShadowRando
             this.spoilerLevelInfo.Size = new System.Drawing.Size(264, 151);
             this.spoilerLevelInfo.TabIndex = 1;
             this.spoilerLevelInfo.WordWrap = false;
-            this.spoilerLevelInfo.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.spoilerLevelInfo.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // spoilerLevelList
             // 
@@ -852,8 +821,6 @@ namespace ShadowRando
             this.spoilerLevelList.Size = new System.Drawing.Size(213, 173);
             this.spoilerLevelList.TabIndex = 0;
             this.spoilerLevelList.SelectedIndexChanged += new System.EventHandler(this.spoilerLevelList_SelectedIndexChanged);
-            this.spoilerLevelList.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
-            this.spoilerLevelList.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // tabPageProgramOptions
             // 
@@ -876,6 +843,7 @@ namespace ShadowRando
             this.checkBoxProgramSound.TabIndex = 10;
             this.checkBoxProgramSound.Text = "Sound";
             this.checkBoxProgramSound.UseVisualStyleBackColor = true;
+            this.checkBoxProgramSound.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
             // 
             // saveFileDialog1
             // 
