@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Numerics;
 using System.Security.Cryptography;
 using System.Windows.Forms;
 
@@ -1014,15 +1015,19 @@ namespace ShadowRando
 		{
 			ShadowSET.LayoutEditorSystem.SetupLayoutEditorSystem();
 			//for (int i = 5; i < 45; i++) {
-				stageAssociationIDMap.TryGetValue(5, out var stageId);
-				var stageDataIdentifier = "stg0" + stageId.ToString();
-				var cmnLayout = stageDataIdentifier + "_cmn.dat";
-				var cmnLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, cmnLayout);
-				var cmnLayoutData = LayoutEditorFunctions.GetShadowLayout(cmnLayoutPath, out var result);
+			stageAssociationIDMap.TryGetValue(5, out var stageId);
+			var stageDataIdentifier = "stg0" + stageId.ToString();
+			var cmnLayout = stageDataIdentifier + "_cmn.dat";
+			var cmnLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, cmnLayout);
+			var cmnLayoutData = LayoutEditorFunctions.GetShadowLayout(cmnLayoutPath, out var resultcmn);
+
+			var nrmLayout = stageDataIdentifier + "_nrm.dat";
+			var nrmLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, nrmLayout);
+			var nrmLayoutData = LayoutEditorFunctions.GetShadowLayout(nrmLayoutPath, out var resultnrm);
 
 			// iterate whatever rules we want, look into making this more efficient as well...
 			// for testing, lets get all breakable boxes and make them contain random weapons
-
+/*			{
 			List<(Object0009_WoodBox item, int index)> woodBoxItems = cmnLayoutData
 				.Select((item, index) => new { Item = item, Index = index })
 				.Where(pair => pair.Item is Object0009_WoodBox)
@@ -1042,47 +1047,147 @@ namespace ShadowRando
 				.ToList();
 
 
-			// valid weapons are 0x0 - 0x21
+				// valid weapons are 0x0 - 0x21
 
-			foreach (var woodbox in woodBoxItems)
+				foreach (var woodbox in woodBoxItems)
+				{
+					woodbox.item.BoxItem = EBoxItem.Weapon;
+					woodbox.item.ModifierWeapon = (EWeapon)r.Next(0x21);
+					cmnLayoutData[woodbox.index] = woodbox.item;
+				}
+
+				foreach (var weaponbox in weaponBoxItems)
+				{
+					weaponbox.item.Weapon = (EWeapon)r.Next(0x21);
+					cmnLayoutData[weaponbox.index] = weaponbox.item;
+				}
+
+				foreach (var metalbox in metalBoxItems)
+				{
+					metalbox.item.BoxItem = EBoxItem.Weapon;
+					metalbox.item.ModifierWeapon = (EWeapon)r.Next(0x21);
+					cmnLayoutData[metalbox.index] = metalbox.item;
+				}
+
+			} // cmn scope boxes
+			// and for nrm now...
 			{
-				woodbox.item.BoxItem = EBoxItem.Weapon;
-				woodbox.item.ModifierWeapon = (EWeapon)r.Next(0x21);
-				cmnLayoutData[woodbox.index] = woodbox.item;
-			}
+				List<(Object0009_WoodBox item, int index)> woodBoxItems = nrmLayoutData
+					.Select((item, index) => new { Item = item, Index = index })
+					.Where(pair => pair.Item is Object0009_WoodBox)
+					.Select(pair => (Item: (Object0009_WoodBox)pair.Item, Index: pair.Index))
+					.ToList();
 
-			foreach (var weaponbox in weaponBoxItems)
-			{
-				weaponbox.item.Weapon = (EWeapon)r.Next(0x21);
-				cmnLayoutData[weaponbox.index] = weaponbox.item;
-			}
+				List<(Object000C_WeaponBox item, int index)> weaponBoxItems = nrmLayoutData
+					.Select((item, index) => new { Item = item, Index = index })
+					.Where(pair => pair.Item is Object000C_WeaponBox)
+					.Select(pair => (Item: (Object000C_WeaponBox)pair.Item, Index: pair.Index))
+					.ToList();
 
-			foreach (var metalbox in metalBoxItems)
-			{
-				metalbox.item.BoxItem = EBoxItem.Weapon;
-				metalbox.item.ModifierWeapon = (EWeapon)r.Next(0x21);
-				cmnLayoutData[metalbox.index] = metalbox.item;
-			}
+				List<(Object000A_MetalBox item, int index)> metalBoxItems = nrmLayoutData
+					.Select((item, index) => new { Item = item, Index = index })
+					.Where(pair => pair.Item is Object000A_MetalBox)
+					.Select(pair => (Item: (Object000A_MetalBox)pair.Item, Index: pair.Index))
+					.ToList();
 
-			// give GUN soldiers random weapons, randomize shields, and set to attack shadow with large range
+				// valid weapons are 0x0 - 0x21
+
+				foreach (var woodbox in woodBoxItems)
+				{
+					woodbox.item.BoxItem = EBoxItem.Weapon;
+					woodbox.item.ModifierWeapon = (EWeapon)r.Next(0x21);
+					cmnLayoutData[woodbox.index] = woodbox.item;
+				}
+
+				foreach (var weaponbox in weaponBoxItems)
+				{
+					weaponbox.item.Weapon = (EWeapon)r.Next(0x21);
+					cmnLayoutData[weaponbox.index] = weaponbox.item;
+				}
+
+				foreach (var metalbox in metalBoxItems)
+				{
+					metalbox.item.BoxItem = EBoxItem.Weapon;
+					metalbox.item.ModifierWeapon = (EWeapon)r.Next(0x21);
+					cmnLayoutData[metalbox.index] = metalbox.item;
+				}
+			} // nrm scope boxes*/
+
+			/*			// give GUN soldiers random weapons, randomize shields, and set to attack shadow with large range
+						List<(Object0064_GUNSoldier item, int index)> gunsoldiers = cmnLayoutData
+						.Select((item, index) => new { Item = item, Index = index })
+						.Where(pair => pair.Item is Object0064_GUNSoldier)
+						.Select(pair => (Item: (Object0064_GUNSoldier)pair.Item, Index: pair.Index))
+						.ToList();
+
+						foreach (var gunsoldier in gunsoldiers)
+						{
+							gunsoldier.item.WeaponType = (Object0064_GUNSoldier.EWeapon)r.Next(0x6);
+							gunsoldier.item.HaveShield = (ENoYes)r.Next(1);
+							gunsoldier.item.SearchRange = 300;
+							gunsoldier.item.SearchWidth = 300;
+							gunsoldier.item.SearchHeight = 100;
+							cmnLayoutData[gunsoldier.index] = gunsoldier.item;
+						}*/
+
+			// lets grab a valid GUN soldiers and then make all objects become it
 			List<(Object0064_GUNSoldier item, int index)> gunsoldiers = cmnLayoutData
 			.Select((item, index) => new { Item = item, Index = index })
 			.Where(pair => pair.Item is Object0064_GUNSoldier)
 			.Select(pair => (Item: (Object0064_GUNSoldier)pair.Item, Index: pair.Index))
 			.ToList();
 
-			foreach (var gunsoldier in gunsoldiers)
+			gunsoldiers[0].item.WeaponType = (Object0064_GUNSoldier.EWeapon)r.Next(0x6);
+			gunsoldiers[0].item.HaveShield = (ENoYes)r.Next(1);
+			gunsoldiers[0].item.SearchRange = 300;
+			gunsoldiers[0].item.SearchWidth = 300;
+			gunsoldiers[0].item.SearchHeight = 100;
+			cmnLayoutData[gunsoldiers[0].index] = gunsoldiers[0].item;
+
+
+			var soldier = gunsoldiers[0].item;
+
+			// make all objects a gun soldier
+			for (int i = 0; i < cmnLayoutData.Count(); i++)
 			{
-				gunsoldier.item.WeaponType = (Object0064_GUNSoldier.EWeapon)r.Next(0x6);
-				gunsoldier.item.HaveShield = (ENoYes)r.Next(1);
-				gunsoldier.item.SearchRange = 300;
-				gunsoldier.item.SearchWidth = 300;
-				gunsoldier.item.SearchHeight = 100;
-				cmnLayoutData[gunsoldier.index] = gunsoldier.item;
+				// skip springs/dashramps/checkpoints
+				if (cmnLayoutData[i].List == 0x00 && (cmnLayoutData[i].Type == 0x01 || (cmnLayoutData[i].Type > 0x00 && cmnLayoutData[i].Type < 0x07)))
+					continue;
+				CloneObjectOverIndex(i, soldier, ref cmnLayoutData, true, r);
+			}
+
+
+			// make all objects a gun soldier
+			for (int i = 0; i < nrmLayoutData.Count(); i++)
+			{
+				// skip springs/dashramps/checkpoints
+				if (cmnLayoutData[i].List == 0x00 && (cmnLayoutData[i].Type == 0x01 || (cmnLayoutData[i].Type > 0x00 && cmnLayoutData[i].Type < 0x07)))
+					continue;
+				CloneObjectOverIndex(i, soldier, ref nrmLayoutData, true, r);
 			}
 
 			LayoutEditorFunctions.SaveShadowLayout(cmnLayoutData, cmnLayoutPath, false);
+			LayoutEditorFunctions.SaveShadowLayout(nrmLayoutData, nrmLayoutPath, false);
 			//}
+		}
+
+		// TODO move this to ShadowSET library?
+		private void CloneObjectOverIndex(int index, Object0064_GUNSoldier cloneObject, ref List<SetObjectShadow> setData, bool isShadow, Random r)
+		{
+			// isShadow ?
+			var oldEntry = setData[index];
+			// may need to make clone entry unkbytes instead , but for now leaving
+			var newEntry = LayoutEditorFunctions.CreateShadowObject(cloneObject.List, cloneObject.Type, oldEntry.PosX, oldEntry.PosY,
+				oldEntry.PosZ, oldEntry.RotX, oldEntry.RotY, oldEntry.RotZ, oldEntry.Link, oldEntry.Rend, oldEntry.UnkBytes); // :
+			var modifier = (Object0064_GUNSoldier)newEntry;                                                                                                                                    //LayoutEditorFunctions.CreateHeroesObject(newEntry.List, newEntry.Type, pos, rot, link, rend, unkb);
+
+			modifier.WeaponType = (Object0064_GUNSoldier.EWeapon)r.Next(0x6);
+			modifier.HaveShield = (ENoYes)r.Next(1);
+			modifier.SearchRange = 300;
+			modifier.SearchWidth = 300;
+			modifier.SearchHeight = 100;
+
+			setData[index] = modifier;
 		}
 
 		private static void Shuffle<T>(Random r, T[] array, int count)
