@@ -1105,20 +1105,20 @@ namespace ShadowRando
 					foreach (var woodbox in woodBoxItems)
 					{
 						woodbox.item.BoxItem = EBoxItem.Weapon;
-						woodbox.item.ModifierWeapon = (EWeapon)r.Next(0x22);
+						woodbox.item.ModifierWeapon = (EWeapon)r.Next(0x1, 0x22);
 						nrmLayoutData[woodbox.index] = woodbox.item;
 					}
 
 					foreach (var weaponbox in weaponBoxItems)
 					{
-						weaponbox.item.Weapon = (EWeapon)r.Next(0x22);
+						weaponbox.item.Weapon = (EWeapon)r.Next(0x1, 0x22);
 						nrmLayoutData[weaponbox.index] = weaponbox.item;
 					}
 
 					foreach (var metalbox in metalBoxItems)
 					{
 						metalbox.item.BoxItem = EBoxItem.Weapon;
-						metalbox.item.ModifierWeapon = (EWeapon)r.Next(0x22);
+						metalbox.item.ModifierWeapon = (EWeapon)r.Next(0x1, 0x22);
 						nrmLayoutData[metalbox.index] = metalbox.item;
 					}
 				} // nrm scope boxes
@@ -1135,19 +1135,45 @@ namespace ShadowRando
 				soldier.Type = 0x64;
 
 				// make all objects a gun soldier
-				/*			for (int i = 0; i < cmnLayoutData.Count(); i++)
-							{
-									// skip springs/dashramps/checkpoints
+				/*				for (int i = 0; i < cmnLayoutData.Count(); i++)
+								{
+									// skip core objs
 									if (cmnLayoutData[i].List == 0x00 &&
 											(
-												(cmnLayoutData[i].Type >= 0x00 && cmnLayoutData[i].Type <= 0x07)
+												(cmnLayoutData[i].Type >= 0x00 && cmnLayoutData[i].Type <= 0x07) ||
+												(cmnLayoutData[i].Type == 0x14) || // goal ring
+												(cmnLayoutData[i].Type == 0x3A) || // shadow box
+												(cmnLayoutData[i].Type == 0x4F) || // vehicles
+												(cmnLayoutData[i].Type == 0x61) || // dark spin entrance
+												(cmnLayoutData[i].Type >= 0xB4 && cmnLayoutData[i].Type <= 0xBE) // bosses
 											)
-										)
-									{
+										|| cmnLayoutData[i].List == 0x14) // gravity related
+									{ 
 										continue;
 									}
-								CloneObjectOverIndex(i, soldier, ref cmnLayoutData, true, r);
-							}*/
+									CloneObjectOverIndex(i, soldier, ref cmnLayoutData, true, r);
+								}
+								if (nrmLayoutData != null)
+								{
+									for (int i = 0; i < nrmLayoutData.Count(); i++)
+									{
+										// skip core objs
+										if (nrmLayoutData[i].List == 0x00 &&
+												(
+													(nrmLayoutData[i].Type >= 0x00 && nrmLayoutData[i].Type <= 0x07) ||
+													(nrmLayoutData[i].Type == 0x14) || // goal ring
+													(nrmLayoutData[i].Type == 0x3A) || // shadow box
+													(nrmLayoutData[i].Type == 0x4F) || // vehicles
+													(nrmLayoutData[i].Type == 0x61) || // dark spin entrance
+													(nrmLayoutData[i].Type >= 0xB4 && nrmLayoutData[i].Type <= 0xBE) // bosses
+												)
+											|| nrmLayoutData[i].List == 0x14) // gravity related
+										{
+											continue;
+										}
+										CloneObjectOverIndex(i, soldier, ref nrmLayoutData, true, r);
+									}
+								}*/
 
 				// make all enemies a gun soldier
 				for (int i = 0; i < cmnLayoutData.Count(); i++)
@@ -1176,15 +1202,6 @@ namespace ShadowRando
 						}
 					}
 				}
-
-				// make all objects a gun soldier
-				/*			for (int i = 0; i < nrmLayoutData.Count(); i++)
-							{
-								// skip springs/dashramps/checkpoints
-								if (cmnLayoutData[i].List == 0x00 && (cmnLayoutData[i].Type == 0x01 || (cmnLayoutData[i].Type > 0x00 && cmnLayoutData[i].Type < 0x07)))
-									continue;
-								CloneObjectOverIndex(i, soldier, ref nrmLayoutData, true, r);
-							}*/
 
 				LayoutEditorFunctions.SaveShadowLayout(cmnLayoutData, cmnLayoutPath, false);
 				if (nrmLayoutData != null)
