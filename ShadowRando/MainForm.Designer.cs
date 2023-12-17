@@ -35,6 +35,7 @@ namespace ShadowRando
             System.Windows.Forms.Label levelOrder_maxBackwardsJumpLabel;
             System.Windows.Forms.Label levelOrder_maxForwardsJumpLabel;
             System.Windows.Forms.Label levelOrder_backwardsJumpProbabilityLabel;
+            System.Windows.Forms.Label setLayout_HaveShieldBlockProbLabel;
             this.randomSeed = new System.Windows.Forms.CheckBox();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.mainPathSelector = new System.Windows.Forms.ComboBox();
@@ -57,11 +58,22 @@ namespace ShadowRando
             this.seedTextBox = new System.Windows.Forms.TextBox();
             this.randomMusic = new System.Windows.Forms.CheckBox();
             this.randomSET = new System.Windows.Forms.CheckBox();
-            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.setLayout_Mode = new System.Windows.Forms.ComboBox();
+            this.setLayout_randomWeaponsInBoxes = new System.Windows.Forms.CheckBox();
+            this.setLayout_enemyRandomWeapons = new System.Windows.Forms.CheckBox();
+            this.setLayout_enemyPreventBadLinkID = new System.Windows.Forms.CheckBox();
+            this.setLayout_keepAffiliation = new System.Windows.Forms.CheckBox();
+            this.setLayout_keepType = new System.Windows.Forms.CheckBox();
+            this.setLayout_haveShieldBlockProb = new System.Windows.Forms.NumericUpDown();
+            this.setLayout_enemyOverrideShieldBlock = new System.Windows.Forms.CheckBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPageLevelOrder = new System.Windows.Forms.TabPage();
             this.levelOrder_modeLabel = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.tabPageSET = new System.Windows.Forms.TabPage();
+            this.tempWarning = new System.Windows.Forms.Label();
+            this.setLayout_groupBoxEnemyConfiguration = new System.Windows.Forms.GroupBox();
+            this.setLayout_ModeLabel = new System.Windows.Forms.Label();
             this.tabPageSubtitles = new System.Windows.Forms.TabPage();
             this.subtitleAndVoicelineSpecifiedCharactersGroupBox = new System.Windows.Forms.GroupBox();
             this.FNTCheckBox_Chars_GUNSoldier = new System.Windows.Forms.CheckBox();
@@ -82,8 +94,6 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_Sonic = new System.Windows.Forms.CheckBox();
             this.FNTCheckBox_Chars_Shadow = new System.Windows.Forms.CheckBox();
             this.subtitleAndVoicelineConfigurationGroupBox = new System.Windows.Forms.GroupBox();
-            this.tabPageSET = new System.Windows.Forms.TabPage();
-            this.setLayoutModeLabel = new System.Windows.Forms.Label();
             this.tabPageMusic = new System.Windows.Forms.TabPage();
             this.randomMusicSkipRankTheme = new System.Windows.Forms.CheckBox();
             this.tabPageSpoilers = new System.Windows.Forms.TabPage();
@@ -98,16 +108,19 @@ namespace ShadowRando
             levelOrder_maxBackwardsJumpLabel = new System.Windows.Forms.Label();
             levelOrder_maxForwardsJumpLabel = new System.Windows.Forms.Label();
             levelOrder_backwardsJumpProbabilityLabel = new System.Windows.Forms.Label();
+            setLayout_HaveShieldBlockProbLabel = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.maxBackJump)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.maxForwJump)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.backJumpProb)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.setLayout_haveShieldBlockProb)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tabPageLevelOrder.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.tabPageSET.SuspendLayout();
+            this.setLayout_groupBoxEnemyConfiguration.SuspendLayout();
             this.tabPageSubtitles.SuspendLayout();
             this.subtitleAndVoicelineSpecifiedCharactersGroupBox.SuspendLayout();
             this.subtitleAndVoicelineConfigurationGroupBox.SuspendLayout();
-            this.tabPageSET.SuspendLayout();
             this.tabPageMusic.SuspendLayout();
             this.tabPageSpoilers.SuspendLayout();
             this.tabPageProgramOptions.SuspendLayout();
@@ -134,7 +147,7 @@ namespace ShadowRando
             // levelOrder_maxBackwardsJumpLabel
             // 
             levelOrder_maxBackwardsJumpLabel.AutoSize = true;
-            levelOrder_maxBackwardsJumpLabel.Location = new System.Drawing.Point(31, 29);
+            levelOrder_maxBackwardsJumpLabel.Location = new System.Drawing.Point(67, 29);
             levelOrder_maxBackwardsJumpLabel.Name = "levelOrder_maxBackwardsJumpLabel";
             levelOrder_maxBackwardsJumpLabel.Size = new System.Drawing.Size(114, 13);
             levelOrder_maxBackwardsJumpLabel.TabIndex = 2;
@@ -143,7 +156,7 @@ namespace ShadowRando
             // levelOrder_maxForwardsJumpLabel
             // 
             levelOrder_maxForwardsJumpLabel.AutoSize = true;
-            levelOrder_maxForwardsJumpLabel.Location = new System.Drawing.Point(41, 54);
+            levelOrder_maxForwardsJumpLabel.Location = new System.Drawing.Point(77, 54);
             levelOrder_maxForwardsJumpLabel.Name = "levelOrder_maxForwardsJumpLabel";
             levelOrder_maxForwardsJumpLabel.Size = new System.Drawing.Size(104, 13);
             levelOrder_maxForwardsJumpLabel.TabIndex = 4;
@@ -152,16 +165,25 @@ namespace ShadowRando
             // levelOrder_backwardsJumpProbabilityLabel
             // 
             levelOrder_backwardsJumpProbabilityLabel.AutoSize = true;
-            levelOrder_backwardsJumpProbabilityLabel.Location = new System.Drawing.Point(4, 79);
+            levelOrder_backwardsJumpProbabilityLabel.Location = new System.Drawing.Point(40, 79);
             levelOrder_backwardsJumpProbabilityLabel.Name = "levelOrder_backwardsJumpProbabilityLabel";
             levelOrder_backwardsJumpProbabilityLabel.Size = new System.Drawing.Size(142, 13);
             levelOrder_backwardsJumpProbabilityLabel.TabIndex = 6;
             levelOrder_backwardsJumpProbabilityLabel.Text = "Backwards Jump Probability:";
             // 
+            // setLayout_HaveShieldBlockProbLabel
+            // 
+            setLayout_HaveShieldBlockProbLabel.AutoSize = true;
+            setLayout_HaveShieldBlockProbLabel.Location = new System.Drawing.Point(6, 101);
+            setLayout_HaveShieldBlockProbLabel.Name = "setLayout_HaveShieldBlockProbLabel";
+            setLayout_HaveShieldBlockProbLabel.Size = new System.Drawing.Size(148, 13);
+            setLayout_HaveShieldBlockProbLabel.TabIndex = 13;
+            setLayout_HaveShieldBlockProbLabel.Text = "HaveShield/Block Probability:";
+            // 
             // randomSeed
             // 
             this.randomSeed.AutoSize = true;
-            this.randomSeed.Location = new System.Drawing.Point(196, 8);
+            this.randomSeed.Location = new System.Drawing.Point(232, 8);
             this.randomSeed.Name = "randomSeed";
             this.randomSeed.Size = new System.Drawing.Size(66, 17);
             this.randomSeed.TabIndex = 2;
@@ -180,13 +202,13 @@ namespace ShadowRando
             "Any Exit"});
             this.mainPathSelector.Location = new System.Drawing.Point(67, 3);
             this.mainPathSelector.Name = "mainPathSelector";
-            this.mainPathSelector.Size = new System.Drawing.Size(121, 21);
+            this.mainPathSelector.Size = new System.Drawing.Size(156, 21);
             this.mainPathSelector.TabIndex = 1;
             this.toolTip1.SetToolTip(this.mainPathSelector, "Which exits from a level are allowed to be part of the main path.");
             // 
             // maxBackJump
             // 
-            this.maxBackJump.Location = new System.Drawing.Point(146, 27);
+            this.maxBackJump.Location = new System.Drawing.Point(182, 27);
             this.maxBackJump.Maximum = new decimal(new int[] {
             69,
             0,
@@ -210,7 +232,7 @@ namespace ShadowRando
             // 
             // maxForwJump
             // 
-            this.maxForwJump.Location = new System.Drawing.Point(146, 53);
+            this.maxForwJump.Location = new System.Drawing.Point(182, 53);
             this.maxForwJump.Maximum = new decimal(new int[] {
             70,
             0,
@@ -247,7 +269,7 @@ namespace ShadowRando
             // 
             // backJumpProb
             // 
-            this.backJumpProb.Location = new System.Drawing.Point(146, 77);
+            this.backJumpProb.Location = new System.Drawing.Point(182, 77);
             this.backJumpProb.Name = "backJumpProb";
             this.backJumpProb.Size = new System.Drawing.Size(41, 20);
             this.backJumpProb.TabIndex = 7;
@@ -261,7 +283,7 @@ namespace ShadowRando
             // allowSameLevel
             // 
             this.allowSameLevel.AutoSize = true;
-            this.allowSameLevel.Location = new System.Drawing.Point(193, 79);
+            this.allowSameLevel.Location = new System.Drawing.Point(229, 79);
             this.allowSameLevel.Name = "allowSameLevel";
             this.allowSameLevel.Size = new System.Drawing.Size(155, 17);
             this.allowSameLevel.TabIndex = 8;
@@ -284,10 +306,9 @@ namespace ShadowRando
             "Wild"});
             this.levelOrderModeSelector.Location = new System.Drawing.Point(49, 32);
             this.levelOrderModeSelector.Name = "levelOrderModeSelector";
-            this.levelOrderModeSelector.Size = new System.Drawing.Size(141, 21);
+            this.levelOrderModeSelector.Size = new System.Drawing.Size(177, 21);
             this.levelOrderModeSelector.TabIndex = 4;
             this.toolTip1.SetToolTip(this.levelOrderModeSelector, "If you don\'t know what this is, please read the mod\'s description.");
-            this.levelOrderModeSelector.SelectedIndexChanged += new System.EventHandler(this.levelOrderModeSelector_SelectedIndexChanged);
             // 
             // saveLogButton
             // 
@@ -429,7 +450,7 @@ namespace ShadowRando
             // 
             this.seedTextBox.Location = new System.Drawing.Point(49, 6);
             this.seedTextBox.Name = "seedTextBox";
-            this.seedTextBox.Size = new System.Drawing.Size(141, 20);
+            this.seedTextBox.Size = new System.Drawing.Size(177, 20);
             this.seedTextBox.TabIndex = 8;
             this.toolTip1.SetToolTip(this.seedTextBox, "This value controls how things are randomized.");
             this.seedTextBox.WordWrap = false;
@@ -459,25 +480,114 @@ namespace ShadowRando
             this.randomSET.UseVisualStyleBackColor = true;
             this.randomSET.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
             // 
-            // comboBox1
+            // setLayout_Mode
             // 
-            this.comboBox1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Items.AddRange(new object[] {
-            "Wild",
-            "1:1 Per Stage",
-            "1:1 Global"});
-            this.comboBox1.Location = new System.Drawing.Point(50, 23);
-            this.comboBox1.Name = "comboBox1";
-            this.comboBox1.Size = new System.Drawing.Size(104, 21);
-            this.comboBox1.TabIndex = 11;
-            this.toolTip1.SetToolTip(this.comboBox1, "If you don\'t know what this is, please read the mod\'s description.");
+            this.setLayout_Mode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.setLayout_Mode.FormattingEnabled = true;
+            this.setLayout_Mode.Items.AddRange(new object[] {
+            "Wild (Not Ready, Does Nothing)",
+            "1:1 Per Stage (Not Ready)",
+            "1:1 Global (Not Ready)",
+            "All Enemies are GUN Soldiers",
+            "All Objects are GUN Soldiers"});
+            this.setLayout_Mode.Location = new System.Drawing.Point(55, 25);
+            this.setLayout_Mode.Name = "setLayout_Mode";
+            this.setLayout_Mode.Size = new System.Drawing.Size(168, 21);
+            this.setLayout_Mode.TabIndex = 11;
+            this.toolTip1.SetToolTip(this.setLayout_Mode, "If you don\'t know what this is, please read the mod\'s description.");
+            // 
+            // setLayout_randomWeaponsInBoxes
+            // 
+            this.setLayout_randomWeaponsInBoxes.AutoSize = true;
+            this.setLayout_randomWeaponsInBoxes.Location = new System.Drawing.Point(242, 99);
+            this.setLayout_randomWeaponsInBoxes.Name = "setLayout_randomWeaponsInBoxes";
+            this.setLayout_randomWeaponsInBoxes.Size = new System.Drawing.Size(158, 17);
+            this.setLayout_randomWeaponsInBoxes.TabIndex = 12;
+            this.setLayout_randomWeaponsInBoxes.Text = "Random Weapons in Boxes";
+            this.toolTip1.SetToolTip(this.setLayout_randomWeaponsInBoxes, "Makes wood, metal, and weapon boxes all contain a random weapon.");
+            this.setLayout_randomWeaponsInBoxes.UseVisualStyleBackColor = true;
+            // 
+            // setLayout_enemyRandomWeapons
+            // 
+            this.setLayout_enemyRandomWeapons.AutoSize = true;
+            this.setLayout_enemyRandomWeapons.Enabled = false;
+            this.setLayout_enemyRandomWeapons.Location = new System.Drawing.Point(6, 49);
+            this.setLayout_enemyRandomWeapons.Name = "setLayout_enemyRandomWeapons";
+            this.setLayout_enemyRandomWeapons.Size = new System.Drawing.Size(115, 17);
+            this.setLayout_enemyRandomWeapons.TabIndex = 12;
+            this.setLayout_enemyRandomWeapons.Text = "Random Weapons";
+            this.toolTip1.SetToolTip(this.setLayout_enemyRandomWeapons, "If off, enemies of the same type will all have the same weapon type");
+            this.setLayout_enemyRandomWeapons.UseVisualStyleBackColor = true;
+            // 
+            // setLayout_enemyPreventBadLinkID
+            // 
+            this.setLayout_enemyPreventBadLinkID.AutoSize = true;
+            this.setLayout_enemyPreventBadLinkID.Enabled = false;
+            this.setLayout_enemyPreventBadLinkID.Location = new System.Drawing.Point(6, 65);
+            this.setLayout_enemyPreventBadLinkID.Name = "setLayout_enemyPreventBadLinkID";
+            this.setLayout_enemyPreventBadLinkID.Size = new System.Drawing.Size(203, 17);
+            this.setLayout_enemyPreventBadLinkID.TabIndex = 10;
+            this.setLayout_enemyPreventBadLinkID.Text = "Prevent Bad Link ID (Recommended)";
+            this.toolTip1.SetToolTip(this.setLayout_enemyPreventBadLinkID, "Prevents enemies from inheriting unsupported Link ID behaviors (ex: GUN Soldier l" +
+        "inked to Enemy Respawner)");
+            this.setLayout_enemyPreventBadLinkID.UseVisualStyleBackColor = true;
+            // 
+            // setLayout_keepAffiliation
+            // 
+            this.setLayout_keepAffiliation.AutoSize = true;
+            this.setLayout_keepAffiliation.Enabled = false;
+            this.setLayout_keepAffiliation.Location = new System.Drawing.Point(6, 34);
+            this.setLayout_keepAffiliation.Name = "setLayout_keepAffiliation";
+            this.setLayout_keepAffiliation.Size = new System.Drawing.Size(168, 17);
+            this.setLayout_keepAffiliation.TabIndex = 9;
+            this.setLayout_keepAffiliation.Text = "Keep Affiliation (GUN -> GUN)";
+            this.toolTip1.SetToolTip(this.setLayout_keepAffiliation, "Enemies will randomize within their affiliation only. GUN -> GUN; BK -> BK; EGG -" +
+        "> EGG");
+            this.setLayout_keepAffiliation.UseVisualStyleBackColor = true;
+            // 
+            // setLayout_keepType
+            // 
+            this.setLayout_keepType.AutoSize = true;
+            this.setLayout_keepType.Enabled = false;
+            this.setLayout_keepType.Location = new System.Drawing.Point(6, 19);
+            this.setLayout_keepType.Name = "setLayout_keepType";
+            this.setLayout_keepType.Size = new System.Drawing.Size(156, 17);
+            this.setLayout_keepType.TabIndex = 8;
+            this.setLayout_keepType.Text = "Keep Type (Flying -> Flying)";
+            this.toolTip1.SetToolTip(this.setLayout_keepType, "Example: A flying enemy (GUN Beetle) will be restricted to become another flying " +
+        "enemy type.");
+            this.setLayout_keepType.UseVisualStyleBackColor = true;
+            // 
+            // setLayout_haveShieldBlockProb
+            // 
+            this.setLayout_haveShieldBlockProb.Location = new System.Drawing.Point(154, 98);
+            this.setLayout_haveShieldBlockProb.Name = "setLayout_haveShieldBlockProb";
+            this.setLayout_haveShieldBlockProb.Size = new System.Drawing.Size(41, 20);
+            this.setLayout_haveShieldBlockProb.TabIndex = 14;
+            this.toolTip1.SetToolTip(this.setLayout_haveShieldBlockProb, "The probability that a backwards jump will be chosen instead of a forwards jump.");
+            this.setLayout_haveShieldBlockProb.Value = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+            // 
+            // setLayout_enemyOverrideShieldBlock
+            // 
+            this.setLayout_enemyOverrideShieldBlock.AutoSize = true;
+            this.setLayout_enemyOverrideShieldBlock.Enabled = false;
+            this.setLayout_enemyOverrideShieldBlock.Location = new System.Drawing.Point(6, 81);
+            this.setLayout_enemyOverrideShieldBlock.Name = "setLayout_enemyOverrideShieldBlock";
+            this.setLayout_enemyOverrideShieldBlock.Size = new System.Drawing.Size(169, 17);
+            this.setLayout_enemyOverrideShieldBlock.TabIndex = 11;
+            this.setLayout_enemyOverrideShieldBlock.Text = "Override Shield/Block % Ratio";
+            this.toolTip1.SetToolTip(this.setLayout_enemyOverrideShieldBlock, "% an enemy will gain a shield or block ability, if eligible");
+            this.setLayout_enemyOverrideShieldBlock.UseVisualStyleBackColor = true;
             // 
             // tabControl1
             // 
             this.tabControl1.Controls.Add(this.tabPageLevelOrder);
-            this.tabControl1.Controls.Add(this.tabPageSubtitles);
             this.tabControl1.Controls.Add(this.tabPageSET);
+            this.tabControl1.Controls.Add(this.tabPageSubtitles);
             this.tabControl1.Controls.Add(this.tabPageMusic);
             this.tabControl1.Controls.Add(this.tabPageSpoilers);
             this.tabControl1.Controls.Add(this.tabPageProgramOptions);
@@ -500,7 +610,7 @@ namespace ShadowRando
             this.tabPageLevelOrder.Controls.Add(this.randomSeed);
             this.tabPageLevelOrder.Location = new System.Drawing.Point(4, 22);
             this.tabPageLevelOrder.Name = "tabPageLevelOrder";
-            this.tabPageLevelOrder.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tabPageLevelOrder.Padding = new System.Windows.Forms.Padding(3);
             this.tabPageLevelOrder.Size = new System.Drawing.Size(495, 192);
             this.tabPageLevelOrder.TabIndex = 0;
             this.tabPageLevelOrder.Text = "Level Order";
@@ -531,8 +641,61 @@ namespace ShadowRando
             this.panel1.Location = new System.Drawing.Point(3, 56);
             this.panel1.Margin = new System.Windows.Forms.Padding(0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(351, 100);
+            this.panel1.Size = new System.Drawing.Size(387, 100);
             this.panel1.TabIndex = 5;
+            // 
+            // tabPageSET
+            // 
+            this.tabPageSET.Controls.Add(this.tempWarning);
+            this.tabPageSET.Controls.Add(this.setLayout_groupBoxEnemyConfiguration);
+            this.tabPageSET.Controls.Add(this.setLayout_randomWeaponsInBoxes);
+            this.tabPageSET.Controls.Add(this.setLayout_Mode);
+            this.tabPageSET.Controls.Add(this.setLayout_ModeLabel);
+            this.tabPageSET.Controls.Add(this.randomSET);
+            this.tabPageSET.Location = new System.Drawing.Point(4, 22);
+            this.tabPageSET.Margin = new System.Windows.Forms.Padding(2);
+            this.tabPageSET.Name = "tabPageSET";
+            this.tabPageSET.Size = new System.Drawing.Size(495, 192);
+            this.tabPageSET.TabIndex = 5;
+            this.tabPageSET.Text = "SET Layout";
+            this.tabPageSET.UseVisualStyleBackColor = true;
+            // 
+            // tempWarning
+            // 
+            this.tempWarning.AutoSize = true;
+            this.tempWarning.BackColor = System.Drawing.Color.Wheat;
+            this.tempWarning.Location = new System.Drawing.Point(239, 25);
+            this.tempWarning.Name = "tempWarning";
+            this.tempWarning.Size = new System.Drawing.Size(207, 65);
+            this.tempWarning.TabIndex = 14;
+            this.tempWarning.Text = "Warning: Only GUN Soldiers Modes \r\nand Random Weapons in Boxes are ready\r\n\r\nCurre" +
+    "ntly applies to all .cmn and .nrm\r\n.hrd layouts are ignored";
+            // 
+            // setLayout_groupBoxEnemyConfiguration
+            // 
+            this.setLayout_groupBoxEnemyConfiguration.Controls.Add(this.setLayout_haveShieldBlockProb);
+            this.setLayout_groupBoxEnemyConfiguration.Controls.Add(setLayout_HaveShieldBlockProbLabel);
+            this.setLayout_groupBoxEnemyConfiguration.Controls.Add(this.setLayout_enemyRandomWeapons);
+            this.setLayout_groupBoxEnemyConfiguration.Controls.Add(this.setLayout_enemyOverrideShieldBlock);
+            this.setLayout_groupBoxEnemyConfiguration.Controls.Add(this.setLayout_enemyPreventBadLinkID);
+            this.setLayout_groupBoxEnemyConfiguration.Controls.Add(this.setLayout_keepAffiliation);
+            this.setLayout_groupBoxEnemyConfiguration.Controls.Add(this.setLayout_keepType);
+            this.setLayout_groupBoxEnemyConfiguration.Enabled = false;
+            this.setLayout_groupBoxEnemyConfiguration.Location = new System.Drawing.Point(8, 50);
+            this.setLayout_groupBoxEnemyConfiguration.Name = "setLayout_groupBoxEnemyConfiguration";
+            this.setLayout_groupBoxEnemyConfiguration.Size = new System.Drawing.Size(215, 126);
+            this.setLayout_groupBoxEnemyConfiguration.TabIndex = 13;
+            this.setLayout_groupBoxEnemyConfiguration.TabStop = false;
+            this.setLayout_groupBoxEnemyConfiguration.Text = "Enemy Configuration";
+            // 
+            // setLayout_ModeLabel
+            // 
+            this.setLayout_ModeLabel.AutoSize = true;
+            this.setLayout_ModeLabel.Location = new System.Drawing.Point(13, 29);
+            this.setLayout_ModeLabel.Name = "setLayout_ModeLabel";
+            this.setLayout_ModeLabel.Size = new System.Drawing.Size(37, 13);
+            this.setLayout_ModeLabel.TabIndex = 10;
+            this.setLayout_ModeLabel.Text = "Mode:";
             // 
             // tabPageSubtitles
             // 
@@ -541,7 +704,7 @@ namespace ShadowRando
             this.tabPageSubtitles.Controls.Add(this.randomFNT);
             this.tabPageSubtitles.Location = new System.Drawing.Point(4, 22);
             this.tabPageSubtitles.Name = "tabPageSubtitles";
-            this.tabPageSubtitles.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tabPageSubtitles.Padding = new System.Windows.Forms.Padding(3);
             this.tabPageSubtitles.Size = new System.Drawing.Size(495, 192);
             this.tabPageSubtitles.TabIndex = 2;
             this.tabPageSubtitles.Text = "Subtitles";
@@ -776,28 +939,6 @@ namespace ShadowRando
             this.subtitleAndVoicelineConfigurationGroupBox.TabStop = false;
             this.subtitleAndVoicelineConfigurationGroupBox.Text = "Subtitles / Voicelines Configuration";
             // 
-            // tabPageSET
-            // 
-            this.tabPageSET.Controls.Add(this.comboBox1);
-            this.tabPageSET.Controls.Add(this.setLayoutModeLabel);
-            this.tabPageSET.Controls.Add(this.randomSET);
-            this.tabPageSET.Location = new System.Drawing.Point(4, 22);
-            this.tabPageSET.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.tabPageSET.Name = "tabPageSET";
-            this.tabPageSET.Size = new System.Drawing.Size(495, 192);
-            this.tabPageSET.TabIndex = 5;
-            this.tabPageSET.Text = "SET Layout";
-            this.tabPageSET.UseVisualStyleBackColor = true;
-            // 
-            // setLayoutModeLabel
-            // 
-            this.setLayoutModeLabel.AutoSize = true;
-            this.setLayoutModeLabel.Location = new System.Drawing.Point(8, 27);
-            this.setLayoutModeLabel.Name = "setLayoutModeLabel";
-            this.setLayoutModeLabel.Size = new System.Drawing.Size(37, 13);
-            this.setLayoutModeLabel.TabIndex = 10;
-            this.setLayoutModeLabel.Text = "Mode:";
-            // 
             // tabPageMusic
             // 
             this.tabPageMusic.Controls.Add(this.randomMusicSkipRankTheme);
@@ -806,7 +947,7 @@ namespace ShadowRando
             this.tabPageMusic.Name = "tabPageMusic";
             this.tabPageMusic.Size = new System.Drawing.Size(495, 192);
             this.tabPageMusic.TabIndex = 3;
-            this.tabPageMusic.Text = "Misc";
+            this.tabPageMusic.Text = "Music";
             this.tabPageMusic.UseVisualStyleBackColor = true;
             // 
             // randomMusicSkipRankTheme
@@ -814,7 +955,7 @@ namespace ShadowRando
             this.randomMusicSkipRankTheme.AutoSize = true;
             this.randomMusicSkipRankTheme.Enabled = false;
             this.randomMusicSkipRankTheme.Location = new System.Drawing.Point(14, 28);
-            this.randomMusicSkipRankTheme.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.randomMusicSkipRankTheme.Margin = new System.Windows.Forms.Padding(2);
             this.randomMusicSkipRankTheme.Name = "randomMusicSkipRankTheme";
             this.randomMusicSkipRankTheme.Size = new System.Drawing.Size(198, 17);
             this.randomMusicSkipRankTheme.TabIndex = 8;
@@ -829,7 +970,7 @@ namespace ShadowRando
             this.tabPageSpoilers.Controls.Add(this.spoilerLevelList);
             this.tabPageSpoilers.Location = new System.Drawing.Point(4, 22);
             this.tabPageSpoilers.Name = "tabPageSpoilers";
-            this.tabPageSpoilers.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this.tabPageSpoilers.Padding = new System.Windows.Forms.Padding(3);
             this.tabPageSpoilers.Size = new System.Drawing.Size(495, 192);
             this.tabPageSpoilers.TabIndex = 1;
             this.tabPageSpoilers.Text = "Spoilers";
@@ -910,19 +1051,22 @@ namespace ShadowRando
             ((System.ComponentModel.ISupportInitialize)(this.maxBackJump)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.maxForwJump)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.backJumpProb)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.setLayout_haveShieldBlockProb)).EndInit();
             this.tabControl1.ResumeLayout(false);
             this.tabPageLevelOrder.ResumeLayout(false);
             this.tabPageLevelOrder.PerformLayout();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
+            this.tabPageSET.ResumeLayout(false);
+            this.tabPageSET.PerformLayout();
+            this.setLayout_groupBoxEnemyConfiguration.ResumeLayout(false);
+            this.setLayout_groupBoxEnemyConfiguration.PerformLayout();
             this.tabPageSubtitles.ResumeLayout(false);
             this.tabPageSubtitles.PerformLayout();
             this.subtitleAndVoicelineSpecifiedCharactersGroupBox.ResumeLayout(false);
             this.subtitleAndVoicelineSpecifiedCharactersGroupBox.PerformLayout();
             this.subtitleAndVoicelineConfigurationGroupBox.ResumeLayout(false);
             this.subtitleAndVoicelineConfigurationGroupBox.PerformLayout();
-            this.tabPageSET.ResumeLayout(false);
-            this.tabPageSET.PerformLayout();
             this.tabPageMusic.ResumeLayout(false);
             this.tabPageMusic.PerformLayout();
             this.tabPageSpoilers.ResumeLayout(false);
@@ -989,8 +1133,17 @@ namespace ShadowRando
 		private System.Windows.Forms.CheckBox checkBoxProgramSound;
 		private System.Windows.Forms.TabPage tabPageSET;
 		private System.Windows.Forms.CheckBox randomSET;
-		private System.Windows.Forms.ComboBox comboBox1;
-		private System.Windows.Forms.Label setLayoutModeLabel;
+		private System.Windows.Forms.ComboBox setLayout_Mode;
+		private System.Windows.Forms.Label setLayout_ModeLabel;
 		private System.Windows.Forms.CheckBox randomMusicSkipRankTheme;
+		private System.Windows.Forms.CheckBox setLayout_randomWeaponsInBoxes;
+		private System.Windows.Forms.GroupBox setLayout_groupBoxEnemyConfiguration;
+		private System.Windows.Forms.CheckBox setLayout_enemyRandomWeapons;
+		private System.Windows.Forms.CheckBox setLayout_enemyPreventBadLinkID;
+		private System.Windows.Forms.CheckBox setLayout_keepAffiliation;
+		private System.Windows.Forms.CheckBox setLayout_keepType;
+		private System.Windows.Forms.NumericUpDown setLayout_haveShieldBlockProb;
+		private System.Windows.Forms.CheckBox setLayout_enemyOverrideShieldBlock;
+		private System.Windows.Forms.Label tempWarning;
 	}
 }
