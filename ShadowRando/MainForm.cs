@@ -7,10 +7,12 @@ using ShadowSET;
 using ShadowSET.SETIDBIN;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.PerformanceData;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Numerics;
+using System.Runtime.InteropServices.ComTypes;
 using System.Security.Cryptography;
 using System.Windows.Forms;
 
@@ -1029,190 +1031,61 @@ namespace ShadowRando
 				try
 				{
 					nrmLayoutData = LayoutEditorFunctions.GetShadowLayout(nrmLayoutPath, out var resultnrm);
-				} catch (FileNotFoundException e)
+				} catch (FileNotFoundException)
 				{
 					// some stages don't have nrm
 				}
 
 				// iterate whatever rules we want, look into making this more efficient as well...
-				// for testing, lets get all breakable boxes and make them contain random weapons
-				{
-					List<(Object0009_WoodBox item, int index)> woodBoxItems = cmnLayoutData
-						.Select((item, index) => new { Item = item, Index = index })
-						.Where(pair => pair.Item is Object0009_WoodBox)
-						.Select(pair => (Item: (Object0009_WoodBox)pair.Item, Index: pair.Index))
-						.ToList();
 
-					List<(Object000C_WeaponBox item, int index)> weaponBoxItems = cmnLayoutData
-						.Select((item, index) => new { Item = item, Index = index })
-						.Where(pair => pair.Item is Object000C_WeaponBox)
-						.Select(pair => (Item: (Object000C_WeaponBox)pair.Item, Index: pair.Index))
-						.ToList();
+				/***
+				 *          Planned modes
+				    wild enemies (no rules at all, ignoring any restrictions below)
+					random per stage (all hawks in one stage become a specific enemy)
+					random per seed (all hawks in ALL stages become a specific enemy)
 
-					List<(Object000A_MetalBox item, int index)> metalBoxItems = cmnLayoutData
-						.Select((item, index) => new { Item = item, Index = index })
-						.Where(pair => pair.Item is Object000A_MetalBox)
-						.Select(pair => (Item: (Object000A_MetalBox)pair.Item, Index: pair.Index))
-						.ToList();
+					enemy prop customization:
+					same type (ex flying -> flying) (note: * include Bigfoot with prop floating as flying type)
+					same affiliation (ex bk -> bk)
+					all same weapon type or random
+					shield type enemies % (percent that enemies will have shields or the canBlockShots property)
+					prevent invalid linkid scenario for certain enemies (gun soldier being linked to a respawner, leading to never triggering it)
+				*/
 
-
-					// valid weapons are 0x0 - 0x21
-
-					foreach (var woodbox in woodBoxItems)
-					{
-						woodbox.item.BoxItem = EBoxItem.Weapon;
-						woodbox.item.ModifierWeapon = (EWeapon)r.Next(0x22);
-						cmnLayoutData[woodbox.index] = woodbox.item;
-					}
-
-					foreach (var weaponbox in weaponBoxItems)
-					{
-						weaponbox.item.Weapon = (EWeapon)r.Next(0x22);
-						cmnLayoutData[weaponbox.index] = weaponbox.item;
-					}
-
-					foreach (var metalbox in metalBoxItems)
-					{
-						metalbox.item.BoxItem = EBoxItem.Weapon;
-						metalbox.item.ModifierWeapon = (EWeapon)r.Next(0x22);
-						cmnLayoutData[metalbox.index] = metalbox.item;
-					}
-
-				} // cmn scope boxes
-				  // and for nrm now...
-				  if (nrmLayoutData != null)
-					{
-					List<(Object0009_WoodBox item, int index)> woodBoxItems = nrmLayoutData
-						.Select((item, index) => new { Item = item, Index = index })
-						.Where(pair => pair.Item is Object0009_WoodBox)
-						.Select(pair => (Item: (Object0009_WoodBox)pair.Item, Index: pair.Index))
-						.ToList();
-
-					List<(Object000C_WeaponBox item, int index)> weaponBoxItems = nrmLayoutData
-						.Select((item, index) => new { Item = item, Index = index })
-						.Where(pair => pair.Item is Object000C_WeaponBox)
-						.Select(pair => (Item: (Object000C_WeaponBox)pair.Item, Index: pair.Index))
-						.ToList();
-
-					List<(Object000A_MetalBox item, int index)> metalBoxItems = nrmLayoutData
-						.Select((item, index) => new { Item = item, Index = index })
-						.Where(pair => pair.Item is Object000A_MetalBox)
-						.Select(pair => (Item: (Object000A_MetalBox)pair.Item, Index: pair.Index))
-						.ToList();
-
-					// valid weapons are 0x0 - 0x21
-
-					foreach (var woodbox in woodBoxItems)
-					{
-						woodbox.item.BoxItem = EBoxItem.Weapon;
-						woodbox.item.ModifierWeapon = (EWeapon)r.Next(0x1, 0x22);
-						nrmLayoutData[woodbox.index] = woodbox.item;
-					}
-
-					foreach (var weaponbox in weaponBoxItems)
-					{
-						weaponbox.item.Weapon = (EWeapon)r.Next(0x1, 0x22);
-						nrmLayoutData[weaponbox.index] = weaponbox.item;
-					}
-
-					foreach (var metalbox in metalBoxItems)
-					{
-						metalbox.item.BoxItem = EBoxItem.Weapon;
-						metalbox.item.ModifierWeapon = (EWeapon)r.Next(0x1, 0x22);
-						nrmLayoutData[metalbox.index] = metalbox.item;
-					}
-				} // nrm scope boxes
-
-				// lets grab a valid GUN soldiers and then make all objects become it
-				List<(Object0064_GUNSoldier item, int index)> gunsoldiers = cmnLayoutData
+				// get all gunsoldiers in a layout...
+/*				List<(Object0064_GUNSoldier item, int index)> gunsoldiers = cmnLayoutData
 					.Select((item, index) => new { Item = item, Index = index })
 					.Where(pair => pair.Item is Object0064_GUNSoldier)
 					.Select(pair => (Item: (Object0064_GUNSoldier)pair.Item, Index: pair.Index))
-					.ToList();
+					.ToList();*/
 
-				var soldier = new Object0064_GUNSoldier();
-				soldier.List = 0x00;
-				soldier.Type = 0x64;
 
-				// make all objects a gun soldier
-				/*				for (int i = 0; i < cmnLayoutData.Count(); i++)
-								{
-									// skip core objs
-									if (cmnLayoutData[i].List == 0x00 &&
-											(
-												(cmnLayoutData[i].Type >= 0x00 && cmnLayoutData[i].Type <= 0x07) ||
-												(cmnLayoutData[i].Type == 0x14) || // goal ring
-												(cmnLayoutData[i].Type == 0x3A) || // shadow box
-												(cmnLayoutData[i].Type == 0x4F) || // vehicles
-												(cmnLayoutData[i].Type == 0x61) || // dark spin entrance
-												(cmnLayoutData[i].Type >= 0xB4 && cmnLayoutData[i].Type <= 0xBE) // bosses
-											)
-										|| cmnLayoutData[i].List == 0x14) // gravity related
-									{ 
-										continue;
-									}
-									CloneObjectOverIndex(i, soldier, ref cmnLayoutData, true, r);
-								}
-								if (nrmLayoutData != null)
-								{
-									for (int i = 0; i < nrmLayoutData.Count(); i++)
-									{
-										// skip core objs
-										if (nrmLayoutData[i].List == 0x00 &&
-												(
-													(nrmLayoutData[i].Type >= 0x00 && nrmLayoutData[i].Type <= 0x07) ||
-													(nrmLayoutData[i].Type == 0x14) || // goal ring
-													(nrmLayoutData[i].Type == 0x3A) || // shadow box
-													(nrmLayoutData[i].Type == 0x4F) || // vehicles
-													(nrmLayoutData[i].Type == 0x61) || // dark spin entrance
-													(nrmLayoutData[i].Type >= 0xB4 && nrmLayoutData[i].Type <= 0xBE) // bosses
-												)
-											|| nrmLayoutData[i].List == 0x14) // gravity related
-										{
-											continue;
-										}
-										CloneObjectOverIndex(i, soldier, ref nrmLayoutData, true, r);
-									}
-								}*/
-
-				// make all enemies a gun soldier
-				for (int i = 0; i < cmnLayoutData.Count(); i++)
-				{
-					if (cmnLayoutData[i].List == 0x00 &&
-							(
-								(cmnLayoutData[i].Type >= 0x64 && cmnLayoutData[i].Type <= 0x93)
-							)
-						)
-					{
-						CloneObjectOverIndex(i, soldier, ref cmnLayoutData, true, r);
-					}
-				}
-
+				// if checkbox for randomize all boxes to be random weapons
+				MakeAllBoxesHaveRandomWeapons(ref cmnLayoutData, r);
 				if (nrmLayoutData != null)
-				{
-					for (int i = 0; i < nrmLayoutData.Count(); i++)
-					{
-						if (nrmLayoutData[i].List == 0x00 &&
-								(
-									(nrmLayoutData[i].Type >= 0x64 && nrmLayoutData[i].Type <= 0x93)
-								)
-							)
-						{
-							CloneObjectOverIndex(i, soldier, ref nrmLayoutData, true, r);
-						}
-					}
-				}
+					MakeAllBoxesHaveRandomWeapons(ref nrmLayoutData, r);
+
+				// if checkBox make all objects gun soldiers true
+/*				MakeAllObjectsGUNSoldiers(ref cmnLayoutData, r);
+				if (nrmLayoutData != null)
+					MakeAllObjectsGUNSoldiers(ref nrmLayoutData, r);*/
+
+				// if checkBox make all enemies gun soldiers true
+				MakeAllEnemiesGUNSoldiers(ref cmnLayoutData, r);
+				if (nrmLayoutData != null)
+					MakeAllEnemiesGUNSoldiers(ref nrmLayoutData, r);
+				// end - make all enemies a gun soldier
 
 				LayoutEditorFunctions.SaveShadowLayout(cmnLayoutData, cmnLayoutPath, false);
 				if (nrmLayoutData != null)
 					LayoutEditorFunctions.SaveShadowLayout(nrmLayoutData, nrmLayoutPath, false);
-			} // end of layout operations
+			} // end - layout operations
 
 			// setIdBin operations
 			var setIdBINPath = Path.Combine(settings.GamePath, "files", "setid.bin");
 			var setIdTable = ShadowSET.SETIDBIN.SetIdTableFunctions.LoadTable(setIdBINPath, true, LayoutEditorSystem.shadowObjectEntries);
 
-			
+
 			// 00 - 0x0C
 			// 00, 0x64 = gun soldier | 0x93 = BkNinja (last enemy type)
 			foreach (ShadowSET.SETIDBIN.TableEntry entry in setIdTable)
@@ -1248,6 +1121,97 @@ namespace ShadowRando
 			MessageBox.Show("WARNING: You must set Dolphin -> Config -> Advanced -> MEM1 value to 64MB!");
 		}
 
+		private void MakeAllBoxesHaveRandomWeapons(ref List<SetObjectShadow> setData, Random r)
+		{
+			List<(Object0009_WoodBox item, int index)> woodBoxItems = setData
+				.Select((item, index) => new { Item = item, Index = index })
+				.Where(pair => pair.Item is Object0009_WoodBox)
+				.Select(pair => (Item: (Object0009_WoodBox)pair.Item, Index: pair.Index))
+				.ToList();
+
+			List<(Object000C_WeaponBox item, int index)> weaponBoxItems = setData
+				.Select((item, index) => new { Item = item, Index = index })
+				.Where(pair => pair.Item is Object000C_WeaponBox)
+				.Select(pair => (Item: (Object000C_WeaponBox)pair.Item, Index: pair.Index))
+				.ToList();
+
+			List<(Object000A_MetalBox item, int index)> metalBoxItems = setData
+				.Select((item, index) => new { Item = item, Index = index })
+				.Where(pair => pair.Item is Object000A_MetalBox)
+				.Select(pair => (Item: (Object000A_MetalBox)pair.Item, Index: pair.Index))
+				.ToList();
+
+
+			// valid weapons are 0x0 - 0x21
+
+			foreach (var woodbox in woodBoxItems)
+			{
+				woodbox.item.BoxItem = EBoxItem.Weapon;
+				woodbox.item.ModifierWeapon = (EWeapon)r.Next(0x22);
+				setData[woodbox.index] = woodbox.item;
+			}
+
+			foreach (var weaponbox in weaponBoxItems)
+			{
+				weaponbox.item.Weapon = (EWeapon)r.Next(0x22);
+				setData[weaponbox.index] = weaponbox.item;
+			}
+
+			foreach (var metalbox in metalBoxItems)
+			{
+				metalbox.item.BoxItem = EBoxItem.Weapon;
+				metalbox.item.ModifierWeapon = (EWeapon)r.Next(0x22);
+				setData[metalbox.index] = metalbox.item;
+			}
+		}
+
+		private void MakeAllEnemiesGUNSoldiers(ref List<SetObjectShadow> setData, Random r)
+		{
+			var soldier = new Object0064_GUNSoldier();
+			soldier.List = 0x00;
+			soldier.Type = 0x64;
+
+			// make all enemies a gun soldier
+			for (int i = 0; i < setData.Count(); i++)
+			{
+				if (setData[i].List == 0x00 &&
+						(
+							(setData[i].Type >= 0x64 && setData[i].Type <= 0x93)
+						)
+					)
+				{
+					CloneObjectOverIndex(i, soldier, ref setData, true, r);
+				}
+			}
+		}
+
+		private void MakeAllObjectsGUNSoldiers(ref List<SetObjectShadow> setData, Random r)
+		{
+			var soldier = new Object0064_GUNSoldier();
+			soldier.List = 0x00;
+			soldier.Type = 0x64;
+
+			// make all objects a gun soldier
+			for (int i = 0; i < setData.Count(); i++)
+			{
+				// skip core objs
+				if (setData[i].List == 0x00 &&
+						(
+							(setData[i].Type >= 0x00 && setData[i].Type <= 0x07) ||
+							(setData[i].Type == 0x14) || // goal ring
+							(setData[i].Type == 0x3A) || // shadow box
+							(setData[i].Type == 0x4F) || // vehicles
+							(setData[i].Type == 0x61) || // dark spin entrance
+							(setData[i].Type >= 0xB4 && setData[i].Type <= 0xBE) // bosses
+						)
+					|| setData[i].List == 0x14) // gravity related
+				{
+					continue;
+				}
+				CloneObjectOverIndex(i, soldier, ref setData, true, r);
+			}
+		}
+
 		// TODO move this to ShadowSET library?
 		private void CloneObjectOverIndex(int index, Object0064_GUNSoldier cloneObject, ref List<SetObjectShadow> setData, bool isShadow, Random r)
 		{
@@ -1259,7 +1223,9 @@ namespace ShadowRando
 			var modifier = (Object0064_GUNSoldier)newEntry;                                                                                                                                    //LayoutEditorFunctions.CreateHeroesObject(newEntry.List, newEntry.Type, pos, rot, link, rend, unkb);
 
 			modifier.WeaponType = (Object0064_GUNSoldier.EWeapon)r.Next(0x7);
-			modifier.HaveShield = (ENoYes)r.Next(2);
+			// 10% chance of shield
+			var hasShield = r.Next(10) == 1;
+			modifier.HaveShield = hasShield ? (ENoYes)1 : (ENoYes)0;
 			modifier.SearchRange = 500;
 			modifier.SearchWidth = 500;
 			modifier.SearchHeight = 200;
