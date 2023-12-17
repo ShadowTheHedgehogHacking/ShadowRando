@@ -807,6 +807,10 @@ namespace ShadowRando
 					{ MusicCategory.Menu, new List<string>(Directory.EnumerateFiles(Path.Combine("backup", "music"), "sng_sys*.adx")) },
 					{ MusicCategory.Credits, new List<string>(Directory.EnumerateFiles(Path.Combine("backup", "music"), "sng_vox*.adx")) }
 				};
+				if (randomMusicSkipRankTheme.Checked)
+					musicFiles[MusicCategory.Jingle].RemoveAll(a => a.EndsWith("sng_jin_roundclear.adx"));
+				if (randomMusicSkipChaosPowers.Checked)
+					musicFiles[MusicCategory.Jingle].RemoveAll(a => a.EndsWith("_e.adx"));
 				var outfiles = musicFiles.ToDictionary(a => a.Key, b => b.Value.Select(c => Path.GetFileName(c)).ToArray());
 				if (Directory.Exists("RandoMusic"))
 					foreach (var file in Directory.EnumerateFiles("RandoMusic", "*.txt", SearchOption.AllDirectories))
