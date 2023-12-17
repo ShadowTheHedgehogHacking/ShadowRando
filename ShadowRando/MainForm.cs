@@ -1038,8 +1038,20 @@ namespace ShadowRando
 			return false;
 		}
 
+		enum SETRandomizationModes
+		{
+			Wild,
+			OneToOnePerStage,
+			OneToOneGlobal,
+			AllEnemiesAreGUNSoldiers,
+			AllObjectsAreGUNSoldiers
+		}
+
 		private void RandomizeSETs(Random r)
 		{
+			var mode = (SETRandomizationModes)setLayout_Mode.SelectedIndex;
+
+			// begin randomization
 			MessageBox.Show("WARNING: Please be patient, this will take longer than other randomization. Press OK to begin.");
 			ShadowSET.LayoutEditorSystem.SetupLayoutEditorSystem(); // Critical to load relevent data
 			for (int stageIdToModify = 5; stageIdToModify < 45; stageIdToModify++) {
@@ -1074,28 +1086,33 @@ namespace ShadowRando
 				*/
 
 				// get all gunsoldiers in a layout...
-/*				List<(Object0064_GUNSoldier item, int index)> gunsoldiers = cmnLayoutData
-					.Select((item, index) => new { Item = item, Index = index })
-					.Where(pair => pair.Item is Object0064_GUNSoldier)
-					.Select(pair => (Item: (Object0064_GUNSoldier)pair.Item, Index: pair.Index))
-					.ToList();*/
+				/*				List<(Object0064_GUNSoldier item, int index)> gunsoldiers = cmnLayoutData
+									.Select((item, index) => new { Item = item, Index = index })
+									.Where(pair => pair.Item is Object0064_GUNSoldier)
+									.Select(pair => (Item: (Object0064_GUNSoldier)pair.Item, Index: pair.Index))
+									.ToList();*/
 
 
-				// if checkbox for randomize all boxes to be random weapons
-				MakeAllBoxesHaveRandomWeapons(ref cmnLayoutData, r);
-				if (nrmLayoutData != null)
-					MakeAllBoxesHaveRandomWeapons(ref nrmLayoutData, r);
+				if (setLayout_randomWeaponsInBoxes.Checked)
+				{
+					MakeAllBoxesHaveRandomWeapons(ref cmnLayoutData, r);
+					if (nrmLayoutData != null)
+						MakeAllBoxesHaveRandomWeapons(ref nrmLayoutData, r);
+				}
 
-				// if checkBox make all objects gun soldiers true
-/*				MakeAllObjectsGUNSoldiers(ref cmnLayoutData, r);
-				if (nrmLayoutData != null)
-					MakeAllObjectsGUNSoldiers(ref nrmLayoutData, r);*/
+				if (mode == SETRandomizationModes.AllObjectsAreGUNSoldiers)
+				{
+					MakeAllObjectsGUNSoldiers(ref cmnLayoutData, r);
+					if (nrmLayoutData != null)
+						MakeAllObjectsGUNSoldiers(ref nrmLayoutData, r);
+				}
 
-				// if checkBox make all enemies gun soldiers true
-				MakeAllEnemiesGUNSoldiers(ref cmnLayoutData, r);
-				if (nrmLayoutData != null)
-					MakeAllEnemiesGUNSoldiers(ref nrmLayoutData, r);
-				// end - make all enemies a gun soldier
+				if (mode == SETRandomizationModes.AllEnemiesAreGUNSoldiers)
+				{
+					MakeAllEnemiesGUNSoldiers(ref cmnLayoutData, r);
+					if (nrmLayoutData != null)
+						MakeAllEnemiesGUNSoldiers(ref nrmLayoutData, r);
+				}
 
 				LayoutEditorFunctions.SaveShadowLayout(cmnLayoutData, Path.Combine(settings.GamePath, "files", stageDataIdentifier, cmnLayout), false);
 				if (nrmLayoutData != null)
@@ -2150,11 +2167,6 @@ namespace ShadowRando
 				outputDevice.Dispose();
 				reader.Dispose();
 			};
-		}
-
-		private void levelOrderModeSelector_SelectedIndexChanged(object sender, EventArgs e)
-		{
-
 		}
 	}
 
