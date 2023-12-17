@@ -138,7 +138,7 @@ namespace ShadowRando
 			checkBoxProgramSound.Checked = settings.ProgramSound;
 			seedTextBox.Text = settings.Seed;
 			randomSeed.Checked = settings.RandomSeed;
-			modeSelector.SelectedIndex = (int)settings.Mode;
+			levelOrderModeSelector.SelectedIndex = (int)settings.Mode;
 			mainPathSelector.SelectedIndex = (int)settings.MainPath;
 			maxBackJump.Value = settings.MaxBackJump;
 			maxForwJump.Value = settings.MaxForwJump;
@@ -255,7 +255,7 @@ namespace ShadowRando
 			settings.ProgramSound = checkBoxProgramSound.Checked;
 			settings.Seed = seedTextBox.Text;
 			settings.RandomSeed = randomSeed.Checked;
-			settings.Mode = (Modes)modeSelector.SelectedIndex;
+			settings.Mode = (Modes)levelOrderModeSelector.SelectedIndex;
 			settings.MainPath = (MainPath)mainPathSelector.SelectedIndex;
 			settings.MaxBackJump = (int)maxBackJump.Value;
 			settings.MaxForwJump = (int)maxForwJump.Value;
@@ -299,10 +299,10 @@ namespace ShadowRando
 
 		private void modeSelector_SelectedIndexChanged(object sender, EventArgs e)
 		{
-			panel1.Enabled = modeSelector.SelectedIndex == 0;
-		}
 
-		private void allowSameLevel_CheckedChanged(object sender, EventArgs e)
+        }
+
+        private void allowSameLevel_CheckedChanged(object sender, EventArgs e)
 		{
 			maxBackJump.Minimum = maxForwJump.Minimum = allowSameLevel.Checked ? 0 : 1;
 		}
@@ -321,7 +321,7 @@ namespace ShadowRando
 				seedTextBox.Text = Convert.ToBase64String(randomBytes);
 			}
 			seed = CalculateSeed(seedTextBox.Text);
-			settings.Mode = (Modes)modeSelector.SelectedIndex;
+			settings.Mode = (Modes)levelOrderModeSelector.SelectedIndex;
 			Random r = new Random(seed);
 			byte[] buf;
 			List<int> tmpids = new List<int>(totalstagecount + 1);
@@ -2150,6 +2150,11 @@ namespace ShadowRando
 				outputDevice.Dispose();
 				reader.Dispose();
 			};
+		}
+
+		private void levelOrderModeSelector_SelectedIndexChanged(object sender, EventArgs e)
+		{
+
 		}
 	}
 
