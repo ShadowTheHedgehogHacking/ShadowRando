@@ -20,168 +20,6 @@ namespace ShadowRando
 {
 	public partial class MainForm : Form
 	{
-		public MainForm()
-		{
-			InitializeComponent();
-		}
-
-		const string programVersion = "0.4.0-dev";
-		private static string hoverSoundPath = AppDomain.CurrentDomain.BaseDirectory + "res/hover.wav";
-		private static string selectSoundPath = AppDomain.CurrentDomain.BaseDirectory + "res/select.wav";
-		Settings settings;
-
-		private void MainForm_Load(object sender, EventArgs e)
-		{
-			settings = Settings.Load();
-			Text += programVersion;
-			checkBoxProgramSound.Checked = settings.ProgramSound;
-			seedTextBox.Text = settings.Seed;
-			randomSeed.Checked = settings.RandomSeed;
-			modeSelector.SelectedIndex = (int)settings.Mode;
-			mainPathSelector.SelectedIndex = (int)settings.MainPath;
-			maxBackJump.Value = settings.MaxBackJump;
-			maxForwJump.Value = settings.MaxForwJump;
-			backJumpProb.Value = settings.BackJumpProb;
-			allowSameLevel.Checked = settings.AllowSameLevel;
-			includeLast.Checked = settings.IncludeLast;
-			includeBosses.Checked = settings.IncludeBosses;
-			randomMusic.Checked = settings.RandomMusic;
-			randomFNT.Checked = settings.RandomFNT;
-
-			// FNT Configuration
-			FNTCheckBox_NoDuplicatesPreRandomization.Checked = settings.FNTNoDuplicatesPreRandomization;
-			FNTCheckBox_NoSystemMessages.Checked = settings.FNTNoSystemMessages;
-			FNTCheckBox_OnlyLinkedAudio.Checked = settings.FNTOnlyLinkedAudio;
-			FNTCheckBox_SpecificCharacters.Checked = settings.FNTSpecificCharacters;
-			FNTCheckBox_GiveAudioToNoLinkedAudio.Checked = settings.FNTGiveAudioToNoLinkedAudio;
-
-			// FNT Configuration Specific Characters
-			FNTCheckBox_Chars_Shadow.Checked = settings.FNTShadowSelected;
-			FNTCheckBox_Chars_Sonic.Checked = settings.FNTSonicSelected;
-			FNTCheckBox_Chars_Tails.Checked = settings.FNTTailsSelected;
-			FNTCheckBox_Chars_Knuckles.Checked = settings.FNTKnucklesSelected;
-			FNTCheckBox_Chars_Amy.Checked = settings.FNTAmySelected;
-			FNTCheckBox_Chars_Rouge.Checked = settings.FNTRougeSelected;
-			FNTCheckBox_Chars_Omega.Checked = settings.FNTOmegaSelected;
-			FNTCheckBox_Chars_Vector.Checked = settings.FNTVectorSelected;
-			FNTCheckBox_Chars_Espio.Checked = settings.FNTEspioSelected;
-			FNTCheckBox_Chars_Maria.Checked = settings.FNTMariaSelected;
-			FNTCheckBox_Chars_Charmy.Checked = settings.FNTCharmySelected;
-			FNTCheckBox_Chars_Eggman.Checked = settings.FNTEggmanSelected;
-			FNTCheckBox_Chars_BlackDoom.Checked = settings.FNTBlackDoomSelected;
-			FNTCheckBox_Chars_Cream.Checked = settings.FNTCreamSelected;
-			FNTCheckBox_Chars_Cheese.Checked = settings.FNTCheeseSelected;
-			FNTCheckBox_Chars_GUNCommander.Checked = settings.FNTGUNCommanderSelected;
-			FNTCheckBox_Chars_GUNSoldier.Checked = settings.FNTGUNSoldierSelected;
-
-			using (var dlg = new Ookii.Dialogs.WinForms.VistaFolderBrowserDialog() { Description = "Select the root folder of an extracted Shadow the Hedgehog disc image." })
-			{
-				if (!string.IsNullOrEmpty(settings.GamePath))
-					dlg.SelectedPath = settings.GamePath;
-				if (dlg.ShowDialog(this) == DialogResult.OK)
-				{
-					if (settings.GamePath != dlg.SelectedPath && Directory.Exists("backup"))
-						switch (MessageBox.Show(this, "New game directory selected!\n\nDo you wish to erase the previous backup data and use the new data as a base?", "Shadow Randomizer", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1))
-						{
-							case DialogResult.Yes:
-								Directory.Delete("backup", true);
-								break;
-							case DialogResult.No:
-								break;
-							default:
-								Close();
-								return;
-						}
-					settings.GamePath = dlg.SelectedPath;
-					if (!Directory.Exists("backup"))
-						Directory.CreateDirectory("backup");
-					if (!File.Exists(Path.Combine("backup", "main.dol")))
-						File.Copy(Path.Combine(settings.GamePath, "sys", "main.dol"), Path.Combine("backup", "main.dol"));
-					if (!Directory.Exists(Path.Combine("backup", "fonts")))
-						CopyDirectory(Path.Combine(settings.GamePath, "files", "fonts"), Path.Combine("backup", "fonts"));
-					if (!Directory.Exists(Path.Combine("backup", "music")))
-					{
-						Directory.CreateDirectory(Path.Combine("backup", "music"));
-						foreach (var fil in Directory.EnumerateFiles(Path.Combine(settings.GamePath, "files"), "*.adx"))
-							File.Copy(fil, Path.Combine("backup", "music", Path.GetFileName(fil)));
-					}
-				}
-				else
-				{
-					Close();
-					return;
-				}
-			}
-		}
-
-		private void CopyDirectory(DirectoryInfo srcDir, string dstDir)
-		{
-			Directory.CreateDirectory(dstDir);
-			foreach (var dir in srcDir.EnumerateDirectories())
-				CopyDirectory(dir, Path.Combine(dstDir, dir.Name));
-			foreach (var fil in srcDir.EnumerateFiles())
-				fil.CopyTo(Path.Combine(dstDir, fil.Name));
-		}
-
-		private void CopyDirectory(string srcDir, string dstDir) => CopyDirectory(new DirectoryInfo(srcDir), dstDir);
-
-		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
-		{
-			settings.ProgramSound = checkBoxProgramSound.Checked;
-			settings.Seed = seedTextBox.Text;
-			settings.RandomSeed = randomSeed.Checked;
-			settings.Mode = (Modes)modeSelector.SelectedIndex;
-			settings.MainPath = (MainPath)mainPathSelector.SelectedIndex;
-			settings.MaxBackJump = (int)maxBackJump.Value;
-			settings.MaxForwJump = (int)maxForwJump.Value;
-			settings.BackJumpProb = (int)backJumpProb.Value;
-			settings.AllowSameLevel = allowSameLevel.Checked;
-			settings.IncludeLast = includeLast.Checked;
-			settings.IncludeBosses = includeBosses.Checked;
-			settings.RandomMusic = randomMusic.Checked;
-			settings.RandomFNT = randomFNT.Checked;
-			// FNT Configuration
-			settings.FNTNoDuplicatesPreRandomization = FNTCheckBox_NoDuplicatesPreRandomization.Checked;
-			settings.FNTNoSystemMessages = FNTCheckBox_NoSystemMessages.Checked;
-			settings.FNTOnlyLinkedAudio = FNTCheckBox_OnlyLinkedAudio.Checked;
-			settings.FNTSpecificCharacters = FNTCheckBox_SpecificCharacters.Checked;
-			settings.FNTGiveAudioToNoLinkedAudio = FNTCheckBox_GiveAudioToNoLinkedAudio.Checked;
-			// FNT Configuration Specific Characters
-			settings.FNTShadowSelected = FNTCheckBox_Chars_Shadow.Checked;
-			settings.FNTSonicSelected = FNTCheckBox_Chars_Sonic.Checked;
-			settings.FNTTailsSelected = FNTCheckBox_Chars_Tails.Checked;
-			settings.FNTKnucklesSelected = FNTCheckBox_Chars_Knuckles.Checked;
-			settings.FNTAmySelected = FNTCheckBox_Chars_Amy.Checked;
-			settings.FNTRougeSelected = FNTCheckBox_Chars_Rouge.Checked;
-			settings.FNTOmegaSelected = FNTCheckBox_Chars_Omega.Checked;
-			settings.FNTVectorSelected = FNTCheckBox_Chars_Vector.Checked;
-			settings.FNTEspioSelected = FNTCheckBox_Chars_Espio.Checked;
-			settings.FNTMariaSelected = FNTCheckBox_Chars_Maria.Checked;
-			settings.FNTCharmySelected = FNTCheckBox_Chars_Charmy.Checked;
-			settings.FNTEggmanSelected = FNTCheckBox_Chars_Eggman.Checked;
-			settings.FNTBlackDoomSelected = FNTCheckBox_Chars_BlackDoom.Checked;
-			settings.FNTCreamSelected = FNTCheckBox_Chars_Cream.Checked;
-			settings.FNTCheeseSelected = FNTCheckBox_Chars_Cheese.Checked;
-			settings.FNTGUNCommanderSelected = FNTCheckBox_Chars_GUNCommander.Checked;
-			settings.FNTGUNSoldierSelected = FNTCheckBox_Chars_GUNSoldier.Checked;
-			settings.Save();
-		}
-
-		private void randomSeed_CheckedChanged(object sender, EventArgs e)
-		{
-			seedTextBox.Enabled = !randomSeed.Checked;
-		}
-
-		private void modeSelector_SelectedIndexChanged(object sender, EventArgs e)
-		{
-			panel1.Enabled = modeSelector.SelectedIndex == 0;
-		}
-
-		private void allowSameLevel_CheckedChanged(object sender, EventArgs e)
-		{
-			maxBackJump.Minimum = maxForwJump.Minimum = allowSameLevel.Checked ? 0 : 1;
-		}
-
 		const int stagefirst = 5;
 		static readonly string[] LevelNames =
 		{
@@ -282,6 +120,192 @@ namespace ShadowRando
 		static int stagecount = 40;
 		int[] stageids;
 		readonly Stage[] stages = new Stage[totalstagecount];
+
+		public MainForm()
+		{
+			InitializeComponent();
+		}
+
+		const string programVersion = "0.4.0-dev";
+		private static string hoverSoundPath = AppDomain.CurrentDomain.BaseDirectory + "res/hover.wav";
+		private static string selectSoundPath = AppDomain.CurrentDomain.BaseDirectory + "res/select.wav";
+		Settings settings;
+
+		private void MainForm_Load(object sender, EventArgs e)
+		{
+			settings = Settings.Load();
+			Text += programVersion;
+			checkBoxProgramSound.Checked = settings.ProgramSound;
+			seedTextBox.Text = settings.Seed;
+			randomSeed.Checked = settings.RandomSeed;
+			modeSelector.SelectedIndex = (int)settings.Mode;
+			mainPathSelector.SelectedIndex = (int)settings.MainPath;
+			maxBackJump.Value = settings.MaxBackJump;
+			maxForwJump.Value = settings.MaxForwJump;
+			backJumpProb.Value = settings.BackJumpProb;
+			allowSameLevel.Checked = settings.AllowSameLevel;
+			includeLast.Checked = settings.IncludeLast;
+			includeBosses.Checked = settings.IncludeBosses;
+			randomMusic.Checked = settings.RandomMusic;
+			randomFNT.Checked = settings.RandomFNT;
+
+			// FNT Configuration
+			FNTCheckBox_NoDuplicatesPreRandomization.Checked = settings.FNTNoDuplicatesPreRandomization;
+			FNTCheckBox_NoSystemMessages.Checked = settings.FNTNoSystemMessages;
+			FNTCheckBox_OnlyLinkedAudio.Checked = settings.FNTOnlyLinkedAudio;
+			FNTCheckBox_SpecificCharacters.Checked = settings.FNTSpecificCharacters;
+			FNTCheckBox_GiveAudioToNoLinkedAudio.Checked = settings.FNTGiveAudioToNoLinkedAudio;
+
+			// FNT Configuration Specific Characters
+			FNTCheckBox_Chars_Shadow.Checked = settings.FNTShadowSelected;
+			FNTCheckBox_Chars_Sonic.Checked = settings.FNTSonicSelected;
+			FNTCheckBox_Chars_Tails.Checked = settings.FNTTailsSelected;
+			FNTCheckBox_Chars_Knuckles.Checked = settings.FNTKnucklesSelected;
+			FNTCheckBox_Chars_Amy.Checked = settings.FNTAmySelected;
+			FNTCheckBox_Chars_Rouge.Checked = settings.FNTRougeSelected;
+			FNTCheckBox_Chars_Omega.Checked = settings.FNTOmegaSelected;
+			FNTCheckBox_Chars_Vector.Checked = settings.FNTVectorSelected;
+			FNTCheckBox_Chars_Espio.Checked = settings.FNTEspioSelected;
+			FNTCheckBox_Chars_Maria.Checked = settings.FNTMariaSelected;
+			FNTCheckBox_Chars_Charmy.Checked = settings.FNTCharmySelected;
+			FNTCheckBox_Chars_Eggman.Checked = settings.FNTEggmanSelected;
+			FNTCheckBox_Chars_BlackDoom.Checked = settings.FNTBlackDoomSelected;
+			FNTCheckBox_Chars_Cream.Checked = settings.FNTCreamSelected;
+			FNTCheckBox_Chars_Cheese.Checked = settings.FNTCheeseSelected;
+			FNTCheckBox_Chars_GUNCommander.Checked = settings.FNTGUNCommanderSelected;
+			FNTCheckBox_Chars_GUNSoldier.Checked = settings.FNTGUNSoldierSelected;
+
+			using (var dlg = new Ookii.Dialogs.WinForms.VistaFolderBrowserDialog() { Description = "Select the root folder of an extracted Shadow the Hedgehog disc image." })
+			{
+				if (!string.IsNullOrEmpty(settings.GamePath))
+					dlg.SelectedPath = settings.GamePath;
+				if (dlg.ShowDialog(this) == DialogResult.OK)
+				{
+					if (settings.GamePath != dlg.SelectedPath && Directory.Exists("backup"))
+						switch (MessageBox.Show(this, "New game directory selected!\n\nDo you wish to erase the previous backup data and use the new data as a base?", "Shadow Randomizer", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1))
+						{
+							case DialogResult.Yes:
+								Directory.Delete("backup", true);
+								break;
+							case DialogResult.No:
+								break;
+							default:
+								Close();
+								return;
+						}
+					settings.GamePath = dlg.SelectedPath;
+					if (!Directory.Exists("backup"))
+						Directory.CreateDirectory("backup");
+					if (!File.Exists(Path.Combine("backup", "main.dol")))
+						File.Copy(Path.Combine(settings.GamePath, "sys", "main.dol"), Path.Combine("backup", "main.dol"));
+					if (!File.Exists(Path.Combine("backup", "bi2.bin")))
+						File.Copy(Path.Combine(settings.GamePath, "sys", "bi2.bin"), Path.Combine("backup", "bi2.bin"));
+					if (!File.Exists(Path.Combine("backup", "setid.bin")))
+						File.Copy(Path.Combine(settings.GamePath, "files", "setid.bin"), Path.Combine("backup", "setid.bin"));
+					if (!Directory.Exists(Path.Combine("backup", "fonts")))
+						CopyDirectory(Path.Combine(settings.GamePath, "files", "fonts"), Path.Combine("backup", "fonts"));
+					if (!Directory.Exists(Path.Combine("backup", "music")))
+					{
+						Directory.CreateDirectory(Path.Combine("backup", "music"));
+						foreach (var fil in Directory.EnumerateFiles(Path.Combine(settings.GamePath, "files"), "*.adx"))
+							File.Copy(fil, Path.Combine("backup", "music", Path.GetFileName(fil)));
+					}
+					if (!Directory.Exists(Path.Combine("backup", "sets")))
+					{
+						Directory.CreateDirectory(Path.Combine("backup", "sets"));
+						for (int stageIdToModify = 5; stageIdToModify < 45; stageIdToModify++)
+						{
+							stageAssociationIDMap.TryGetValue(stageIdToModify, out var stageId);
+							var stageDataIdentifier = "stg0" + stageId.ToString();
+							var cmnLayout = stageDataIdentifier + "_cmn.dat";
+							var nrmLayout = stageDataIdentifier + "_nrm.dat";
+							var hrdLayout = stageDataIdentifier + "_hrd.dat";
+							var cmnLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, cmnLayout);
+							var nrmLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, nrmLayout);
+							var hrdLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, hrdLayout);
+							if (!Directory.Exists(Path.Combine("backup", "sets", stageDataIdentifier)))
+								Directory.CreateDirectory(Path.Combine("backup", "sets", stageDataIdentifier));
+							File.Copy(cmnLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, cmnLayout));
+							try { File.Copy(nrmLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, nrmLayout)); } catch (FileNotFoundException) { } // some stages don't have nrm
+							try { File.Copy(hrdLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, hrdLayout)); } catch (FileNotFoundException) { } // some stages don't have hrd
+						}
+					}
+				}
+				else
+				{
+					Close();
+					return;
+				}
+			}
+		}
+
+		private void CopyDirectory(DirectoryInfo srcDir, string dstDir)
+		{
+			Directory.CreateDirectory(dstDir);
+			foreach (var dir in srcDir.EnumerateDirectories())
+				CopyDirectory(dir, Path.Combine(dstDir, dir.Name));
+			foreach (var fil in srcDir.EnumerateFiles())
+				fil.CopyTo(Path.Combine(dstDir, fil.Name));
+		}
+
+		private void CopyDirectory(string srcDir, string dstDir) => CopyDirectory(new DirectoryInfo(srcDir), dstDir);
+
+		private void MainForm_FormClosing(object sender, FormClosingEventArgs e)
+		{
+			settings.ProgramSound = checkBoxProgramSound.Checked;
+			settings.Seed = seedTextBox.Text;
+			settings.RandomSeed = randomSeed.Checked;
+			settings.Mode = (Modes)modeSelector.SelectedIndex;
+			settings.MainPath = (MainPath)mainPathSelector.SelectedIndex;
+			settings.MaxBackJump = (int)maxBackJump.Value;
+			settings.MaxForwJump = (int)maxForwJump.Value;
+			settings.BackJumpProb = (int)backJumpProb.Value;
+			settings.AllowSameLevel = allowSameLevel.Checked;
+			settings.IncludeLast = includeLast.Checked;
+			settings.IncludeBosses = includeBosses.Checked;
+			settings.RandomMusic = randomMusic.Checked;
+			settings.RandomFNT = randomFNT.Checked;
+			// FNT Configuration
+			settings.FNTNoDuplicatesPreRandomization = FNTCheckBox_NoDuplicatesPreRandomization.Checked;
+			settings.FNTNoSystemMessages = FNTCheckBox_NoSystemMessages.Checked;
+			settings.FNTOnlyLinkedAudio = FNTCheckBox_OnlyLinkedAudio.Checked;
+			settings.FNTSpecificCharacters = FNTCheckBox_SpecificCharacters.Checked;
+			settings.FNTGiveAudioToNoLinkedAudio = FNTCheckBox_GiveAudioToNoLinkedAudio.Checked;
+			// FNT Configuration Specific Characters
+			settings.FNTShadowSelected = FNTCheckBox_Chars_Shadow.Checked;
+			settings.FNTSonicSelected = FNTCheckBox_Chars_Sonic.Checked;
+			settings.FNTTailsSelected = FNTCheckBox_Chars_Tails.Checked;
+			settings.FNTKnucklesSelected = FNTCheckBox_Chars_Knuckles.Checked;
+			settings.FNTAmySelected = FNTCheckBox_Chars_Amy.Checked;
+			settings.FNTRougeSelected = FNTCheckBox_Chars_Rouge.Checked;
+			settings.FNTOmegaSelected = FNTCheckBox_Chars_Omega.Checked;
+			settings.FNTVectorSelected = FNTCheckBox_Chars_Vector.Checked;
+			settings.FNTEspioSelected = FNTCheckBox_Chars_Espio.Checked;
+			settings.FNTMariaSelected = FNTCheckBox_Chars_Maria.Checked;
+			settings.FNTCharmySelected = FNTCheckBox_Chars_Charmy.Checked;
+			settings.FNTEggmanSelected = FNTCheckBox_Chars_Eggman.Checked;
+			settings.FNTBlackDoomSelected = FNTCheckBox_Chars_BlackDoom.Checked;
+			settings.FNTCreamSelected = FNTCheckBox_Chars_Cream.Checked;
+			settings.FNTCheeseSelected = FNTCheckBox_Chars_Cheese.Checked;
+			settings.FNTGUNCommanderSelected = FNTCheckBox_Chars_GUNCommander.Checked;
+			settings.FNTGUNSoldierSelected = FNTCheckBox_Chars_GUNSoldier.Checked;
+			settings.Save();
+		}
+
+		private void randomSeed_CheckedChanged(object sender, EventArgs e)
+		{
+			seedTextBox.Enabled = !randomSeed.Checked;
+		}
+
+		private void modeSelector_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			panel1.Enabled = modeSelector.SelectedIndex == 0;
+		}
+
+		private void allowSameLevel_CheckedChanged(object sender, EventArgs e)
+		{
+			maxBackJump.Minimum = maxForwJump.Minimum = allowSameLevel.Checked ? 0 : 1;
+		}
 
 		private void randomizeButton_Click(object sender, EventArgs e)
 		{
@@ -1022,15 +1046,12 @@ namespace ShadowRando
 				stageAssociationIDMap.TryGetValue(stageIdToModify, out var stageId);
 				var stageDataIdentifier = "stg0" + stageId.ToString();
 				var cmnLayout = stageDataIdentifier + "_cmn.dat";
-				var cmnLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, cmnLayout);
-				var cmnLayoutData = LayoutEditorFunctions.GetShadowLayout(cmnLayoutPath, out var resultcmn);
-
+				var cmnLayoutData = LayoutEditorFunctions.GetShadowLayout(Path.Combine("backup", "sets", stageDataIdentifier, cmnLayout), out var resultcmn);
 				var nrmLayout = stageDataIdentifier + "_nrm.dat";
-				var nrmLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, nrmLayout);
 				List<SetObjectShadow> nrmLayoutData = null;
 				try
 				{
-					nrmLayoutData = LayoutEditorFunctions.GetShadowLayout(nrmLayoutPath, out var resultnrm);
+					nrmLayoutData = LayoutEditorFunctions.GetShadowLayout(Path.Combine("backup", "sets", stageDataIdentifier, nrmLayout), out var resultnrm);
 				} catch (FileNotFoundException)
 				{
 					// some stages don't have nrm
@@ -1076,15 +1097,14 @@ namespace ShadowRando
 					MakeAllEnemiesGUNSoldiers(ref nrmLayoutData, r);
 				// end - make all enemies a gun soldier
 
-				LayoutEditorFunctions.SaveShadowLayout(cmnLayoutData, cmnLayoutPath, false);
+				LayoutEditorFunctions.SaveShadowLayout(cmnLayoutData, Path.Combine(settings.GamePath, "files", stageDataIdentifier, cmnLayout), false);
 				if (nrmLayoutData != null)
-					LayoutEditorFunctions.SaveShadowLayout(nrmLayoutData, nrmLayoutPath, false);
+					LayoutEditorFunctions.SaveShadowLayout(nrmLayoutData, Path.Combine(settings.GamePath, "files", stageDataIdentifier, nrmLayout), false);
 			} // end - layout operations
 
 			// setIdBin operations
-			var setIdBINPath = Path.Combine(settings.GamePath, "files", "setid.bin");
+			var setIdBINPath = Path.Combine("backup", "setid.bin");
 			var setIdTable = ShadowSET.SETIDBIN.SetIdTableFunctions.LoadTable(setIdBINPath, true, LayoutEditorSystem.shadowObjectEntries);
-
 
 			// 00 - 0x0C
 			// 00, 0x64 = gun soldier | 0x93 = BkNinja (last enemy type)
@@ -1108,14 +1128,13 @@ namespace ShadowRando
 				}
 			}
 
-			SetIdTableFunctions.SaveTable(setIdBINPath, true, setIdTable);
+			SetIdTableFunctions.SaveTable(Path.Combine(settings.GamePath, "files", "setid.bin"), true, setIdTable);
 
 			// lastly, patch bi2.bin since we require 64MB Dolphin
-			var bi2binPath = Path.Combine(settings.GamePath, "sys", "bi2.bin");
 			var buf = BitConverter.GetBytes(0);
-			var bi2 = File.ReadAllBytes(bi2binPath);
+			var bi2 = File.ReadAllBytes(Path.Combine("backup", "bi2.bin"));
 			buf.CopyTo(bi2, 0x4);
-			File.WriteAllBytes(bi2binPath, bi2);
+			File.WriteAllBytes(Path.Combine(settings.GamePath, "sys", "bi2.bin"), bi2);
 			// end patch
 
 			MessageBox.Show("WARNING: You must set Dolphin -> Config -> Advanced -> MEM1 value to 64MB!");
