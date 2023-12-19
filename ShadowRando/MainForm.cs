@@ -1220,7 +1220,8 @@ namespace ShadowRando
 						)
 					)
 				{
-					CloneObjectOverIndex(i, soldier, ref setData, true, r);
+					if (setData[i].Link != 0) // Skip enemies with LinkID to prevent softlock
+						CloneObjectOverIndex(i, soldier, ref setData, true, r);
 				}
 			}
 		}

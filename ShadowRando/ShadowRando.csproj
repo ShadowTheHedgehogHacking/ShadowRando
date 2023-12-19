@@ -94,6 +94,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EnemySETMutations.cs" />
     <Compile Include="IniFile.cs" />
     <Compile Include="IniSerializer.cs" />
     <Compile Include="MainForm.cs">
