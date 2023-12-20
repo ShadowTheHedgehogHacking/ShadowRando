@@ -1048,7 +1048,8 @@ namespace ShadowRando
 			OneToOnePerStage,
 			OneToOneGlobal,
 			AllEnemiesAreGUNSoldiers,
-			AllObjectsAreGUNSoldiers
+			AllObjectsAreGUNSoldiers,
+			AllEnemiesAreGUNSoldiersWithTranslations
 		}
 
 		private void RandomizeSETs(Random r)
@@ -1116,6 +1117,12 @@ namespace ShadowRando
 					MakeAllEnemiesGUNSoldiers(ref cmnLayoutData, r);
 					if (nrmLayoutData != null)
 						MakeAllEnemiesGUNSoldiers(ref nrmLayoutData, r);
+				}
+
+				if (mode == SETRandomizationModes.AllEnemiesAreGUNSoldiersWithTranslations) {
+					MakeAllEnemiesGUNSoldiersWithTranslations(ref cmnLayoutData, r);
+					if (nrmLayoutData != null)
+						MakeAllEnemiesGUNSoldiersWithTranslations(ref nrmLayoutData, r);
 				}
 
 				LayoutEditorFunctions.SaveShadowLayout(cmnLayoutData, Path.Combine(settings.GamePath, "files", stageDataIdentifier, cmnLayout), false);
@@ -1220,8 +1227,29 @@ namespace ShadowRando
 						)
 					)
 				{
-					if (setData[i].Link != 0) // Skip enemies with LinkID to prevent softlock
+					if (setData[i].Link == 0 || setData[i].Link == 50) // Skip enemies with LinkID to prevent softlock
 						CloneObjectOverIndex(i, soldier, ref setData, true, r);
+				}
+			}
+		}
+
+		private void MakeAllEnemiesGUNSoldiersWithTranslations(ref List<SetObjectShadow> setData, Random r)
+		{
+			var soldier = new Object0064_GUNSoldier();
+			soldier.List = 0x00;
+			soldier.Type = 0x64;
+
+			// make all enemies a gun soldier
+			for (int i = 0; i < setData.Count(); i++)
+			{
+				if (setData[i].List == 0x00 &&
+						(
+							(setData[i].Type >= 0x64 && setData[i].Type <= 0x93)
+						)
+					)
+				{
+					if (setData[i].Link == 0 || setData[i].Link == 50) // Skip enemies with LinkID to prevent softlock
+						EnemySETMutations.MutateObjectAtIndex(i, typeof(Object0064_GUNSoldier), ref setData, true, r);
 				}
 			}
 		}
