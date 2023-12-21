@@ -121,12 +121,30 @@ namespace ShadowRando
 		int[] stageids;
 		readonly Stage[] stages = new Stage[totalstagecount];
 
+		static readonly Dictionary<int, Type> enemyTypeMap = new Dictionary<int, Type>
+		{
+			{ 0, typeof(Object0064_GUNSoldier) },
+			{ 1, typeof(Object0065_GUNBeetle) },
+			{ 2, typeof(Object0066_GUNBigfoot) },
+			{ 3, typeof(Object0068_GUNRobot) },
+			{ 4, typeof(Object0078_EggPierrot) },
+			{ 5, typeof(Object0079_EggPawn) },
+			{ 6, typeof(Object007A_EggShadowAndroid) },
+			{ 7, typeof(Object008C_BkGiant) },
+			{ 8, typeof(Object008D_BkSoldier) },
+			{ 9, typeof(Object008E_BkWingLarge) },
+			{ 10, typeof(Object008F_BkWingSmall) },
+			{ 11, typeof(Object0090_BkWorm) },
+			{ 12, typeof(Object0091_BkLarva) },
+			{ 13, typeof(Object0092_BkChaos) },
+			{ 14, typeof(Object0093_BkNinja) },
+		};
 		public MainForm()
 		{
 			InitializeComponent();
 		}
 
-		const string programVersion = "0.4.0-dev";
+		const string programVersion = "0.4.0-preview-2023-12-20";
 		private static string hoverSoundPath = AppDomain.CurrentDomain.BaseDirectory + "res/hover.wav";
 		private static string selectSoundPath = AppDomain.CurrentDomain.BaseDirectory + "res/select.wav";
 		Settings settings;
@@ -1105,24 +1123,28 @@ namespace ShadowRando
 						MakeAllBoxesHaveRandomWeapons(ref nrmLayoutData, r);
 				}
 
-				if (mode == SETRandomizationModes.AllObjectsAreGUNSoldiers)
+				switch (mode)
 				{
-					MakeAllObjectsGUNSoldiers(ref cmnLayoutData, r);
-					if (nrmLayoutData != null)
-						MakeAllObjectsGUNSoldiers(ref nrmLayoutData, r);
-				}
-
-				if (mode == SETRandomizationModes.AllEnemiesAreGUNSoldiers)
-				{
-					MakeAllEnemiesGUNSoldiers(ref cmnLayoutData, r);
-					if (nrmLayoutData != null)
-						MakeAllEnemiesGUNSoldiers(ref nrmLayoutData, r);
-				}
-
-				if (mode == SETRandomizationModes.AllEnemiesAreGUNSoldiersWithTranslations) {
-					MakeAllEnemiesGUNSoldiersWithTranslations(ref cmnLayoutData, r);
-					if (nrmLayoutData != null)
-						MakeAllEnemiesGUNSoldiersWithTranslations(ref nrmLayoutData, r);
+					case SETRandomizationModes.Wild:
+						WildRandomizeAllEnemiesWithTranslations(ref cmnLayoutData, r);
+						if (nrmLayoutData != null)
+							WildRandomizeAllEnemiesWithTranslations(ref nrmLayoutData, r);
+						break;
+					case SETRandomizationModes.AllObjectsAreGUNSoldiers:
+						MakeAllObjectsGUNSoldiers(ref cmnLayoutData, r);
+						if (nrmLayoutData != null)
+							MakeAllObjectsGUNSoldiers(ref nrmLayoutData, r);
+						break;
+					case SETRandomizationModes.AllEnemiesAreGUNSoldiers:
+						MakeAllEnemiesGUNSoldiers(ref cmnLayoutData, r);
+						if (nrmLayoutData != null)
+							MakeAllEnemiesGUNSoldiers(ref nrmLayoutData, r);
+						break;
+					case SETRandomizationModes.AllEnemiesAreGUNSoldiersWithTranslations:
+						MakeAllEnemiesGUNSoldiersWithTranslations(ref cmnLayoutData, r);
+						if (nrmLayoutData != null)
+							MakeAllEnemiesGUNSoldiersWithTranslations(ref nrmLayoutData, r);
+						break;
 				}
 
 				LayoutEditorFunctions.SaveShadowLayout(cmnLayoutData, Path.Combine(settings.GamePath, "files", stageDataIdentifier, cmnLayout), false);
@@ -1212,6 +1234,30 @@ namespace ShadowRando
 			}
 		}
 
+		private void WildRandomizeAllEnemiesWithTranslations(ref List<SetObjectShadow> setData, Random r)
+		{
+			// Wild Randomize of all Enemies
+			for (int i = 0; i < setData.Count(); i++)
+			{
+				if (setData[i].List == 0x00 &&
+						(
+							(setData[i].Type >= 0x64 && setData[i].Type <= 0x93)
+						)
+					)
+				{
+					if (setData[i].Type == 0x64 && (setData[i].Link == 0 || setData[i].Link == 50)) { // All enemies if LinkID = 0 or 50
+						enemyTypeMap.TryGetValue(r.Next(15), out Type enemyType);
+						EnemySETMutations.MutateObjectAtIndex(i, enemyType, ref setData, true, r);
+					}
+					else
+					{
+						enemyTypeMap.TryGetValue(r.Next(1, 15), out Type enemyType); // skip GUN Soldiers otherwise
+						EnemySETMutations.MutateObjectAtIndex(i, enemyType, ref setData, true, r);
+					}
+				}
+			}
+		}
+
 		private void MakeAllEnemiesGUNSoldiers(ref List<SetObjectShadow> setData, Random r)
 		{
 			var soldier = new Object0064_GUNSoldier();
@@ -1235,10 +1281,6 @@ namespace ShadowRando
 
 		private void MakeAllEnemiesGUNSoldiersWithTranslations(ref List<SetObjectShadow> setData, Random r)
 		{
-			var soldier = new Object0064_GUNSoldier();
-			soldier.List = 0x00;
-			soldier.Type = 0x64;
-
 			// make all enemies a gun soldier
 			for (int i = 0; i < setData.Count(); i++)
 			{

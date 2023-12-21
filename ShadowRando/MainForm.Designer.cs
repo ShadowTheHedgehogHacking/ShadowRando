@@ -148,7 +148,7 @@ namespace ShadowRando
             // levelOrder_maxBackwardsJumpLabel
             // 
             levelOrder_maxBackwardsJumpLabel.AutoSize = true;
-            levelOrder_maxBackwardsJumpLabel.Location = new System.Drawing.Point(67, 29);
+            levelOrder_maxBackwardsJumpLabel.Location = new System.Drawing.Point(62, 29);
             levelOrder_maxBackwardsJumpLabel.Name = "levelOrder_maxBackwardsJumpLabel";
             levelOrder_maxBackwardsJumpLabel.Size = new System.Drawing.Size(114, 13);
             levelOrder_maxBackwardsJumpLabel.TabIndex = 2;
@@ -157,7 +157,7 @@ namespace ShadowRando
             // levelOrder_maxForwardsJumpLabel
             // 
             levelOrder_maxForwardsJumpLabel.AutoSize = true;
-            levelOrder_maxForwardsJumpLabel.Location = new System.Drawing.Point(77, 54);
+            levelOrder_maxForwardsJumpLabel.Location = new System.Drawing.Point(72, 55);
             levelOrder_maxForwardsJumpLabel.Name = "levelOrder_maxForwardsJumpLabel";
             levelOrder_maxForwardsJumpLabel.Size = new System.Drawing.Size(104, 13);
             levelOrder_maxForwardsJumpLabel.TabIndex = 4;
@@ -166,7 +166,7 @@ namespace ShadowRando
             // levelOrder_backwardsJumpProbabilityLabel
             // 
             levelOrder_backwardsJumpProbabilityLabel.AutoSize = true;
-            levelOrder_backwardsJumpProbabilityLabel.Location = new System.Drawing.Point(40, 79);
+            levelOrder_backwardsJumpProbabilityLabel.Location = new System.Drawing.Point(34, 79);
             levelOrder_backwardsJumpProbabilityLabel.Name = "levelOrder_backwardsJumpProbabilityLabel";
             levelOrder_backwardsJumpProbabilityLabel.Size = new System.Drawing.Size(142, 13);
             levelOrder_backwardsJumpProbabilityLabel.TabIndex = 6;
@@ -486,12 +486,12 @@ namespace ShadowRando
             this.setLayout_Mode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.setLayout_Mode.FormattingEnabled = true;
             this.setLayout_Mode.Items.AddRange(new object[] {
-            "Wild (Not Ready, Does Nothing)",
+            "Wild (WIP)",
             "1:1 Per Stage (Not Ready)",
             "1:1 Global (Not Ready)",
             "All Enemies are GUN Soldiers",
             "All Objects are GUN Soldiers",
-            "All Enemies are GUN Soldiers w/Translations (NEW)"});
+            "All Enemies are GUN Soldiers w/Translations"});
             this.setLayout_Mode.Location = new System.Drawing.Point(55, 25);
             this.setLayout_Mode.Name = "setLayout_Mode";
             this.setLayout_Mode.Size = new System.Drawing.Size(259, 21);
@@ -501,7 +501,7 @@ namespace ShadowRando
             // setLayout_randomWeaponsInBoxes
             // 
             this.setLayout_randomWeaponsInBoxes.AutoSize = true;
-            this.setLayout_randomWeaponsInBoxes.Location = new System.Drawing.Point(247, 131);
+            this.setLayout_randomWeaponsInBoxes.Location = new System.Drawing.Point(247, 151);
             this.setLayout_randomWeaponsInBoxes.Name = "setLayout_randomWeaponsInBoxes";
             this.setLayout_randomWeaponsInBoxes.Size = new System.Drawing.Size(158, 17);
             this.setLayout_randomWeaponsInBoxes.TabIndex = 12;
@@ -666,12 +666,12 @@ namespace ShadowRando
             // 
             this.tempWarning.AutoSize = true;
             this.tempWarning.BackColor = System.Drawing.Color.Wheat;
-            this.tempWarning.Location = new System.Drawing.Point(244, 51);
+            this.tempWarning.Location = new System.Drawing.Point(244, 55);
             this.tempWarning.Name = "tempWarning";
-            this.tempWarning.Size = new System.Drawing.Size(207, 65);
+            this.tempWarning.Size = new System.Drawing.Size(207, 91);
             this.tempWarning.TabIndex = 14;
-            this.tempWarning.Text = "Warning: Only GUN Soldiers Modes \r\nand Random Weapons in Boxes are ready\r\n\r\nCurre" +
-    "ntly applies to all .cmn and .nrm\r\n.hrd layouts are ignored";
+            this.tempWarning.Text = "Only \r\nWild (WIP),\r\nGUN Soldiers Modes,\r\nand Random Weapons in Boxes are ready\r\n\r" +
+    "\nCurrently applies to all .cmn and .nrm\r\n.hrd layouts are ignored";
             // 
             // setLayout_groupBoxEnemyConfiguration
             // 
