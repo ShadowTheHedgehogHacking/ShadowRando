@@ -7,12 +7,9 @@ using ShadowSET;
 using ShadowSET.SETIDBIN;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.PerformanceData;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Numerics;
-using System.Runtime.InteropServices.ComTypes;
 using System.Security.Cryptography;
 using System.Windows.Forms;
 
@@ -139,12 +136,38 @@ namespace ShadowRando
 			{ 13, typeof(Object0092_BkChaos) },
 			{ 14, typeof(Object0093_BkNinja) },
 		};
+
+		static readonly Dictionary<int, Type> groundEnemyTypeMap = new Dictionary<int, Type>
+		{
+			{ 0, typeof(Object0064_GUNSoldier) },
+			{ 1, typeof(Object0066_GUNBigfoot) },
+			{ 2, typeof(Object0068_GUNRobot) },
+			{ 3, typeof(Object0078_EggPierrot) },
+			{ 4, typeof(Object0079_EggPawn) },
+			{ 5, typeof(Object007A_EggShadowAndroid) },
+			{ 6, typeof(Object008C_BkGiant) },
+			{ 7, typeof(Object008D_BkSoldier) },
+			{ 8, typeof(Object0090_BkWorm) },
+			{ 9, typeof(Object0091_BkLarva) },
+			{ 10, typeof(Object0093_BkNinja) },
+		};
+
+		static readonly Dictionary<int, Type> flyingEnemyTypeMap = new Dictionary<int, Type>
+		{
+			{ 0, typeof(Object0065_GUNBeetle) },
+			{ 1, typeof(Object008E_BkWingLarge) },
+			{ 2, typeof(Object008F_BkWingSmall) },
+			{ 3, typeof(Object0092_BkChaos) },
+			{ 4, typeof(Object0066_GUNBigfoot) }, // only if AppearType is ZUTTO_HOVERING
+			{ 5, typeof(Object0093_BkNinja) }, // only if AppearType is ON_AIR_SAUCER_WARP
+		};
+
 		public MainForm()
 		{
 			InitializeComponent();
 		}
 
-		const string programVersion = "0.4.0-preview-2023-12-20";
+		const string programVersion = "0.4.0-preview-2023-12-28";
 		private static string hoverSoundPath = AppDomain.CurrentDomain.BaseDirectory + "res/hover.wav";
 		private static string selectSoundPath = AppDomain.CurrentDomain.BaseDirectory + "res/select.wav";
 		Settings settings;
@@ -166,7 +189,12 @@ namespace ShadowRando
 			includeBosses.Checked = settings.IncludeBosses;
 			randomMusic.Checked = settings.RandomMusic;
 			randomFNT.Checked = settings.RandomFNT;
-
+			randomSET.Checked = settings.RandomSET;
+			// SET Configuration
+			setLayout_Mode.SelectedIndex = (int)settings.SETMode;
+			setLayout_keepType.Checked = settings.SETEnemyKeepType;
+			setLayout_randomPartners.Checked = settings.SETRandomPartners;
+			setLayout_randomWeaponsInBoxes.Checked = settings.SETRandomWeaponsInBoxes;
 			// FNT Configuration
 			FNTCheckBox_NoDuplicatesPreRandomization.Checked = settings.FNTNoDuplicatesPreRandomization;
 			FNTCheckBox_NoSystemMessages.Checked = settings.FNTNoSystemMessages;
@@ -283,6 +311,12 @@ namespace ShadowRando
 			settings.IncludeBosses = includeBosses.Checked;
 			settings.RandomMusic = randomMusic.Checked;
 			settings.RandomFNT = randomFNT.Checked;
+			settings.RandomSET = randomSET.Checked;
+			// SET Configuration
+			settings.SETMode = (SETRandomizationModes)setLayout_Mode.SelectedIndex;
+			settings.SETEnemyKeepType = setLayout_keepType.Checked;
+			settings.SETRandomPartners = setLayout_randomPartners.Checked;
+			settings.SETRandomWeaponsInBoxes = setLayout_randomWeaponsInBoxes.Checked;
 			// FNT Configuration
 			settings.FNTNoDuplicatesPreRandomization = FNTCheckBox_NoDuplicatesPreRandomization.Checked;
 			settings.FNTNoSystemMessages = FNTCheckBox_NoSystemMessages.Checked;
@@ -314,11 +348,6 @@ namespace ShadowRando
 		{
 			seedTextBox.Enabled = !randomSeed.Checked;
 		}
-
-		private void modeSelector_SelectedIndexChanged(object sender, EventArgs e)
-		{
-
-        }
 
         private void allowSameLevel_CheckedChanged(object sender, EventArgs e)
 		{
@@ -1060,22 +1089,11 @@ namespace ShadowRando
 			return false;
 		}
 
-		enum SETRandomizationModes
-		{
-			Wild,
-			OneToOnePerStage,
-			OneToOneGlobal,
-			AllEnemiesAreGUNSoldiers,
-			AllObjectsAreGUNSoldiers,
-			AllEnemiesAreGUNSoldiersWithTranslations
-		}
-
 		private void RandomizeSETs(Random r)
 		{
 			var mode = (SETRandomizationModes)setLayout_Mode.SelectedIndex;
 
 			// begin randomization
-			MessageBox.Show("WARNING: Please be patient, this will take longer than other randomization. Press OK to begin.");
 			ShadowSET.LayoutEditorSystem.SetupLayoutEditorSystem(); // Critical to load relevent data
 			for (int stageIdToModify = 5; stageIdToModify < 45; stageIdToModify++) {
 				stageAssociationIDMap.TryGetValue(stageIdToModify, out var stageId);
@@ -1123,8 +1141,17 @@ namespace ShadowRando
 						MakeAllBoxesHaveRandomWeapons(ref nrmLayoutData, r);
 				}
 
+				if (setLayout_randomPartners.Checked)
+				{
+					MakeAllPartnersRandom(ref cmnLayoutData, r);
+					if (nrmLayoutData != null)
+						MakeAllPartnersRandom(ref nrmLayoutData, r);
+				}
+
 				switch (mode)
 				{
+					case SETRandomizationModes.None:
+						break;
 					case SETRandomizationModes.Wild:
 						WildRandomizeAllEnemiesWithTranslations(ref cmnLayoutData, r);
 						if (nrmLayoutData != null)
@@ -1190,6 +1217,21 @@ namespace ShadowRando
 			MessageBox.Show("WARNING: You must set Dolphin -> Config -> Advanced -> MEM1 value to 64MB!");
 		}
 
+		private void MakeAllPartnersRandom(ref List<SetObjectShadow> setData, Random r)
+		{
+			List<(Object0190_Partner item, int index)> partnerItems = setData
+				.Select((item, index) => new { Item = item, Index = index })
+				.Where(pair => pair.Item is Object0190_Partner)
+				.Select(pair => (Item: (Object0190_Partner)pair.Item, Index: pair.Index))
+				.ToList();
+
+			foreach (var partner in partnerItems)
+			{
+				partner.item.Partner = (Object0190_Partner.EPartner)r.Next(0x01, 0x0D);
+				setData[partner.index] = partner.item;
+			}
+		}
+
 		private void MakeAllBoxesHaveRandomWeapons(ref List<SetObjectShadow> setData, Random r)
 		{
 			List<(Object0009_WoodBox item, int index)> woodBoxItems = setData
@@ -1239,23 +1281,125 @@ namespace ShadowRando
 			// Wild Randomize of all Enemies
 			for (int i = 0; i < setData.Count(); i++)
 			{
-				if (setData[i].List == 0x00 &&
-						(
-							(setData[i].Type >= 0x64 && setData[i].Type <= 0x93)
-						)
-					)
+				if (setData[i].List == 0x00 && (setData[i].Type >= 0x64 && setData[i].Type <= 0x93))
 				{
-					if (setData[i].Type == 0x64 && (setData[i].Link == 0 || setData[i].Link == 50)) { // All enemies if LinkID = 0 or 50
-						enemyTypeMap.TryGetValue(r.Next(15), out Type enemyType);
-						EnemySETMutations.MutateObjectAtIndex(i, enemyType, ref setData, true, r);
+					int randomEnemy;
+					Type randomEnemyType = typeof(Nullable);
+					if (setLayout_keepType.Checked)
+					{
+						if (IsFlyingEnemy(setData[i]))
+						{
+							randomEnemy = r.Next(6);
+							flyingEnemyTypeMap.TryGetValue(randomEnemy, out Type enemyType);
+							randomEnemyType = enemyType;
+							if (randomEnemy == 4) // special case for BkNinja and Bigfoot, since we need to force a specific 
+							{
+								var donor = new Object0066_GUNBigfoot
+								{
+									List = 0x00,
+									Type = 0x66,
+									MoveRange = 200, // EnemyBase
+									SearchRange = 200,
+									SearchAngle = 0,
+									SearchWidth = 600,
+									SearchHeight = 400,
+									SearchHeightOffset = 0,
+									MoveSpeedRatio = 1, // end EnemyBase
+									AppearType = Object0066_GUNBigfoot.EAppear.ZUTTO_HOVERING,
+									WeaponType = (Object0066_GUNBigfoot.EWeapon)r.Next(2),
+									OffsetPos_Y = 50
+								};
+								EnemySETMutations.MutateObjectAtIndex(i, donor, ref setData, true, r);
+								continue; // skip the MutateObject below since we handled it ourselves
+							} else if (randomEnemy == 5)
+							{
+								var donor = new Object0093_BkNinja
+								{
+									List = 0x00,
+									Type = 0x93,
+									MoveRange = 300,
+									SearchRange = 0,
+									SearchAngle = 0,
+									SearchWidth = 500,
+									SearchHeight = 300,
+									SearchHeightOffset = 0,
+									MoveSpeedRatio = 1,
+									AppearType = Object0093_BkNinja.EAppear.ON_AIR_SAUCER_WARP,
+									ShootCount = r.Next(1, 5),
+									AttackInterval = 1,
+									WaitInterval = 1,
+									Pos0_X = 0,
+									Pos0_Y = 50,
+									Pos0_Z = 0,
+									UNUSED_Pos0_IntWaitType = 0,
+									UNUSED_Pos0_DisappearTime = 0,
+									UNUSED_Pos1_X = 0,
+									UNUSED_Pos1_Y = 0,
+									UNUSED_Pos1_Z = 0,
+									UNUSED_Pos1_WaitType = 0,
+									UNUSED_Pos1_DisappearTime = 0,
+									UNUSED_Float21 = 0,
+									UNUSED_Float22 = 0
+								};
+								EnemySETMutations.MutateObjectAtIndex(i, donor, ref setData, true, r);
+								continue; // skip the MutateObject below since we handled it ourselves
+							}
+						} else
+						{ // ground enemies
+							if (setData[i].Type == 0x64 && (setData[i].Link == 0 || setData[i].Link == 50))
+							{
+								randomEnemy = r.Next(11); // All enemies if LinkID = 0 or 50
+							}
+							else
+							{
+								randomEnemy = r.Next(1, 11); // skip GUN Soldiers otherwise
+							}
+							groundEnemyTypeMap.TryGetValue(randomEnemy, out Type enemyType);
+							randomEnemyType = enemyType;
+						}
 					}
 					else
 					{
-						enemyTypeMap.TryGetValue(r.Next(1, 15), out Type enemyType); // skip GUN Soldiers otherwise
-						EnemySETMutations.MutateObjectAtIndex(i, enemyType, ref setData, true, r);
+						if (setData[i].Type == 0x64 && (setData[i].Link == 0 || setData[i].Link == 50))
+						{
+							randomEnemy = r.Next(15); // All enemies if LinkID = 0 or 50
+						}
+						else
+						{
+							randomEnemy = r.Next(1, 15); // skip GUN Soldiers otherwise
+						}
+						enemyTypeMap.TryGetValue(randomEnemy, out Type enemyType);
+						randomEnemyType = enemyType;
 					}
+					EnemySETMutations.MutateObjectAtIndex(i, randomEnemyType, ref setData, true, r);
 				}
 			}
+		}
+
+		private bool IsFlyingEnemy(SetObjectShadow enemy)
+		{
+			switch (enemy.Type)
+			{
+				case 0x65: // GUNBeetle
+				case 0x8E: // BkWingLarge
+				case 0x8F: // BkWingSmall
+				case 0x92: // BkChaos
+					return true;
+				case 0x66: // GUNBigfoot
+					if (((Object0066_GUNBigfoot)enemy).AppearType == Object0066_GUNBigfoot.EAppear.ZUTTO_HOVERING) {
+						return true;
+					}
+					break;
+				case 0x93: // BkNinja
+					if (((Object0093_BkNinja)enemy).AppearType == Object0093_BkNinja.EAppear.ON_AIR_SAUCER_WARP)
+					{
+						return true;
+					}
+					break;
+				default:
+					return false;
+			}
+			return false;
 		}
 
 		private void MakeAllEnemiesGUNSoldiers(ref List<SetObjectShadow> setData, Random r)
@@ -2213,9 +2357,14 @@ namespace ShadowRando
 			PlayAudio(hoverSoundPath);
 		}
 
-		private void SharedMouseDown(object sender, MouseEventArgs e)
+		private void SharedMouseDown_Shoot(object sender, MouseEventArgs e)
 		{
 			PlayAudio(selectSoundPath);
+		}
+
+		private void SharedMouseDown_Chkchk(object sender, MouseEventArgs e)
+		{
+			PlayAudio(hoverSoundPath);
 		}
 
 		private void SharedMouseDown(object sender, EventArgs e)
@@ -2242,6 +2391,14 @@ namespace ShadowRando
 				outputDevice.Dispose();
 				reader.Dispose();
 			};
+		}
+
+		private void randomSET_CheckedChanged(object sender, EventArgs e)
+		{
+			setLayout_groupBoxEnemyConfiguration.Enabled = randomSET.Checked;
+			setLayout_keepType.Enabled = randomSET.Checked;
+			setLayout_randomWeaponsInBoxes.Enabled = randomSET.Checked;
+			setLayout_randomPartners.Enabled = randomSET.Checked;
 		}
 	}
 
@@ -2488,6 +2645,19 @@ namespace ShadowRando
 		[IniAlwaysInclude]
 		public bool RandomFNT { get; set; }
 		[IniAlwaysInclude]
+		public bool RandomSET { get; set; }
+		// SET
+		[IniAlwaysInclude]
+		public SETRandomizationModes SETMode { get; set; }
+		//public SETMode
+		[IniAlwaysInclude]
+		public bool SETEnemyKeepType { get; set; }
+		[IniAlwaysInclude]
+		public bool SETRandomPartners {  get; set; }
+		[IniAlwaysInclude]
+		public bool SETRandomWeaponsInBoxes {  get; set; }
+		// FNT
+		[IniAlwaysInclude]
 		public bool FNTNoDuplicatesPreRandomization;
 		[IniAlwaysInclude]
 		public bool FNTNoSystemMessages;
@@ -2555,6 +2725,17 @@ namespace ShadowRando
 		ReverseBranching,
 		BossRush,
 		Wild
+	}
+
+	enum SETRandomizationModes
+	{
+		None,
+		Wild,
+		OneToOnePerStage,
+		OneToOneGlobal,
+		AllEnemiesAreGUNSoldiers,
+		AllObjectsAreGUNSoldiers,
+		AllEnemiesAreGUNSoldiersWithTranslations
 	}
 
 	enum MainPath

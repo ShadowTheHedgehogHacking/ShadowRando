@@ -61,11 +61,11 @@ namespace ShadowRando
             this.setLayout_Mode = new System.Windows.Forms.ComboBox();
             this.setLayout_randomWeaponsInBoxes = new System.Windows.Forms.CheckBox();
             this.setLayout_enemyRandomWeapons = new System.Windows.Forms.CheckBox();
-            this.setLayout_enemyPreventBadLinkID = new System.Windows.Forms.CheckBox();
             this.setLayout_keepAffiliation = new System.Windows.Forms.CheckBox();
             this.setLayout_keepType = new System.Windows.Forms.CheckBox();
             this.setLayout_haveShieldBlockProb = new System.Windows.Forms.NumericUpDown();
             this.setLayout_enemyOverrideShieldBlock = new System.Windows.Forms.CheckBox();
+            this.setLayout_randomPartners = new System.Windows.Forms.CheckBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPageLevelOrder = new System.Windows.Forms.TabPage();
             this.levelOrder_modeLabel = new System.Windows.Forms.Label();
@@ -175,6 +175,7 @@ namespace ShadowRando
             // setLayout_HaveShieldBlockProbLabel
             // 
             setLayout_HaveShieldBlockProbLabel.AutoSize = true;
+            setLayout_HaveShieldBlockProbLabel.Enabled = false;
             setLayout_HaveShieldBlockProbLabel.Location = new System.Drawing.Point(6, 101);
             setLayout_HaveShieldBlockProbLabel.Name = "setLayout_HaveShieldBlockProbLabel";
             setLayout_HaveShieldBlockProbLabel.Size = new System.Drawing.Size(148, 13);
@@ -193,7 +194,7 @@ namespace ShadowRando
         "t time.");
             this.randomSeed.UseVisualStyleBackColor = true;
             this.randomSeed.CheckedChanged += new System.EventHandler(this.randomSeed_CheckedChanged);
-            this.randomSeed.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
+            this.randomSeed.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // mainPathSelector
             // 
@@ -265,7 +266,7 @@ namespace ShadowRando
             this.toolTip1.SetToolTip(this.randomizeButton, "Click this button to randomize the game with these settings.");
             this.randomizeButton.UseVisualStyleBackColor = true;
             this.randomizeButton.Click += new System.EventHandler(this.randomizeButton_Click);
-            this.randomizeButton.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
+            this.randomizeButton.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Shoot);
             this.randomizeButton.MouseEnter += new System.EventHandler(this.SharedMouseEnter);
             // 
             // backJumpProb
@@ -292,7 +293,7 @@ namespace ShadowRando
             this.toolTip1.SetToolTip(this.allowSameLevel, "If checked, warps may take you to the start of the level you\'re in currently.");
             this.allowSameLevel.UseVisualStyleBackColor = true;
             this.allowSameLevel.CheckedChanged += new System.EventHandler(this.allowSameLevel_CheckedChanged);
-            this.allowSameLevel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
+            this.allowSameLevel.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // levelOrderModeSelector
             // 
@@ -357,7 +358,7 @@ namespace ShadowRando
             this.toolTip1.SetToolTip(this.randomFNT, "Check this box to shuffle the subtitles played.");
             this.randomFNT.UseVisualStyleBackColor = true;
             this.randomFNT.CheckedChanged += new System.EventHandler(this.randomFNT_CheckedChanged);
-            this.randomFNT.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
+            this.randomFNT.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // includeLast
             // 
@@ -369,7 +370,7 @@ namespace ShadowRando
             this.includeLast.Text = "Include Last Story";
             this.toolTip1.SetToolTip(this.includeLast, "If checked, the levels from the Last Story will also be randomized.");
             this.includeLast.UseVisualStyleBackColor = true;
-            this.includeLast.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
+            this.includeLast.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // includeBosses
             // 
@@ -381,7 +382,7 @@ namespace ShadowRando
             this.includeBosses.Text = "Include Bosses";
             this.toolTip1.SetToolTip(this.includeBosses, "If unchecked, boss fights will not be included in the game.");
             this.includeBosses.UseVisualStyleBackColor = true;
-            this.includeBosses.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
+            this.includeBosses.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // FNTCheckBox_SpecificCharacters
             // 
@@ -466,7 +467,7 @@ namespace ShadowRando
             this.randomMusic.Text = "Randomize Music";
             this.toolTip1.SetToolTip(this.randomMusic, "Check this box to shuffle the music that\'s played in each area of the game.");
             this.randomMusic.UseVisualStyleBackColor = true;
-            this.randomMusic.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
+            this.randomMusic.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // randomSET
             // 
@@ -479,13 +480,15 @@ namespace ShadowRando
             this.toolTip1.SetToolTip(this.randomSET, "Check this box to enable randomization of enemies and weapons, per the options be" +
         "low.");
             this.randomSET.UseVisualStyleBackColor = true;
-            this.randomSET.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
+            this.randomSET.CheckedChanged += new System.EventHandler(this.randomSET_CheckedChanged);
+            this.randomSET.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // setLayout_Mode
             // 
             this.setLayout_Mode.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.setLayout_Mode.FormattingEnabled = true;
             this.setLayout_Mode.Items.AddRange(new object[] {
+            "No Random Enemies",
             "Wild (WIP)",
             "1:1 Per Stage (Not Ready)",
             "1:1 Global (Not Ready)",
@@ -501,13 +504,15 @@ namespace ShadowRando
             // setLayout_randomWeaponsInBoxes
             // 
             this.setLayout_randomWeaponsInBoxes.AutoSize = true;
-            this.setLayout_randomWeaponsInBoxes.Location = new System.Drawing.Point(247, 151);
+            this.setLayout_randomWeaponsInBoxes.Enabled = false;
+            this.setLayout_randomWeaponsInBoxes.Location = new System.Drawing.Point(247, 99);
             this.setLayout_randomWeaponsInBoxes.Name = "setLayout_randomWeaponsInBoxes";
             this.setLayout_randomWeaponsInBoxes.Size = new System.Drawing.Size(158, 17);
             this.setLayout_randomWeaponsInBoxes.TabIndex = 12;
             this.setLayout_randomWeaponsInBoxes.Text = "Random Weapons in Boxes";
             this.toolTip1.SetToolTip(this.setLayout_randomWeaponsInBoxes, "Makes wood, metal, and weapon boxes all contain a random weapon.");
             this.setLayout_randomWeaponsInBoxes.UseVisualStyleBackColor = true;
+            this.setLayout_randomWeaponsInBoxes.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // setLayout_enemyRandomWeapons
             // 
@@ -520,19 +525,6 @@ namespace ShadowRando
             this.setLayout_enemyRandomWeapons.Text = "Random Weapons";
             this.toolTip1.SetToolTip(this.setLayout_enemyRandomWeapons, "If off, enemies of the same type will all have the same weapon type");
             this.setLayout_enemyRandomWeapons.UseVisualStyleBackColor = true;
-            // 
-            // setLayout_enemyPreventBadLinkID
-            // 
-            this.setLayout_enemyPreventBadLinkID.AutoSize = true;
-            this.setLayout_enemyPreventBadLinkID.Enabled = false;
-            this.setLayout_enemyPreventBadLinkID.Location = new System.Drawing.Point(6, 65);
-            this.setLayout_enemyPreventBadLinkID.Name = "setLayout_enemyPreventBadLinkID";
-            this.setLayout_enemyPreventBadLinkID.Size = new System.Drawing.Size(203, 17);
-            this.setLayout_enemyPreventBadLinkID.TabIndex = 10;
-            this.setLayout_enemyPreventBadLinkID.Text = "Prevent Bad Link ID (Recommended)";
-            this.toolTip1.SetToolTip(this.setLayout_enemyPreventBadLinkID, "Prevents enemies from inheriting unsupported Link ID behaviors (ex: GUN Soldier l" +
-        "inked to Enemy Respawner)");
-            this.setLayout_enemyPreventBadLinkID.UseVisualStyleBackColor = true;
             // 
             // setLayout_keepAffiliation
             // 
@@ -562,6 +554,7 @@ namespace ShadowRando
             // 
             // setLayout_haveShieldBlockProb
             // 
+            this.setLayout_haveShieldBlockProb.Enabled = false;
             this.setLayout_haveShieldBlockProb.Location = new System.Drawing.Point(154, 98);
             this.setLayout_haveShieldBlockProb.Name = "setLayout_haveShieldBlockProb";
             this.setLayout_haveShieldBlockProb.Size = new System.Drawing.Size(41, 20);
@@ -584,6 +577,20 @@ namespace ShadowRando
             this.setLayout_enemyOverrideShieldBlock.Text = "Override Shield/Block % Ratio";
             this.toolTip1.SetToolTip(this.setLayout_enemyOverrideShieldBlock, "% an enemy will gain a shield or block ability, if eligible");
             this.setLayout_enemyOverrideShieldBlock.UseVisualStyleBackColor = true;
+            // 
+            // setLayout_randomPartners
+            // 
+            this.setLayout_randomPartners.AutoSize = true;
+            this.setLayout_randomPartners.Enabled = false;
+            this.setLayout_randomPartners.Location = new System.Drawing.Point(247, 122);
+            this.setLayout_randomPartners.Name = "setLayout_randomPartners";
+            this.setLayout_randomPartners.Size = new System.Drawing.Size(108, 17);
+            this.setLayout_randomPartners.TabIndex = 15;
+            this.setLayout_randomPartners.Text = "Random Partners";
+            this.toolTip1.SetToolTip(this.setLayout_randomPartners, "All partners are random. You may not encounter Sonic / Black Doom in Westopolis f" +
+        "or example.");
+            this.setLayout_randomPartners.UseVisualStyleBackColor = true;
+            this.setLayout_randomPartners.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // tabControl1
             // 
@@ -648,6 +655,7 @@ namespace ShadowRando
             // 
             // tabPageSET
             // 
+            this.tabPageSET.Controls.Add(this.setLayout_randomPartners);
             this.tabPageSET.Controls.Add(this.tempWarning);
             this.tabPageSET.Controls.Add(this.setLayout_groupBoxEnemyConfiguration);
             this.tabPageSET.Controls.Add(this.setLayout_randomWeaponsInBoxes);
@@ -668,10 +676,9 @@ namespace ShadowRando
             this.tempWarning.BackColor = System.Drawing.Color.Wheat;
             this.tempWarning.Location = new System.Drawing.Point(244, 55);
             this.tempWarning.Name = "tempWarning";
-            this.tempWarning.Size = new System.Drawing.Size(207, 91);
+            this.tempWarning.Size = new System.Drawing.Size(136, 26);
             this.tempWarning.TabIndex = 14;
-            this.tempWarning.Text = "Only \r\nWild (WIP),\r\nGUN Soldiers Modes,\r\nand Random Weapons in Boxes are ready\r\n\r" +
-    "\nCurrently applies to all .cmn and .nrm\r\n.hrd layouts are ignored";
+            this.tempWarning.Text = "Applies to all .cmn and .nrm\r\n.hrd layouts are ignored";
             // 
             // setLayout_groupBoxEnemyConfiguration
             // 
@@ -679,7 +686,6 @@ namespace ShadowRando
             this.setLayout_groupBoxEnemyConfiguration.Controls.Add(setLayout_HaveShieldBlockProbLabel);
             this.setLayout_groupBoxEnemyConfiguration.Controls.Add(this.setLayout_enemyRandomWeapons);
             this.setLayout_groupBoxEnemyConfiguration.Controls.Add(this.setLayout_enemyOverrideShieldBlock);
-            this.setLayout_groupBoxEnemyConfiguration.Controls.Add(this.setLayout_enemyPreventBadLinkID);
             this.setLayout_groupBoxEnemyConfiguration.Controls.Add(this.setLayout_keepAffiliation);
             this.setLayout_groupBoxEnemyConfiguration.Controls.Add(this.setLayout_keepType);
             this.setLayout_groupBoxEnemyConfiguration.Enabled = false;
@@ -963,6 +969,7 @@ namespace ShadowRando
             this.randomMusicSkipChaosPowers.TabIndex = 9;
             this.randomMusicSkipChaosPowers.Text = "Skip Chaos Power Use Jingles";
             this.randomMusicSkipChaosPowers.UseVisualStyleBackColor = true;
+            this.randomMusicSkipChaosPowers.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // randomMusicSkipRankTheme
             // 
@@ -974,6 +981,7 @@ namespace ShadowRando
             this.randomMusicSkipRankTheme.TabIndex = 8;
             this.randomMusicSkipRankTheme.Text = "Skip Rank Theme";
             this.randomMusicSkipRankTheme.UseVisualStyleBackColor = true;
+            this.randomMusicSkipRankTheme.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // tabPageSpoilers
             // 
@@ -1034,7 +1042,7 @@ namespace ShadowRando
             this.checkBoxProgramSound.TabIndex = 10;
             this.checkBoxProgramSound.Text = "Sound";
             this.checkBoxProgramSound.UseVisualStyleBackColor = true;
-            this.checkBoxProgramSound.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown);
+            this.checkBoxProgramSound.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // saveFileDialog1
             // 
@@ -1152,12 +1160,12 @@ namespace ShadowRando
 		private System.Windows.Forms.CheckBox setLayout_randomWeaponsInBoxes;
 		private System.Windows.Forms.GroupBox setLayout_groupBoxEnemyConfiguration;
 		private System.Windows.Forms.CheckBox setLayout_enemyRandomWeapons;
-		private System.Windows.Forms.CheckBox setLayout_enemyPreventBadLinkID;
 		private System.Windows.Forms.CheckBox setLayout_keepAffiliation;
 		private System.Windows.Forms.CheckBox setLayout_keepType;
 		private System.Windows.Forms.NumericUpDown setLayout_haveShieldBlockProb;
 		private System.Windows.Forms.CheckBox setLayout_enemyOverrideShieldBlock;
 		private System.Windows.Forms.Label tempWarning;
 		private System.Windows.Forms.CheckBox randomMusicSkipChaosPowers;
+		private System.Windows.Forms.CheckBox setLayout_randomPartners;
 	}
 }
