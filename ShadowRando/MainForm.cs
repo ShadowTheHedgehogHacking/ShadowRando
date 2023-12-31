@@ -1329,7 +1329,7 @@ namespace ShadowRando
 									AttackInterval = 1,
 									WaitInterval = 1,
 									Pos0_X = 0,
-									Pos0_Y = 50,
+									Pos0_Y = 0,
 									Pos0_Z = 0,
 									UNUSED_Pos0_IntWaitType = 0,
 									UNUSED_Pos0_DisappearTime = 0,

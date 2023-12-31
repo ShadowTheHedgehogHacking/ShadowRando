@@ -1459,6 +1459,7 @@ namespace ShadowRando
 		}
 		private static void ToBkNinja(int index, ref List<SetObjectShadow> setData, Random r)
 		{
+			var appearType = (Object0093_BkNinja.EAppear)r.Next(4);
 			var donor = new Object0093_BkNinja
 			{
 				List = 0x00,
@@ -1470,12 +1471,12 @@ namespace ShadowRando
 				SearchHeight = 100,
 				SearchHeightOffset = 0,
 				MoveSpeedRatio = 1,
-				AppearType = (Object0093_BkNinja.EAppear)r.Next(4),
+				AppearType = appearType,
 				ShootCount = r.Next(1, 5),
 				AttackInterval = 1,
 				WaitInterval = 1,
 				Pos0_X = 0,
-				Pos0_Y = 0,
+				Pos0_Y = appearType == Object0093_BkNinja.EAppear.ON_AIR_SAUCER_WARP ? 0 : 50,
 				Pos0_Z = 0,
 				UNUSED_Pos0_IntWaitType = 0,
 				UNUSED_Pos0_DisappearTime = 0,
