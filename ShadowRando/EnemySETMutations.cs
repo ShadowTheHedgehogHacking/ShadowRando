@@ -1428,7 +1428,7 @@ namespace ShadowRando
 				SearchHeight = 50,
 				SearchHeightOffset = 0,
 				MoveSpeedRatio = 0.6f,
-				NumberOfLarva = r.Next(20),
+				NumberOfLarva = r.Next(1, 20),
 				AppearRange = r.Next(10, 60),
 				AppearType = appearType,
 				Offset_Y = appearType == Object0091_BkLarva.EAppear.NORMAL ? 0 : 50
@@ -1475,7 +1475,7 @@ namespace ShadowRando
 				AttackInterval = 1,
 				WaitInterval = 1,
 				Pos0_X = 0,
-				Pos0_Y = 50,
+				Pos0_Y = 0,
 				Pos0_Z = 0,
 				UNUSED_Pos0_IntWaitType = 0,
 				UNUSED_Pos0_DisappearTime = 0,
