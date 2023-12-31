@@ -1289,6 +1289,10 @@ namespace ShadowRando
 					{
 						if (IsFlyingEnemy(setData[i]))
 						{
+							if (setData[i].List == 0x00 && setData[i].Type == 0x90) {
+								// if BkWorm, mutate original posY +50
+								setData[i].PosY = setData[i].PosY + 50;
+							}
 							randomEnemy = r.Next(6);
 							flyingEnemyTypeMap.TryGetValue(randomEnemy, out Type enemyType);
 							randomEnemyType = enemyType;
@@ -1387,6 +1391,12 @@ namespace ShadowRando
 					return true;
 				case 0x66: // GUNBigfoot
 					if (((Object0066_GUNBigfoot)enemy).AppearType == Object0066_GUNBigfoot.EAppear.ZUTTO_HOVERING) {
+						return true;
+					}
+					break;
+				case 0x90: // BkWorm
+					if (enemy.UnkBytes[2] == 0x40 && enemy.UnkBytes[6] == 0x40) // BkWorms that spawn on killplanes
+					{
 						return true;
 					}
 					break;
