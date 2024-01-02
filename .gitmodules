@@ -1,3 +1,6 @@
 [submodule "ShadowSET"]
 	path = ShadowSET
 	url = https://github.com/ShadowTheHedgehogHacking/ShadowSET.git
+[submodule "HeroesONE-Reloaded"]
+	path = HeroesONE-Reloaded
+	url = https://github.com/Sewer56/HeroesONE-Reloaded.git
