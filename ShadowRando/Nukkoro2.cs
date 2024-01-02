@@ -41,7 +41,7 @@ namespace ShadowRando
 							{
 								if (!char.IsDigit(split[1][c]))
 								{
-									ints.Add(int.Parse(split[1].Substring(st, c)));
+									ints.Add(int.Parse(split[1].Substring(st, c - st)));
 									if (split[1][c] == '-')
 										st = c;
 									else
