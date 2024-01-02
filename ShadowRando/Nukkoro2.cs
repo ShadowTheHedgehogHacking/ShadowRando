@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace ShadowRando
@@ -31,58 +32,76 @@ namespace ShadowRando
 					string[] split = line.Split(new[] { " : " }, StringSplitOptions.None);
 					if (split.Length == 2)
 					{
+						List<int> ints = new List<int>();
+						int st = 0;
+						bool num = false;
+						for (int c = 0; c < split[1].Length; c++)
+						{
+							if (num)
+							{
+								if (!char.IsDigit(split[1][c]))
+								{
+									ints.Add(int.Parse(split[1].Substring(st, c)));
+									if (split[1][c] == '-')
+										st = c;
+									else
+										num = false;
+								}
+							}
+							else if (char.IsDigit(split[1][c]) || split[1][c] == '-')
+							{
+								num = true;
+								st = c;
+							}
+						}
+						if (num)
+							ints.Add(int.Parse(split[1].Substring(st)));
 						switch (split[0])
 						{
 							case "PLAYER":
-								{
-									string[] sp2 = split[1].Split(' ');
-									stage.Player.Add(int.Parse(sp2[0]), new Nukkoro2Player(sp2));
-								}
+								stage.Player.Add(ints[0], new Nukkoro2Player(ints.Skip(1).ToArray()));
 								break;
 							case "STARTSPD":
-								{
-									string[] sp2 = split[1].Split(' ');
-									stage.StartSpeed.Add(int.Parse(sp2[0]), new Nukkoro2Vector(int.Parse(sp2[1]), int.Parse(sp2[2]), int.Parse(sp2[3])));
-								}
+								stage.StartSpeed.Add(ints[0], new Nukkoro2Vector(ints.Skip(1).ToArray()));
 								break;
 							case "STARTDEMO":
-								stage.StartDemo = int.Parse(split[1]);
+								stage.StartDemo = ints[0];
 								break;
 							case "RANK_H":
-								stage.RankHero = new Nukkoro2Rank(split[1]);
+								stage.RankHero = new Nukkoro2Rank(ints.ToArray());
 								break;
 							case "RANK_D":
-								stage.RankDark = new Nukkoro2Rank(split[1]);
+								stage.RankDark = new Nukkoro2Rank(ints.ToArray());
 								break;
 							case "RANK_N":
-								stage.RankNeutral = new Nukkoro2Rank(split[1]);
+								stage.RankNeutral = new Nukkoro2Rank(ints.ToArray());
 								break;
 							case "GOALEVENTPOS_H":
-								stage.GoalEventPosHero = new Nukkoro2Vector(split[1]);
+								stage.GoalEventPosHero = new Nukkoro2Vector(ints.ToArray());
 								break;
 							case "GOALEVENTPOS_D":
-								stage.GoalEventPosDark = new Nukkoro2Vector(split[1]);
+								stage.GoalEventPosDark = new Nukkoro2Vector(ints.ToArray());
 								break;
 							case "GOALEVENTPOS_N":
-								stage.GoalEventPosNeutral = new Nukkoro2Vector(split[1]);
+								stage.GoalEventPosNeutral = new Nukkoro2Vector(ints.ToArray());
 								break;
 							case "GOALEVENTPOS_X":
-								stage.GoalEventPosExpert = new Nukkoro2Vector(split[1]);
+								stage.GoalEventPosExpert = new Nukkoro2Vector(ints.ToArray());
 								break;
 							case "MISSIONCOUNT_H":
-								stage.MissionCountHero = new Nukkoro2Mission(split[1]);
+								stage.MissionCountHero = new Nukkoro2Mission(ints.ToArray());
 								break;
 							case "MISSIONCOUNT_D":
-								stage.MissionCountDark = new Nukkoro2Mission(split[1]);
+								stage.MissionCountDark = new Nukkoro2Mission(ints.ToArray());
 								break;
 							case "MISSIONCOUNT_N":
-								stage.MissionCountNeutral = new Nukkoro2Mission(split[1]);
+								stage.MissionCountNeutral = new Nukkoro2Mission(ints.ToArray());
 								break;
 							case "MISSIONCOUNT_HARD":
-								stage.MissionCountExpert = new Nukkoro2Mission(split[1]);
+								stage.MissionCountExpert = new Nukkoro2Mission(ints.ToArray());
 								break;
 							case "MIPMAPK":
-								stage.MipmapK = int.Parse(split[1]);
+								stage.MipmapK = ints[0];
 								break;
 						}
 					}
@@ -162,16 +181,10 @@ namespace ShadowRando
 
 		public Nukkoro2Player() { }
 
-		public Nukkoro2Player(string[] data)
+		public Nukkoro2Player(int[] data)
 		{
-			Position = new Nukkoro2Vector(int.Parse(data[1]), int.Parse(data[2]), int.Parse(data[3]));
-			try
-			{
-				Rotation = new Nukkoro2Vector(int.Parse(data[4]), int.Parse(data[5]), int.Parse(data[6]));
-			} catch (FormatException)
-			{
-				Rotation = new Nukkoro2Vector(0, -90, 0); // hardcode to catch original and reloaded 1.1 error
-			}
+			Position = new Nukkoro2Vector(data[1], data[2], data[3]);
+			Rotation = new Nukkoro2Vector(data[4], data[5], data[6]);
 		}
 
 		public override string ToString() => $"{Position} {Rotation}";
@@ -192,12 +205,11 @@ namespace ShadowRando
 			Z = z;
 		}
 
-		public Nukkoro2Vector(string data)
+		public Nukkoro2Vector(int[] data)
 		{
-			string[] split = data.Split(' ');
-			X = int.Parse(split[0]);
-			Y = int.Parse(split[1]);
-			Z = int.Parse(split[2]);
+			X = data[0];
+			Y = data[1];
+			Z = data[2];
 		}
 
 		public override string ToString() => $"{X} {Y} {Z}";
@@ -212,13 +224,12 @@ namespace ShadowRando
 
 		public Nukkoro2Rank() { }
 
-		public Nukkoro2Rank(string data)
+		public Nukkoro2Rank(int[] data)
 		{
-			string[] split = data.Split(' ');
-			A = int.Parse(split[0]);
-			B = int.Parse(split[1]);
-			C = int.Parse(split[2]);
-			D = int.Parse(split[3]);
+			A = data[0];
+			B = data[1];
+			C = data[2];
+			D = data[3];
 		}
 
 		public override string ToString() => $"{A} {B} {C} {D}";
@@ -231,17 +242,10 @@ namespace ShadowRando
 
 		public Nukkoro2Mission() { }
 
-		public Nukkoro2Mission(string data)
+		public Nukkoro2Mission(int[] data)
 		{
-			string[] split = data.Split(' ');
-			Success = int.Parse(split[0]);
-			try
-			{
-				Failure = int.Parse(split[1]);
-			} catch (FormatException)
-			{
-				Failure = int.Parse(split[2]);
-			}
+			Success = data[0];
+			Failure = data[1];
 		}
 
 		public override string ToString() => $"{Success} {Failure}";
