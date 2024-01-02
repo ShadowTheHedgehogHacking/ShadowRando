@@ -183,8 +183,8 @@ namespace ShadowRando
 
 		public Nukkoro2Player(int[] data)
 		{
-			Position = new Nukkoro2Vector(data[1], data[2], data[3]);
-			Rotation = new Nukkoro2Vector(data[4], data[5], data[6]);
+			Position = new Nukkoro2Vector(data[0], data[1], data[2]);
+			Rotation = new Nukkoro2Vector(data[3], data[4], data[5]);
 		}
 
 		public override string ToString() => $"{Position} {Rotation}";
