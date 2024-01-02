@@ -150,10 +150,17 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\HeroesONE-Reloaded\HeroesONE++\HeroesONE_R.csproj">
+      <Project>{f13bbd67-b8cc-461b-8b02-f4cf2622f0cd}</Project>
+      <Name>HeroesONE_R</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ShadowSET\ShadowSET\ShadowSET.csproj">
       <Project>{e6c0cdfd-f6bb-4bff-863c-1025624d6889}</Project>
       <Name>ShadowSET</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

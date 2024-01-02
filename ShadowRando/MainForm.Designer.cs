@@ -66,6 +66,8 @@ namespace ShadowRando
             this.setLayout_haveShieldBlockProb = new System.Windows.Forms.NumericUpDown();
             this.setLayout_enemyOverrideShieldBlock = new System.Windows.Forms.CheckBox();
             this.setLayout_randomPartners = new System.Windows.Forms.CheckBox();
+            this.setLayout_adjustMissionCounts = new System.Windows.Forms.CheckBox();
+            this.setLayout_makeCCSplinesAWRidable = new System.Windows.Forms.CheckBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPageLevelOrder = new System.Windows.Forms.TabPage();
             this.levelOrder_modeLabel = new System.Windows.Forms.Label();
@@ -104,7 +106,6 @@ namespace ShadowRando
             this.checkBoxProgramSound = new System.Windows.Forms.CheckBox();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.saveFileDialog2 = new System.Windows.Forms.SaveFileDialog();
-            this.setLayout_adjustMissionCounts = new System.Windows.Forms.CheckBox();
             levelOrder_seedLabel = new System.Windows.Forms.Label();
             levelOrder_mainPathLabel = new System.Windows.Forms.Label();
             levelOrder_maxBackwardsJumpLabel = new System.Windows.Forms.Label();
@@ -583,7 +584,7 @@ namespace ShadowRando
             // 
             this.setLayout_randomPartners.AutoSize = true;
             this.setLayout_randomPartners.Enabled = false;
-            this.setLayout_randomPartners.Location = new System.Drawing.Point(247, 122);
+            this.setLayout_randomPartners.Location = new System.Drawing.Point(247, 118);
             this.setLayout_randomPartners.Name = "setLayout_randomPartners";
             this.setLayout_randomPartners.Size = new System.Drawing.Size(108, 17);
             this.setLayout_randomPartners.TabIndex = 15;
@@ -592,6 +593,30 @@ namespace ShadowRando
         "or example.");
             this.setLayout_randomPartners.UseVisualStyleBackColor = true;
             this.setLayout_randomPartners.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
+            // 
+            // setLayout_adjustMissionCounts
+            // 
+            this.setLayout_adjustMissionCounts.AutoSize = true;
+            this.setLayout_adjustMissionCounts.Enabled = false;
+            this.setLayout_adjustMissionCounts.Location = new System.Drawing.Point(247, 138);
+            this.setLayout_adjustMissionCounts.Name = "setLayout_adjustMissionCounts";
+            this.setLayout_adjustMissionCounts.Size = new System.Drawing.Size(129, 17);
+            this.setLayout_adjustMissionCounts.TabIndex = 16;
+            this.setLayout_adjustMissionCounts.Text = "Adjust Mission Counts";
+            this.toolTip1.SetToolTip(this.setLayout_adjustMissionCounts, "Missions counts are adjusted if enemy counts of affiliation are modified");
+            this.setLayout_adjustMissionCounts.UseVisualStyleBackColor = true;
+            // 
+            // setLayout_makeCCSplinesAWRidable
+            // 
+            this.setLayout_makeCCSplinesAWRidable.AutoSize = true;
+            this.setLayout_makeCCSplinesAWRidable.Location = new System.Drawing.Point(247, 156);
+            this.setLayout_makeCCSplinesAWRidable.Name = "setLayout_makeCCSplinesAWRidable";
+            this.setLayout_makeCCSplinesAWRidable.Size = new System.Drawing.Size(200, 17);
+            this.setLayout_makeCCSplinesAWRidable.TabIndex = 17;
+            this.setLayout_makeCCSplinesAWRidable.Text = "Make CC Splines Vehicle Compatible";
+            this.toolTip1.SetToolTip(this.setLayout_makeCCSplinesAWRidable, "Allows Black Hawk/Volt to attach to Chaos Control splines. May have side effects." +
+        "");
+            this.setLayout_makeCCSplinesAWRidable.UseVisualStyleBackColor = true;
             // 
             // tabControl1
             // 
@@ -656,6 +681,7 @@ namespace ShadowRando
             // 
             // tabPageSET
             // 
+            this.tabPageSET.Controls.Add(this.setLayout_makeCCSplinesAWRidable);
             this.tabPageSET.Controls.Add(this.setLayout_adjustMissionCounts);
             this.tabPageSET.Controls.Add(this.setLayout_randomPartners);
             this.tabPageSET.Controls.Add(this.tempWarning);
@@ -1057,18 +1083,6 @@ namespace ShadowRando
             this.saveFileDialog2.DefaultExt = "png";
             this.saveFileDialog2.Filter = "PNG Files|*.png";
             // 
-            // setLayout_adjustMissionCounts
-            // 
-            this.setLayout_adjustMissionCounts.AutoSize = true;
-            this.setLayout_adjustMissionCounts.Enabled = false;
-            this.setLayout_adjustMissionCounts.Location = new System.Drawing.Point(247, 145);
-            this.setLayout_adjustMissionCounts.Name = "setLayout_adjustMissionCounts";
-            this.setLayout_adjustMissionCounts.Size = new System.Drawing.Size(129, 17);
-            this.setLayout_adjustMissionCounts.TabIndex = 16;
-            this.setLayout_adjustMissionCounts.Text = "Adjust Mission Counts";
-            this.toolTip1.SetToolTip(this.setLayout_adjustMissionCounts, "Missions counts are adjusted if enemy counts of affiliation are modified");
-            this.setLayout_adjustMissionCounts.UseVisualStyleBackColor = true;
-            // 
             // MainForm
             // 
             this.AcceptButton = this.randomizeButton;
@@ -1182,5 +1196,6 @@ namespace ShadowRando
 		private System.Windows.Forms.CheckBox randomMusicSkipChaosPowers;
 		private System.Windows.Forms.CheckBox setLayout_randomPartners;
 		private System.Windows.Forms.CheckBox setLayout_adjustMissionCounts;
+		private System.Windows.Forms.CheckBox setLayout_makeCCSplinesAWRidable;
 	}
 }

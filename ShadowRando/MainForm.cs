@@ -1,4 +1,5 @@
 ﻿using AFSLib;
+using HeroesONE_R.Structures;
 using IniFile;
 using NAudio.Wave;
 using ShadowFNT;
@@ -10,7 +11,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
 using System.Security.Cryptography;
 using System.Windows.Forms;
 
@@ -280,14 +280,18 @@ namespace ShadowRando
 						{
 							stageAssociationIDMap.TryGetValue(stageIdToModify, out var stageId);
 							var stageDataIdentifier = "stg0" + stageId.ToString();
+							var datOne = stageDataIdentifier + "_dat.one";
 							var cmnLayout = stageDataIdentifier + "_cmn.dat";
 							var nrmLayout = stageDataIdentifier + "_nrm.dat";
 							var hrdLayout = stageDataIdentifier + "_hrd.dat";
+							var datOnePath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, datOne);
 							var cmnLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, cmnLayout);
 							var nrmLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, nrmLayout);
 							var hrdLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, hrdLayout);
+
 							if (!Directory.Exists(Path.Combine("backup", "sets", stageDataIdentifier)))
 								Directory.CreateDirectory(Path.Combine("backup", "sets", stageDataIdentifier));
+							File.Copy(datOnePath, Path.Combine("backup", "sets", stageDataIdentifier, datOne));
 							File.Copy(cmnLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, cmnLayout));
 							try { File.Copy(nrmLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, nrmLayout)); } catch (FileNotFoundException) { } // some stages don't have nrm
 							try { File.Copy(hrdLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, hrdLayout)); } catch (FileNotFoundException) { } // some stages don't have hrd
@@ -1210,6 +1214,18 @@ namespace ShadowRando
 							break;
 						default:
 							break;
+					}
+				}
+
+				if (setLayout_makeCCSplinesAWRidable.Checked)
+				{
+					var datOneFile = stageDataIdentifier + "_dat.one";
+					var datOneData = File.ReadAllBytes(Path.Combine("backup", "sets", stageDataIdentifier, datOneFile));
+					var datOneDataContent = Archive.FromONEFile(ref datOneData);
+					if (datOneDataContent.Files[0].Name == "PATH.PTP")
+					{
+						var splineData = datOneDataContent.Files[0].DecompressThis();
+						// TODO: Spline parsing and manipulation of AW ridable byte per spline
 					}
 				}
 			} // end - layout operations
