@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Runtime.InteropServices.ComTypes;
 using System.Security.Cryptography;
 using System.Windows.Forms;
 
@@ -1143,13 +1144,6 @@ namespace ShadowRando
 					prevent invalid linkid scenario for certain enemies (gun soldier being linked to a respawner, leading to never triggering it)
 				*/
 
-				// get all gunsoldiers in a layout...
-				/*				List<(Object0064_GUNSoldier item, int index)> gunsoldiers = cmnLayoutData
-									.Select((item, index) => new { Item = item, Index = index })
-									.Where(pair => pair.Item is Object0064_GUNSoldier)
-									.Select(pair => (Item: (Object0064_GUNSoldier)pair.Item, Index: pair.Index))
-									.ToList();*/
-
 
 				if (setLayout_randomWeaponsInBoxes.Checked)
 				{
@@ -1195,21 +1189,24 @@ namespace ShadowRando
 				if (nrmLayoutData != null)
 					LayoutEditorFunctions.SaveShadowLayout(nrmLayoutData, Path.Combine(settings.GamePath, "files", stageDataIdentifier, nrmLayout), false);
 
-				if (nukkoro2EnemyCountStagesMap.TryGetValue(stageId, out var nukkoro2StageString))
+				if (setLayout_adjustMissionCounts.Checked && nukkoro2EnemyCountStagesMap.TryGetValue(stageId, out var nukkoro2StageString))
 				{
 					nukkoro2.TryGetValue(nukkoro2StageString.Item1, out var nukkoro2Stage);
 					switch(nukkoro2StageString.Item2)
 					{
-						// TODO replace these with affiliation counts for nrm and cmn
 						case 0:
-							nukkoro2Stage.MissionCountDark.Success = 5;
+							var total = GetTotalGUNEnemies(cmnLayoutData, nrmLayoutData);
+							nukkoro2Stage.MissionCountDark.Success = total - (int)(total * 0.05);
 							break;
 						case 1:
-							nukkoro2Stage.MissionCountHero.Success = 5;
+							total = GetTotalBlackArmsEnemies(cmnLayoutData, nrmLayoutData);
+							nukkoro2Stage.MissionCountHero.Success = total - (int)(total * 0.05);
 							break;
 						case 2:
-							nukkoro2Stage.MissionCountDark.Success = 5;
-							nukkoro2Stage.MissionCountHero.Success = 5;
+							total = GetTotalGUNEnemies(cmnLayoutData, nrmLayoutData);
+							nukkoro2Stage.MissionCountDark.Success = total - (int)(total * 0.05);
+							total = GetTotalBlackArmsEnemies(cmnLayoutData, nrmLayoutData);
+							nukkoro2Stage.MissionCountHero.Success = total - (int)(total * 0.05);
 							break;
 						default:
 							break;
@@ -1258,6 +1255,69 @@ namespace ShadowRando
 			}
 
 			MessageBox.Show("WARNING: You must set Dolphin -> Config -> Advanced -> MEM1 value to 64MB!");
+		}
+
+		private int GetTotalGUNEnemies(List<SetObjectShadow> cmn, List<SetObjectShadow> nrm = null)
+		{
+			int total = 0;
+
+			for (int i = 0; i < cmn.Count(); i++)
+			{
+				if (cmn[i].List == 0x00 && (cmn[i].Type >= 0x64 && cmn[i].Type <= 0x68))
+				{
+					total++;
+				}
+			}
+
+			if (nrm != null)
+			{
+				for (int i = 0; i < nrm.Count(); i++)
+				{
+					if (nrm[i].List == 0x00 && (nrm[i].Type >= 0x64 && nrm[i].Type <= 0x68))
+					{
+						total++;
+					}
+				}
+			}
+			return total;
+		}
+
+		private int GetTotalBlackArmsEnemies(List<SetObjectShadow> cmn, List<SetObjectShadow> nrm = null)
+		{
+			int total = 0;
+
+			for (int i = 0; i < cmn.Count(); i++)
+			{
+				if (cmn[i].List == 0x00 && (cmn[i].Type >= 0x8C && cmn[i].Type <= 0x93))
+				{
+					if (cmn[i].Type == 0x91) // BkLarva
+					{
+						total += ((Object0091_BkLarva)cmn[i]).NumberOfLarva;
+					} else
+					{
+						total++;
+					}
+				}
+			}
+
+			if (nrm != null)
+			{
+				for (int i = 0; i < nrm.Count(); i++)
+				{
+					if (nrm[i].List == 0x00 && (nrm[i].Type >= 0x8C && nrm[i].Type <= 0x93))
+					{
+						if (nrm[i].Type == 0x91) // BkLarva
+						{
+							total += ((Object0091_BkLarva)nrm[i]).NumberOfLarva;
+						}
+						else
+						{
+							total++;
+						}
+					}
+				}
+			}
+			return total;
 		}
 
 		private void MakeAllPartnersRandom(ref List<SetObjectShadow> setData, Random r)
