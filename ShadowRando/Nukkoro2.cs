@@ -130,6 +130,7 @@ namespace ShadowRando
 						sw.WriteLine("MISSIONCOUNT_X : {0}", stage.Value.MissionCountExpert);
 					if (stage.Value.MipmapK != 0)
 						sw.WriteLine("MIPMAPK : {0}", stage.Value.MipmapK);
+					sw.WriteLine();
 				}
 			}
 		}
@@ -228,7 +229,13 @@ namespace ShadowRando
 		{
 			string[] split = data.Split(' ');
 			Success = int.Parse(split[0]);
-			Failure = int.Parse(split[1]);
+			try
+			{
+				Failure = int.Parse(split[1]);
+			} catch (FormatException)
+			{
+				Failure = int.Parse(split[2]);
+			}
 		}
 
 		public override string ToString() => $"{Success} {Failure}";

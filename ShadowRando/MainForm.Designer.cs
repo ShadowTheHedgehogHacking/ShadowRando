@@ -104,6 +104,7 @@ namespace ShadowRando
             this.checkBoxProgramSound = new System.Windows.Forms.CheckBox();
             this.saveFileDialog1 = new System.Windows.Forms.SaveFileDialog();
             this.saveFileDialog2 = new System.Windows.Forms.SaveFileDialog();
+            this.setLayout_adjustMissionCounts = new System.Windows.Forms.CheckBox();
             levelOrder_seedLabel = new System.Windows.Forms.Label();
             levelOrder_mainPathLabel = new System.Windows.Forms.Label();
             levelOrder_maxBackwardsJumpLabel = new System.Windows.Forms.Label();
@@ -655,6 +656,7 @@ namespace ShadowRando
             // 
             // tabPageSET
             // 
+            this.tabPageSET.Controls.Add(this.setLayout_adjustMissionCounts);
             this.tabPageSET.Controls.Add(this.setLayout_randomPartners);
             this.tabPageSET.Controls.Add(this.tempWarning);
             this.tabPageSET.Controls.Add(this.setLayout_groupBoxEnemyConfiguration);
@@ -1055,6 +1057,18 @@ namespace ShadowRando
             this.saveFileDialog2.DefaultExt = "png";
             this.saveFileDialog2.Filter = "PNG Files|*.png";
             // 
+            // setLayout_adjustMissionCounts
+            // 
+            this.setLayout_adjustMissionCounts.AutoSize = true;
+            this.setLayout_adjustMissionCounts.Enabled = false;
+            this.setLayout_adjustMissionCounts.Location = new System.Drawing.Point(247, 145);
+            this.setLayout_adjustMissionCounts.Name = "setLayout_adjustMissionCounts";
+            this.setLayout_adjustMissionCounts.Size = new System.Drawing.Size(129, 17);
+            this.setLayout_adjustMissionCounts.TabIndex = 16;
+            this.setLayout_adjustMissionCounts.Text = "Adjust Mission Counts";
+            this.toolTip1.SetToolTip(this.setLayout_adjustMissionCounts, "Missions counts are adjusted if enemy counts of affiliation are modified");
+            this.setLayout_adjustMissionCounts.UseVisualStyleBackColor = true;
+            // 
             // MainForm
             // 
             this.AcceptButton = this.randomizeButton;
@@ -1167,5 +1181,6 @@ namespace ShadowRando
 		private System.Windows.Forms.Label tempWarning;
 		private System.Windows.Forms.CheckBox randomMusicSkipChaosPowers;
 		private System.Windows.Forms.CheckBox setLayout_randomPartners;
+		private System.Windows.Forms.CheckBox setLayout_adjustMissionCounts;
 	}
 }

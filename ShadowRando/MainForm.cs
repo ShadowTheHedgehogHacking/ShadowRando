@@ -118,6 +118,20 @@ namespace ShadowRando
 		int[] stageids;
 		readonly Stage[] stages = new Stage[totalstagecount];
 
+		static readonly Dictionary<int, Tuple<String, int>> nukkoro2EnemyCountStagesMap = new Dictionary<int, Tuple<String, int>>
+		{
+			{ 100, Tuple.Create("City1",		 2) }, // both
+			{ 201, Tuple.Create("Canyon1",		 1) }, // hero
+			{ 301, Tuple.Create("PrisonIsland",	 0) }, // dark
+			{ 302, Tuple.Create("Circus",		 0) }, // dark
+			{ 401, Tuple.Create("ARKPast1",		 0) }, // dark
+			{ 404, Tuple.Create("Ruins",		 1) }, // hero
+			{ 501, Tuple.Create("Sky",			 1) }, // hero
+			{ 502, Tuple.Create("Jungle",		 0) }, // dark
+			{ 504, Tuple.Create("ARKPast2",		 1) }, // hero
+			{ 601, Tuple.Create("DoomsBase1",	 0) }, // dark
+		};
+
 		static readonly Dictionary<int, Type> enemyTypeMap = new Dictionary<int, Type>
 		{
 			{ 0, typeof(Object0064_GUNSoldier) },
@@ -167,7 +181,7 @@ namespace ShadowRando
 			InitializeComponent();
 		}
 
-		const string programVersion = "0.4.0-preview-2023-12-28";
+		const string programVersion = "0.4.0-preview-2024-01-01";
 		private static string hoverSoundPath = AppDomain.CurrentDomain.BaseDirectory + "res/hover.wav";
 		private static string selectSoundPath = AppDomain.CurrentDomain.BaseDirectory + "res/select.wav";
 		Settings settings;
@@ -248,6 +262,8 @@ namespace ShadowRando
 						File.Copy(Path.Combine(settings.GamePath, "sys", "bi2.bin"), Path.Combine("backup", "bi2.bin"));
 					if (!File.Exists(Path.Combine("backup", "setid.bin")))
 						File.Copy(Path.Combine(settings.GamePath, "files", "setid.bin"), Path.Combine("backup", "setid.bin"));
+					if (!File.Exists(Path.Combine("backup", "nukkoro2.inf")))
+						File.Copy(Path.Combine(settings.GamePath, "files", "nukkoro2.inf"), Path.Combine("backup", "nukkoro2.inf"));
 					if (!Directory.Exists(Path.Combine("backup", "fonts")))
 						CopyDirectory(Path.Combine(settings.GamePath, "files", "fonts"), Path.Combine("backup", "fonts"));
 					if (!Directory.Exists(Path.Combine("backup", "music")))
@@ -1092,6 +1108,7 @@ namespace ShadowRando
 		private void RandomizeSETs(Random r)
 		{
 			var mode = (SETRandomizationModes)setLayout_Mode.SelectedIndex;
+			var nukkoro2 = Nukkoro2.ReadFile(Path.Combine("backup", "nukkoro2.inf"));
 
 			// begin randomization
 			ShadowSET.LayoutEditorSystem.SetupLayoutEditorSystem(); // Critical to load relevent data
@@ -1177,6 +1194,27 @@ namespace ShadowRando
 				LayoutEditorFunctions.SaveShadowLayout(cmnLayoutData, Path.Combine(settings.GamePath, "files", stageDataIdentifier, cmnLayout), false);
 				if (nrmLayoutData != null)
 					LayoutEditorFunctions.SaveShadowLayout(nrmLayoutData, Path.Combine(settings.GamePath, "files", stageDataIdentifier, nrmLayout), false);
+
+				if (nukkoro2EnemyCountStagesMap.TryGetValue(stageId, out var nukkoro2StageString))
+				{
+					nukkoro2.TryGetValue(nukkoro2StageString.Item1, out var nukkoro2Stage);
+					switch(nukkoro2StageString.Item2)
+					{
+						// TODO replace these with affiliation counts for nrm and cmn
+						case 0:
+							nukkoro2Stage.MissionCountDark.Success = 5;
+							break;
+						case 1:
+							nukkoro2Stage.MissionCountHero.Success = 5;
+							break;
+						case 2:
+							nukkoro2Stage.MissionCountDark.Success = 5;
+							nukkoro2Stage.MissionCountHero.Success = 5;
+							break;
+						default:
+							break;
+					}
+				}
 			} // end - layout operations
 
 			// setIdBin operations
@@ -1207,12 +1245,17 @@ namespace ShadowRando
 
 			SetIdTableFunctions.SaveTable(Path.Combine(settings.GamePath, "files", "setid.bin"), true, setIdTable);
 
-			// lastly, patch bi2.bin since we require 64MB Dolphin
+			// patch bi2.bin since we require 64MB Dolphin
 			var buf = BitConverter.GetBytes(0);
 			var bi2 = File.ReadAllBytes(Path.Combine("backup", "bi2.bin"));
 			buf.CopyTo(bi2, 0x4);
 			File.WriteAllBytes(Path.Combine(settings.GamePath, "sys", "bi2.bin"), bi2);
 			// end patch
+
+			if (setLayout_adjustMissionCounts.Checked)
+			{
+				Nukkoro2.WriteFile(Path.Combine(settings.GamePath, "files", "nukkoro2.inf"), nukkoro2);
+			}
 
 			MessageBox.Show("WARNING: You must set Dolphin -> Config -> Advanced -> MEM1 value to 64MB!");
 		}
@@ -2409,6 +2452,7 @@ namespace ShadowRando
 			setLayout_keepType.Enabled = randomSET.Checked;
 			setLayout_randomWeaponsInBoxes.Enabled = randomSET.Checked;
 			setLayout_randomPartners.Enabled = randomSET.Checked;
+			setLayout_adjustMissionCounts.Enabled = randomSET.Checked;
 		}
 	}
 
