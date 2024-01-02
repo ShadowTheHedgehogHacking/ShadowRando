@@ -165,7 +165,13 @@ namespace ShadowRando
 		public Nukkoro2Player(string[] data)
 		{
 			Position = new Nukkoro2Vector(int.Parse(data[1]), int.Parse(data[2]), int.Parse(data[3]));
-			Rotation = new Nukkoro2Vector(int.Parse(data[4]), int.Parse(data[5]), int.Parse(data[6]));
+			try
+			{
+				Rotation = new Nukkoro2Vector(int.Parse(data[4]), int.Parse(data[5]), int.Parse(data[6]));
+			} catch (FormatException)
+			{
+				Rotation = new Nukkoro2Vector(0, -90, 0); // hardcode to catch original and reloaded 1.1 error
+			}
 		}
 
 		public override string ToString() => $"{Position} {Rotation}";
