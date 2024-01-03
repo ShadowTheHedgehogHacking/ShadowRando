@@ -598,6 +598,7 @@ namespace ShadowRando
             this.toolTip1.SetToolTip(this.setLayout_randomPartners, "All partners are random. You may not encounter Sonic / Black Doom in Westopolis f" +
         "or example.");
             this.setLayout_randomPartners.UseVisualStyleBackColor = true;
+            this.setLayout_randomPartners.CheckedChanged += new System.EventHandler(this.setLayout_randomPartners_CheckedChanged);
             this.setLayout_randomPartners.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // setLayout_adjustMissionCounts

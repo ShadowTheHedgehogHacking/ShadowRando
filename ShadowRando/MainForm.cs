@@ -188,6 +188,7 @@ namespace ShadowRando
 		private static string hoverSoundPath = AppDomain.CurrentDomain.BaseDirectory + "res/hover.wav";
 		private static string selectSoundPath = AppDomain.CurrentDomain.BaseDirectory + "res/select.wav";
 		Settings settings;
+		private bool programInitialized = false;
 
 		private void MainForm_Load(object sender, EventArgs e)
 		{
@@ -205,6 +206,8 @@ namespace ShadowRando
 			includeLast.Checked = settings.IncludeLast;
 			includeBosses.Checked = settings.IncludeBosses;
 			randomMusic.Checked = settings.RandomMusic;
+			randomMusicSkipChaosPowers.Checked = settings.RandomMusicSkipChaosPowers;
+			randomMusicSkipRankTheme.Checked = settings.RandomMusicSkipRankTheme;
 			randomFNT.Checked = settings.RandomFNT;
 			randomSET.Checked = settings.RandomSET;
 			// SET Configuration
@@ -238,6 +241,7 @@ namespace ShadowRando
 			FNTCheckBox_Chars_Cheese.Checked = settings.FNTCheeseSelected;
 			FNTCheckBox_Chars_GUNCommander.Checked = settings.FNTGUNCommanderSelected;
 			FNTCheckBox_Chars_GUNSoldier.Checked = settings.FNTGUNSoldierSelected;
+			programInitialized = true;
 
 			using (var dlg = new Ookii.Dialogs.WinForms.VistaFolderBrowserDialog() { Description = "Select the root folder of an extracted Shadow the Hedgehog disc image." })
 			{
@@ -334,6 +338,8 @@ namespace ShadowRando
 			settings.IncludeLast = includeLast.Checked;
 			settings.IncludeBosses = includeBosses.Checked;
 			settings.RandomMusic = randomMusic.Checked;
+			settings.RandomMusicSkipChaosPowers = randomMusicSkipChaosPowers.Checked;
+			settings.RandomMusicSkipRankTheme = randomMusicSkipRankTheme.Checked;
 			settings.RandomFNT = randomFNT.Checked;
 			settings.RandomSET = randomSET.Checked;
 			// SET Configuration
@@ -1120,7 +1126,6 @@ namespace ShadowRando
 			var mode = (SETRandomizationModes)setLayout_Mode.SelectedIndex;
 			var nukkoro2 = Nukkoro2.ReadFile(Path.Combine("backup", "nukkoro2.inf"));
 
-			// begin randomization
 			ShadowSET.LayoutEditorSystem.SetupLayoutEditorSystem(); // Critical to load relevent data
 			for (int stageIdToModify = 5; stageIdToModify < 45; stageIdToModify++) {
 				stageAssociationIDMap.TryGetValue(stageIdToModify, out var stageId);
@@ -1136,23 +1141,6 @@ namespace ShadowRando
 				{
 					// some stages don't have nrm
 				}
-
-				// iterate whatever rules we want, look into making this more efficient as well...
-
-				/***
-				 *          Planned modes
-				    wild enemies (no rules at all, ignoring any restrictions below)
-					random per stage (all hawks in one stage become a specific enemy)
-					random per seed (all hawks in ALL stages become a specific enemy)
-
-					enemy prop customization:
-					same type (ex flying -> flying) (note: * include Bigfoot with prop floating as flying type)
-					same affiliation (ex bk -> bk)
-					all same weapon type or random
-					shield type enemies % (percent that enemies will have shields or the canBlockShots property)
-					prevent invalid linkid scenario for certain enemies (gun soldier being linked to a respawner, leading to never triggering it)
-				*/
-
 
 				if (setLayout_randomWeaponsInBoxes.Checked)
 				{
@@ -2547,6 +2535,15 @@ namespace ShadowRando
 			setLayout_adjustMissionCounts.Enabled = randomSET.Checked;
 			setLayout_makeCCSplinesAWRidable.Enabled = randomSET.Checked;
 		}
+
+		private void setLayout_randomPartners_CheckedChanged(object sender, EventArgs e)
+		{
+			if (setLayout_randomPartners.Checked && programInitialized)
+			{
+				MessageBox.Show("Warning: If you are using a ROM based on Reloaded 1.0/1.1 or 2P-Reloaded 1.0b or earlier, the Random Partners feature will cause the game to hang for some mission completions.", "Warning");
+				MessageBox.Show("You can fix this by copying the: \n\n\\files\\events folder\n\n from the ORIGINAL (non Reloaded) game to your extracted folder.", "Mitigation");
+			}
+		}
 	}
 
 	static class Extensions
@@ -2790,6 +2787,9 @@ namespace ShadowRando
 		[IniAlwaysInclude]
 		public bool RandomMusic { get; set; }
 		[IniAlwaysInclude]
+		public bool RandomMusicSkipRankTheme { get; set; }
+		[IniAlwaysInclude]
+		public bool RandomMusicSkipChaosPowers { get; set; }
 		public bool RandomFNT { get; set; }
 		[IniAlwaysInclude]
 		public bool RandomSET { get; set; }
