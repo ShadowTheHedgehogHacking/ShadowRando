@@ -184,7 +184,7 @@ namespace ShadowRando
 			InitializeComponent();
 		}
 
-		const string programVersion = "0.4.0-preview-2024-01-02";
+		const string programVersion = "0.4.0";
 		private static string hoverSoundPath = AppDomain.CurrentDomain.BaseDirectory + "res/hover.wav";
 		private static string selectSoundPath = AppDomain.CurrentDomain.BaseDirectory + "res/select.wav";
 		Settings settings;
@@ -1193,17 +1193,17 @@ namespace ShadowRando
 					{
 						case 0:
 							var total = GetTotalGUNEnemies(cmnLayoutData, nrmLayoutData);
-							nukkoro2Stage.MissionCountDark.Success = total - (int)(total * 0.05);
+							nukkoro2Stage.MissionCountDark.Success = total - (int)(total * 0.1);
 							break;
 						case 1:
 							total = GetTotalBlackArmsEnemies(cmnLayoutData, nrmLayoutData);
-							nukkoro2Stage.MissionCountHero.Success = total - (int)(total * 0.05);
+							nukkoro2Stage.MissionCountHero.Success = total - (int)(total * 0.1);
 							break;
 						case 2:
 							total = GetTotalGUNEnemies(cmnLayoutData, nrmLayoutData);
-							nukkoro2Stage.MissionCountDark.Success = total - (int)(total * 0.05);
+							nukkoro2Stage.MissionCountDark.Success = total - (int)(total * 0.1);
 							total = GetTotalBlackArmsEnemies(cmnLayoutData, nrmLayoutData);
-							nukkoro2Stage.MissionCountHero.Success = total - (int)(total * 0.05);
+							nukkoro2Stage.MissionCountHero.Success = total - (int)(total * 0.1);
 							break;
 						default:
 							break;
