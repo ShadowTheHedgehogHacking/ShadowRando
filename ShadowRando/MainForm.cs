@@ -1224,6 +1224,8 @@ namespace ShadowRando
 
 				if (setLayout_makeCCSplinesAWRidable.Checked)
 				{
+					if (stageDataIdentifier == "stg0210" && stageDataIdentifier == "stg0400" && stageDataIdentifier == "stg0700")
+						continue;
 					var datOneFile = stageDataIdentifier + "_dat.one";
 					var datOneData = File.ReadAllBytes(Path.Combine("backup", "sets", stageDataIdentifier, datOneFile));
 					ONEArchiveType archiveType = ONEArchiveTester.GetArchiveType(ref datOneData);
