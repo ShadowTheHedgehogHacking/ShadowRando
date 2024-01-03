@@ -398,6 +398,7 @@ namespace ShadowRando
             this.toolTip1.SetToolTip(this.FNTCheckBox_SpecificCharacters, "Only characters specified are used");
             this.FNTCheckBox_SpecificCharacters.UseVisualStyleBackColor = true;
             this.FNTCheckBox_SpecificCharacters.CheckedChanged += new System.EventHandler(this.FNTCheckBox_SpecificCharacters_CheckedChanged);
+            this.FNTCheckBox_SpecificCharacters.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // FNTCheckBox_OnlyLinkedAudio
             // 
@@ -411,6 +412,7 @@ namespace ShadowRando
             this.toolTip1.SetToolTip(this.FNTCheckBox_OnlyLinkedAudio, "Only subtitles that have a matching voiceline are used in the random pool");
             this.FNTCheckBox_OnlyLinkedAudio.UseVisualStyleBackColor = true;
             this.FNTCheckBox_OnlyLinkedAudio.CheckedChanged += new System.EventHandler(this.FNTCheckBox_OnlyLinkedAudio_CheckedChanged);
+            this.FNTCheckBox_OnlyLinkedAudio.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // FNTCheckBox_NoSystemMessages
             // 
@@ -423,6 +425,7 @@ namespace ShadowRando
             this.FNTCheckBox_NoSystemMessages.Text = "No System Messages In Pool";
             this.toolTip1.SetToolTip(this.FNTCheckBox_NoSystemMessages, "No system messages will be used in the random pool");
             this.FNTCheckBox_NoSystemMessages.UseVisualStyleBackColor = true;
+            this.FNTCheckBox_NoSystemMessages.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // FNTCheckBox_NoDuplicatesPreRandomization
             // 
@@ -436,6 +439,7 @@ namespace ShadowRando
             this.toolTip1.SetToolTip(this.FNTCheckBox_NoDuplicatesPreRandomization, "Every unique subtitle entry is only considered once in the pool. It is still poss" +
         "ible to get the same entry multiple times.");
             this.FNTCheckBox_NoDuplicatesPreRandomization.UseVisualStyleBackColor = true;
+            this.FNTCheckBox_NoDuplicatesPreRandomization.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // FNTCheckBox_GiveAudioToNoLinkedAudio
             // 
@@ -449,6 +453,7 @@ namespace ShadowRando
             this.toolTip1.SetToolTip(this.FNTCheckBox_GiveAudioToNoLinkedAudio, "Subtitles with no associated audio will be given random audio");
             this.FNTCheckBox_GiveAudioToNoLinkedAudio.UseVisualStyleBackColor = true;
             this.FNTCheckBox_GiveAudioToNoLinkedAudio.CheckedChanged += new System.EventHandler(this.FNTCheckBox_GiveAudioToNoLinkedAudio_CheckedChanged);
+            this.FNTCheckBox_GiveAudioToNoLinkedAudio.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // seedTextBox
             // 
@@ -553,6 +558,7 @@ namespace ShadowRando
             this.toolTip1.SetToolTip(this.setLayout_keepType, "Example: A flying enemy (GUN Beetle) will be restricted to become another flying " +
         "enemy type.");
             this.setLayout_keepType.UseVisualStyleBackColor = true;
+            this.setLayout_keepType.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // setLayout_haveShieldBlockProb
             // 
@@ -605,10 +611,12 @@ namespace ShadowRando
             this.setLayout_adjustMissionCounts.Text = "Adjust Mission Counts";
             this.toolTip1.SetToolTip(this.setLayout_adjustMissionCounts, "Missions counts are adjusted if enemy counts of affiliation are modified");
             this.setLayout_adjustMissionCounts.UseVisualStyleBackColor = true;
+            this.setLayout_adjustMissionCounts.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // setLayout_makeCCSplinesAWRidable
             // 
             this.setLayout_makeCCSplinesAWRidable.AutoSize = true;
+            this.setLayout_makeCCSplinesAWRidable.Enabled = false;
             this.setLayout_makeCCSplinesAWRidable.Location = new System.Drawing.Point(247, 156);
             this.setLayout_makeCCSplinesAWRidable.Name = "setLayout_makeCCSplinesAWRidable";
             this.setLayout_makeCCSplinesAWRidable.Size = new System.Drawing.Size(200, 17);
@@ -617,6 +625,7 @@ namespace ShadowRando
             this.toolTip1.SetToolTip(this.setLayout_makeCCSplinesAWRidable, "Allows Black Hawk/Volt to attach to Chaos Control splines. May have side effects." +
         "");
             this.setLayout_makeCCSplinesAWRidable.UseVisualStyleBackColor = true;
+            this.setLayout_makeCCSplinesAWRidable.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // tabControl1
             // 
@@ -783,6 +792,7 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_GUNSoldier.TabIndex = 16;
             this.FNTCheckBox_Chars_GUNSoldier.Text = "GUN Soldier";
             this.FNTCheckBox_Chars_GUNSoldier.UseVisualStyleBackColor = true;
+            this.FNTCheckBox_Chars_GUNSoldier.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // FNTCheckBox_Chars_GUNCommander
             // 
@@ -794,6 +804,7 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_GUNCommander.TabIndex = 15;
             this.FNTCheckBox_Chars_GUNCommander.Text = "GUN Commander";
             this.FNTCheckBox_Chars_GUNCommander.UseVisualStyleBackColor = true;
+            this.FNTCheckBox_Chars_GUNCommander.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // FNTCheckBox_Chars_BlackDoom
             // 
@@ -805,6 +816,7 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_BlackDoom.TabIndex = 14;
             this.FNTCheckBox_Chars_BlackDoom.Text = "Black Doom";
             this.FNTCheckBox_Chars_BlackDoom.UseVisualStyleBackColor = true;
+            this.FNTCheckBox_Chars_BlackDoom.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // FNTCheckBox_Chars_Cheese
             // 
@@ -816,6 +828,7 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_Cheese.TabIndex = 13;
             this.FNTCheckBox_Chars_Cheese.Text = "Cheese";
             this.FNTCheckBox_Chars_Cheese.UseVisualStyleBackColor = true;
+            this.FNTCheckBox_Chars_Cheese.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // FNTCheckBox_Chars_Maria
             // 
@@ -827,6 +840,7 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_Maria.TabIndex = 9;
             this.FNTCheckBox_Chars_Maria.Text = "Maria";
             this.FNTCheckBox_Chars_Maria.UseVisualStyleBackColor = true;
+            this.FNTCheckBox_Chars_Maria.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // FNTCheckBox_Chars_Cream
             // 
@@ -838,6 +852,7 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_Cream.TabIndex = 12;
             this.FNTCheckBox_Chars_Cream.Text = "Cream";
             this.FNTCheckBox_Chars_Cream.UseVisualStyleBackColor = true;
+            this.FNTCheckBox_Chars_Cream.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // FNTCheckBox_Chars_Eggman
             // 
@@ -849,6 +864,7 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_Eggman.TabIndex = 11;
             this.FNTCheckBox_Chars_Eggman.Text = "Eggman";
             this.FNTCheckBox_Chars_Eggman.UseVisualStyleBackColor = true;
+            this.FNTCheckBox_Chars_Eggman.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // FNTCheckBox_Chars_Charmy
             // 
@@ -860,6 +876,7 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_Charmy.TabIndex = 10;
             this.FNTCheckBox_Chars_Charmy.Text = "Charmy";
             this.FNTCheckBox_Chars_Charmy.UseVisualStyleBackColor = true;
+            this.FNTCheckBox_Chars_Charmy.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // FNTCheckBox_Chars_Espio
             // 
@@ -871,6 +888,7 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_Espio.TabIndex = 8;
             this.FNTCheckBox_Chars_Espio.Text = "Espio";
             this.FNTCheckBox_Chars_Espio.UseVisualStyleBackColor = true;
+            this.FNTCheckBox_Chars_Espio.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // FNTCheckBox_Chars_Vector
             // 
@@ -882,6 +900,7 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_Vector.TabIndex = 7;
             this.FNTCheckBox_Chars_Vector.Text = "Vector";
             this.FNTCheckBox_Chars_Vector.UseVisualStyleBackColor = true;
+            this.FNTCheckBox_Chars_Vector.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // FNTCheckBox_Chars_Omega
             // 
@@ -893,6 +912,7 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_Omega.TabIndex = 6;
             this.FNTCheckBox_Chars_Omega.Text = "Omega";
             this.FNTCheckBox_Chars_Omega.UseVisualStyleBackColor = true;
+            this.FNTCheckBox_Chars_Omega.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // FNTCheckBox_Chars_Rouge
             // 
@@ -904,6 +924,7 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_Rouge.TabIndex = 5;
             this.FNTCheckBox_Chars_Rouge.Text = "Rouge";
             this.FNTCheckBox_Chars_Rouge.UseVisualStyleBackColor = true;
+            this.FNTCheckBox_Chars_Rouge.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // FNTCheckBox_Chars_Amy
             // 
@@ -915,6 +936,7 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_Amy.TabIndex = 4;
             this.FNTCheckBox_Chars_Amy.Text = "Amy";
             this.FNTCheckBox_Chars_Amy.UseVisualStyleBackColor = true;
+            this.FNTCheckBox_Chars_Amy.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // FNTCheckBox_Chars_Knuckles
             // 
@@ -926,6 +948,7 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_Knuckles.TabIndex = 3;
             this.FNTCheckBox_Chars_Knuckles.Text = "Knuckles";
             this.FNTCheckBox_Chars_Knuckles.UseVisualStyleBackColor = true;
+            this.FNTCheckBox_Chars_Knuckles.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // FNTCheckBox_Chars_Tails
             // 
@@ -937,6 +960,7 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_Tails.TabIndex = 2;
             this.FNTCheckBox_Chars_Tails.Text = "Tails";
             this.FNTCheckBox_Chars_Tails.UseVisualStyleBackColor = true;
+            this.FNTCheckBox_Chars_Tails.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // FNTCheckBox_Chars_Sonic
             // 
@@ -948,6 +972,7 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_Sonic.TabIndex = 1;
             this.FNTCheckBox_Chars_Sonic.Text = "Sonic";
             this.FNTCheckBox_Chars_Sonic.UseVisualStyleBackColor = true;
+            this.FNTCheckBox_Chars_Sonic.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // FNTCheckBox_Chars_Shadow
             // 
@@ -959,6 +984,7 @@ namespace ShadowRando
             this.FNTCheckBox_Chars_Shadow.TabIndex = 0;
             this.FNTCheckBox_Chars_Shadow.Text = "Shadow";
             this.FNTCheckBox_Chars_Shadow.UseVisualStyleBackColor = true;
+            this.FNTCheckBox_Chars_Shadow.MouseDown += new System.Windows.Forms.MouseEventHandler(this.SharedMouseDown_Chkchk);
             // 
             // subtitleAndVoicelineConfigurationGroupBox
             // 

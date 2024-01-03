@@ -1,5 +1,7 @@
 ﻿using AFSLib;
 using HeroesONE_R.Structures;
+using HeroesONE_R.Structures.Common;
+using HeroesONE_R.Structures.SonicHeroes;
 using IniFile;
 using NAudio.Wave;
 using ShadowFNT;
@@ -182,7 +184,7 @@ namespace ShadowRando
 			InitializeComponent();
 		}
 
-		const string programVersion = "0.4.0-preview-2024-01-01";
+		const string programVersion = "0.4.0-preview-2024-01-02";
 		private static string hoverSoundPath = AppDomain.CurrentDomain.BaseDirectory + "res/hover.wav";
 		private static string selectSoundPath = AppDomain.CurrentDomain.BaseDirectory + "res/select.wav";
 		Settings settings;
@@ -210,13 +212,14 @@ namespace ShadowRando
 			setLayout_keepType.Checked = settings.SETEnemyKeepType;
 			setLayout_randomPartners.Checked = settings.SETRandomPartners;
 			setLayout_randomWeaponsInBoxes.Checked = settings.SETRandomWeaponsInBoxes;
+			setLayout_adjustMissionCounts.Checked = settings.SETRandomAdjustMissionCounts;
+			setLayout_makeCCSplinesAWRidable.Checked = settings.SETRandomMakeCCSplinesAWRidable;
 			// FNT Configuration
 			FNTCheckBox_NoDuplicatesPreRandomization.Checked = settings.FNTNoDuplicatesPreRandomization;
 			FNTCheckBox_NoSystemMessages.Checked = settings.FNTNoSystemMessages;
 			FNTCheckBox_OnlyLinkedAudio.Checked = settings.FNTOnlyLinkedAudio;
 			FNTCheckBox_SpecificCharacters.Checked = settings.FNTSpecificCharacters;
 			FNTCheckBox_GiveAudioToNoLinkedAudio.Checked = settings.FNTGiveAudioToNoLinkedAudio;
-
 			// FNT Configuration Specific Characters
 			FNTCheckBox_Chars_Shadow.Checked = settings.FNTShadowSelected;
 			FNTCheckBox_Chars_Sonic.Checked = settings.FNTSonicSelected;
@@ -338,6 +341,8 @@ namespace ShadowRando
 			settings.SETEnemyKeepType = setLayout_keepType.Checked;
 			settings.SETRandomPartners = setLayout_randomPartners.Checked;
 			settings.SETRandomWeaponsInBoxes = setLayout_randomWeaponsInBoxes.Checked;
+			settings.SETRandomAdjustMissionCounts = setLayout_adjustMissionCounts.Checked;
+			settings.SETRandomMakeCCSplinesAWRidable = setLayout_makeCCSplinesAWRidable.Checked;
 			// FNT Configuration
 			settings.FNTNoDuplicatesPreRandomization = FNTCheckBox_NoDuplicatesPreRandomization.Checked;
 			settings.FNTNoSystemMessages = FNTCheckBox_NoSystemMessages.Checked;
@@ -1221,11 +1226,20 @@ namespace ShadowRando
 				{
 					var datOneFile = stageDataIdentifier + "_dat.one";
 					var datOneData = File.ReadAllBytes(Path.Combine("backup", "sets", stageDataIdentifier, datOneFile));
+					ONEArchiveType archiveType = ONEArchiveTester.GetArchiveType(ref datOneData);
 					var datOneDataContent = Archive.FromONEFile(ref datOneData);
 					if (datOneDataContent.Files[0].Name == "PATH.PTP")
 					{
-						var splineData = datOneDataContent.Files[0].DecompressThis();
-						// TODO: Spline parsing and manipulation of AW ridable byte per spline
+						var splines = SplineReader.ReadShadowSplineFile(datOneDataContent.Files[0]);
+						foreach (var spline in splines)
+						{
+							if (spline.SplineType == 32)
+								spline.Setting2 = 1;
+						}
+						var updatedPATHPTP = SplineReader.ShadowSplinesToByteArray(stageDataIdentifier, splines);
+						datOneDataContent.Files[0].CompressedData = Prs.Compress(ref updatedPATHPTP);
+						var updatedDatOneData = datOneDataContent.BuildShadowONEArchive(archiveType == ONEArchiveType.Shadow060);
+						File.WriteAllBytes(Path.Combine(settings.GamePath, "files", stageDataIdentifier, datOneFile), updatedDatOneData.ToArray());
 					}
 				}
 			} // end - layout operations
@@ -2529,6 +2543,7 @@ namespace ShadowRando
 			setLayout_randomWeaponsInBoxes.Enabled = randomSET.Checked;
 			setLayout_randomPartners.Enabled = randomSET.Checked;
 			setLayout_adjustMissionCounts.Enabled = randomSET.Checked;
+			setLayout_makeCCSplinesAWRidable.Enabled = randomSET.Checked;
 		}
 	}
 
@@ -2786,6 +2801,10 @@ namespace ShadowRando
 		public bool SETRandomPartners {  get; set; }
 		[IniAlwaysInclude]
 		public bool SETRandomWeaponsInBoxes {  get; set; }
+		[IniAlwaysInclude]
+		public bool SETRandomMakeCCSplinesAWRidable {  get; set; }
+		[IniAlwaysInclude]
+		public bool SETRandomAdjustMissionCounts { get; set; }
 		// FNT
 		[IniAlwaysInclude]
 		public bool FNTNoDuplicatesPreRandomization;
