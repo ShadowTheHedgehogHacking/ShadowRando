@@ -178,12 +178,104 @@ namespace ShadowRando
 			{ 5, typeof(Object0093_BkNinja) }, // only if AppearType is ON_AIR_SAUCER_WARP
 		};
 
+		public static EWeapon[] weapons; /* = [ Can't do this because .NET Framework is locked to C# 8 and earlier
+			EWeapon.None,
+			EWeapon.Pistol,
+			EWeapon.SubmachineGun,
+			EWeapon.MachineGun,
+			EWeapon.HeavyMachineGun,
+			EWeapon.GatlingGun,
+			EWeapon.None06,
+			EWeapon.EggGun,
+			EWeapon.LightShot,
+			EWeapon.FlashShot,
+			EWeapon.RingShot,
+			EWeapon.HeavyShot,
+			EWeapon.GrenadeLauncher,
+			EWeapon.GUNBazooka,
+			EWeapon.TankCannon,
+			EWeapon.BlackBarrel,
+			EWeapon.BigBarrel,
+			EWeapon.EggBazooka,
+			EWeapon.RPG,
+			EWeapon.FourShot,
+			EWeapon.EightShot,
+			EWeapon.WormShooterBlack,
+			EWeapon.WideWormShooterRed,
+			EWeapon.BigWormShooterGold,
+			EWeapon.VacuumPod,
+			EWeapon.LaserRifle,
+			EWeapon.Splitter,
+			EWeapon.Refractor,
+			EWeapon.UnusedGUNWeaponSlot,
+			EWeapon.UnusedBlackArmsWeaponSlot,
+			EWeapon.Knife,
+			EWeapon.BlackSword,
+			EWeapon.DarkHammer,
+			EWeapon.EggLance,
+			EWeapon.SamuraiSwordLv1,
+			EWeapon.SamuraiSwordLv2,
+			EWeapon.SatelliteLaserLv1,
+			EWeapon.SatelliteLaserLv2,
+			EWeapon.EggVacLv1,
+			EWeapon.EggVacLv2,
+			EWeapon.OmochaoLv1,
+			EWeapon.OmochaoLv2,
+			EWeapon.HealCannonLv1,
+			EWeapon.HealCannonLv2,
+			EWeapon.ShadowRifle
+		];*/
+
 		public MainForm()
 		{
 			InitializeComponent();
+			weapons = new EWeapon[] { // have to do this until we move to .NET 8
+				EWeapon.None,
+				EWeapon.Pistol,
+				EWeapon.SubmachineGun,
+				EWeapon.MachineGun,
+				EWeapon.HeavyMachineGun,
+				EWeapon.GatlingGun,
+				EWeapon.EggGun,
+				EWeapon.LightShot,
+				EWeapon.FlashShot,
+				EWeapon.RingShot,
+				EWeapon.HeavyShot,
+				EWeapon.GrenadeLauncher,
+				EWeapon.GUNBazooka,
+				EWeapon.TankCannon,
+				EWeapon.BlackBarrel,
+				EWeapon.BigBarrel,
+				EWeapon.EggBazooka,
+				EWeapon.RPG,
+				EWeapon.FourShot,
+				EWeapon.EightShot,
+				EWeapon.WormShooterBlack,
+				EWeapon.WideWormShooterRed,
+				EWeapon.BigWormShooterGold,
+				EWeapon.VacuumPod,
+				EWeapon.LaserRifle,
+				EWeapon.Splitter,
+				EWeapon.Refractor,
+				EWeapon.Knife,
+				EWeapon.BlackSword,
+				EWeapon.DarkHammer,
+				EWeapon.EggLance,
+				EWeapon.SamuraiSwordLv1,
+				EWeapon.SamuraiSwordLv2,
+				EWeapon.SatelliteLaserLv1,
+				EWeapon.SatelliteLaserLv2,
+				EWeapon.EggVacLv1,
+				EWeapon.EggVacLv2,
+				EWeapon.OmochaoLv1,
+				EWeapon.OmochaoLv2,
+				EWeapon.HealCannonLv1,
+				EWeapon.HealCannonLv2,
+				EWeapon.ShadowRifle
+			};
 		}
 
-		const string programVersion = "0.4.0";
+		const string programVersion = "0.4.1-dev";
 		private static string hoverSoundPath = AppDomain.CurrentDomain.BaseDirectory + "res/hover.wav";
 		private static string selectSoundPath = AppDomain.CurrentDomain.BaseDirectory + "res/select.wav";
 		Settings settings;
@@ -1379,27 +1471,51 @@ namespace ShadowRando
 				.Select(pair => (Item: (Object000A_MetalBox)pair.Item, Index: pair.Index))
 				.ToList();
 
+/*			List<(Object003A_SpecialWeaponBox item, int index)> specialWeaponsBoxItems = setData // Only do this when we can override spawning spw to use single default setdata weapon
+				.Select((item, index) => new { Item = item, Index = index })
+				.Where(pair => pair.Item is Object003A_SpecialWeaponBox)
+				.Select(pair => (Item: (Object003A_SpecialWeaponBox)pair.Item, Index: pair.Index))
+				.ToList(); */
+
+			List<(Object0020_Weapon item, int index)> weaponsOnGroundItems = setData
+				.Select((item, index) => new { Item = item, Index = index })
+				.Where(pair => pair.Item is Object0020_Weapon)
+				.Select(pair => (Item: (Object0020_Weapon)pair.Item, Index: pair.Index))
+				.ToList();
+
 
 			// valid weapons are 0x0 - 0x21
 
 			foreach (var woodbox in woodBoxItems)
 			{
 				woodbox.item.BoxItem = EBoxItem.Weapon;
-				woodbox.item.ModifierWeapon = (EWeapon)r.Next(0x22);
+				woodbox.item.ModifierWeapon = weapons[r.Next(weapons.Length)];
 				setData[woodbox.index] = woodbox.item;
 			}
 
 			foreach (var weaponbox in weaponBoxItems)
 			{
-				weaponbox.item.Weapon = (EWeapon)r.Next(0x22);
+				weaponbox.item.Weapon = weapons[r.Next(weapons.Length)];
 				setData[weaponbox.index] = weaponbox.item;
 			}
 
 			foreach (var metalbox in metalBoxItems)
 			{
 				metalbox.item.BoxItem = EBoxItem.Weapon;
-				metalbox.item.ModifierWeapon = (EWeapon)r.Next(0x22);
+				metalbox.item.ModifierWeapon = weapons[r.Next(weapons.Length)];
 				setData[metalbox.index] = metalbox.item;
+			}
+
+/*			foreach (var specialWeaponsBox in specialWeaponsBoxItems) // Only do this when we can override spawning spw to use single default setdata weapon
+			{
+				specialWeaponsBox.item.Weapon = weapons[r.Next(weapons.Length)];
+				setData[specialWeaponsBox.index] = specialWeaponsBox.item;
+			}*/
+
+			foreach (var weaponOnGround in weaponsOnGroundItems)
+			{
+				weaponOnGround.item.Weapon = weapons[r.Next(weapons.Length)];
+				setData[weaponOnGround.index] = weaponOnGround.item;
 			}
 		}
 
