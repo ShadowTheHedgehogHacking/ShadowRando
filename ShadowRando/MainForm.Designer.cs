@@ -214,7 +214,7 @@ namespace ShadowRando
             // 
             this.maxBackJump.Location = new System.Drawing.Point(182, 27);
             this.maxBackJump.Maximum = new decimal(new int[] {
-            69,
+            21,
             0,
             0,
             0});
@@ -229,7 +229,7 @@ namespace ShadowRando
             this.toolTip1.SetToolTip(this.maxBackJump, "The maximum number of stages along the main path that you can get sent backwards." +
         "");
             this.maxBackJump.Value = new decimal(new int[] {
-            69,
+            4,
             0,
             0,
             0});
@@ -238,7 +238,7 @@ namespace ShadowRando
             // 
             this.maxForwJump.Location = new System.Drawing.Point(182, 53);
             this.maxForwJump.Maximum = new decimal(new int[] {
-            70,
+            22,
             0,
             0,
             0});
@@ -252,7 +252,7 @@ namespace ShadowRando
             this.maxForwJump.TabIndex = 5;
             this.toolTip1.SetToolTip(this.maxForwJump, "The maximum number of stages along the main path that you can get sent forwards.");
             this.maxForwJump.Value = new decimal(new int[] {
-            70,
+            22,
             0,
             0,
             0});
@@ -279,7 +279,7 @@ namespace ShadowRando
             this.backJumpProb.TabIndex = 7;
             this.toolTip1.SetToolTip(this.backJumpProb, "The probability that a backwards jump will be chosen instead of a forwards jump.");
             this.backJumpProb.Value = new decimal(new int[] {
-            50,
+            10,
             0,
             0,
             0});
@@ -302,6 +302,7 @@ namespace ShadowRando
             this.levelOrderModeSelector.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.levelOrderModeSelector.FormattingEnabled = true;
             this.levelOrderModeSelector.Items.AddRange(new object[] {
+            "None",
             "Shuffle All Stages w/ Warps",
             "Vanilla Structure",
             "Branching Paths",

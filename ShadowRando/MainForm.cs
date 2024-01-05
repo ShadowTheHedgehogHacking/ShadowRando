@@ -1,7 +1,6 @@
 ﻿using AFSLib;
 using HeroesONE_R.Structures;
 using HeroesONE_R.Structures.Common;
-using HeroesONE_R.Structures.SonicHeroes;
 using IniFile;
 using NAudio.Wave;
 using ShadowFNT;
@@ -441,6 +440,8 @@ namespace ShadowRando
 			stageids = tmpids.ToArray();
 			switch (settings.Mode)
 			{
+				case Modes.None:
+					break;
 				case Modes.AllStagesWarps:
 					{
 						Shuffle(r, stageids, stagecount);
@@ -842,34 +843,37 @@ namespace ShadowRando
 					}
 					break;
 			}
-			for (int i = 0; i < totalstagecount; i++)
+			if (settings.Mode != Modes.None)
 			{
-				Stage stg = stages[i];
-				if (stg.IsBoss && stg.Hero == -1 && stg.Dark == -1)
-					stg.Dark = stg.Hero = stg.Neutral;
-				if (stg.Dark != -1)
+				for (int i = 0; i < totalstagecount; i++)
 				{
-					buf = BitConverter.GetBytes(stg.Dark == totalstagecount ? -2 : stg.Dark + stagefirst);
-					Array.Reverse(buf);
-					buf.CopyTo(dolfile, firstStageOffset + (i * stageOffset) + darkOffset);
+					Stage stg = stages[i];
+					if (stg.IsBoss && stg.Hero == -1 && stg.Dark == -1)
+						stg.Dark = stg.Hero = stg.Neutral;
+					if (stg.Dark != -1)
+					{
+						buf = BitConverter.GetBytes(stg.Dark == totalstagecount ? -2 : stg.Dark + stagefirst);
+						Array.Reverse(buf);
+						buf.CopyTo(dolfile, firstStageOffset + (i * stageOffset) + darkOffset);
+					}
+					if (stg.Neutral != -1)
+					{
+						buf = BitConverter.GetBytes(stg.Neutral == totalstagecount ? -2 : stg.Neutral + stagefirst);
+						Array.Reverse(buf);
+						buf.CopyTo(dolfile, firstStageOffset + (i * stageOffset) + neutOffset);
+					}
+					if (stg.Hero != -1)
+					{
+						buf = BitConverter.GetBytes(stg.Hero == totalstagecount ? -2 : stg.Hero + stagefirst);
+						Array.Reverse(buf);
+						buf.CopyTo(dolfile, firstStageOffset + (i * stageOffset) + heroOffset);
+					}
 				}
-				if (stg.Neutral != -1)
-				{
-					buf = BitConverter.GetBytes(stg.Neutral == totalstagecount ? -2 : stg.Neutral + stagefirst);
-					Array.Reverse(buf);
-					buf.CopyTo(dolfile, firstStageOffset + (i * stageOffset) + neutOffset);
-				}
-				if (stg.Hero != -1)
-				{
-					buf = BitConverter.GetBytes(stg.Hero == totalstagecount ? -2 : stg.Hero + stagefirst);
-					Array.Reverse(buf);
-					buf.CopyTo(dolfile, firstStageOffset + (i * stageOffset) + heroOffset);
-				}
+			
+				buf = BitConverter.GetBytes(0x38000000 | stageAssociationIDMap[stageids[0] + stagefirst]);
+				Array.Reverse(buf);
+				buf.CopyTo(dolfile, storyModeStartAddress);
 			}
-			buf = BitConverter.GetBytes(0x38000000 | stageAssociationIDMap[stageids[0] + stagefirst]);
-			Array.Reverse(buf);
-			buf.CopyTo(dolfile, storyModeStartAddress);
-
 			// patch the route menu to allow stg06xx+ to display next stages
 			buf = BitConverter.GetBytes(routeMenu6xxStagePreviewPatchValue);
 			Array.Reverse(buf);
@@ -2870,6 +2874,7 @@ namespace ShadowRando
 
 	enum Modes
 	{
+		None,
 		AllStagesWarps,
 		VanillaStructure,
 		BranchingPaths,
