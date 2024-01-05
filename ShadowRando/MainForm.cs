@@ -1319,7 +1319,7 @@ namespace ShadowRando
 						var splines = SplineReader.ReadShadowSplineFile(datOneDataContent.Files[0]);
 						foreach (var spline in splines)
 						{
-							if (spline.SplineType == 32)
+							if (spline.SplineType == 32 && spline.Name.Contains("_cc_"))
 								spline.Setting2 = 1;
 						}
 						var updatedPATHPTP = SplineReader.ShadowSplinesToByteArray(stageDataIdentifier, splines);
