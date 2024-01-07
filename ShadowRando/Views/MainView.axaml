@@ -12,5 +12,31 @@
     <vm:MainViewModel />
   </Design.DataContext>
 
-  <TextBlock Text="{Binding Greeting}" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+	<TabControl>
+		<TabItem Header="Level Order">
+		
+		</TabItem>
+		<TabItem Header="Layout">
+		
+		</TabItem>
+		<TabItem Header="Subtitles">
+		
+		</TabItem>
+		<TabItem Header="Music">
+		
+		</TabItem>
+		<TabItem Header="Spoilers">
+		
+		</TabItem>
+		<TabItem Header="About">
+			<StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+				<Label FontWeight="Bold">Created by dreamsyntax &amp; MainMemory</Label>
+				<Label Padding="10, 0, 0, 0" FontSize="12" VerticalAlignment="Center">Thanks to igorseabra4 for HeroesPowerPlant</Label>
+				<Label Padding="10, 0, 0, 10" FontSize="12" VerticalAlignment="Center">Thanks to Sewer56 for HeroesONE-R</Label>
+				<Button HorizontalAlignment="Center">Project GitHub Page</Button>
+				<CheckBox>Program Sound</CheckBox>
+			</StackPanel>
+		</TabItem>
+	</TabControl>
+	
 </UserControl>
