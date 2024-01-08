@@ -2888,9 +2888,9 @@ namespace ShadowRando
 		public Modes Mode { get; set; }
 		[IniAlwaysInclude]
 		public MainPath MainPath { get; set; }
-		[System.ComponentModel.DefaultValue(21)]
+		[System.ComponentModel.DefaultValue(4)]
 		[IniAlwaysInclude]
-		public int MaxBackJump { get; set; } = 21;
+		public int MaxBackJump { get; set; } = 4;
 		[System.ComponentModel.DefaultValue(22)]
 		[IniAlwaysInclude]
 		public int MaxForwJump { get; set; } = 22;
