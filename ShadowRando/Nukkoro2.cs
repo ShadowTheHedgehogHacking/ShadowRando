@@ -146,7 +146,7 @@ namespace ShadowRando
 					if (stage.Value.MissionCountNeutral != null)
 						sw.WriteLine("MISSIONCOUNT_N : {0}", stage.Value.MissionCountNeutral);
 					if (stage.Value.MissionCountExpert != null)
-						sw.WriteLine("MISSIONCOUNT_X : {0}", stage.Value.MissionCountExpert);
+						sw.WriteLine("MISSIONCOUNT_HARD : {0}", stage.Value.MissionCountExpert);
 					if (stage.Value.MipmapK != 0)
 						sw.WriteLine("MIPMAPK : {0}", stage.Value.MipmapK);
 					sw.WriteLine();
