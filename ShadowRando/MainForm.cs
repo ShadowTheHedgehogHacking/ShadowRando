@@ -178,7 +178,7 @@ namespace ShadowRando
 			{ 5, typeof(Object0093_BkNinja) }, // only if AppearType is ON_AIR_SAUCER_WARP
 		};
 
-		public static EWeapon[] weapons; /* = [ Can't do this because .NET Framework is locked to C# 8 and earlier
+		public static readonly EWeapon[] weapons = {
 			EWeapon.None,
 			EWeapon.Pistol,
 			EWeapon.SubmachineGun,
@@ -224,55 +224,11 @@ namespace ShadowRando
 			EWeapon.HealCannonLv1,
 			EWeapon.HealCannonLv2,
 			EWeapon.ShadowRifle
-		];*/
+		};
 
 		public MainForm()
 		{
 			InitializeComponent();
-			weapons = new EWeapon[] { // have to do this until we move to .NET 8
-				EWeapon.None,
-				EWeapon.Pistol,
-				EWeapon.SubmachineGun,
-				EWeapon.MachineGun,
-				EWeapon.HeavyMachineGun,
-				EWeapon.GatlingGun,
-				EWeapon.EggGun,
-				EWeapon.LightShot,
-				EWeapon.FlashShot,
-				EWeapon.RingShot,
-				EWeapon.HeavyShot,
-				EWeapon.GrenadeLauncher,
-				EWeapon.GUNBazooka,
-				EWeapon.TankCannon,
-				EWeapon.BlackBarrel,
-				EWeapon.BigBarrel,
-				EWeapon.EggBazooka,
-				EWeapon.RPG,
-				EWeapon.FourShot,
-				EWeapon.EightShot,
-				EWeapon.WormShooterBlack,
-				EWeapon.WideWormShooterRed,
-				EWeapon.BigWormShooterGold,
-				EWeapon.VacuumPod,
-				EWeapon.LaserRifle,
-				EWeapon.Splitter,
-				EWeapon.Refractor,
-				EWeapon.Knife,
-				EWeapon.BlackSword,
-				EWeapon.DarkHammer,
-				EWeapon.EggLance,
-				EWeapon.SamuraiSwordLv1,
-				EWeapon.SamuraiSwordLv2,
-				EWeapon.SatelliteLaserLv1,
-				EWeapon.SatelliteLaserLv2,
-				EWeapon.EggVacLv1,
-				EWeapon.EggVacLv2,
-				EWeapon.OmochaoLv1,
-				EWeapon.OmochaoLv2,
-				EWeapon.HealCannonLv1,
-				EWeapon.HealCannonLv2,
-				EWeapon.ShadowRifle
-			};
 		}
 
 		const string programVersion = "0.4.1-dev";
@@ -1317,8 +1273,7 @@ namespace ShadowRando
 					if (datOneDataContent.Files[0].Name == "PATH.PTP")
 					{
 						var splines = SplineReader.ReadShadowSplineFile(datOneDataContent.Files[0]);
-						foreach (var spline in splines)
-						{
+						foreach (var spline in splines)						{
 							if (spline.SplineType == 32 && spline.Name.Contains("_cc_"))
 								spline.Setting2 = 1;
 						}
