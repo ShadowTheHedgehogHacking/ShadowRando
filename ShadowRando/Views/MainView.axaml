@@ -14,7 +14,24 @@
 
 	<TabControl>
 		<TabItem Header="Level Order">
-		
+			<StackPanel>
+				<Label>Seed</Label>
+				<TextBox></TextBox>
+				<CheckBox>Random</CheckBox>
+				<Label>Mode</Label>
+				<ComboBox></ComboBox>
+				<Label>Main Path</Label>
+				<ComboBox></ComboBox>
+				<Label>Max Backwards Jump</Label>
+				<NumericUpDown></NumericUpDown>
+				<Label>Max Forwards Jump</Label>
+				<NumericUpDown></NumericUpDown>
+				<Label>Backwards Jump Probability</Label>
+				<NumericUpDown></NumericUpDown>
+				<CheckBox>Allow Jumps to Same Level</CheckBox>
+				<CheckBox>Include Last Story</CheckBox>
+				<CheckBox>Include Bosses</CheckBox>
+			</StackPanel>
 		</TabItem>
 		<TabItem Header="Layout">
 		
