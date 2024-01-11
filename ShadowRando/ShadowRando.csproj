@@ -21,4 +21,9 @@
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.6" />
     <PackageReference Include="Semi.Avalonia" Version="11.0.1" />
   </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Submodules\HeroesONE-Reloaded\HeroesONE++\HeroesONE_R.csproj" />
+    <ProjectReference Include="..\Submodules\ShadowSET\ShadowSET\ShadowSET.csproj" />
+  </ItemGroup>
 </Project>
