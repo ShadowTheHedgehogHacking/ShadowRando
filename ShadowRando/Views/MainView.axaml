@@ -38,11 +38,11 @@
 						</ComboBox>
 						<Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto">
 							<Label Grid.Column="0" Grid.Row="0" Margin="0,10,0,0">Max Forwards Jump</Label>
-							<NumericUpDown Grid.Column="0" Grid.Row="1" Increment="1" Value="22"></NumericUpDown>
+							<NumericUpDown Grid.Column="0" Grid.Row="1" Increment="1" Value="15" Maximum="22" Minimum="1"></NumericUpDown>
 							<Label Grid.Column="0" Grid.Row="2" Margin="0,5,0,0">Max Backwards Jump</Label>
-							<NumericUpDown Grid.Column="0" Grid.Row="3" Increment="1" Value="4"></NumericUpDown>
+							<NumericUpDown Grid.Column="0" Grid.Row="3" Increment="1" Value="4" Maximum="21" Minimum="1"></NumericUpDown>
 							<Label Grid.Column="0" Grid.Row="4" Margin="0,5,0,0">Backwards Jump Probability</Label>
-							<NumericUpDown Grid.Column="0" Grid.Row="5" Increment="1" Value="10"></NumericUpDown>
+							<NumericUpDown Grid.Column="0" Grid.Row="5" Increment="1" Value="10" Maximum="100" Minimum="0"></NumericUpDown>
 							<CheckBox Grid.Column="1" Grid.Row="5" Margin="10,0,10,0">Allow Jumps to Same Level</CheckBox>
 						</Grid>
 						<CheckBox Margin="0,10,0,0">Include Last Story</CheckBox>
@@ -50,7 +50,134 @@
 					</StackPanel>
 				</TabItem>
 				<TabItem Header="Layout">
-		
+						<Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto, Auto">
+							<CheckBox Grid.Column="0" Grid.Row="0" Margin="10,0,10,0">Randomize Layouts (64MB Patch / Dolphin Only)</CheckBox>
+							<CheckBox Grid.Column="0" Grid.Row="1" Margin="10,0,10,0">Make CC Splines Vehicle Compatible</CheckBox>
+							<TabControl Grid.Row="2">
+								<TabItem Header="Enemy">
+									<StackPanel>
+										<Label>Mode</Label>
+										<ComboBox>
+											<ComboBoxItem>Default Enemies</ComboBoxItem>
+											<ComboBoxItem>Wild</ComboBoxItem>
+											<ComboBoxItem>1:1 Per Stage (Not Ready Yet)</ComboBoxItem>
+											<ComboBoxItem>1:1 Global (Not Ready Yet)</ComboBoxItem>
+										</ComboBox>
+										<CheckBox>Adjust Mission Counts</CheckBox>
+										<CheckBox>Keep Type (Flying -> Flying)</CheckBox>
+										<CheckBox>Keep Affiliation (GUN -> GUN)</CheckBox>
+										<CheckBox>Random Weapons (Overriding 1:1 Modes)</CheckBox>
+										<Grid ColumnDefinitions="Auto, Auto">
+											<CheckBox Grid.Column="0">Shield/Block Probability</CheckBox>
+											<NumericUpDown Grid.Column="1" Increment="1" Value="10" Margin="10,0,10,0" Maximum="100" Minimum="0"></NumericUpDown>
+										</Grid>
+										<CheckBox>Only Selected Enemy Types</CheckBox>
+										<Label Margin="0,10,0,0">Selected Enemy Types</Label>
+										<Grid ColumnDefinitions="*, *, *" RowDefinitions="*, *, *, *, *">
+											<CheckBox Grid.Column="0" Grid.Row="0" Margin="0,0,5,0">GUN Soldier</CheckBox>
+											<CheckBox Grid.Column="1" Grid.Row="0" Margin="0,0,5,0">GUN Beetle</CheckBox>
+											<CheckBox Grid.Column="2" Grid.Row="0" Margin="0,0,5,0">GUN Bigfoot</CheckBox>
+											<CheckBox Grid.Column="0" Grid.Row="1" Margin="0,0,5,0">GUN Robot</CheckBox>
+											<CheckBox Grid.Column="1" Grid.Row="1" Margin="0,0,5,0">Egg Pierrot</CheckBox>
+											<CheckBox Grid.Column="2" Grid.Row="1" Margin="0,0,5,0">Egg Pawn</CheckBox>
+											<CheckBox Grid.Column="0" Grid.Row="2" Margin="0,0,5,0">Shadow Android</CheckBox>
+											<CheckBox Grid.Column="1" Grid.Row="2" Margin="0,0,5,0">BA Giant</CheckBox>
+											<CheckBox Grid.Column="2" Grid.Row="2" Margin="0,0,5,0">BA Soldier</CheckBox>
+											<CheckBox Grid.Column="0" Grid.Row="3" Margin="0,0,5,0">BA Hawk/Volt</CheckBox>
+											<CheckBox Grid.Column="1" Grid.Row="3" Margin="0,0,5,0">BA Wing</CheckBox>
+											<CheckBox Grid.Column="2" Grid.Row="3" Margin="0,0,5,0">BA Worm</CheckBox>
+											<CheckBox Grid.Column="0" Grid.Row="4" Margin="0,0,5,0">BA Larva</CheckBox>
+											<CheckBox Grid.Column="1" Grid.Row="4" Margin="0,0,5,0">Artificial Chaos</CheckBox>
+											<CheckBox Grid.Column="2" Grid.Row="4" Margin="0,0,5,0">BA Assassin</CheckBox>
+										</Grid>
+									</StackPanel>
+								</TabItem>
+								<TabItem Header="Weapon">
+									<ScrollViewer>
+										<StackPanel>
+											<CheckBox>Random Weapons in Weapon Boxes</CheckBox>
+											<CheckBox>Random Weapons in All Boxes</CheckBox>
+											<CheckBox>Random Exposed Weapons</CheckBox>
+											<CheckBox>Only Selected Weapons</CheckBox>
+											<Label Margin="0,10,0,0">Selected Weapons</Label>
+											<Grid ColumnDefinitions="*, *, *" RowDefinitions="*, *, *, *, *, *, *, *, *, *, *, *, *, *">
+												<CheckBox Grid.Column="0" Grid.Row="0" Margin="0,0,5,0">None</CheckBox>
+												<CheckBox Grid.Column="1" Grid.Row="0" Margin="0,0,5,0">Pistol</CheckBox>
+												<CheckBox Grid.Column="2" Grid.Row="0" Margin="0,0,5,0">Submachine Gun</CheckBox>
+												<CheckBox Grid.Column="0" Grid.Row="1" Margin="0,0,5,0">Machine Gun</CheckBox>
+												<CheckBox Grid.Column="1" Grid.Row="1" Margin="0,0,5,0">Heavy Machine Gun</CheckBox>
+												<CheckBox Grid.Column="2" Grid.Row="1" Margin="0,0,5,0">Gatling Gun</CheckBox>
+												<CheckBox Grid.Column="0" Grid.Row="2" Margin="0,0,5,0">Egg Pistol</CheckBox>
+												<CheckBox Grid.Column="1" Grid.Row="2" Margin="0,0,5,0">Light Shot</CheckBox>
+												<CheckBox Grid.Column="2" Grid.Row="2" Margin="0,0,5,0">Flash Shot</CheckBox>
+												<CheckBox Grid.Column="0" Grid.Row="3" Margin="0,0,5,0">Ring Shot</CheckBox>
+												<CheckBox Grid.Column="1" Grid.Row="3" Margin="0,0,5,0">Heavy Shot</CheckBox>
+												<CheckBox Grid.Column="2" Grid.Row="3" Margin="0,0,5,0">Grenade Launcher</CheckBox>
+												<CheckBox Grid.Column="0" Grid.Row="4" Margin="0,0,5,0">GUN Bazooka</CheckBox>
+												<CheckBox Grid.Column="1" Grid.Row="4" Margin="0,0,5,0">Tank Cannon</CheckBox>
+												<CheckBox Grid.Column="2" Grid.Row="4" Margin="0,0,5,0">Black Barrel</CheckBox>
+												<CheckBox Grid.Column="0" Grid.Row="5" Margin="0,0,5,0">Big Barrel</CheckBox>
+												<CheckBox Grid.Column="1" Grid.Row="5" Margin="0,0,5,0">Egg Bazooka</CheckBox>
+												<CheckBox Grid.Column="2" Grid.Row="5" Margin="0,0,5,0">RPG</CheckBox>
+												<CheckBox Grid.Column="0" Grid.Row="6" Margin="0,0,5,0">Four Shot</CheckBox>
+												<CheckBox Grid.Column="1" Grid.Row="6" Margin="0,0,5,0">Eight Shot</CheckBox>
+												<CheckBox Grid.Column="2" Grid.Row="6" Margin="0,0,5,0">Worm Shooter Black</CheckBox>
+												<CheckBox Grid.Column="0" Grid.Row="7" Margin="0,0,5,0">Worm Shooter Red</CheckBox>
+												<CheckBox Grid.Column="1" Grid.Row="7" Margin="0,0,5,0">Worm Shooter Gold</CheckBox>
+												<CheckBox Grid.Column="2" Grid.Row="7" Margin="0,0,5,0">Vacuum Pod</CheckBox>
+												<CheckBox Grid.Column="0" Grid.Row="8" Margin="0,0,5,0">Laser Rifle</CheckBox>
+												<CheckBox Grid.Column="1" Grid.Row="8" Margin="0,0,5,0">Splitter</CheckBox>
+												<CheckBox Grid.Column="2" Grid.Row="8" Margin="0,0,5,0">Refractor</CheckBox>
+												<CheckBox Grid.Column="0" Grid.Row="9" Margin="0,0,5,0">Knife</CheckBox>
+												<CheckBox Grid.Column="1" Grid.Row="9" Margin="0,0,5,0">Black Sword</CheckBox>
+												<CheckBox Grid.Column="2" Grid.Row="9" Margin="0,0,5,0">Dark Hammer</CheckBox>
+												<CheckBox Grid.Column="0" Grid.Row="10" Margin="0,0,5,0">Egg Lance</CheckBox>
+												<CheckBox Grid.Column="1" Grid.Row="10" Margin="0,0,5,0">Samurai Sword Lv1</CheckBox>
+												<CheckBox Grid.Column="2" Grid.Row="10" Margin="0,0,5,0">Samurai Sword Lv2</CheckBox>
+												<CheckBox Grid.Column="0" Grid.Row="11" Margin="0,0,5,0">Satellite Laser Lv1</CheckBox>
+												<CheckBox Grid.Column="1" Grid.Row="11" Margin="0,0,5,0">Satellite Laser Lv2</CheckBox>
+												<CheckBox Grid.Column="2" Grid.Row="11" Margin="0,0,5,0">Egg Vacuum Lv1</CheckBox>
+												<CheckBox Grid.Column="0" Grid.Row="12" Margin="0,0,5,0">Egg Vacuum Lv2</CheckBox>
+												<CheckBox Grid.Column="1" Grid.Row="12" Margin="0,0,5,0">Omochao Gun Lv1</CheckBox>
+												<CheckBox Grid.Column="2" Grid.Row="12" Margin="0,0,5,0">Omochao Gun Lv2</CheckBox>
+												<CheckBox Grid.Column="0" Grid.Row="13" Margin="0,0,5,0">Heal Cannon Lv1</CheckBox>
+												<CheckBox Grid.Column="1" Grid.Row="13" Margin="0,0,5,0">Heal Cannon Lv2</CheckBox>
+												<CheckBox Grid.Column="2" Grid.Row="13" Margin="0,0,5,0">Shadow Rifle</CheckBox>
+											</Grid>
+										</StackPanel>
+									</ScrollViewer>
+								</TabItem>
+								<TabItem Header="Partner">
+									<StackPanel>
+										<Label>Mode</Label>
+										<ComboBox>
+											<ComboBoxItem>Default Partners</ComboBoxItem>
+											<ComboBoxItem>Wild</ComboBoxItem>
+											<ComboBoxItem>1:1 Per Stage (Not Ready Yet)</ComboBoxItem>
+											<ComboBoxItem>1:1 Global (Not Ready Yet)</ComboBoxItem>
+										</ComboBox>
+										<CheckBox>Reclassify Affiliation of Dark/Hero Partners</CheckBox>
+										<CheckBox>Keep Affiliation of Original Object (Dark -> Dark)</CheckBox>
+										<CheckBox>Only Selected Partners</CheckBox>
+										<Label Margin="0,10,0,0">Selected Partners</Label>
+										<Grid ColumnDefinitions="*, *, *" RowDefinitions="*, *, *, *">
+											<CheckBox Grid.Column="0" Grid.Row="0" Margin="0,0,5,0">Sonic</CheckBox>
+											<CheckBox Grid.Column="1" Grid.Row="0" Margin="0,0,5,0">Tails</CheckBox>
+											<CheckBox Grid.Column="2" Grid.Row="0" Margin="0,0,5,0">Knuckles</CheckBox>
+											<CheckBox Grid.Column="0" Grid.Row="1" Margin="0,0,5,0">Amy</CheckBox>
+											<CheckBox Grid.Column="1" Grid.Row="1" Margin="0,0,5,0">Rouge</CheckBox>
+											<CheckBox Grid.Column="2" Grid.Row="1" Margin="0,0,5,0">Omega</CheckBox>
+											<CheckBox Grid.Column="0" Grid.Row="2" Margin="0,0,5,0">Vector</CheckBox>
+											<CheckBox Grid.Column="1" Grid.Row="2" Margin="0,0,5,0">Espio</CheckBox>
+											<CheckBox Grid.Column="2" Grid.Row="2" Margin="0,0,5,0">Maria</CheckBox>
+											<CheckBox Grid.Column="0" Grid.Row="3" Margin="0,0,5,0">Charmy</CheckBox>
+											<CheckBox Grid.Column="1" Grid.Row="3" Margin="0,0,5,0">Egg Monitor</CheckBox>
+											<CheckBox Grid.Column="2" Grid.Row="3" Margin="0,0,5,0">Doom's Eye</CheckBox>
+										</Grid>
+									</StackPanel>
+								</TabItem>
+							</TabControl>
+						</Grid>
 				</TabItem>
 				<TabItem Header="Subtitles">
 		
