@@ -13,7 +13,7 @@
 		MaxHeight="750"
 		CanResize="False"
         x:Class="ShadowRando.Views.MainWindow"
-        Icon="/Assets/avalonia-logo.ico"
-        Title="ShadowRando">
+        Icon="/Assets/logo.ico"
+        Title="ShadowRando: Shadow the Hedgehog Randomizer">
         <views:MainView />
 </Window>
