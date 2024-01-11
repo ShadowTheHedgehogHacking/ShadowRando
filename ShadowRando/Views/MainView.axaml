@@ -1,9 +1,9 @@
-<UserControl xmlns="https://github.com/avaloniaui"
+		<UserControl xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:ShadowRando.ViewModels"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="800"
              x:Class="ShadowRando.Views.MainView"
              x:DataType="vm:MainViewModel">
   <Design.DataContext>
@@ -12,48 +12,69 @@
     <vm:MainViewModel />
   </Design.DataContext>
 
-	<TabControl>
-		<TabItem Header="Level Order">
-			<StackPanel>
-				<Label>Seed</Label>
-				<TextBox></TextBox>
-				<CheckBox>Random</CheckBox>
-				<Label>Mode</Label>
-				<ComboBox></ComboBox>
-				<Label>Main Path</Label>
-				<ComboBox></ComboBox>
-				<Label>Max Backwards Jump</Label>
-				<NumericUpDown></NumericUpDown>
-				<Label>Max Forwards Jump</Label>
-				<NumericUpDown></NumericUpDown>
-				<Label>Backwards Jump Probability</Label>
-				<NumericUpDown></NumericUpDown>
-				<CheckBox>Allow Jumps to Same Level</CheckBox>
-				<CheckBox>Include Last Story</CheckBox>
-				<CheckBox>Include Bosses</CheckBox>
-			</StackPanel>
-		</TabItem>
-		<TabItem Header="Layout">
+		<Grid RowDefinitions="*, Auto">
+			<TabControl Grid.Row="0">
+				<TabItem Header="Level Order">
+					<StackPanel HorizontalAlignment="Center">
+						<Label>Seed</Label>
+						<Grid ColumnDefinitions="*, Auto">
+							<TextBox Grid.Column="0"></TextBox>
+							<CheckBox Grid.Column="1" Margin="10,0,10,0">Random</CheckBox>
+						</Grid>
+						<Label Margin="0,40,0,0">Mode</Label>
+						<ComboBox SelectedIndex="1" MinWidth="225">
+							<ComboBoxItem>None</ComboBoxItem>
+							<ComboBoxItem>Shuffle All Stages w/Warps</ComboBoxItem>
+							<ComboBoxItem>Vanilla Structure</ComboBoxItem>
+							<ComboBoxItem>Branching Paths</ComboBoxItem>
+							<ComboBoxItem>Reverse Branching</ComboBoxItem>
+							<ComboBoxItem>Boss Rush</ComboBoxItem>
+							<ComboBoxItem>Wild</ComboBoxItem>
+						</ComboBox>
+						<Label Margin="0,5,0,0">Main Path</Label>
+						<ComboBox SelectedIndex="0" MinWidth="195">
+							<ComboBoxItem>Act Clear</ComboBoxItem>
+							<ComboBoxItem>Any Exits</ComboBoxItem>
+						</ComboBox>
+						<Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto">
+							<Label Grid.Column="0" Grid.Row="0" Margin="0,10,0,0">Max Forwards Jump</Label>
+							<NumericUpDown Grid.Column="0" Grid.Row="1" Increment="1" Value="22"></NumericUpDown>
+							<Label Grid.Column="0" Grid.Row="2" Margin="0,5,0,0">Max Backwards Jump</Label>
+							<NumericUpDown Grid.Column="0" Grid.Row="3" Increment="1" Value="4"></NumericUpDown>
+							<Label Grid.Column="0" Grid.Row="4" Margin="0,5,0,0">Backwards Jump Probability</Label>
+							<NumericUpDown Grid.Column="0" Grid.Row="5" Increment="1" Value="10"></NumericUpDown>
+							<CheckBox Grid.Column="1" Grid.Row="5" Margin="10,0,10,0">Allow Jumps to Same Level</CheckBox>
+						</Grid>
+						<CheckBox Margin="0,10,0,0">Include Last Story</CheckBox>
+						<CheckBox>Include Bosses</CheckBox>
+					</StackPanel>
+				</TabItem>
+				<TabItem Header="Layout">
 		
-		</TabItem>
-		<TabItem Header="Subtitles">
+				</TabItem>
+				<TabItem Header="Subtitles">
 		
-		</TabItem>
-		<TabItem Header="Music">
+				</TabItem>
+				<TabItem Header="Music">
 		
-		</TabItem>
-		<TabItem Header="Spoilers">
+				</TabItem>
+				<TabItem Header="Spoilers">
 		
-		</TabItem>
-		<TabItem Header="About">
-			<StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
-				<Label FontWeight="Bold">Created by dreamsyntax &amp; MainMemory</Label>
-				<Label Padding="10, 0, 0, 0" FontSize="12" VerticalAlignment="Center">Thanks to igorseabra4 for HeroesPowerPlant</Label>
-				<Label Padding="10, 0, 0, 10" FontSize="12" VerticalAlignment="Center">Thanks to Sewer56 for HeroesONE-R</Label>
-				<Button HorizontalAlignment="Center">Project GitHub Page</Button>
-				<CheckBox>Program Sound</CheckBox>
-			</StackPanel>
-		</TabItem>
-	</TabControl>
+				</TabItem>
+				<TabItem Header="About">
+					<StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+						<Label FontWeight="Bold">Created by dreamsyntax &amp; MainMemory</Label>
+						<Label Padding="10, 0, 0, 0" FontSize="12" VerticalAlignment="Center">Thanks to igorseabra4 for HeroesPowerPlant</Label>
+						<Label Padding="10, 0, 0, 10" FontSize="12" VerticalAlignment="Center">Thanks to Sewer56 for HeroesONE-R</Label>
+						<Button HorizontalAlignment="Center">Project GitHub Page</Button>
+						<CheckBox>Program Sound</CheckBox>
+					</StackPanel>
+				</TabItem>
+			</TabControl>
+			<Grid Grid.Row="1" ColumnDefinitions="*, Auto">
+				<ProgressBar Grid.Column="0" Height="30" Margin="20,0,20,20" Value="50"></ProgressBar>
+				<Button Grid.Column="1" Margin="0,0,20,20">Randomize</Button>
+			</Grid>
+	</Grid>
 	
 </UserControl>
