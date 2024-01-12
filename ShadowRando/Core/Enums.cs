@@ -2,7 +2,7 @@
 {
 	public enum LevelOrderMode
 	{
-		None,
+		Original,
 		AllStagesWarps,
 		VanillaStructure,
 		BranchingPaths,
@@ -19,7 +19,7 @@
 
 	public enum LayoutEnemyMode
 	{
-		None,
+		Original,
 		Wild,
 		OneToOnePerStage,
 		OneToOneGlobal
@@ -27,7 +27,7 @@
 
 	public enum LayoutPartnerMode
 	{
-		None,
+		Original,
 		Wild,
 		OneToOnePerStage,
 		OneToOneGlobal

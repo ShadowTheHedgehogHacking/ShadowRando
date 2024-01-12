@@ -10,6 +10,13 @@ using System.Linq;
 using HeroesONE_R.Structures.Common;
 using HeroesONE_R.Structures;
 using System.Diagnostics;
+using Avalonia.Media.Imaging;
+using Avalonia.Media;
+using System.Drawing;
+using Avalonia.Platform.Storage;
+using MsBox.Avalonia.Enums;
+using MsBox.Avalonia;
+using Reloaded.Memory.Utilities;
 
 namespace ShadowRando.Views;
 
@@ -231,7 +238,7 @@ public partial class MainView : UserControl
         InitializeComponent();
     }
 
-    private void UserControl_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private async void UserControl_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
 		settings = Settings.Load();
 
@@ -297,75 +304,75 @@ public partial class MainView : UserControl
 
 		programInitialized = true;
 
-		/*		using (var dlg = new Ookii.Dialogs.WinForms.VistaFolderBrowserDialog() { Description = "Select the root folder of an extracted Shadow the Hedgehog disc image." })
-				{
-					if (!string.IsNullOrEmpty(settings.GamePath))
-						dlg.SelectedPath = settings.GamePath;
-					if (dlg.ShowDialog(this) == DialogResult.OK)
-					{
-						if (settings.GamePath != dlg.SelectedPath && Directory.Exists("backup"))
-							switch (MessageBox.Show(this, "New game directory selected!\n\nDo you wish to erase the previous backup data and use the new data as a base?", "Shadow Randomizer", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1))
-							{
-								case DialogResult.Yes:
-									Directory.Delete("backup", true);
-									break;
-								case DialogResult.No:
-									break;
-								default:
-									Close();
-									return;
-							}
-						settings.GamePath = dlg.SelectedPath;
-						if (!Directory.Exists("backup"))
-							Directory.CreateDirectory("backup");
-						if (!File.Exists(Path.Combine("backup", "main.dol")))
-							File.Copy(Path.Combine(settings.GamePath, "sys", "main.dol"), Path.Combine("backup", "main.dol"));
-						if (!File.Exists(Path.Combine("backup", "bi2.bin")))
-							File.Copy(Path.Combine(settings.GamePath, "sys", "bi2.bin"), Path.Combine("backup", "bi2.bin"));
-						if (!File.Exists(Path.Combine("backup", "setid.bin")))
-							File.Copy(Path.Combine(settings.GamePath, "files", "setid.bin"), Path.Combine("backup", "setid.bin"));
-						if (!File.Exists(Path.Combine("backup", "nukkoro2.inf")))
-							File.Copy(Path.Combine(settings.GamePath, "files", "nukkoro2.inf"), Path.Combine("backup", "nukkoro2.inf"));
-						if (!Directory.Exists(Path.Combine("backup", "fonts")))
-							CopyDirectory(Path.Combine(settings.GamePath, "files", "fonts"), Path.Combine("backup", "fonts"));
-						if (!Directory.Exists(Path.Combine("backup", "music")))
-						{
-							Directory.CreateDirectory(Path.Combine("backup", "music"));
-							foreach (var fil in Directory.EnumerateFiles(Path.Combine(settings.GamePath, "files"), "*.adx"))
-								File.Copy(fil, Path.Combine("backup", "music", Path.GetFileName(fil)));
-						}
-						if (!Directory.Exists(Path.Combine("backup", "sets")))
-						{
-							Directory.CreateDirectory(Path.Combine("backup", "sets"));
-							for (int stageIdToModify = 5; stageIdToModify < 45; stageIdToModify++)
-							{
-								stageAssociationIDMap.TryGetValue(stageIdToModify, out var stageId);
-								var stageDataIdentifier = "stg0" + stageId.ToString();
-								var datOne = stageDataIdentifier + "_dat.one";
-								var cmnLayout = stageDataIdentifier + "_cmn.dat";
-								var nrmLayout = stageDataIdentifier + "_nrm.dat";
-								var hrdLayout = stageDataIdentifier + "_hrd.dat";
-								var datOnePath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, datOne);
-								var cmnLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, cmnLayout);
-								var nrmLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, nrmLayout);
-								var hrdLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, hrdLayout);
 
-								if (!Directory.Exists(Path.Combine("backup", "sets", stageDataIdentifier)))
-									Directory.CreateDirectory(Path.Combine("backup", "sets", stageDataIdentifier));
-								File.Copy(datOnePath, Path.Combine("backup", "sets", stageDataIdentifier, datOne));
-								File.Copy(cmnLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, cmnLayout));
-								try { File.Copy(nrmLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, nrmLayout)); } catch (FileNotFoundException) { } // some stages don't have nrm
-								try { File.Copy(hrdLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, hrdLayout)); } catch (FileNotFoundException) { } // some stages don't have hrd
-							}
-						}
-					}
-					else
-					{
-						Close();
-						return;
-					}
+		var topLevel = TopLevel.GetTopLevel(this);
+		var folderPath = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+		{
+			Title = "Select the root folder of an extracted Shadow the Hedgehog disc image.",
+		});
+
+		if (folderPath is not null)
+		{
+			if (settings.GamePath != folderPath.First().Path.AbsolutePath && Directory.Exists("backup"))
+			{
+				var msgbox = MessageBoxManager.GetMessageBoxStandard("Shadow Randomizer", "New game directory selected!\n\nDo you wish to erase the previous backup data and use the new data as a base?", ButtonEnum.YesNo, Icon.Question);
+				var result = await msgbox.ShowAsync();
+				switch(result)
+				{
+					case ButtonResult.Yes:
+						Directory.Delete("backup", true);
+						break;
+					case ButtonResult.No:
+						break;
+					default:
+						break;
 				}
-		*/
+			}
+			settings.GamePath = folderPath.First().Path.AbsolutePath;
+			if (!Directory.Exists("backup"))
+				Directory.CreateDirectory("backup");
+			if (!File.Exists(Path.Combine("backup", "main.dol")))
+				File.Copy(Path.Combine(settings.GamePath, "sys", "main.dol"), Path.Combine("backup", "main.dol"));
+			if (!File.Exists(Path.Combine("backup", "bi2.bin")))
+				File.Copy(Path.Combine(settings.GamePath, "sys", "bi2.bin"), Path.Combine("backup", "bi2.bin"));
+			if (!File.Exists(Path.Combine("backup", "setid.bin")))
+				File.Copy(Path.Combine(settings.GamePath, "files", "setid.bin"), Path.Combine("backup", "setid.bin"));
+			if (!File.Exists(Path.Combine("backup", "nukkoro2.inf")))
+				File.Copy(Path.Combine(settings.GamePath, "files", "nukkoro2.inf"), Path.Combine("backup", "nukkoro2.inf"));
+			if (!Directory.Exists(Path.Combine("backup", "fonts")))
+				CopyDirectory(Path.Combine(settings.GamePath, "files", "fonts"), Path.Combine("backup", "fonts"));
+			if (!Directory.Exists(Path.Combine("backup", "music")))
+			{
+				Directory.CreateDirectory(Path.Combine("backup", "music"));
+				foreach (var fil in Directory.EnumerateFiles(Path.Combine(settings.GamePath, "files"), "*.adx"))
+					File.Copy(fil, Path.Combine("backup", "music", Path.GetFileName(fil)));
+			}
+			if (!Directory.Exists(Path.Combine("backup", "sets")))
+			{
+				Directory.CreateDirectory(Path.Combine("backup", "sets"));
+				for (int stageIdToModify = 5; stageIdToModify < 45; stageIdToModify++)
+				{
+					stageAssociationIDMap.TryGetValue(stageIdToModify, out var stageId);
+					var stageDataIdentifier = "stg0" + stageId.ToString();
+					var datOne = stageDataIdentifier + "_dat.one";
+					var cmnLayout = stageDataIdentifier + "_cmn.dat";
+					var nrmLayout = stageDataIdentifier + "_nrm.dat";
+					var hrdLayout = stageDataIdentifier + "_hrd.dat";
+					var datOnePath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, datOne);
+					var cmnLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, cmnLayout);
+					var nrmLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, nrmLayout);
+					var hrdLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, hrdLayout);
+
+					if (!Directory.Exists(Path.Combine("backup", "sets", stageDataIdentifier)))
+						Directory.CreateDirectory(Path.Combine("backup", "sets", stageDataIdentifier));
+					File.Copy(datOnePath, Path.Combine("backup", "sets", stageDataIdentifier, datOne));
+					File.Copy(cmnLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, cmnLayout));
+					try { File.Copy(nrmLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, nrmLayout)); } catch (FileNotFoundException) { } // some stages don't have nrm
+					try { File.Copy(hrdLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, hrdLayout)); } catch (FileNotFoundException) { } // some stages don't have hrd
+				}
+			}
+		}
+
 	}
 
 	private void UserControl_Unloaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -494,7 +501,7 @@ public partial class MainView : UserControl
 		stageids = tmpids.ToArray();
 		switch (settings.LevelOrderMode)
 		{
-			case LevelOrderMode.None:
+			case LevelOrderMode.Original:
 				break;
 			case LevelOrderMode.AllStagesWarps:
 				{
@@ -897,7 +904,7 @@ public partial class MainView : UserControl
 				}
 				break;
 		}
-		if (settings.LevelOrderMode != LevelOrderMode.None)
+		if (settings.LevelOrderMode != LevelOrderMode.Original)
 		{
 			for (int i = 0; i < totalstagecount; i++)
 			{
@@ -980,7 +987,8 @@ public partial class MainView : UserControl
 		Spoilers_Button_SaveLog.IsEnabled = true;
 		Spoilers_Button_MakeChart.IsEnabled = true;
 		ProgressBar_RandomizationProgress.Value = 100;
-		// MessageBox.Show("Randomization Complete", "Report");
+		var msgbox = MessageBoxManager.GetMessageBoxStandard("Shadow Randomizer", "Randomization Complete", ButtonEnum.Ok, Icon.Info);
+		var result = msgbox.ShowAsync();
 	}
 
 	private void CopyDirectory(DirectoryInfo srcDir, string dstDir)
@@ -993,16 +1001,6 @@ public partial class MainView : UserControl
 	}
 
 	private void CopyDirectory(string srcDir, string dstDir) => CopyDirectory(new DirectoryInfo(srcDir), dstDir);
-
-	private void LevelOrder_CheckBox_Random_Seed_Checked(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-	{
-		LevelOrder_TextBox_Seed.IsEnabled = !LevelOrder_CheckBox_Random_Seed.IsChecked.Value;
-	}
-
-	private void LevelOrder_CheckBox_AllowJumpsToSameLevel_Checked(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-	{
-		LevelOrder_NumericUpDown_MaxBackwardsJump.Minimum = LevelOrder_NumericUpDown_MaxForwardsJump.Minimum = LevelOrder_CheckBox_AllowJumpsToSameLevel.IsChecked.Value ? 0 : 1;
-	}
 
 	private void RandomizeSubtitles(Random r)
 	{
@@ -1231,7 +1229,7 @@ public partial class MainView : UserControl
 
 			switch (enemyMode)
 			{
-				case LayoutEnemyMode.None:
+				case LayoutEnemyMode.Original:
 					break;
 				case LayoutEnemyMode.Wild:
 					WildRandomizeAllEnemiesWithTranslations(ref cmnLayoutData, r);
@@ -1739,8 +1737,208 @@ public partial class MainView : UserControl
 		return LevelNames[id];
 	}
 
-	private void Spoilers_ListBox_LevelList_SelectedIndexChanged(object sender, EventArgs e)
+	int[] FindShortestPath(int start)
 	{
+		Stack<int> stack = new Stack<int>(stagecount);
+		stack.Push(start);
+		return FindShortestPath(stages[start], stack, null);
+	}
+
+	int[] FindShortestPath(Stage stage, Stack<int> path, int[] shortestPath)
+	{
+		if (shortestPath != null && path.Count >= shortestPath.Length)
+			return shortestPath;
+		if (stage.Neutral != -1 && !path.Contains(stage.Neutral))
+		{
+			path.Push(stage.Neutral);
+			if (stage.Neutral == totalstagecount)
+			{
+				if (shortestPath == null || path.Count < shortestPath.Length)
+				{
+					shortestPath = path.ToArray();
+					Array.Reverse(shortestPath);
+					path.Pop();
+					return shortestPath;
+				}
+			}
+			else
+				shortestPath = FindShortestPath(stages[stage.Neutral], path, shortestPath);
+			path.Pop();
+		}
+		if (stage.Hero != -1 && !path.Contains(stage.Hero))
+		{
+			path.Push(stage.Hero);
+			if (stage.Hero == totalstagecount)
+			{
+				if (shortestPath == null || path.Count < shortestPath.Length)
+				{
+					shortestPath = path.ToArray();
+					Array.Reverse(shortestPath);
+					path.Pop();
+					return shortestPath;
+				}
+			}
+			else
+				shortestPath = FindShortestPath(stages[stage.Hero], path, shortestPath);
+			path.Pop();
+		}
+		if (stage.Dark != -1 && !path.Contains(stage.Dark))
+		{
+			path.Push(stage.Dark);
+			if (stage.Dark == totalstagecount)
+			{
+				if (shortestPath == null || path.Count < shortestPath.Length)
+				{
+					shortestPath = path.ToArray();
+					Array.Reverse(shortestPath);
+					path.Pop();
+					return shortestPath;
+				}
+			}
+			else
+				shortestPath = FindShortestPath(stages[stage.Dark], path, shortestPath);
+			path.Pop();
+		}
+		return shortestPath;
+	}
+
+	private void LevelOrder_Button_ProjectPage_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+	{
+		Process.Start(new ProcessStartInfo("https://github.com/ShadowTheHedgehogHacking/ShadowRando") { UseShellExecute = true });
+	}
+
+	private void LevelOrder_CheckBox_Random_Seed_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+	{
+		LevelOrder_TextBox_Seed.IsEnabled = !LevelOrder_CheckBox_Random_Seed.IsChecked.Value;
+	}
+
+	private void LevelOrder_CheckBox_AllowJumpsToSameLevel_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+	{
+		LevelOrder_NumericUpDown_MaxBackwardsJump.Minimum = LevelOrder_NumericUpDown_MaxForwardsJump.Minimum = LevelOrder_CheckBox_AllowJumpsToSameLevel.IsChecked.Value ? 0 : 1;
+	}
+
+	private void Layout_CheckBox_RandomizeLayouts_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+	{
+		Layout_Enemy_CheckBox_KeepType.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
+		Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
+		Layout_Partner_ComboBox_Mode.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
+		Layout_Enemy_CheckBox_AdjustMissionCounts.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
+		Layout_CheckBox_MakeCCSplinesVehicleCompatible.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
+	}
+
+	private void Subtitles_CheckBox_RandomizeSubtitlesVoicelines_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+	{
+		Subtitles_CheckBox_NoDuplicates.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
+		Subtitles_CheckBox_NoSystemMessages.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
+		Subtitles_CheckBox_OnlyWithLinkedAudio.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
+		Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
+		Subtitles_CheckBox_OnlySelectedCharacters.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
+		SetSubtitlesEnabledStateSelectedCharacters(Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value && Subtitles_CheckBox_OnlySelectedCharacters.IsChecked.Value);
+	}
+
+	private void Subtitles_CheckBox_OnlyWithLinkedAudio_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+		if (Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked.Value)
+			Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsChecked = false;
+	}
+
+    private void Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+		if (Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsChecked.Value)
+			Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked = false;
+	}
+
+	private void Subtitles_CheckBox_OnlySelectedCharacters_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+	{
+		SetSubtitlesEnabledStateSelectedCharacters(Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value && Subtitles_CheckBox_OnlySelectedCharacters.IsChecked.Value);
+	}
+
+	private void SetSubtitlesEnabledStateSelectedCharacters(bool state)
+	{
+		Subtitles_CheckBox_SelectedCharacter_Shadow.IsEnabled = state;
+		Subtitles_CheckBox_SelectedCharacter_Sonic.IsEnabled = state;
+		Subtitles_CheckBox_SelectedCharacter_Tails.IsEnabled = state;
+		Subtitles_CheckBox_SelectedCharacter_Knuckles.IsEnabled = state;
+		Subtitles_CheckBox_SelectedCharacter_Amy.IsEnabled = state;
+		Subtitles_CheckBox_SelectedCharacter_Rouge.IsEnabled = state;
+		Subtitles_CheckBox_SelectedCharacter_Omega.IsEnabled = state;
+		Subtitles_CheckBox_SelectedCharacter_Vector.IsEnabled = state;
+		Subtitles_CheckBox_SelectedCharacter_Espio.IsEnabled = state;
+		Subtitles_CheckBox_SelectedCharacter_Maria.IsEnabled = state;
+		Subtitles_CheckBox_SelectedCharacter_Charmy.IsEnabled = state;
+		Subtitles_CheckBox_SelectedCharacter_Eggman.IsEnabled = state;
+		Subtitles_CheckBox_SelectedCharacter_BlackDoom.IsEnabled = state;
+		Subtitles_CheckBox_SelectedCharacter_Cream.IsEnabled = state;
+		Subtitles_CheckBox_SelectedCharacter_Cheese.IsEnabled = state;
+		Subtitles_CheckBox_SelectedCharacter_GUNCommander.IsEnabled = state;
+		Subtitles_CheckBox_SelectedCharacter_GUNSoldier.IsEnabled = state;
+	}
+
+    private void Spoilers_Button_MakeChart_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+		// TODO: Implement cross platform MakeChart OR make it Windows exclusive
+	}
+
+    private async void Spoilers_Button_SaveLog_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+		var topLevel = TopLevel.GetTopLevel(this);
+		var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+		{
+			Title = "Save log",
+			DefaultExtension = ".txt",
+			FileTypeChoices = [FilePickerFileTypes.TextPlain]
+		});
+
+		if (file is not null)
+		{
+			// Open writing stream from the file.
+			await using var stream = await file.OpenWriteAsync();
+			using var sw = new StreamWriter(stream);
+			// Write some content to the file.
+			sw.WriteLine($"ShadowRando Version: {programVersion}");
+			sw.WriteLine($"Seed: {LevelOrder_TextBox_Seed.Text}");
+			sw.WriteLine($"Level Order Mode: {settings.LevelOrderMode}");
+			if (settings.LevelOrderMode == LevelOrderMode.AllStagesWarps)
+			{
+				sw.WriteLine($"Main Path: {settings.LevelOrderMainPath}");
+				sw.WriteLine($"Max Forwards Jump: {LevelOrder_NumericUpDown_MaxForwardsJump.Value}");
+				sw.WriteLine($"Max Backwards Jump: {LevelOrder_NumericUpDown_MaxBackwardsJump.Value}");
+				sw.WriteLine($"Backwards Jump Probability: {LevelOrder_NumericUpDown_BackwardsJumpProbability.Value}");
+				sw.WriteLine($"Allow Jumps To Same Level: {LevelOrder_CheckBox_AllowJumpsToSameLevel.IsChecked.Value}");
+			}
+			sw.WriteLine($"Include Last Story: {LevelOrder_CheckBox_IncludeLastStory.IsChecked.Value}");
+			sw.WriteLine($"Include Bosses: {LevelOrder_CheckBox_IncludeBosses.IsChecked.Value}");
+
+			sw.WriteLine($"Randomize Layouts: {Layout_CheckBox_RandomizeLayouts.IsChecked.Value}");
+			if (settings.RandomizeLayouts == true)
+			{
+				sw.WriteLine($"Enemy Mode: {settings.LayoutEnemyMode}");
+				sw.WriteLine($"Random Weapons In All Boxes: {Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes.IsChecked.Value}");
+				sw.WriteLine($"Partner Mode: {settings.LayoutPartnerMode}");
+			}
+			sw.WriteLine($"Randomize Subtitles / Voicelines: {Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value}");
+			sw.WriteLine($"Randomize Music: {Music_CheckBox_RandomizeMusic.IsChecked.Value}");
+			sw.WriteLine($"Skip Chaos Power Use Jingles: {Music_CheckBox_SkipChaosPowerUseJingles.IsChecked.Value}");
+			sw.WriteLine($"Skip Rank Theme: {Music_CheckBox_SkipRankTheme.IsChecked.Value}");
+			sw.WriteLine();
+			for (int i = 0; i < stagecount; i++)
+			{
+				Stage stg = stages[stageids[i]];
+				sw.WriteLine($"{GetStageName(stageids[i])}:");
+				if (stg.Neutral != -1)
+					sw.WriteLine($"Neutral -> {GetStageName(stg.Neutral)} ({Array.IndexOf(stageids, stg.Neutral) - i:+##;-##;0})");
+				if (stg.Hero != -1)
+					sw.WriteLine($"Hero -> {GetStageName(stg.Hero)} ({Array.IndexOf(stageids, stg.Hero) - i:+##;-##;0})");
+				if (stg.Dark != -1)
+					sw.WriteLine($"Dark -> {GetStageName(stg.Dark)} ({Array.IndexOf(stageids, stg.Dark) - i:+##;-##;0})");
+				sw.WriteLine();
+			}
+		}
+
+	}
+
+	private void Spoilers_ListBox_LevelList_SelectionChanged(object? sender, Avalonia.Controls.SelectionChangedEventArgs e)
+    {
 		if (Spoilers_ListBox_LevelList.SelectedIndex != -1)
 		{
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
@@ -1811,804 +2009,44 @@ public partial class MainView : UserControl
 		}
 	}
 
-	int[] FindShortestPath(int start)
-	{
-		Stack<int> stack = new Stack<int>(stagecount);
-		stack.Push(start);
-		return FindShortestPath(stages[start], stack, null);
-	}
-
-	int[] FindShortestPath(Stage stage, Stack<int> path, int[] shortestPath)
-	{
-		if (shortestPath != null && path.Count >= shortestPath.Length)
-			return shortestPath;
-		if (stage.Neutral != -1 && !path.Contains(stage.Neutral))
-		{
-			path.Push(stage.Neutral);
-			if (stage.Neutral == totalstagecount)
-			{
-				if (shortestPath == null || path.Count < shortestPath.Length)
-				{
-					shortestPath = path.ToArray();
-					Array.Reverse(shortestPath);
-					path.Pop();
-					return shortestPath;
-				}
-			}
-			else
-				shortestPath = FindShortestPath(stages[stage.Neutral], path, shortestPath);
-			path.Pop();
-		}
-		if (stage.Hero != -1 && !path.Contains(stage.Hero))
-		{
-			path.Push(stage.Hero);
-			if (stage.Hero == totalstagecount)
-			{
-				if (shortestPath == null || path.Count < shortestPath.Length)
-				{
-					shortestPath = path.ToArray();
-					Array.Reverse(shortestPath);
-					path.Pop();
-					return shortestPath;
-				}
-			}
-			else
-				shortestPath = FindShortestPath(stages[stage.Hero], path, shortestPath);
-			path.Pop();
-		}
-		if (stage.Dark != -1 && !path.Contains(stage.Dark))
-		{
-			path.Push(stage.Dark);
-			if (stage.Dark == totalstagecount)
-			{
-				if (shortestPath == null || path.Count < shortestPath.Length)
-				{
-					shortestPath = path.ToArray();
-					Array.Reverse(shortestPath);
-					path.Pop();
-					return shortestPath;
-				}
-			}
-			else
-				shortestPath = FindShortestPath(stages[stage.Dark], path, shortestPath);
-			path.Pop();
-		}
-		return shortestPath;
-	}
-
-	private void saveLogButton_Click(object sender, EventArgs e)
-	{
-/*		saveFileDialog1.InitialDirectory = Directory.GetCurrentDirectory();
-		if (saveFileDialog1.ShowDialog(this) == DialogResult.OK)
-			using (StreamWriter sw = File.CreateText(saveFileDialog1.FileName))
-			{
-				sw.WriteLine($"ShadowRando Version: {programVersion}");
-				sw.WriteLine($"Seed: {seedTextBox.Text}");
-				sw.WriteLine($"Mode: {settings.Mode}");
-				if (settings.Mode == LevelOrderMode.AllStagesWarps)
-				{
-					sw.WriteLine($"Main Path: {mainPathSelector.SelectedItem}");
-					sw.WriteLine($"Max Backwards Jump: {LevelOrder_NumericUpDown_MaxBackwardsJump.Value}");
-					sw.WriteLine($"Max Forwards Jump: {LevelOrder_NumericUpDown_MaxForwardsJump.Value}");
-					sw.WriteLine($"Backwards Jump Probability: {LevelOrder_NumericUpDown_BackwardsJumpProbability.Value}");
-					sw.WriteLine($"Allow Same Level: {allowSameLevel.IsChecked.Value}");
-				}
-				sw.WriteLine($"Include Last Story: {includeLast.IsChecked.Value}");
-				sw.WriteLine($"Random Music: {randomMusic.IsChecked.Value}");
-				sw.WriteLine($"Random Subtitles / Voicelines: {randomFNT.IsChecked.Value}");
-				sw.WriteLine();
-				for (int i = 0; i < stagecount; i++)
-				{
-					Stage stg = stages[stageids[i]];
-					sw.WriteLine($"{GetStageName(stageids[i])}:");
-					if (stg.Neutral != -1)
-						sw.WriteLine($"Neutral -> {GetStageName(stg.Neutral)} ({Array.IndexOf(stageids, stg.Neutral) - i:+##;-##;0})");
-					if (stg.Hero != -1)
-						sw.WriteLine($"Hero -> {GetStageName(stg.Hero)} ({Array.IndexOf(stageids, stg.Hero) - i:+##;-##;0})");
-					if (stg.Dark != -1)
-						sw.WriteLine($"Dark -> {GetStageName(stg.Dark)} ({Array.IndexOf(stageids, stg.Dark) - i:+##;-##;0})");
-					sw.WriteLine();
-				}
-			}*/
-	}
-
-	const int linespace = 8;
-/*	private void makeChartButton_Click(object sender, EventArgs e)
-	{
-		if (saveFileDialog2.ShowDialog(this) != DialogResult.OK)
-			return;
-		ChartNode[] levels = new ChartNode[totalstagecount + 2];
-		int gridmaxh = 0;
-		int gridmaxv = 0;
-		switch (settings.LevelOrderMode)
-		{
-			case LevelOrderMode.AllStagesWarps: // stages + warps
-			case LevelOrderMode.BossRush: // boss rush
-			case LevelOrderMode.Wild: // wild
-				gridmaxh = 1;
-				gridmaxv = stagecount + 2;
-				for (int i = 0; i <= stagecount; i++)
-					levels[stageids[i]] = new ChartNode(0, i + 1);
-				levels[totalstagecount + 1] = new ChartNode(0, 0);
-				break;
-			case LevelOrderMode.BranchingPaths: // branching paths
-				{
-					int row = 0;
-					int col = 0;
-					int nextrow = stageids[0];
-					for (int i = 0; i < stagecount; i++)
-					{
-						if (stageids[i] == nextrow)
-						{
-							++row;
-							col = 0;
-							nextrow = stages[stageids[i]].Neutral;
-						}
-						levels[stageids[i]] = new ChartNode(col++, row);
-						gridmaxh = Math.Max(col, gridmaxh);
-					}
-					levels[totalstagecount] = new ChartNode(0, ++row);
-					gridmaxv = row + 1;
-					levels[totalstagecount + 1] = new ChartNode(0, 0);
-				}
-				break;
-			case LevelOrderMode.ReverseBranching: // reverse branching
-				{
-					List<List<int>> depthstages = new List<List<int>>() { new List<int>() { totalstagecount } };
-					List<Stage> stages2 = new List<Stage>(stageids.Take(stagecount).Select(a => stages[a]));
-					while (stages2.Count > 0)
-					{
-						var next = stages2.Where(a => depthstages[depthstages.Count - 1].Contains(a.Neutral) || depthstages[depthstages.Count - 1].Contains(a.Hero) || depthstages[depthstages.Count - 1].Contains(a.Dark)).Select(a => a.ID).ToList();
-						depthstages.Add(next);
-						stages2.RemoveAll(a => next.Contains(a.ID));
-					}
-					depthstages.Add(new List<int>() { totalstagecount + 1 });
-					depthstages.Reverse();
-					gridmaxh = depthstages.Max(a => a.Count);
-					gridmaxv = depthstages.Count;
-					int row = 0;
-					int col = 0;
-					foreach (var ds in depthstages)
-					{
-						foreach (var id in ds)
-							levels[id] = new ChartNode(col++, row);
-						gridmaxh = Math.Max(col, gridmaxh);
-						++row;
-						col = 0;
-					}
-				}
-				break;
-			default: // normal game structure
-				if (LevelOrder_CheckBox_IncludeBosses.IsChecked.Value)
-				{
-					gridmaxh = 1;
-					gridmaxv = 11;
-					int[] stgcnts = { 1, 3, 3, 5, 5, 5, 0 };
-					int[][] bosses = { new int[] { }, new[] { 8 }, new[] { 4 }, new[] { 4, 8, 10 }, new[] { 2, 6 }, new int[] { }, new[] { 0, 1, 2, 3, 5, 7, 8, 9, 10 } };
-					int ind = 0;
-					for (int i = 0; i < stgcnts.Length; i++)
-					{
-						int y = gridmaxv / 4 - stgcnts[i] / 2;
-						for (int j = 0; j < stgcnts[i]; j++)
-							levels[stageids[ind++]] = new ChartNode(gridmaxh, y++ * 2 + 1);
-						if (bosses[i].Length > 0)
-							for (int j = 0; j < bosses[i].Length; j++)
-								levels[stageids[ind++]] = new ChartNode(gridmaxh, bosses[i][j]);
-						gridmaxh++;
-					}
-					levels[totalstagecount] = new ChartNode(gridmaxh++, 5);
-					levels[totalstagecount + 1] = new ChartNode(0, 5);
-				}
-				else
-				{
-					gridmaxh = 1;
-					gridmaxv = 5;
-					int[] stgcnts = { 1, 3, 3, 5, 5, 5 };
-					int ind = 0;
-					for (int i = 0; i < stgcnts.Length; i++)
-					{
-						int y = gridmaxv / 2 - stgcnts[i] / 2;
-						for (int j = 0; j < stgcnts[i]; j++)
-							levels[stageids[ind++]] = new ChartNode(gridmaxh, y++);
-						gridmaxh++;
-					}
-					levels[totalstagecount] = new ChartNode(gridmaxh++, 2);
-					levels[totalstagecount + 1] = new ChartNode(0, 2);
-				}
-				break;
-		}
-		levels[totalstagecount + 1].Connect(ConnectionType.Neutral, levels[stageids[0]]);
-		for (int i = 0; i < totalstagecount; i++)
-		{
-			ChartNode node = levels[i];
-			if (node == null)
-				continue;
-			Stage stage = stages[i];
-			if (stage.Neutral != -1)
-				node.Connect(ConnectionType.Neutral, levels[stage.Neutral]);
-			if (stage.Hero != -1)
-				node.Connect(ConnectionType.Hero, levels[stage.Hero]);
-			if (stage.Dark != -1)
-				node.Connect(ConnectionType.Dark, levels[stage.Dark]);
-		}
-		Size textsz = Size.Empty;
-		using (var g = CreateGraphics())
-		{
-			foreach (string item in LevelNames)
-			{
-				Size tmpsz = g.MeasureString(item, DefaultFont).ToSize();
-				if (tmpsz.Width > textsz.Width)
-					textsz.Width = tmpsz.Width;
-				if (tmpsz.Height > textsz.Height)
-					textsz.Height = tmpsz.Height;
-			}
-			textsz.Width += 6;
-			textsz.Height += 6;
-		}
-		List<(ChartNode src, ChartConnection con)> shortcons = new List<(ChartNode src, ChartConnection con)>();
-		List<ChartConnection>[] vcons = new List<ChartConnection>[gridmaxh * 2];
-		for (int i = 0; i < gridmaxh * 2; i++)
-			vcons[i] = new List<ChartConnection>();
-		List<ChartConnection>[] hcons = new List<ChartConnection>[gridmaxv * 2];
-		for (int i = 0; i < gridmaxv * 2; i++)
-			hcons[i] = new List<ChartConnection>();
-		foreach (var item in levels)
-		{
-			if (item == null)
-				continue;
-			textsz.Height = Math.Max((item.OutgoingConnections[Direction.Left].Count + item.IncomingConnections[Direction.Left].Count) * linespace, textsz.Height);
-			textsz.Width = Math.Max((item.OutgoingConnections[Direction.Top].Count + item.IncomingConnections[Direction.Top].Count) * linespace, textsz.Width);
-			textsz.Height = Math.Max((item.OutgoingConnections[Direction.Right].Count + item.IncomingConnections[Direction.Right].Count) * linespace, textsz.Height);
-			textsz.Width = Math.Max((item.OutgoingConnections[Direction.Bottom].Count + item.IncomingConnections[Direction.Bottom].Count) * linespace, textsz.Width);
-			shortcons.AddRange(item.OutgoingConnections.SelectMany(a => a.Value).Where(a => item.GetDistance(a.Node) == 1).Select(a => (item, a)));
-			vcons[item.GridX * 2].AddRange(item.IncomingConnections[Direction.Left].Where(a => a.Distance != 1));
-			vcons[item.GridX * 2 + 1].AddRange(item.IncomingConnections[Direction.Right].Where(a => a.Distance != 1));
-			if (item.GridY > 0)
-				hcons[item.GridY * 2 - 1].AddRange(item.IncomingConnections[Direction.Top].Where(a => a.Distance != 1 && a.MinY == item.GridY - 1));
-			hcons[item.GridY * 2].AddRange(item.IncomingConnections[Direction.Top].Where(a => a.Distance != 1 && a.MinY != item.GridY - 1));
-			hcons[item.GridY * 2 + 1].AddRange(item.IncomingConnections[Direction.Bottom].Where(a => a.Distance != 1));
-		}
-		int conslotsh = textsz.Height / linespace;
-		int conslotsv = textsz.Width / linespace;
-		int hconoff = (textsz.Height - (conslotsh * linespace)) / 2;
-		int vconoff = (textsz.Width - (conslotsv * linespace)) / 2;
-		foreach (var item in levels)
-		{
-			if (item == null)
-				continue;
-			item.ConnectionOrder[Direction.Left] = new ChartConnection[conslotsh];
-			item.ConnectionOrder[Direction.Top] = new ChartConnection[conslotsv];
-			item.ConnectionOrder[Direction.Right] = new ChartConnection[conslotsh];
-			item.ConnectionOrder[Direction.Bottom] = new ChartConnection[conslotsv];
-		}
-		foreach (var (src, con) in shortcons)
-		{
-			ChartConnection[] srcord = src.ConnectionOrder[src.OutgoingConnections.First(a => a.Value.Contains(con)).Key];
-			ChartConnection[] dstord = con.Node.ConnectionOrder[con.Side];
-			int mid = srcord.Length / 2;
-			int slot = mid;
-			while (slot < srcord.Length && (srcord[slot] != null || dstord[slot] != null))
-				++slot;
-			if (slot == srcord.Length)
-			{
-				slot = mid - 1;
-				while (srcord[slot] != null || dstord[slot] != null)
-					--slot;
-			}
-			srcord[slot] = con;
-			dstord[slot] = con;
-		}
-		foreach (var item in levels)
-		{
-			if (item == null)
-				continue;
-			int preslots = Array.FindIndex(item.ConnectionOrder[Direction.Left], a => a != null);
-			int postslots;
-			List<ChartConnection> prelist = new List<ChartConnection>();
-			List<ChartConnection> postlist = new List<ChartConnection>();
-			if (preslots == -1)
-			{
-				prelist.AddRange(item.IncomingConnections[Direction.Left]);
-				prelist.AddRange(item.OutgoingConnections[Direction.Left]);
-				prelist.Sort(CompareConnV);
-				prelist.CopyTo(item.ConnectionOrder[Direction.Left], (item.ConnectionOrder[Direction.Left].Length - prelist.Count) / 2);
-			}
-			else
-			{
-				postslots = item.ConnectionOrder[Direction.Left].Length - Array.FindIndex(item.ConnectionOrder[Direction.Left], preslots, a => a == null);
-				foreach (var con in item.IncomingConnections[Direction.Left].Where(a => Array.IndexOf(item.ConnectionOrder[Direction.Left], a) == -1))
-				{
-					if (con.MaxY == item.GridY)
-						prelist.Add(con);
-					else if (con.MinY == item.GridY)
-						postlist.Add(con);
-					else if (Math.Abs(con.MinY - item.GridY) > Math.Abs(con.MaxY - item.GridY))
-						prelist.Add(con);
-					else
-						postlist.Add(con);
-				}
-				foreach (var con in item.OutgoingConnections[Direction.Left].Where(a => Array.IndexOf(item.ConnectionOrder[Direction.Left], a) == -1))
-				{
-					if (con.MinY == item.GridY)
-						postlist.Add(con);
-					else if (con.MaxY == item.GridY)
-						prelist.Add(con);
-					else if (Math.Abs(con.MinY - item.GridY) > Math.Abs(con.MaxY - item.GridY))
-						prelist.Add(con);
-					else
-						postlist.Add(con);
-				}
-				if (prelist.Count > 0 || postlist.Count > 0)
-				{
-					prelist.Sort(CompareConnV);
-					postlist.Sort(CompareConnV);
-					if (prelist.Count > preslots)
-					{
-						postlist.InsertRange(0, prelist.Skip(preslots));
-						prelist.RemoveRange(preslots, prelist.Count - preslots);
-					}
-					else if (postlist.Count > postslots)
-					{
-						prelist.AddRange(postlist.Take(postlist.Count - postslots));
-						postlist.RemoveRange(0, postlist.Count - postslots);
-					}
-					prelist.CopyTo(item.ConnectionOrder[Direction.Left], preslots - prelist.Count);
-					postlist.CopyTo(item.ConnectionOrder[Direction.Left], Math.Max(item.ConnectionOrder[Direction.Left].Length - postslots, 0));
-				}
-			}
-			preslots = Array.FindIndex(item.ConnectionOrder[Direction.Top], a => a != null);
-			prelist.Clear();
-			postlist.Clear();
-			if (preslots == -1)
-			{
-				prelist.AddRange(item.IncomingConnections[Direction.Top]);
-				prelist.AddRange(item.OutgoingConnections[Direction.Top]);
-				prelist.Sort(CompareConnV);
-				prelist.CopyTo(item.ConnectionOrder[Direction.Top], (item.ConnectionOrder[Direction.Top].Length - prelist.Count) / 2);
-			}
-			else
-			{
-				postslots = item.ConnectionOrder[Direction.Top].Length - Array.FindIndex(item.ConnectionOrder[Direction.Top], preslots, a => a == null);
-				foreach (var con in item.IncomingConnections[Direction.Top].Where(a => Array.IndexOf(item.ConnectionOrder[Direction.Top], a) == -1))
-				{
-					if (con.MaxX == item.GridX)
-						prelist.Add(con);
-					else if (con.MinX == item.GridX)
-						postlist.Add(con);
-					else if (Math.Abs(con.MinX - item.GridX) > Math.Abs(con.MaxX - item.GridX))
-						prelist.Add(con);
-					else
-						postlist.Add(con);
-				}
-				foreach (var con in item.OutgoingConnections[Direction.Top].Where(a => Array.IndexOf(item.ConnectionOrder[Direction.Top], a) == -1))
-				{
-					if (con.MinX == item.GridX)
-						postlist.Add(con);
-					else if (con.MaxX == item.GridX)
-						prelist.Add(con);
-					else if (Math.Abs(con.MinX - item.GridX) > Math.Abs(con.MaxX - item.GridX))
-						prelist.Add(con);
-					else
-						postlist.Add(con);
-				}
-				if (prelist.Count > 0 || postlist.Count > 0)
-				{
-					prelist.Sort(CompareConnH);
-					postlist.Sort(CompareConnH);
-					if (prelist.Count > preslots)
-					{
-						postlist.InsertRange(0, prelist.Skip(preslots));
-						prelist.RemoveRange(preslots, prelist.Count - preslots);
-					}
-					else if (postlist.Count > postslots)
-					{
-						prelist.AddRange(postlist.Take(postlist.Count - postslots));
-						postlist.RemoveRange(0, postlist.Count - postslots);
-					}
-					prelist.CopyTo(item.ConnectionOrder[Direction.Top], preslots - prelist.Count);
-					postlist.CopyTo(item.ConnectionOrder[Direction.Top], item.ConnectionOrder[Direction.Top].Length - postslots);
-				}
-			}
-			preslots = Array.FindIndex(item.ConnectionOrder[Direction.Right], a => a != null);
-			prelist.Clear();
-			postlist.Clear();
-			if (preslots == -1)
-			{
-				prelist.AddRange(item.IncomingConnections[Direction.Right]);
-				prelist.AddRange(item.OutgoingConnections[Direction.Right]);
-				prelist.Sort(CompareConnV);
-				prelist.CopyTo(item.ConnectionOrder[Direction.Right], (item.ConnectionOrder[Direction.Right].Length - prelist.Count) / 2);
-			}
-			else
-			{
-				postslots = item.ConnectionOrder[Direction.Right].Length - Array.FindIndex(item.ConnectionOrder[Direction.Right], preslots, a => a == null);
-				foreach (var con in item.IncomingConnections[Direction.Right].Where(a => Array.IndexOf(item.ConnectionOrder[Direction.Right], a) == -1))
-				{
-					if (con.MaxY == item.GridY)
-						prelist.Add(con);
-					else if (con.MinY == item.GridY)
-						postlist.Add(con);
-					else if (Math.Abs(con.MinY - item.GridY) > Math.Abs(con.MaxY - item.GridY))
-						prelist.Add(con);
-					else
-						postlist.Add(con);
-				}
-				foreach (var con in item.OutgoingConnections[Direction.Right].Where(a => Array.IndexOf(item.ConnectionOrder[Direction.Right], a) == -1))
-				{
-					if (con.MinY == item.GridY)
-						postlist.Add(con);
-					else if (con.MaxY == item.GridY)
-						prelist.Add(con);
-					else if (Math.Abs(con.MinY - item.GridY) > Math.Abs(con.MaxY - item.GridY))
-						prelist.Add(con);
-					else
-						postlist.Add(con);
-				}
-				if (prelist.Count > 0 || postlist.Count > 0)
-				{
-					prelist.Sort(CompareConnV);
-					postlist.Sort(CompareConnV);
-					if (prelist.Count > preslots)
-					{
-						postlist.InsertRange(0, prelist.Skip(preslots));
-						prelist.RemoveRange(preslots, prelist.Count - preslots);
-					}
-					else if (postlist.Count > postslots)
-					{
-						prelist.AddRange(postlist.Take(postlist.Count - postslots));
-						postlist.RemoveRange(0, postlist.Count - postslots);
-					}
-					prelist.CopyTo(item.ConnectionOrder[Direction.Right], preslots - prelist.Count);
-					postlist.CopyTo(item.ConnectionOrder[Direction.Right], item.ConnectionOrder[Direction.Right].Length - postslots);
-				}
-			}
-			preslots = Array.FindIndex(item.ConnectionOrder[Direction.Bottom], a => a != null);
-			prelist.Clear();
-			postlist.Clear();
-			if (preslots == -1)
-			{
-				prelist.AddRange(item.IncomingConnections[Direction.Bottom]);
-				prelist.AddRange(item.OutgoingConnections[Direction.Bottom]);
-				prelist.Sort(CompareConnV);
-				prelist.CopyTo(item.ConnectionOrder[Direction.Bottom], (item.ConnectionOrder[Direction.Bottom].Length - prelist.Count) / 2);
-			}
-			else
-			{
-				postslots = item.ConnectionOrder[Direction.Bottom].Length - Array.FindIndex(item.ConnectionOrder[Direction.Bottom], preslots, a => a == null);
-				foreach (var con in item.IncomingConnections[Direction.Bottom].Where(a => Array.IndexOf(item.ConnectionOrder[Direction.Bottom], a) == -1))
-				{
-					if (con.MaxX == item.GridX)
-						prelist.Add(con);
-					else if (con.MinX == item.GridX)
-						postlist.Add(con);
-					else if (Math.Abs(con.MinX - item.GridX) > Math.Abs(con.MaxX - item.GridX))
-						prelist.Add(con);
-					else
-						postlist.Add(con);
-				}
-				foreach (var con in item.OutgoingConnections[Direction.Bottom].Where(a => Array.IndexOf(item.ConnectionOrder[Direction.Bottom], a) == -1))
-				{
-					if (con.MinX == item.GridX)
-						postlist.Add(con);
-					else if (con.MaxX == item.GridX)
-						prelist.Add(con);
-					else if (Math.Abs(con.MinX - item.GridX) > Math.Abs(con.MaxX - item.GridX))
-						prelist.Add(con);
-					else
-						postlist.Add(con);
-				}
-				if (prelist.Count > 0 || postlist.Count > 0)
-				{
-					prelist.Sort(CompareConnH);
-					postlist.Sort(CompareConnH);
-					if (prelist.Count > preslots)
-					{
-						postlist.InsertRange(0, prelist.Skip(preslots));
-						prelist.RemoveRange(preslots, prelist.Count - preslots);
-					}
-					else if (postlist.Count > postslots)
-					{
-						prelist.AddRange(postlist.Take(postlist.Count - postslots));
-						postlist.RemoveRange(0, postlist.Count - postslots);
-					}
-					prelist.CopyTo(item.ConnectionOrder[Direction.Bottom], preslots - prelist.Count);
-					postlist.CopyTo(item.ConnectionOrder[Direction.Bottom], item.ConnectionOrder[Direction.Bottom].Length - postslots);
-				}
-			}
-		}
-		int vlanemax = 0;
-		foreach (var list in vcons)
-		{
-			list.Sort((a, b) =>
-			{
-				int r = a.Distance.CompareTo(b.Distance);
-				if (r == 0)
-				{
-					r = a.MinY.CompareTo(b.MinY);
-					if (r == 0)
-						r = a.Type.CompareTo(b.Type);
-				}
-				return r;
-			});
-			for (int i = 0; i < list.Count; i++)
-			{
-				var line = list[i];
-				for (int j = 0; j < i; j++)
-					if (list[j].Lane == line.Lane && line.MaxY >= list[j].MinY && list[j].MaxY >= line.MinY)
-					{
-						line.Lane++;
-						j = -1;
-					}
-				vlanemax = Math.Max(line.Lane + 1, vlanemax);
-			}
-		}
-		int hlanemax = 0;
-		foreach (var list in hcons)
-		{
-			list.Sort((a, b) =>
-			{
-				int r = a.Distance.CompareTo(b.Distance);
-				if (r == 0)
-				{
-					r = a.MinX.CompareTo(b.MinX);
-					if (r == 0)
-						r = a.Type.CompareTo(b.Type);
-				}
-				return r;
-			});
-			for (int i = 0; i < list.Count; i++)
-			{
-				var line = list[i];
-				for (int j = 0; j < i; j++)
-					if (list[j].Lane == line.Lane && line.MaxX >= list[j].MinX && list[j].MaxX >= line.MinX)
-					{
-						line.Lane++;
-						j = -1;
-					}
-				hlanemax = Math.Max(line.Lane + 1, hlanemax);
-			}
-		}
-		int margin = Math.Min(textsz.Width / 2, textsz.Height / 2);
-		int hmargin = Math.Max(vlanemax * linespace + 5, margin);
-		int vmargin = Math.Max(hlanemax * linespace + 5, margin);
-		int colwidth = textsz.Width + hmargin * 2;
-		int rowheight = textsz.Height + vmargin * 2;
-		using (Bitmap bmp = new Bitmap(colwidth * gridmaxh, rowheight * gridmaxv))
-		{
-			using (Graphics gfx = Graphics.FromImage(bmp))
-			{
-				gfx.Clear(Color.White);
-				List<int> stageorder = new List<int>(totalstagecount + 2);
-				stageorder.Add(totalstagecount + 1);
-				stageorder.AddRange(stageids);
-				stageorder.Reverse();
-				StringFormat fmt = new StringFormat() { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
-				Pen pen = new Pen(Color.Black, 3) { EndCap = System.Drawing.Drawing2D.LineCap.ArrowAnchor };
-				foreach (var id in stageorder)
-				{
-					var node = levels[id];
-					int x = colwidth * node.GridX + hmargin;
-					int y = rowheight * node.GridY + vmargin;
-					gfx.DrawRectangle(Pens.Black, x, y, textsz.Width, textsz.Height);
-					gfx.DrawString(GetStageName(id), DefaultFont, Brushes.Black, new RectangleF(x, y, textsz.Width, textsz.Height), fmt);
-					foreach (var (dir, list) in node.OutgoingConnections)
-						foreach (var con in list)
-						{
-							int srclane = Array.LastIndexOf(node.ConnectionOrder[dir], con);
-							int srcx = 0;
-							int srcy = 0;
-							switch (dir)
-							{
-								case Direction.Left:
-									srcx = x;
-									srcy = y + hconoff + (srclane * linespace) + (linespace / 2);
-									break;
-								case Direction.Top:
-									srcx = x + vconoff + (srclane * linespace) + (linespace / 2);
-									srcy = y;
-									break;
-								case Direction.Right:
-									srcx = x + textsz.Width + 1;
-									srcy = y + hconoff + (srclane * linespace) + (linespace / 2);
-									break;
-								case Direction.Bottom:
-									srcx = x + vconoff + (srclane * linespace) + (linespace / 2);
-									srcy = y + textsz.Height + 1;
-									break;
-							}
-							int dstlane = Array.IndexOf(con.Node.ConnectionOrder[con.Side], con);
-							int dstx = colwidth * con.Node.GridX + hmargin;
-							int dsty = rowheight * con.Node.GridY + vmargin;
-							switch (con.Side)
-							{
-								case Direction.Left:
-									dsty += hconoff + (dstlane * linespace) + (linespace / 2);
-									break;
-								case Direction.Top:
-									dstx += vconoff + (dstlane * linespace) + (linespace / 2);
-									break;
-								case Direction.Right:
-									dstx += textsz.Width + 1;
-									dsty += hconoff + (dstlane * linespace) + (linespace / 2);
-									break;
-								case Direction.Bottom:
-									dstx += vconoff + (dstlane * linespace) + (linespace / 2);
-									dsty += textsz.Height + 1;
-									break;
-							}
-							switch (con.Type)
-							{
-								case ConnectionType.Neutral:
-									pen.Color = Color.Black;
-									break;
-								case ConnectionType.Hero:
-									pen.Color = Color.Blue;
-									break;
-								case ConnectionType.Dark:
-									pen.Color = Color.Red;
-									break;
-							}
-							if (con.MaxX - con.MinX == 1 || con.MaxY - con.MinY == 1)
-								pen.DashStyle = System.Drawing.Drawing2D.DashStyle.Solid;
-							else
-								pen.DashStyle = System.Drawing.Drawing2D.DashStyle.Dash;
-							if (node.GetDistance(con.Node) == 1)
-								gfx.DrawLine(pen, srcx, srcy, dstx, dsty);
-							else
-							{
-								var path = new System.Drawing.Drawing2D.GraphicsPath();
-								int midx = srcx;
-								int midy = srcy;
-								switch (dir)
-								{
-									case Direction.Left:
-										midx -= con.Lane * linespace + (linespace / 2) + 5;
-										break;
-									case Direction.Top:
-										midy -= con.Lane * linespace + (linespace / 2) + 5;
-										break;
-									case Direction.Right:
-										midx += con.Lane * linespace + (linespace / 2) + 5;
-										break;
-									case Direction.Bottom:
-										midy += con.Lane * linespace + (linespace / 2) + 5;
-										break;
-								}
-								path.AddLine(srcx, srcy, midx, midy);
-								switch (dir)
-								{
-									case Direction.Left:
-									case Direction.Right:
-										path.AddLine(midx, midy, midx, dsty);
-										path.AddLine(midx, dsty, dstx, dsty);
-										break;
-									case Direction.Top:
-									case Direction.Bottom:
-										path.AddLine(midx, midy, dstx, midy);
-										path.AddLine(dstx, midy, dstx, dsty);
-										break;
-								}
-								gfx.DrawPath(pen, path);
-							}
-						}
-				}
-			}
-			bmp.Save(saveFileDialog2.FileName);
-		}
-	}
-*/
-/*	private void randomFNT_CheckedChanged(object sender, EventArgs e)
-	{
-		subtitleAndVoicelineConfigurationGroupBox.Enabled = randomFNT.IsChecked.Value;
-		FNTCheckBox_NoDuplicatesPreRandomization.Enabled = randomFNT.IsChecked.Value;
-		FNTCheckBox_NoSystemMessages.Enabled = randomFNT.IsChecked.Value;
-		FNTCheckBox_OnlyLinkedAudio.Enabled = randomFNT.IsChecked.Value;
-		FNTCheckBox_SpecificCharacters.Enabled = randomFNT.IsChecked.Value;
-		FNTCheckBox_GiveAudioToNoLinkedAudio.Enabled = randomFNT.IsChecked.Value;
-		SetEnabledStateSpecifiedCharGroup(randomFNT.IsChecked.Value && FNTCheckBox_SpecificCharacters.IsChecked.Value);
-	}
-
-	private void FNTCheckBox_OnlyLinkedAudio_CheckedChanged(object sender, EventArgs e)
-	{
-		if (FNTCheckBox_OnlyLinkedAudio.IsChecked.Value)
-			FNTCheckBox_GiveAudioToNoLinkedAudio.IsChecked.Value = false;
-	}
-
-	private void FNTCheckBox_GiveAudioToNoLinkedAudio_CheckedChanged(object sender, EventArgs e)
-	{
-		if (FNTCheckBox_GiveAudioToNoLinkedAudio.IsChecked.Value)
-			FNTCheckBox_OnlyLinkedAudio.IsChecked.Value = false;
-	}*/
-
-    private void LevelOrder_Button_ProjectPage_Clicked(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    /*private void SharedMouseEnter(object sender, EventArgs e)
     {
-		Process.Start(new ProcessStartInfo("https://github.com/ShadowTheHedgehogHacking/ShadowRando") { UseShellExecute = true });
-	}
+      PlayAudio(hoverSoundPath);
+    }
 
-    private void Subtitles_CheckBox_OnlySelectedCharacters_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    private void SharedMouseDown_Shoot(object sender, MouseEventArgs e)
     {
-		SetSubtitlesEnabledStateSelectedCharacters(Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value && Subtitles_CheckBox_OnlySelectedCharacters.IsChecked.Value);
-	}
+      PlayAudio(selectSoundPath);
+    }
 
-	private void SetSubtitlesEnabledStateSelectedCharacters(bool state)
-	{
-		Subtitles_CheckBox_SelectedCharacter_Shadow.IsEnabled = state;
-		Subtitles_CheckBox_SelectedCharacter_Sonic.IsEnabled = state;
-		Subtitles_CheckBox_SelectedCharacter_Tails.IsEnabled = state;
-		Subtitles_CheckBox_SelectedCharacter_Knuckles.IsEnabled = state;
-		Subtitles_CheckBox_SelectedCharacter_Amy.IsEnabled = state;
-		Subtitles_CheckBox_SelectedCharacter_Rouge.IsEnabled = state;
-		Subtitles_CheckBox_SelectedCharacter_Omega.IsEnabled = state;
-		Subtitles_CheckBox_SelectedCharacter_Vector.IsEnabled = state;
-		Subtitles_CheckBox_SelectedCharacter_Espio.IsEnabled = state;
-		Subtitles_CheckBox_SelectedCharacter_Maria.IsEnabled = state;
-		Subtitles_CheckBox_SelectedCharacter_Charmy.IsEnabled = state;
-		Subtitles_CheckBox_SelectedCharacter_Eggman.IsEnabled = state;
-		Subtitles_CheckBox_SelectedCharacter_BlackDoom.IsEnabled = state;
-		Subtitles_CheckBox_SelectedCharacter_Cream.IsEnabled = state;
-		Subtitles_CheckBox_SelectedCharacter_Cheese.IsEnabled = state;
-		Subtitles_CheckBox_SelectedCharacter_GUNCommander.IsEnabled = state;
-		Subtitles_CheckBox_SelectedCharacter_GUNSoldier.IsEnabled = state;
-	}
+    private void SharedMouseDown_Chkchk(object sender, MouseEventArgs e)
+    {
+      PlayAudio(hoverSoundPath);
+    }
 
-	/*
-private void SharedMouseEnter(object sender, EventArgs e)
-{
-  PlayAudio(hoverSoundPath);
-}
+    private void SharedMouseDown(object sender, EventArgs e)
+    {
+      PlayAudio(selectSoundPath);
+    }
 
-private void SharedMouseDown_Shoot(object sender, MouseEventArgs e)
-{
-  PlayAudio(selectSoundPath);
-}
+    private void PlayAudio(string soundPath)
+    {
+      if (!checkBoxProgramSound.IsChecked.Value)
+          return;
 
-private void SharedMouseDown_Chkchk(object sender, MouseEventArgs e)
-{
-  PlayAudio(hoverSoundPath);
-}
+      var outputDevice = new WaveOutEvent();
 
-private void SharedMouseDown(object sender, EventArgs e)
-{
-  PlayAudio(selectSoundPath);
-}
+      // Create a new instance of WaveFileReader for each call to playsound
+      WaveFileReader reader = new WaveFileReader(soundPath);
 
-private void PlayAudio(string soundPath)
-{
-  if (!checkBoxProgramSound.IsChecked.Value)
-      return;
+      outputDevice.Init(reader);
+      outputDevice.Play();
 
-  var outputDevice = new WaveOutEvent();
-
-  // Create a new instance of WaveFileReader for each call to playsound
-  WaveFileReader reader = new WaveFileReader(soundPath);
-
-  outputDevice.Init(reader);
-  outputDevice.Play();
-
-  // Hook the PlaybackStopped event to dispose of resources when playback is finished
-  outputDevice.PlaybackStopped += (sender, args) =>
-  {
-      outputDevice.Dispose();
-      reader.Dispose();
-  };
-}
-
-private void randomSET_CheckedChanged(object sender, EventArgs e)
-{
-  setLayout_groupBoxEnemyConfiguration.IsEnabled = randomSET.IsChecked.Value;
-  setLayout_keepType.IsEnabled = randomSET.IsChecked.Value;
-  setLayout_randomWeaponsInBoxes.IsEnabled = randomSET.IsChecked.Value;
-  setLayout_randomPartners.IsEnabled = randomSET.IsChecked.Value;
-  setLayout_adjustMissionCounts.IsEnabled = randomSET.IsChecked.Value;
-  setLayout_makeCCSplinesAWRidable.IsEnabled = randomSET.IsChecked.Value;
-}
-
-private void setLayout_randomPartners_CheckedChanged(object sender, EventArgs e)
-{
-  if (setLayout_randomPartners.IsChecked.Value && programInitialized)
-  {
-      MessageBox.Show("Warning: If you are using a ROM based on Reloaded 1.0/1.1 or 2P-Reloaded 1.0b or earlier, the Random Partners feature will cause the game to hang for some mission completions.", "Warning");
-      MessageBox.Show("You can fix this by copying the: \n\n\\files\\events folder\n\n from the ORIGINAL (non Reloaded) game to your extracted folder.", "Mitigation");
-  }
-}*/
+      // Hook the PlaybackStopped event to dispose of resources when playback is finished
+      outputDevice.PlaybackStopped += (sender, args) =>
+      {
+          outputDevice.Dispose();
+          reader.Dispose();
+      };
+    }*/
 }
