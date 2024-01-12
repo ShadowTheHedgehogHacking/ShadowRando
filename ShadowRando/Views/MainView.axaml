@@ -5,7 +5,9 @@
 	 xmlns:vm="clr-namespace:ShadowRando.ViewModels"
 	 mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="750"
 	 x:Class="ShadowRando.Views.MainView"
-	 x:DataType="vm:MainViewModel">
+	 x:DataType="vm:MainViewModel"
+	 Loaded="UserControl_Loaded"
+     Unloaded="UserControl_Unloaded">
 	<Design.DataContext>
 		<!-- This only sets the DataContext for the previewer in an IDE,
          to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
@@ -17,7 +19,7 @@
 			<TabItem Header="Level Order">
 				<StackPanel>
 					<StackPanel Margin="0,20,0,0" VerticalAlignment="Center" HorizontalAlignment="Center">
-						<Label FontWeight="Bold" FontSize="16" HorizontalAlignment="Center">ShadowRando v0.5</Label>
+						<Label x:Name="LevelOrder_Label_ProgramTitle" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center">ShadowRando</Label>
 						<Label FontWeight="Bold">Created by dreamsyntax &amp; MainMemory</Label>
 						<Button x:Name="LevelOrder_Button_ProjectPage" HorizontalAlignment="Center">Project Page</Button>
 					</StackPanel>
@@ -117,7 +119,7 @@
 										<CheckBox x:Name="Layout_Weapon_CheckBox_OnlySelectedWeapons" IsEnabled="False">Only Selected Weapons</CheckBox>
 										<Label Margin="0,10,0,0">Selected Weapons</Label>
 										<Grid IsEnabled="False" ColumnDefinitions="*, *, *" RowDefinitions="*, *, *, *, *, *, *, *, *, *, *, *, *, *">
-											<CheckBox Grid.Column="0" Grid.Row="0" Margin="0,0,5,0" x:Name="Layout_Weapon_CheckBox_SelectedWeapon_None">None"</CheckBox>
+											<CheckBox Grid.Column="0" Grid.Row="0" Margin="0,0,5,0" x:Name="Layout_Weapon_CheckBox_SelectedWeapon_None">None</CheckBox>
 											<CheckBox Grid.Column="1" Grid.Row="0" Margin="0,0,5,0" x:Name="Layout_Weapon_CheckBox_SelectedWeapon_Pistol">Pistol</CheckBox>
 											<CheckBox Grid.Column="2" Grid.Row="0" Margin="0,0,5,0" x:Name="Layout_Weapon_CheckBox_SelectedWeapon_SubmachineGun">Submachine Gun</CheckBox>
 											<CheckBox Grid.Column="0" Grid.Row="1" Margin="0,0,5,0" x:Name="Layout_Weapon_CheckBox_SelectedWeapon_AssaultRifle">Assault Rifle</CheckBox>
@@ -209,7 +211,7 @@
 					<CheckBox x:Name="Subtitles_CheckBox_OnlySelectedCharacters">Only Selected Characters</CheckBox>
 					<Label Margin="0,10,0,0">Selected Characters</Label>
 					<Grid ColumnDefinitions="*, *, *, *" RowDefinitions="*, *, *, *, *">
-						<CheckBox Grid.Column="0" Grid.Row="0" Margin="0,0,5,0" x:Name="Subtitles_CheckBox_SelectedCharacter_Shadow">Shadow"</CheckBox>
+						<CheckBox Grid.Column="0" Grid.Row="0" Margin="0,0,5,0" x:Name="Subtitles_CheckBox_SelectedCharacter_Shadow">Shadow</CheckBox>
 						<CheckBox Grid.Column="1" Grid.Row="0" Margin="0,0,5,0" x:Name="Subtitles_CheckBox_SelectedCharacter_Sonic">Sonic</CheckBox>
 						<CheckBox Grid.Column="2" Grid.Row="0" Margin="0,0,5,0" x:Name="Subtitles_CheckBox_SelectedCharacter_Tails">Tails</CheckBox>
 						<CheckBox Grid.Column="3" Grid.Row="0" Margin="0,0,5,0" x:Name="Subtitles_CheckBox_SelectedCharacter_Knuckles">Knuckles</CheckBox>
@@ -251,7 +253,7 @@
 		</TabControl>
 		<Grid Grid.Row="1" ColumnDefinitions="*, Auto">
 			<ProgressBar x:Name="ProgressBar_RandomizationProgress" Grid.Column="0" Height="30" Margin="20,0,20,20" Value="50"></ProgressBar>
-			<Button x:Name="Button_Randomize" Grid.Column="1" Margin="0,0,20,20">Randomize</Button>
+			<Button x:Name="Button_Randomize" Click="Button_Randomize_Click" Grid.Column="1" Margin="0,0,20,20">Randomize</Button>
 		</Grid>
 	</Grid>
 
