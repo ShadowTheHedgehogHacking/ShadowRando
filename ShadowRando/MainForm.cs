@@ -231,7 +231,7 @@ namespace ShadowRando
 			InitializeComponent();
 		}
 
-		const string programVersion = "0.4.1-dev";
+		const string programVersion = "0.4.1";
 		private static string hoverSoundPath = AppDomain.CurrentDomain.BaseDirectory + "res/hover.wav";
 		private static string selectSoundPath = AppDomain.CurrentDomain.BaseDirectory + "res/select.wav";
 		Settings settings;
@@ -1274,7 +1274,7 @@ namespace ShadowRando
 					{
 						var splines = SplineReader.ReadShadowSplineFile(datOneDataContent.Files[0]);
 						foreach (var spline in splines)						{
-							if (spline.SplineType == 32 && spline.Name.Contains("_cc_"))
+							if (spline.SplineType == 32 && spline.Name.Contains("_cc_") && !spline.Name.Contains("stg0300_cc_dr_jn_208") && !spline.Name.Contains("stg0300_cc_pr_jn_210"))
 								spline.Setting2 = 1;
 						}
 						var updatedPATHPTP = SplineReader.ShadowSplinesToByteArray(stageDataIdentifier, splines);
