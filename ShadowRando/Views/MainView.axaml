@@ -21,7 +21,7 @@
 					<StackPanel Margin="0,20,0,0" VerticalAlignment="Center" HorizontalAlignment="Center">
 						<Label x:Name="LevelOrder_Label_ProgramTitle" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center">ShadowRando</Label>
 						<Label FontWeight="Bold">Created by dreamsyntax &amp; MainMemory</Label>
-						<Button x:Name="LevelOrder_Button_ProjectPage" HorizontalAlignment="Center">Project Page</Button>
+						<Button x:Name="LevelOrder_Button_ProjectPage" Click="LevelOrder_Button_ProjectPage_Clicked" HorizontalAlignment="Center">Project Page</Button>
 					</StackPanel>
 					<Label>Seed</Label>
 					<Grid ColumnDefinitions="*, Auto">
@@ -53,15 +53,15 @@
 						<CheckBox x:Name="LevelOrder_CheckBox_AllowJumpsToSameLevel" Checked="LevelOrder_CheckBox_AllowJumpsToSameLevel_Checked" Grid.Column="1" Grid.Row="5" Margin="10,0,10,0">Allow Jumps to Same Level</CheckBox>
 					</Grid>
 					<CheckBox x:Name="LevelOrder_CheckBox_IncludeLastStory" Margin="0,10,0,0">Include Last Story</CheckBox>
-					<CheckBox x:Name="LevelOrder_CheckBox_IncludeBosses" IsThreeState="False">Include Bosses</CheckBox>
+					<CheckBox x:Name="LevelOrder_CheckBox_IncludeBosses">Include Bosses</CheckBox>
 					<Label Margin="0,15,0,0">Program Theme</Label>
 					<StackPanel Orientation="Horizontal">
-						<ComboBox x:Name="LevelOrder_ComboBox_ProgramTheme" SelectedIndex="0">
+						<ComboBox x:Name="LevelOrder_ComboBox_ProgramTheme" IsEnabled="False" SelectedIndex="2">
 							<ComboBoxItem>System</ComboBoxItem>
 							<ComboBoxItem>Light</ComboBoxItem>
 							<ComboBoxItem>Dark</ComboBoxItem>
 						</ComboBox>
-						<CheckBox x:Name="LevelOrder_CheckBox_ProgramSound" Margin="20,0,0,0">Program Sound</CheckBox>
+						<CheckBox x:Name="LevelOrder_CheckBox_ProgramSound" IsEnabled="False" Margin="20,0,0,0">Program Sound</CheckBox>
 					</StackPanel>
 				</StackPanel>
 			</TabItem>
@@ -208,26 +208,26 @@
 					<CheckBox x:Name="Subtitles_CheckBox_NoDuplicates" IsChecked="True">No Duplicates</CheckBox>
 					<CheckBox x:Name="Subtitles_CheckBox_RandomizeAllAudio" IsEnabled="False">Randomize All Audio</CheckBox>
 					<CheckBox x:Name="Subtitles_CheckBox_IncludeSonicAdventureSubtitlesVoices" IsEnabled="False">Include Sonic Adventure Subtitles/Voices</CheckBox>
-					<CheckBox x:Name="Subtitles_CheckBox_OnlySelectedCharacters">Only Selected Characters</CheckBox>
+					<CheckBox x:Name="Subtitles_CheckBox_OnlySelectedCharacters" Click="Subtitles_CheckBox_OnlySelectedCharacters_Click">Only Selected Characters</CheckBox>
 					<Label Margin="0,10,0,0">Selected Characters</Label>
 					<Grid ColumnDefinitions="*, *, *, *" RowDefinitions="*, *, *, *, *">
-						<CheckBox Grid.Column="0" Grid.Row="0" Margin="0,0,5,0" x:Name="Subtitles_CheckBox_SelectedCharacter_Shadow">Shadow</CheckBox>
-						<CheckBox Grid.Column="1" Grid.Row="0" Margin="0,0,5,0" x:Name="Subtitles_CheckBox_SelectedCharacter_Sonic">Sonic</CheckBox>
-						<CheckBox Grid.Column="2" Grid.Row="0" Margin="0,0,5,0" x:Name="Subtitles_CheckBox_SelectedCharacter_Tails">Tails</CheckBox>
-						<CheckBox Grid.Column="3" Grid.Row="0" Margin="0,0,5,0" x:Name="Subtitles_CheckBox_SelectedCharacter_Knuckles">Knuckles</CheckBox>
-						<CheckBox Grid.Column="0" Grid.Row="1" Margin="0,0,5,0" x:Name="Subtitles_CheckBox_SelectedCharacter_Amy">Amy</CheckBox>
-						<CheckBox Grid.Column="1" Grid.Row="1" Margin="0,0,5,0" x:Name="Subtitles_CheckBox_SelectedCharacter_Rouge">Rouge</CheckBox>
-						<CheckBox Grid.Column="2" Grid.Row="1" Margin="0,0,5,0" x:Name="Subtitles_CheckBox_SelectedCharacter_Omega">Omega</CheckBox>
-						<CheckBox Grid.Column="3" Grid.Row="1" Margin="0,0,5,0" x:Name="Subtitles_CheckBox_SelectedCharacter_Vector">Vector</CheckBox>
-						<CheckBox Grid.Column="0" Grid.Row="2" Margin="0,0,5,0" x:Name="Subtitles_CheckBox_SelectedCharacter_Espio">Espio</CheckBox>
-						<CheckBox Grid.Column="1" Grid.Row="2" Margin="0,0,5,0" x:Name="Subtitles_CheckBox_SelectedCharacter_Maria">Maria</CheckBox>
-						<CheckBox Grid.Column="2" Grid.Row="2" Margin="0,0,5,0" x:Name="Subtitles_CheckBox_SelectedCharacter_Charmy">Charmy</CheckBox>
-						<CheckBox Grid.Column="3" Grid.Row="2" Margin="0,0,5,0" x:Name="Subtitles_CheckBox_SelectedCharacter_Eggman">Eggman</CheckBox>
-						<CheckBox Grid.Column="0" Grid.Row="3" Margin="0,0,5,0" x:Name="Subtitles_CheckBox_SelectedCharacter_BlackDoom">Black Doom</CheckBox>
-						<CheckBox Grid.Column="1" Grid.Row="3" Margin="0,0,5,0" x:Name="Subtitles_CheckBox_SelectedCharacter_Cream">Cream</CheckBox>
-						<CheckBox Grid.Column="2" Grid.Row="3" Margin="0,0,5,0" x:Name="Subtitles_CheckBox_SelectedCharacter_Cheese">Cheese</CheckBox>
-						<CheckBox Grid.Column="3" Grid.Row="3" Margin="0,0,5,0" x:Name="Subtitles_CheckBox_SelectedCharacter_GUNSoldier">GUN Soldier</CheckBox>
-						<CheckBox Grid.Column="0" Grid.Row="4" Margin="0,0,5,0" x:Name="Subtitles_CheckBox_SelectedCharacter_GUNCommander">GUN Commander</CheckBox>
+						<CheckBox Grid.Column="0" Grid.Row="0" Margin="0,0,5,0" IsEnabled="False" x:Name="Subtitles_CheckBox_SelectedCharacter_Shadow">Shadow</CheckBox>
+						<CheckBox Grid.Column="1" Grid.Row="0" Margin="0,0,5,0" IsEnabled="False" x:Name="Subtitles_CheckBox_SelectedCharacter_Sonic">Sonic</CheckBox>
+						<CheckBox Grid.Column="2" Grid.Row="0" Margin="0,0,5,0" IsEnabled="False" x:Name="Subtitles_CheckBox_SelectedCharacter_Tails">Tails</CheckBox>
+						<CheckBox Grid.Column="3" Grid.Row="0" Margin="0,0,5,0" IsEnabled="False" x:Name="Subtitles_CheckBox_SelectedCharacter_Knuckles">Knuckles</CheckBox>
+						<CheckBox Grid.Column="0" Grid.Row="1" Margin="0,0,5,0" IsEnabled="False" x:Name="Subtitles_CheckBox_SelectedCharacter_Amy">Amy</CheckBox>
+						<CheckBox Grid.Column="1" Grid.Row="1" Margin="0,0,5,0" IsEnabled="False" x:Name="Subtitles_CheckBox_SelectedCharacter_Rouge">Rouge</CheckBox>
+						<CheckBox Grid.Column="2" Grid.Row="1" Margin="0,0,5,0" IsEnabled="False" x:Name="Subtitles_CheckBox_SelectedCharacter_Omega">Omega</CheckBox>
+						<CheckBox Grid.Column="3" Grid.Row="1" Margin="0,0,5,0" IsEnabled="False" x:Name="Subtitles_CheckBox_SelectedCharacter_Vector">Vector</CheckBox>
+						<CheckBox Grid.Column="0" Grid.Row="2" Margin="0,0,5,0" IsEnabled="False" x:Name="Subtitles_CheckBox_SelectedCharacter_Espio">Espio</CheckBox>
+						<CheckBox Grid.Column="1" Grid.Row="2" Margin="0,0,5,0" IsEnabled="False" x:Name="Subtitles_CheckBox_SelectedCharacter_Maria">Maria</CheckBox>
+						<CheckBox Grid.Column="2" Grid.Row="2" Margin="0,0,5,0" IsEnabled="False" x:Name="Subtitles_CheckBox_SelectedCharacter_Charmy">Charmy</CheckBox>
+						<CheckBox Grid.Column="3" Grid.Row="2" Margin="0,0,5,0" IsEnabled="False" x:Name="Subtitles_CheckBox_SelectedCharacter_Eggman">Eggman</CheckBox>
+						<CheckBox Grid.Column="0" Grid.Row="3" Margin="0,0,5,0" IsEnabled="False" x:Name="Subtitles_CheckBox_SelectedCharacter_BlackDoom">Black Doom</CheckBox>
+						<CheckBox Grid.Column="1" Grid.Row="3" Margin="0,0,5,0" IsEnabled="False" x:Name="Subtitles_CheckBox_SelectedCharacter_Cream">Cream</CheckBox>
+						<CheckBox Grid.Column="2" Grid.Row="3" Margin="0,0,5,0" IsEnabled="False" x:Name="Subtitles_CheckBox_SelectedCharacter_Cheese">Cheese</CheckBox>
+						<CheckBox Grid.Column="3" Grid.Row="3" Margin="0,0,5,0" IsEnabled="False" x:Name="Subtitles_CheckBox_SelectedCharacter_GUNSoldier">GUN Soldier</CheckBox>
+						<CheckBox Grid.Column="0" Grid.Row="4" Margin="0,0,5,0" IsEnabled="False" x:Name="Subtitles_CheckBox_SelectedCharacter_GUNCommander">GUN Commander</CheckBox>
 					</Grid>
 				</StackPanel>
 			</TabItem>

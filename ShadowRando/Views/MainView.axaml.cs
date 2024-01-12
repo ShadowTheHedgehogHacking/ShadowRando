@@ -9,6 +9,7 @@ using AFSLib;
 using System.Linq;
 using HeroesONE_R.Structures.Common;
 using HeroesONE_R.Structures;
+using System.Diagnostics;
 
 namespace ShadowRando.Views;
 
@@ -428,6 +429,14 @@ public partial class MainView : UserControl
 		settings.MusicSkipRankTheme = Music_CheckBox_SkipRankTheme.IsChecked.Value;
 
 		settings.Save();
+	}
+
+	static int CalculateSeed(string seedString)
+	{
+		using (SHA256 sha256 = SHA256.Create())
+		{
+			return BitConverter.ToInt32(sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(seedString)), 0);
+		}
 	}
 
 	private void Button_Randomize_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -2511,98 +2520,95 @@ public partial class MainView : UserControl
 			FNTCheckBox_OnlyLinkedAudio.IsChecked.Value = false;
 	}*/
 
-	static int CalculateSeed(string seedString)
-	{
-		using (SHA256 sha256 = SHA256.Create())
-		{
-			return BitConverter.ToInt32(sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(seedString)), 0);
-		}
-	}
-/*
-	private void FNTCheckBox_SpecificCharacters_CheckedChanged(object sender, EventArgs e)
-	{
-		SetEnabledStateSpecifiedCharGroup(randomFNT.IsChecked.Value && FNTCheckBox_SpecificCharacters.IsChecked.Value);
+    private void LevelOrder_Button_ProjectPage_Clicked(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+		Process.Start(new ProcessStartInfo("https://github.com/ShadowTheHedgehogHacking/ShadowRando") { UseShellExecute = true });
 	}
 
-	private void SetEnabledStateSpecifiedCharGroup(bool enable)
-	{
-		subtitleAndVoicelineSpecifiedCharactersGroupBox.Enabled = enable;
-		Subtitles_CheckBox_SelectedCharacter_Shadow.Enabled = enable;
-		Subtitles_CheckBox_SelectedCharacter_Sonic.Enabled = enable;
-		Subtitles_CheckBox_SelectedCharacter_Tails.Enabled = enable;
-		Subtitles_CheckBox_SelectedCharacter_Knuckles.Enabled = enable;
-		Subtitles_CheckBox_SelectedCharacter_Amy.Enabled = enable;
-		Subtitles_CheckBox_SelectedCharacter_Rouge.Enabled = enable;
-		Subtitles_CheckBox_SelectedCharacter_Omega.Enabled = enable;
-		Subtitles_CheckBox_SelectedCharacter_Vector.Enabled = enable;
-		Subtitles_CheckBox_SelectedCharacter_Espio.Enabled = enable;
-		Subtitles_CheckBox_SelectedCharacter_Maria.Enabled = enable;
-		Subtitles_CheckBox_SelectedCharacter_Charmy.Enabled = enable;
-		Subtitles_CheckBox_SelectedCharacter_Eggman.Enabled = enable;
-		Subtitles_CheckBox_SelectedCharacter_BlackDoom.Enabled = enable;
-		Subtitles_CheckBox_SelectedCharacter_Cream.Enabled = enable;
-		Subtitles_CheckBox_SelectedCharacter_Cheese.Enabled = enable;
-		Subtitles_CheckBox_SelectedCharacter_GUNCommander.Enabled = enable;
-		Subtitles_CheckBox_SelectedCharacter_GUNSoldier.Enabled = enable;
+    private void Subtitles_CheckBox_OnlySelectedCharacters_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+		SetSubtitlesEnabledStateSelectedCharacters(Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value && Subtitles_CheckBox_OnlySelectedCharacters.IsChecked.Value);
 	}
 
-	private void SharedMouseEnter(object sender, EventArgs e)
+	private void SetSubtitlesEnabledStateSelectedCharacters(bool state)
 	{
-		PlayAudio(hoverSoundPath);
+		Subtitles_CheckBox_SelectedCharacter_Shadow.IsEnabled = state;
+		Subtitles_CheckBox_SelectedCharacter_Sonic.IsEnabled = state;
+		Subtitles_CheckBox_SelectedCharacter_Tails.IsEnabled = state;
+		Subtitles_CheckBox_SelectedCharacter_Knuckles.IsEnabled = state;
+		Subtitles_CheckBox_SelectedCharacter_Amy.IsEnabled = state;
+		Subtitles_CheckBox_SelectedCharacter_Rouge.IsEnabled = state;
+		Subtitles_CheckBox_SelectedCharacter_Omega.IsEnabled = state;
+		Subtitles_CheckBox_SelectedCharacter_Vector.IsEnabled = state;
+		Subtitles_CheckBox_SelectedCharacter_Espio.IsEnabled = state;
+		Subtitles_CheckBox_SelectedCharacter_Maria.IsEnabled = state;
+		Subtitles_CheckBox_SelectedCharacter_Charmy.IsEnabled = state;
+		Subtitles_CheckBox_SelectedCharacter_Eggman.IsEnabled = state;
+		Subtitles_CheckBox_SelectedCharacter_BlackDoom.IsEnabled = state;
+		Subtitles_CheckBox_SelectedCharacter_Cream.IsEnabled = state;
+		Subtitles_CheckBox_SelectedCharacter_Cheese.IsEnabled = state;
+		Subtitles_CheckBox_SelectedCharacter_GUNCommander.IsEnabled = state;
+		Subtitles_CheckBox_SelectedCharacter_GUNSoldier.IsEnabled = state;
 	}
 
-	private void SharedMouseDown_Shoot(object sender, MouseEventArgs e)
-	{
-		PlayAudio(selectSoundPath);
-	}
+	/*
+private void SharedMouseEnter(object sender, EventArgs e)
+{
+  PlayAudio(hoverSoundPath);
+}
 
-	private void SharedMouseDown_Chkchk(object sender, MouseEventArgs e)
-	{
-		PlayAudio(hoverSoundPath);
-	}
+private void SharedMouseDown_Shoot(object sender, MouseEventArgs e)
+{
+  PlayAudio(selectSoundPath);
+}
 
-	private void SharedMouseDown(object sender, EventArgs e)
-	{
-		PlayAudio(selectSoundPath);
-	}
+private void SharedMouseDown_Chkchk(object sender, MouseEventArgs e)
+{
+  PlayAudio(hoverSoundPath);
+}
 
-	private void PlayAudio(string soundPath)
-	{
-		if (!checkBoxProgramSound.IsChecked.Value)
-			return;
+private void SharedMouseDown(object sender, EventArgs e)
+{
+  PlayAudio(selectSoundPath);
+}
 
-		var outputDevice = new WaveOutEvent();
+private void PlayAudio(string soundPath)
+{
+  if (!checkBoxProgramSound.IsChecked.Value)
+      return;
 
-		// Create a new instance of WaveFileReader for each call to playsound
-		WaveFileReader reader = new WaveFileReader(soundPath);
+  var outputDevice = new WaveOutEvent();
 
-		outputDevice.Init(reader);
-		outputDevice.Play();
+  // Create a new instance of WaveFileReader for each call to playsound
+  WaveFileReader reader = new WaveFileReader(soundPath);
 
-		// Hook the PlaybackStopped event to dispose of resources when playback is finished
-		outputDevice.PlaybackStopped += (sender, args) =>
-		{
-			outputDevice.Dispose();
-			reader.Dispose();
-		};
-	}
+  outputDevice.Init(reader);
+  outputDevice.Play();
 
-	private void randomSET_CheckedChanged(object sender, EventArgs e)
-	{
-		setLayout_groupBoxEnemyConfiguration.Enabled = randomSET.IsChecked.Value;
-		setLayout_keepType.Enabled = randomSET.IsChecked.Value;
-		setLayout_randomWeaponsInBoxes.Enabled = randomSET.IsChecked.Value;
-		setLayout_randomPartners.Enabled = randomSET.IsChecked.Value;
-		setLayout_adjustMissionCounts.Enabled = randomSET.IsChecked.Value;
-		setLayout_makeCCSplinesAWRidable.Enabled = randomSET.IsChecked.Value;
-	}
+  // Hook the PlaybackStopped event to dispose of resources when playback is finished
+  outputDevice.PlaybackStopped += (sender, args) =>
+  {
+      outputDevice.Dispose();
+      reader.Dispose();
+  };
+}
 
-	private void setLayout_randomPartners_CheckedChanged(object sender, EventArgs e)
-	{
-		if (setLayout_randomPartners.IsChecked.Value && programInitialized)
-		{
-			MessageBox.Show("Warning: If you are using a ROM based on Reloaded 1.0/1.1 or 2P-Reloaded 1.0b or earlier, the Random Partners feature will cause the game to hang for some mission completions.", "Warning");
-			MessageBox.Show("You can fix this by copying the: \n\n\\files\\events folder\n\n from the ORIGINAL (non Reloaded) game to your extracted folder.", "Mitigation");
-		}
-	}*/
+private void randomSET_CheckedChanged(object sender, EventArgs e)
+{
+  setLayout_groupBoxEnemyConfiguration.IsEnabled = randomSET.IsChecked.Value;
+  setLayout_keepType.IsEnabled = randomSET.IsChecked.Value;
+  setLayout_randomWeaponsInBoxes.IsEnabled = randomSET.IsChecked.Value;
+  setLayout_randomPartners.IsEnabled = randomSET.IsChecked.Value;
+  setLayout_adjustMissionCounts.IsEnabled = randomSET.IsChecked.Value;
+  setLayout_makeCCSplinesAWRidable.IsEnabled = randomSET.IsChecked.Value;
+}
+
+private void setLayout_randomPartners_CheckedChanged(object sender, EventArgs e)
+{
+  if (setLayout_randomPartners.IsChecked.Value && programInitialized)
+  {
+      MessageBox.Show("Warning: If you are using a ROM based on Reloaded 1.0/1.1 or 2P-Reloaded 1.0b or earlier, the Random Partners feature will cause the game to hang for some mission completions.", "Warning");
+      MessageBox.Show("You can fix this by copying the: \n\n\\files\\events folder\n\n from the ORIGINAL (non Reloaded) game to your extracted folder.", "Mitigation");
+  }
+}*/
 }

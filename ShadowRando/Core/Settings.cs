@@ -6,9 +6,9 @@ namespace ShadowRando
 	public class Settings
 	{
 		[IniAlwaysInclude]
-		public bool ProgramSound { get; set; } = true;
+		public bool ProgramSound { get; set; } = false;
 		[IniAlwaysInclude]
-		public int ProgramTheme { get; set; } = 0;
+		public int ProgramTheme { get; set; } = 2;
 		[IniAlwaysInclude]
 		public string GamePath { get; set; }
 		[IniAlwaysInclude]
@@ -16,7 +16,7 @@ namespace ShadowRando
 		[IniAlwaysInclude]
 		public bool RandomSeed { get; set; }
 		[IniAlwaysInclude]
-		public LevelOrderMode LevelOrderMode { get; set; }
+		public LevelOrderMode LevelOrderMode { get; set; } = LevelOrderMode.AllStagesWarps;
 		[IniAlwaysInclude]
 		public LevelOrderMainPath LevelOrderMainPath { get; set; }
 		[System.ComponentModel.DefaultValue(22)]
@@ -30,6 +30,7 @@ namespace ShadowRando
 		public int LevelOrderBackwardsJumpProbability { get; set; } = 10;
 		[IniAlwaysInclude]
 		public bool LevelOrderAllowJumpsToSameLevel { get; set; }
+		[System.ComponentModel.DefaultValue(true)]
 		[IniAlwaysInclude]
 		public bool LevelOrderIncludeLastStory { get; set; }
 		[System.ComponentModel.DefaultValue(true)]
