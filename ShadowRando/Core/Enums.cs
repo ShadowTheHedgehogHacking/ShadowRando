@@ -22,7 +22,15 @@
 		None,
 		Wild,
 		OneToOnePerStage,
-		OneToOneGlobal,
+		OneToOneGlobal
+	}
+
+	public enum LayoutPartnerMode
+	{
+		None,
+		Wild,
+		OneToOnePerStage,
+		OneToOneGlobal
 	}
 
 	public enum MusicCategory

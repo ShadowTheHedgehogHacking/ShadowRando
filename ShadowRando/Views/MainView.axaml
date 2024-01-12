@@ -26,7 +26,7 @@
 					<Label>Seed</Label>
 					<Grid ColumnDefinitions="*, Auto">
 						<TextBox x:Name="LevelOrder_TextBox_Seed" Grid.Column="0"></TextBox>
-						<CheckBox x:Name="LevelOrder_CheckBox_Random_Seed" Grid.Column="1" Margin="10,0,10,0">Random</CheckBox>
+						<CheckBox x:Name="LevelOrder_CheckBox_Random_Seed" Checked="LevelOrder_CheckBox_Random_Seed_Checked" Grid.Column="1" Margin="10,0,10,0">Random</CheckBox>
 					</Grid>
 					<Label Margin="0,20,0,0">Mode</Label>
 					<ComboBox x:Name="LevelOrder_ComboBox_Mode" SelectedIndex="1" MinWidth="225">
@@ -50,10 +50,10 @@
 						<NumericUpDown x:Name="LevelOrder_NumericUpDown_MaxBackwardsJump" Grid.Column="0" Grid.Row="3" Increment="1" Value="4" Maximum="21" Minimum="1"></NumericUpDown>
 						<Label Grid.Column="0" Grid.Row="4" Margin="0,5,0,0">Backwards Jump Probability</Label>
 						<NumericUpDown x:Name="LevelOrder_NumericUpDown_BackwardsJumpProbability" Grid.Column="0" Grid.Row="5" Increment="1" Value="10" Maximum="100" Minimum="0"></NumericUpDown>
-						<CheckBox x:Name="LevelOrder_CheckBox_AllowJumpsToSameLevel" Grid.Column="1" Grid.Row="5" Margin="10,0,10,0">Allow Jumps to Same Level</CheckBox>
+						<CheckBox x:Name="LevelOrder_CheckBox_AllowJumpsToSameLevel" Checked="LevelOrder_CheckBox_AllowJumpsToSameLevel_Checked" Grid.Column="1" Grid.Row="5" Margin="10,0,10,0">Allow Jumps to Same Level</CheckBox>
 					</Grid>
 					<CheckBox x:Name="LevelOrder_CheckBox_IncludeLastStory" Margin="0,10,0,0">Include Last Story</CheckBox>
-					<CheckBox x:Name="LevelOrder_CheckBox_IncludeBosses">Include Bosses</CheckBox>
+					<CheckBox x:Name="LevelOrder_CheckBox_IncludeBosses" IsThreeState="False">Include Bosses</CheckBox>
 					<Label Margin="0,15,0,0">Program Theme</Label>
 					<StackPanel Orientation="Horizontal">
 						<ComboBox x:Name="LevelOrder_ComboBox_ProgramTheme" SelectedIndex="0">
@@ -240,7 +240,7 @@
 			</TabItem>
 			<TabItem Header="Spoilers">
 				<Grid ColumnDefinitions="*,*">
-					<ListBox x:Name="Spoilers_TextBox_LevelList" Margin="0,0,0,70" Grid.Column="0"></ListBox>
+					<ListBox x:Name="Spoilers_ListBox_LevelList" Margin="0,0,0,70" Grid.Column="0"></ListBox>
 					<Grid Grid.Column="1" RowDefinitions="*, Auto">
 						<TextBox x:Name="Spoilers_TextBox_LevelInfo" Grid.Row="0" IsReadOnly="True" AcceptsReturn="True" ScrollViewer.HorizontalScrollBarVisibility="Visible" ></TextBox>
 						<StackPanel Grid.Row="1" Orientation="Horizontal">

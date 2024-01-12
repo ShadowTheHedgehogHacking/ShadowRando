@@ -6,6 +6,9 @@ using System;
 using ShadowSET;
 using ShadowFNT;
 using AFSLib;
+using System.Linq;
+using HeroesONE_R.Structures.Common;
+using HeroesONE_R.Structures;
 
 namespace ShadowRando.Views;
 
@@ -230,175 +233,200 @@ public partial class MainView : UserControl
     private void UserControl_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
 		settings = Settings.Load();
-		LevelOrder_Label_ProgramTitle.Content += programVersion;
+
+		// Program Configuration
+		LevelOrder_Label_ProgramTitle.Content += " " + programVersion;
 		LevelOrder_CheckBox_ProgramSound.IsChecked = settings.ProgramSound;
+
+		// Level Order
 		LevelOrder_TextBox_Seed.Text = settings.Seed;
 		LevelOrder_CheckBox_Random_Seed.IsChecked = settings.RandomSeed;
 		LevelOrder_ComboBox_Mode.SelectedIndex = (int)settings.LevelOrderMode;
-		mainPathSelector.SelectedIndex = (int)settings.MainPath;
-		maxBackJump.Value = settings.MaxBackJump;
-		maxForwJump.Value = settings.MaxForwJump;
-		backJumpProb.Value = settings.BackJumpProb;
-		allowSameLevel.Checked = settings.AllowSameLevel;
-		includeLast.Checked = settings.IncludeLast;
-		includeBosses.Checked = settings.IncludeBosses;
-		randomMusic.Checked = settings.RandomMusic;
-		randomMusicSkipChaosPowers.Checked = settings.RandomMusicSkipChaosPowers;
-		randomMusicSkipRankTheme.Checked = settings.RandomMusicSkipRankTheme;
-		randomFNT.Checked = settings.RandomFNT;
-		randomSET.Checked = settings.RandomSET;
-		// SET Configuration
-		setLayout_Mode.SelectedIndex = (int)settings.SETMode;
-		setLayout_keepType.Checked = settings.SETEnemyKeepType;
-		setLayout_randomPartners.Checked = settings.SETRandomPartners;
-		setLayout_randomWeaponsInBoxes.Checked = settings.SETRandomWeaponsInBoxes;
-		setLayout_adjustMissionCounts.Checked = settings.SETRandomAdjustMissionCounts;
-		setLayout_makeCCSplinesAWRidable.Checked = settings.SETRandomMakeCCSplinesAWRidable;
-		// FNT Configuration
-		FNTCheckBox_NoDuplicatesPreRandomization.Checked = settings.FNTNoDuplicatesPreRandomization;
-		FNTCheckBox_NoSystemMessages.Checked = settings.FNTNoSystemMessages;
-		FNTCheckBox_OnlyLinkedAudio.Checked = settings.FNTOnlyLinkedAudio;
-		FNTCheckBox_SpecificCharacters.Checked = settings.FNTSpecificCharacters;
-		FNTCheckBox_GiveAudioToNoLinkedAudio.Checked = settings.FNTGiveAudioToNoLinkedAudio;
-		// FNT Configuration Specific Characters
-		FNTCheckBox_Chars_Shadow.Checked = settings.FNTShadowSelected;
-		FNTCheckBox_Chars_Sonic.Checked = settings.FNTSonicSelected;
-		FNTCheckBox_Chars_Tails.Checked = settings.FNTTailsSelected;
-		FNTCheckBox_Chars_Knuckles.Checked = settings.FNTKnucklesSelected;
-		FNTCheckBox_Chars_Amy.Checked = settings.FNTAmySelected;
-		FNTCheckBox_Chars_Rouge.Checked = settings.FNTRougeSelected;
-		FNTCheckBox_Chars_Omega.Checked = settings.FNTOmegaSelected;
-		FNTCheckBox_Chars_Vector.Checked = settings.FNTVectorSelected;
-		FNTCheckBox_Chars_Espio.Checked = settings.FNTEspioSelected;
-		FNTCheckBox_Chars_Maria.Checked = settings.FNTMariaSelected;
-		FNTCheckBox_Chars_Charmy.Checked = settings.FNTCharmySelected;
-		FNTCheckBox_Chars_Eggman.Checked = settings.FNTEggmanSelected;
-		FNTCheckBox_Chars_BlackDoom.Checked = settings.FNTBlackDoomSelected;
-		FNTCheckBox_Chars_Cream.Checked = settings.FNTCreamSelected;
-		FNTCheckBox_Chars_Cheese.Checked = settings.FNTCheeseSelected;
-		FNTCheckBox_Chars_GUNCommander.Checked = settings.FNTGUNCommanderSelected;
-		FNTCheckBox_Chars_GUNSoldier.Checked = settings.FNTGUNSoldierSelected;
+		LevelOrder_ComboBox_MainPath.SelectedIndex = (int)settings.LevelOrderMainPath;
+		LevelOrder_NumericUpDown_MaxForwardsJump.Value = settings.LevelOrderMaxForwardsJump;
+		LevelOrder_NumericUpDown_MaxBackwardsJump.Value = settings.LevelOrderMaxBackwardsJump;
+		LevelOrder_NumericUpDown_BackwardsJumpProbability.Value = settings.LevelOrderBackwardsJumpProbability;
+		LevelOrder_CheckBox_AllowJumpsToSameLevel.IsChecked = settings.LevelOrderAllowJumpsToSameLevel;
+		LevelOrder_CheckBox_IncludeLastStory.IsChecked = settings.LevelOrderIncludeLastStory;
+		LevelOrder_CheckBox_IncludeBosses.IsChecked = settings.LevelOrderIncludeBosses;
+
+		// Layout
+		Layout_CheckBox_RandomizeLayouts.IsChecked = settings.RandomizeLayouts;
+		Layout_CheckBox_MakeCCSplinesVehicleCompatible.IsChecked = settings.LayoutMakeCCSplinesVehicleCompatible;
+		// Enemy
+		Layout_Enemy_CheckBox_AdjustMissionCounts.IsChecked = settings.LayoutAdjustMissionCounts;
+		Layout_Enemy_ComboBox_Mode.SelectedIndex = (int)settings.LayoutEnemyMode;
+		Layout_Enemy_CheckBox_KeepType.IsChecked = settings.LayoutEnemyKeepType;
+		// Weapon
+		Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes.IsChecked = settings.LayoutRandomWeaponsInAllBoxes;
+		// Partner
+		Layout_Partner_ComboBox_Mode.SelectedIndex = (int)settings.LayoutPartnerMode;
+
+		// Subtitles
+		Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked = settings.RandomizeSubtitlesVoicelines;
+		Subtitles_CheckBox_NoDuplicates.IsChecked = settings.SubtitlesNoDuplicates;
+		Subtitles_CheckBox_NoSystemMessages.IsChecked = settings.SubtitlesNoSystemMessages;
+		Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked = settings.SubtitlesOnlyLinkedAudio;
+		Subtitles_CheckBox_OnlySelectedCharacters.IsChecked = settings.SubtitlesOnlySelectedCharacters;
+		Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsChecked = settings.SubtitlesGiveAudioToNoLinkedAudio;
+
+		// Selected Characters
+		Subtitles_CheckBox_SelectedCharacter_Shadow.IsChecked = settings.SubtitlesSelectedCharacterShadow;
+		Subtitles_CheckBox_SelectedCharacter_Sonic.IsChecked = settings.SubtitlesSelectedCharacterSonic;
+		Subtitles_CheckBox_SelectedCharacter_Tails.IsChecked = settings.SubtitlesSelectedCharacterTails;
+		Subtitles_CheckBox_SelectedCharacter_Knuckles.IsChecked = settings.SubtitlesSelectedCharacterKnuckles;
+		Subtitles_CheckBox_SelectedCharacter_Amy.IsChecked = settings.SubtitlesSelectedCharacterAmy;
+		Subtitles_CheckBox_SelectedCharacter_Rouge.IsChecked = settings.SubtitlesSelectedCharacterRouge;
+		Subtitles_CheckBox_SelectedCharacter_Omega.IsChecked = settings.SubtitlesSelectedCharacterOmega;
+		Subtitles_CheckBox_SelectedCharacter_Vector.IsChecked = settings.SubtitlesSelectedCharacterVector;
+		Subtitles_CheckBox_SelectedCharacter_Espio.IsChecked = settings.SubtitlesSelectedCharacterEspio;
+		Subtitles_CheckBox_SelectedCharacter_Maria.IsChecked = settings.SubtitlesSelectedCharacterMaria;
+		Subtitles_CheckBox_SelectedCharacter_Charmy.IsChecked = settings.SubtitlesSelectedCharacterCharmy;
+		Subtitles_CheckBox_SelectedCharacter_Eggman.IsChecked = settings.SubtitlesSelectedCharacterEggman;
+		Subtitles_CheckBox_SelectedCharacter_BlackDoom.IsChecked = settings.SubtitlesSelectedCharacterBlackDoom;
+		Subtitles_CheckBox_SelectedCharacter_Cream.IsChecked = settings.SubtitlesSelectedCharacterCream;
+		Subtitles_CheckBox_SelectedCharacter_Cheese.IsChecked = settings.SubtitlesSelectedCharacterCheese;
+		Subtitles_CheckBox_SelectedCharacter_GUNCommander.IsChecked = settings.SubtitlesSelectedCharacterGUNCommander;
+		Subtitles_CheckBox_SelectedCharacter_GUNSoldier.IsChecked = settings.SubtitlesSelectedCharacterGUNSoldier;
+
+		// Music
+		Music_CheckBox_RandomizeMusic.IsChecked = settings.RandomizeMusic;
+		Music_CheckBox_SkipChaosPowerUseJingles.IsChecked = settings.MusicSkipChaosPowers;
+		Music_CheckBox_SkipRankTheme.IsChecked = settings.MusicSkipRankTheme;
+
 		programInitialized = true;
 
-		using (var dlg = new Ookii.Dialogs.WinForms.VistaFolderBrowserDialog() { Description = "Select the root folder of an extracted Shadow the Hedgehog disc image." })
-		{
-			if (!string.IsNullOrEmpty(settings.GamePath))
-				dlg.SelectedPath = settings.GamePath;
-			if (dlg.ShowDialog(this) == DialogResult.OK)
-			{
-				if (settings.GamePath != dlg.SelectedPath && Directory.Exists("backup"))
-					switch (MessageBox.Show(this, "New game directory selected!\n\nDo you wish to erase the previous backup data and use the new data as a base?", "Shadow Randomizer", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1))
-					{
-						case DialogResult.Yes:
-							Directory.Delete("backup", true);
-							break;
-						case DialogResult.No:
-							break;
-						default:
-							Close();
-							return;
-					}
-				settings.GamePath = dlg.SelectedPath;
-				if (!Directory.Exists("backup"))
-					Directory.CreateDirectory("backup");
-				if (!File.Exists(Path.Combine("backup", "main.dol")))
-					File.Copy(Path.Combine(settings.GamePath, "sys", "main.dol"), Path.Combine("backup", "main.dol"));
-				if (!File.Exists(Path.Combine("backup", "bi2.bin")))
-					File.Copy(Path.Combine(settings.GamePath, "sys", "bi2.bin"), Path.Combine("backup", "bi2.bin"));
-				if (!File.Exists(Path.Combine("backup", "setid.bin")))
-					File.Copy(Path.Combine(settings.GamePath, "files", "setid.bin"), Path.Combine("backup", "setid.bin"));
-				if (!File.Exists(Path.Combine("backup", "nukkoro2.inf")))
-					File.Copy(Path.Combine(settings.GamePath, "files", "nukkoro2.inf"), Path.Combine("backup", "nukkoro2.inf"));
-				if (!Directory.Exists(Path.Combine("backup", "fonts")))
-					CopyDirectory(Path.Combine(settings.GamePath, "files", "fonts"), Path.Combine("backup", "fonts"));
-				if (!Directory.Exists(Path.Combine("backup", "music")))
+		/*		using (var dlg = new Ookii.Dialogs.WinForms.VistaFolderBrowserDialog() { Description = "Select the root folder of an extracted Shadow the Hedgehog disc image." })
 				{
-					Directory.CreateDirectory(Path.Combine("backup", "music"));
-					foreach (var fil in Directory.EnumerateFiles(Path.Combine(settings.GamePath, "files"), "*.adx"))
-						File.Copy(fil, Path.Combine("backup", "music", Path.GetFileName(fil)));
-				}
-				if (!Directory.Exists(Path.Combine("backup", "sets")))
-				{
-					Directory.CreateDirectory(Path.Combine("backup", "sets"));
-					for (int stageIdToModify = 5; stageIdToModify < 45; stageIdToModify++)
+					if (!string.IsNullOrEmpty(settings.GamePath))
+						dlg.SelectedPath = settings.GamePath;
+					if (dlg.ShowDialog(this) == DialogResult.OK)
 					{
-						stageAssociationIDMap.TryGetValue(stageIdToModify, out var stageId);
-						var stageDataIdentifier = "stg0" + stageId.ToString();
-						var datOne = stageDataIdentifier + "_dat.one";
-						var cmnLayout = stageDataIdentifier + "_cmn.dat";
-						var nrmLayout = stageDataIdentifier + "_nrm.dat";
-						var hrdLayout = stageDataIdentifier + "_hrd.dat";
-						var datOnePath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, datOne);
-						var cmnLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, cmnLayout);
-						var nrmLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, nrmLayout);
-						var hrdLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, hrdLayout);
+						if (settings.GamePath != dlg.SelectedPath && Directory.Exists("backup"))
+							switch (MessageBox.Show(this, "New game directory selected!\n\nDo you wish to erase the previous backup data and use the new data as a base?", "Shadow Randomizer", MessageBoxButtons.YesNoCancel, MessageBoxIcon.Warning, MessageBoxDefaultButton.Button1))
+							{
+								case DialogResult.Yes:
+									Directory.Delete("backup", true);
+									break;
+								case DialogResult.No:
+									break;
+								default:
+									Close();
+									return;
+							}
+						settings.GamePath = dlg.SelectedPath;
+						if (!Directory.Exists("backup"))
+							Directory.CreateDirectory("backup");
+						if (!File.Exists(Path.Combine("backup", "main.dol")))
+							File.Copy(Path.Combine(settings.GamePath, "sys", "main.dol"), Path.Combine("backup", "main.dol"));
+						if (!File.Exists(Path.Combine("backup", "bi2.bin")))
+							File.Copy(Path.Combine(settings.GamePath, "sys", "bi2.bin"), Path.Combine("backup", "bi2.bin"));
+						if (!File.Exists(Path.Combine("backup", "setid.bin")))
+							File.Copy(Path.Combine(settings.GamePath, "files", "setid.bin"), Path.Combine("backup", "setid.bin"));
+						if (!File.Exists(Path.Combine("backup", "nukkoro2.inf")))
+							File.Copy(Path.Combine(settings.GamePath, "files", "nukkoro2.inf"), Path.Combine("backup", "nukkoro2.inf"));
+						if (!Directory.Exists(Path.Combine("backup", "fonts")))
+							CopyDirectory(Path.Combine(settings.GamePath, "files", "fonts"), Path.Combine("backup", "fonts"));
+						if (!Directory.Exists(Path.Combine("backup", "music")))
+						{
+							Directory.CreateDirectory(Path.Combine("backup", "music"));
+							foreach (var fil in Directory.EnumerateFiles(Path.Combine(settings.GamePath, "files"), "*.adx"))
+								File.Copy(fil, Path.Combine("backup", "music", Path.GetFileName(fil)));
+						}
+						if (!Directory.Exists(Path.Combine("backup", "sets")))
+						{
+							Directory.CreateDirectory(Path.Combine("backup", "sets"));
+							for (int stageIdToModify = 5; stageIdToModify < 45; stageIdToModify++)
+							{
+								stageAssociationIDMap.TryGetValue(stageIdToModify, out var stageId);
+								var stageDataIdentifier = "stg0" + stageId.ToString();
+								var datOne = stageDataIdentifier + "_dat.one";
+								var cmnLayout = stageDataIdentifier + "_cmn.dat";
+								var nrmLayout = stageDataIdentifier + "_nrm.dat";
+								var hrdLayout = stageDataIdentifier + "_hrd.dat";
+								var datOnePath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, datOne);
+								var cmnLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, cmnLayout);
+								var nrmLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, nrmLayout);
+								var hrdLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, hrdLayout);
 
-						if (!Directory.Exists(Path.Combine("backup", "sets", stageDataIdentifier)))
-							Directory.CreateDirectory(Path.Combine("backup", "sets", stageDataIdentifier));
-						File.Copy(datOnePath, Path.Combine("backup", "sets", stageDataIdentifier, datOne));
-						File.Copy(cmnLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, cmnLayout));
-						try { File.Copy(nrmLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, nrmLayout)); } catch (FileNotFoundException) { } // some stages don't have nrm
-						try { File.Copy(hrdLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, hrdLayout)); } catch (FileNotFoundException) { } // some stages don't have hrd
+								if (!Directory.Exists(Path.Combine("backup", "sets", stageDataIdentifier)))
+									Directory.CreateDirectory(Path.Combine("backup", "sets", stageDataIdentifier));
+								File.Copy(datOnePath, Path.Combine("backup", "sets", stageDataIdentifier, datOne));
+								File.Copy(cmnLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, cmnLayout));
+								try { File.Copy(nrmLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, nrmLayout)); } catch (FileNotFoundException) { } // some stages don't have nrm
+								try { File.Copy(hrdLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, hrdLayout)); } catch (FileNotFoundException) { } // some stages don't have hrd
+							}
+						}
+					}
+					else
+					{
+						Close();
+						return;
 					}
 				}
-			}
-			else
-			{
-				Close();
-				return;
-			}
-		}
+		*/
 	}
 
 	private void UserControl_Unloaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
 	{
-		settings.ProgramSound = checkBoxProgramSound.Checked;
-		settings.Seed = seedTextBox.Text;
-		settings.RandomSeed = randomSeed.Checked;
-		settings.Mode = (Modes)levelOrderModeSelector.SelectedIndex;
-		settings.MainPath = (MainPath)mainPathSelector.SelectedIndex;
-		settings.MaxBackJump = (int)maxBackJump.Value;
-		settings.MaxForwJump = (int)maxForwJump.Value;
-		settings.BackJumpProb = (int)backJumpProb.Value;
-		settings.AllowSameLevel = allowSameLevel.Checked;
-		settings.IncludeLast = includeLast.Checked;
-		settings.IncludeBosses = includeBosses.Checked;
-		settings.RandomMusic = randomMusic.Checked;
-		settings.RandomMusicSkipChaosPowers = randomMusicSkipChaosPowers.Checked;
-		settings.RandomMusicSkipRankTheme = randomMusicSkipRankTheme.Checked;
-		settings.RandomFNT = randomFNT.Checked;
-		settings.RandomSET = randomSET.Checked;
-		// SET Configuration
-		settings.SETMode = (SETRandomizationModes)setLayout_Mode.SelectedIndex;
-		settings.SETEnemyKeepType = setLayout_keepType.Checked;
-		settings.SETRandomPartners = setLayout_randomPartners.Checked;
-		settings.SETRandomWeaponsInBoxes = setLayout_randomWeaponsInBoxes.Checked;
-		settings.SETRandomAdjustMissionCounts = setLayout_adjustMissionCounts.Checked;
-		settings.SETRandomMakeCCSplinesAWRidable = setLayout_makeCCSplinesAWRidable.Checked;
-		// FNT Configuration
-		settings.FNTNoDuplicatesPreRandomization = FNTCheckBox_NoDuplicatesPreRandomization.Checked;
-		settings.FNTNoSystemMessages = FNTCheckBox_NoSystemMessages.Checked;
-		settings.FNTOnlyLinkedAudio = FNTCheckBox_OnlyLinkedAudio.Checked;
-		settings.FNTSpecificCharacters = FNTCheckBox_SpecificCharacters.Checked;
-		settings.FNTGiveAudioToNoLinkedAudio = FNTCheckBox_GiveAudioToNoLinkedAudio.Checked;
-		// FNT Configuration Specific Characters
-		settings.FNTShadowSelected = FNTCheckBox_Chars_Shadow.Checked;
-		settings.FNTSonicSelected = FNTCheckBox_Chars_Sonic.Checked;
-		settings.FNTTailsSelected = FNTCheckBox_Chars_Tails.Checked;
-		settings.FNTKnucklesSelected = FNTCheckBox_Chars_Knuckles.Checked;
-		settings.FNTAmySelected = FNTCheckBox_Chars_Amy.Checked;
-		settings.FNTRougeSelected = FNTCheckBox_Chars_Rouge.Checked;
-		settings.FNTOmegaSelected = FNTCheckBox_Chars_Omega.Checked;
-		settings.FNTVectorSelected = FNTCheckBox_Chars_Vector.Checked;
-		settings.FNTEspioSelected = FNTCheckBox_Chars_Espio.Checked;
-		settings.FNTMariaSelected = FNTCheckBox_Chars_Maria.Checked;
-		settings.FNTCharmySelected = FNTCheckBox_Chars_Charmy.Checked;
-		settings.FNTEggmanSelected = FNTCheckBox_Chars_Eggman.Checked;
-		settings.FNTBlackDoomSelected = FNTCheckBox_Chars_BlackDoom.Checked;
-		settings.FNTCreamSelected = FNTCheckBox_Chars_Cream.Checked;
-		settings.FNTCheeseSelected = FNTCheckBox_Chars_Cheese.Checked;
-		settings.FNTGUNCommanderSelected = FNTCheckBox_Chars_GUNCommander.Checked;
-		settings.FNTGUNSoldierSelected = FNTCheckBox_Chars_GUNSoldier.Checked;
+		// Program Configuration
+		settings.ProgramSound = LevelOrder_CheckBox_ProgramSound.IsChecked.Value;
+
+		// Level Order
+		settings.Seed = LevelOrder_TextBox_Seed.Text;
+		settings.RandomSeed = LevelOrder_CheckBox_Random_Seed.IsChecked.Value;
+		settings.LevelOrderMode = (LevelOrderMode)LevelOrder_ComboBox_Mode.SelectedIndex;
+		settings.LevelOrderMainPath = (LevelOrderMainPath)LevelOrder_ComboBox_MainPath.SelectedIndex;
+		settings.LevelOrderMaxForwardsJump = (int)LevelOrder_NumericUpDown_MaxForwardsJump.Value;
+		settings.LevelOrderMaxBackwardsJump = (int)LevelOrder_NumericUpDown_MaxBackwardsJump.Value;
+		settings.LevelOrderBackwardsJumpProbability = (int)LevelOrder_NumericUpDown_BackwardsJumpProbability.Value;
+		settings.LevelOrderAllowJumpsToSameLevel = LevelOrder_CheckBox_AllowJumpsToSameLevel.IsChecked.Value;
+		settings.LevelOrderIncludeLastStory = LevelOrder_CheckBox_IncludeLastStory.IsChecked.Value;
+		settings.LevelOrderIncludeBosses = LevelOrder_CheckBox_IncludeBosses.IsChecked.Value;
+
+		// Layout
+		settings.RandomizeLayouts = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
+		settings.LayoutMakeCCSplinesVehicleCompatible = Layout_CheckBox_MakeCCSplinesVehicleCompatible.IsChecked.Value;
+		// Enemy
+		settings.LayoutAdjustMissionCounts = Layout_Enemy_CheckBox_AdjustMissionCounts.IsChecked.Value;
+		settings.LayoutEnemyMode = (LayoutEnemyMode)Layout_Enemy_ComboBox_Mode.SelectedIndex;
+		settings.LayoutEnemyKeepType = Layout_Enemy_CheckBox_KeepType.IsChecked.Value;
+		// Weapon
+		settings.LayoutRandomWeaponsInAllBoxes = Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes.IsChecked.Value;
+		// Partner
+		settings.LayoutPartnerMode = (LayoutPartnerMode)Layout_Partner_ComboBox_Mode.SelectedIndex;
+
+		// Subtitles
+		settings.RandomizeSubtitlesVoicelines = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
+		settings.SubtitlesNoDuplicates = Subtitles_CheckBox_NoDuplicates.IsChecked.Value;
+		settings.SubtitlesNoSystemMessages = Subtitles_CheckBox_NoSystemMessages.IsChecked.Value;
+		settings.SubtitlesOnlyLinkedAudio = Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked.Value;
+		settings.SubtitlesOnlySelectedCharacters = Subtitles_CheckBox_OnlySelectedCharacters.IsChecked.Value;
+		settings.SubtitlesGiveAudioToNoLinkedAudio = Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsChecked.Value;
+		// Selected Characters
+		settings.SubtitlesSelectedCharacterShadow = Subtitles_CheckBox_SelectedCharacter_Shadow.IsChecked.Value;
+		settings.SubtitlesSelectedCharacterSonic = Subtitles_CheckBox_SelectedCharacter_Sonic.IsChecked.Value;
+		settings.SubtitlesSelectedCharacterTails = Subtitles_CheckBox_SelectedCharacter_Tails.IsChecked.Value;
+		settings.SubtitlesSelectedCharacterKnuckles = Subtitles_CheckBox_SelectedCharacter_Knuckles.IsChecked.Value;
+		settings.SubtitlesSelectedCharacterAmy = Subtitles_CheckBox_SelectedCharacter_Amy.IsChecked.Value;
+		settings.SubtitlesSelectedCharacterRouge = Subtitles_CheckBox_SelectedCharacter_Rouge.IsChecked.Value;
+		settings.SubtitlesSelectedCharacterOmega = Subtitles_CheckBox_SelectedCharacter_Omega.IsChecked.Value;
+		settings.SubtitlesSelectedCharacterVector = Subtitles_CheckBox_SelectedCharacter_Vector.IsChecked.Value;
+		settings.SubtitlesSelectedCharacterEspio = Subtitles_CheckBox_SelectedCharacter_Espio.IsChecked.Value;
+		settings.SubtitlesSelectedCharacterMaria = Subtitles_CheckBox_SelectedCharacter_Maria.IsChecked.Value;
+		settings.SubtitlesSelectedCharacterCharmy = Subtitles_CheckBox_SelectedCharacter_Charmy.IsChecked.Value;
+		settings.SubtitlesSelectedCharacterEggman = Subtitles_CheckBox_SelectedCharacter_Eggman.IsChecked.Value;
+		settings.SubtitlesSelectedCharacterBlackDoom = Subtitles_CheckBox_SelectedCharacter_BlackDoom.IsChecked.Value;
+		settings.SubtitlesSelectedCharacterCream = Subtitles_CheckBox_SelectedCharacter_Cream.IsChecked.Value;
+		settings.SubtitlesSelectedCharacterCheese = Subtitles_CheckBox_SelectedCharacter_Cheese.IsChecked.Value;
+		settings.SubtitlesSelectedCharacterGUNCommander = Subtitles_CheckBox_SelectedCharacter_GUNCommander.IsChecked.Value;
+		settings.SubtitlesSelectedCharacterGUNSoldier = Subtitles_CheckBox_SelectedCharacter_GUNSoldier.IsChecked.Value;
+
+		// Music
+		settings.RandomizeMusic = Music_CheckBox_RandomizeMusic.IsChecked.Value;
+		settings.MusicSkipChaosPowers = Music_CheckBox_SkipChaosPowerUseJingles.IsChecked.Value;
+		settings.MusicSkipRankTheme = Music_CheckBox_SkipRankTheme.IsChecked.Value;
+
 		settings.Save();
 	}
 
@@ -406,17 +434,17 @@ public partial class MainView : UserControl
     {
 		byte[] dolfile = File.ReadAllBytes(Path.Combine("backup", "main.dol"));
 		int seed;
-		if (randomSeed.Checked)
+		if (LevelOrder_CheckBox_Random_Seed.IsChecked.Value)
 		{
 			var randomBytes = new byte[10];
 			using (var rng = new RNGCryptoServiceProvider())
 			{
 				rng.GetBytes(randomBytes);
 			}
-			seedTextBox.Text = Convert.ToBase64String(randomBytes);
+			LevelOrder_TextBox_Seed.Text = Convert.ToBase64String(randomBytes);
 		}
-		seed = CalculateSeed(seedTextBox.Text);
-		settings.Mode = (Modes)levelOrderModeSelector.SelectedIndex;
+		seed = CalculateSeed(LevelOrder_TextBox_Seed.Text);
+		settings.LevelOrderMode = (LevelOrderMode)LevelOrder_ComboBox_Mode.SelectedIndex;
 		Random r = new Random(seed);
 		byte[] buf;
 		List<int> tmpids = new List<int>(totalstagecount + 1);
@@ -443,11 +471,11 @@ public partial class MainView : UserControl
 			else
 				stages[i].IsBoss = true;
 			bool include = true;
-			if (!includeLast.Checked)
+			if (!LevelOrder_CheckBox_IncludeLastStory.IsChecked.Value)
 				include = !stages[i].IsLast;
-			if (settings.Mode == Modes.BossRush)
+			if (settings.LevelOrderMode == LevelOrderMode.BossRush)
 				include &= stages[i].IsBoss;
-			else if (!includeBosses.Checked)
+			else if (!LevelOrder_CheckBox_IncludeBosses.IsChecked.Value)
 				include &= !stages[i].IsBoss;
 			if (include)
 				tmpids.Add(i);
@@ -455,20 +483,20 @@ public partial class MainView : UserControl
 		stagecount = tmpids.Count;
 		tmpids.Add(totalstagecount);
 		stageids = tmpids.ToArray();
-		switch (settings.Mode)
+		switch (settings.LevelOrderMode)
 		{
-			case Modes.None:
+			case LevelOrderMode.None:
 				break;
-			case Modes.AllStagesWarps:
+			case LevelOrderMode.AllStagesWarps:
 				{
 					Shuffle(r, stageids, stagecount);
-					switch ((MainPath)mainPathSelector.SelectedIndex)
+					switch ((LevelOrderMainPath)LevelOrder_ComboBox_MainPath.SelectedIndex)
 					{
-						case MainPath.ActClear:
+						case LevelOrderMainPath.ActClear:
 							for (int i = 0; i < stagecount; i++)
 								stages[stageids[i]].SetExit(0, stageids[i + 1]);
 							break;
-						case MainPath.AnyExit:
+						case LevelOrderMainPath.AnyExit:
 							for (int i = 0; i < stagecount; i++)
 								stages[stageids[i]].SetExit(r.Next(stages[stageids[i]].CountExits()), stageids[i + 1]);
 							break;
@@ -479,50 +507,50 @@ public partial class MainView : UserControl
 						int min, max;
 						if (stg.HasNeutral && stg.Neutral == -1)
 						{
-							if (r.Next(100) < backJumpProb.Value && (i > 0 || backJumpProb.Value == 100))
+							if (r.Next(100) < LevelOrder_NumericUpDown_BackwardsJumpProbability.Value && (i > 0 || LevelOrder_NumericUpDown_BackwardsJumpProbability.Value == 100))
 							{
-								min = Math.Max(i - (int)maxBackJump.Value, 0);
-								max = Math.Max(i - (int)maxBackJump.Minimum + 1, 0);
+								min = Math.Max(i - (int)LevelOrder_NumericUpDown_MaxBackwardsJump.Value, 0);
+								max = Math.Max(i - (int)LevelOrder_NumericUpDown_MaxBackwardsJump.Minimum + 1, 0);
 							}
 							else
 							{
-								min = i + (int)maxForwJump.Minimum;
-								max = Math.Min(i + (int)maxForwJump.Value + 1, stagecount + 1);
+								min = i + (int)LevelOrder_NumericUpDown_MaxForwardsJump.Minimum;
+								max = Math.Min(i + (int)LevelOrder_NumericUpDown_MaxForwardsJump.Value + 1, stagecount + 1);
 							}
 							stg.Neutral = stageids[r.Next(min, max)];
 						}
 						if (stg.HasHero && stg.Hero == -1)
 						{
-							if (r.Next(100) < backJumpProb.Value && (i > 0 || backJumpProb.Value == 100))
+							if (r.Next(100) < LevelOrder_NumericUpDown_BackwardsJumpProbability.Value && (i > 0 || LevelOrder_NumericUpDown_BackwardsJumpProbability.Value == 100))
 							{
-								min = Math.Max(i - (int)maxBackJump.Value, 0);
-								max = Math.Max(i - (int)maxBackJump.Minimum + 1, 0);
+								min = Math.Max(i - (int)LevelOrder_NumericUpDown_MaxBackwardsJump.Value, 0);
+								max = Math.Max(i - (int)LevelOrder_NumericUpDown_MaxBackwardsJump.Minimum + 1, 0);
 							}
 							else
 							{
-								min = i + (int)maxForwJump.Minimum;
-								max = Math.Min(i + (int)maxForwJump.Value + 1, stagecount + 1);
+								min = i + (int)LevelOrder_NumericUpDown_MaxForwardsJump.Minimum;
+								max = Math.Min(i + (int)LevelOrder_NumericUpDown_MaxForwardsJump.Value + 1, stagecount + 1);
 							}
 							stg.Hero = stageids[r.Next(min, max)];
 						}
 						if (stg.HasDark && stg.Dark == -1)
 						{
-							if (r.Next(100) < backJumpProb.Value && (i > 0 || backJumpProb.Value == 100))
+							if (r.Next(100) < LevelOrder_NumericUpDown_BackwardsJumpProbability.Value && (i > 0 || LevelOrder_NumericUpDown_BackwardsJumpProbability.Value == 100))
 							{
-								min = Math.Max(i - (int)maxBackJump.Value, 0);
-								max = Math.Max(i - (int)maxBackJump.Minimum + 1, 0);
+								min = Math.Max(i - (int)LevelOrder_NumericUpDown_MaxBackwardsJump.Value, 0);
+								max = Math.Max(i - (int)LevelOrder_NumericUpDown_MaxBackwardsJump.Minimum + 1, 0);
 							}
 							else
 							{
-								min = i + (int)maxForwJump.Minimum;
-								max = Math.Min(i + (int)maxForwJump.Value + 1, stagecount + 1);
+								min = i + (int)LevelOrder_NumericUpDown_MaxForwardsJump.Minimum;
+								max = Math.Min(i + (int)LevelOrder_NumericUpDown_MaxForwardsJump.Value + 1, stagecount + 1);
 							}
 							stg.Dark = stageids[r.Next(min, max)];
 						}
 					}
 				}
 				break;
-			case Modes.VanillaStructure:
+			case LevelOrderMode.VanillaStructure:
 				{
 					List<int> twoexitlst = new List<int>();
 					List<int> threeexitlst = new List<int>();
@@ -564,7 +592,7 @@ public partial class MainView : UserControl
 									neword.Add(twoq.Dequeue());
 									break;
 							}
-						if (includeBosses.Checked)
+						if (LevelOrder_CheckBox_IncludeBosses.IsChecked.Value)
 							for (int i = 0; i < set.bossCount; i++)
 								neword.Add(bossq.Dequeue());
 					}
@@ -573,13 +601,13 @@ public partial class MainView : UserControl
 					foreach (var set in ShadowStageSet.StageList)
 					{
 						int bossind = ind + set.stages.Count;
-						int next = set.stages.Count + (includeBosses.Checked ? set.bossCount : 0);
+						int next = set.stages.Count + (LevelOrder_CheckBox_IncludeBosses.IsChecked.Value ? set.bossCount : 0);
 						if (set.stages[0].stageType == StageType.Neutral)
 							++next;
 						foreach (var item in set.stages)
 						{
 							Stage stg = stages[neword[ind]];
-							int bosscnt = includeBosses.Checked ? item.bossCount : 0;
+							int bosscnt = LevelOrder_CheckBox_IncludeBosses.IsChecked.Value ? item.bossCount : 0;
 							if (bosscnt == 2)
 							{
 								stg.SetExit(0, neword[bossind]);
@@ -686,13 +714,13 @@ public partial class MainView : UserControl
 							}
 							++ind;
 						}
-						if (includeBosses.Checked)
+						if (LevelOrder_CheckBox_IncludeBosses.IsChecked.Value)
 							ind += set.bossCount;
 					}
 					neword.CopyTo(stageids);
 				}
 				break;
-			case Modes.BranchingPaths:
+			case LevelOrderMode.BranchingPaths:
 				{
 					List<int> stagepool = new List<int>(stageids.Take(stagecount));
 					List<int> curset = new List<int>() { r.Next(stagecount) };
@@ -736,7 +764,7 @@ public partial class MainView : UserControl
 					ids2.CopyTo(stageids);
 				}
 				break;
-			case Modes.ReverseBranching:
+			case LevelOrderMode.ReverseBranching:
 				{
 					int exitcnt = stages.Sum(a => a.CountExits()) - stages.Count(a => a.CountExits() == 1);
 					Shuffle(r, stageids, stagecount);
@@ -796,7 +824,7 @@ public partial class MainView : UserControl
 					}
 					foreach (Stage stg in stages)
 					{
-						if (!includeLast.Checked && stg.IsLast)
+						if (!LevelOrder_CheckBox_IncludeLastStory.IsChecked.Value && stg.IsLast)
 							continue;
 						if ((stg.IsBoss || stg.HasNeutral) && stg.Neutral == -1)
 						{
@@ -816,12 +844,12 @@ public partial class MainView : UserControl
 					}
 				}
 				break;
-			case Modes.BossRush:
+			case LevelOrderMode.BossRush:
 				Shuffle(r, stageids, stagecount);
 				for (int i = 0; i < stagecount; i++)
 					stages[stageids[i]].Neutral = stageids[i + 1];
 				break;
-			case Modes.Wild:
+			case LevelOrderMode.Wild:
 				{
 					Queue<int> stgq = new Queue<int>();
 					stgq.Enqueue(stageids[r.Next(stagecount)]);
@@ -860,7 +888,7 @@ public partial class MainView : UserControl
 				}
 				break;
 		}
-		if (settings.Mode != Modes.None)
+		if (settings.LevelOrderMode != LevelOrderMode.None)
 		{
 			for (int i = 0; i < totalstagecount; i++)
 			{
@@ -898,7 +926,7 @@ public partial class MainView : UserControl
 		// end patch
 
 		File.WriteAllBytes(Path.Combine(settings.GamePath, "sys", "main.dol"), dolfile);
-		if (randomMusic.Checked)
+		if (Music_CheckBox_RandomizeMusic.IsChecked.Value)
 		{
 			Dictionary<MusicCategory, List<string>> musicFiles = new Dictionary<MusicCategory, List<string>>()
 				{
@@ -907,9 +935,9 @@ public partial class MainView : UserControl
 					{ MusicCategory.Menu, new List<string>(Directory.EnumerateFiles(Path.Combine("backup", "music"), "sng_sys*.adx")) },
 					{ MusicCategory.Credits, new List<string>(Directory.EnumerateFiles(Path.Combine("backup", "music"), "sng_vox*.adx")) }
 				};
-			if (randomMusicSkipRankTheme.Checked)
+			if (Music_CheckBox_SkipRankTheme.IsChecked.Value)
 				musicFiles[MusicCategory.Jingle].RemoveAll(a => a.EndsWith("sng_jin_roundclear.adx"));
-			if (randomMusicSkipChaosPowers.Checked)
+			if (Music_CheckBox_SkipChaosPowerUseJingles.IsChecked.Value)
 				musicFiles[MusicCategory.Jingle].RemoveAll(a => a.EndsWith("_e.adx"));
 			var outfiles = musicFiles.ToDictionary(a => a.Key, b => b.Value.Select(c => Path.GetFileName(c)).ToArray());
 			if (Directory.Exists("RandoMusic"))
@@ -929,22 +957,21 @@ public partial class MainView : UserControl
 			}
 		}
 
-		if (randomFNT.Checked)
-			RandomizeFNTs(r);
+		if (Layout_CheckBox_RandomizeLayouts.IsChecked.Value)
+			RandomizeLayouts(r);
 
-		if (randomSET.Checked)
-			RandomizeSETs(r);
+		if (Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value)
+			RandomizeSubtitles(r);
 
-		spoilerLevelList.BeginUpdate();
-		spoilerLevelList.Items.Clear();
+		Spoilers_ListBox_LevelList.Items.Clear();
 		for (int i = 0; i < stagecount; i++)
-			spoilerLevelList.Items.Add(GetStageName(stageids[i]));
-		spoilerLevelList.EndUpdate();
-		spoilerLevelList.Enabled = true;
-		spoilerLevelList.SelectedIndex = 0;
-		saveLogButton.Enabled = true;
-		makeChartButton.Enabled = true;
-		MessageBox.Show("Randomization Complete", "Report");
+			Spoilers_ListBox_LevelList.Items.Add(GetStageName(stageids[i]));
+		Spoilers_ListBox_LevelList.IsEnabled = true;
+		Spoilers_ListBox_LevelList.SelectedIndex = 0;
+		Spoilers_Button_SaveLog.IsEnabled = true;
+		Spoilers_Button_MakeChart.IsEnabled = true;
+		ProgressBar_RandomizationProgress.Value = 100;
+		// MessageBox.Show("Randomization Complete", "Report");
 	}
 
 	private void CopyDirectory(DirectoryInfo srcDir, string dstDir)
@@ -958,37 +985,37 @@ public partial class MainView : UserControl
 
 	private void CopyDirectory(string srcDir, string dstDir) => CopyDirectory(new DirectoryInfo(srcDir), dstDir);
 
-	private void randomSeed_CheckedChanged(object sender, EventArgs e)
+	private void LevelOrder_CheckBox_Random_Seed_Checked(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
 	{
-		seedTextBox.Enabled = !randomSeed.Checked;
+		LevelOrder_TextBox_Seed.IsEnabled = !LevelOrder_CheckBox_Random_Seed.IsChecked.Value;
 	}
 
-	private void allowSameLevel_CheckedChanged(object sender, EventArgs e)
+	private void LevelOrder_CheckBox_AllowJumpsToSameLevel_Checked(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
 	{
-		maxBackJump.Minimum = maxForwJump.Minimum = allowSameLevel.Checked ? 0 : 1;
+		LevelOrder_NumericUpDown_MaxBackwardsJump.Minimum = LevelOrder_NumericUpDown_MaxForwardsJump.Minimum = LevelOrder_CheckBox_AllowJumpsToSameLevel.IsChecked.Value ? 0 : 1;
 	}
 
-	private void RandomizeFNTs(Random r)
+	private void RandomizeSubtitles(Random r)
 	{
 		var fontAndAudioData = LoadFNTsAndAFS(true);
 		var fntRandomPool = new List<ShadowFNT.Structures.TableEntry>();
 		var uniqueAudioIDs = new Dictionary<int, bool>();
 		var uniqueSubtitles = new Dictionary<string, bool>();
-		if (FNTCheckBox_OnlyLinkedAudio.Checked || FNTCheckBox_NoDuplicatesPreRandomization.Checked || FNTCheckBox_NoSystemMessages.Checked || FNTCheckBox_SpecificCharacters.Checked)
+		if (Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked.Value || Subtitles_CheckBox_NoDuplicates.IsChecked.Value || Subtitles_CheckBox_NoSystemMessages.IsChecked.Value || Subtitles_CheckBox_OnlySelectedCharacters.IsChecked.Value)
 		{
 			for (int i = 0; i < fontAndAudioData.initialFntState.Count; i++)
 			{
 				for (int j = 0; j < fontAndAudioData.initialFntState[i].GetEntryTableCount(); j++)
 				{
 					var entry = fontAndAudioData.initialFntState[i].GetEntryTable()[j];
-					if (FNTCheckBox_OnlyLinkedAudio.Checked && entry.audioId == -1)
+					if (Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked.Value && entry.audioId == -1)
 						continue;
-					if (FNTCheckBox_NoSystemMessages.Checked && (entry.entryType == EntryType.MENU || entry.entryType == EntryType.FINAL_ENTRY || entry.messageIdBranchSequence == 9998100))
+					if (Subtitles_CheckBox_NoSystemMessages.IsChecked.Value && (entry.entryType == ShadowFNT.Structures.EntryType.MENU || entry.entryType == ShadowFNT.Structures.EntryType.FINAL_ENTRY || entry.messageIdBranchSequence == 9998100))
 						continue;
-					if (FNTCheckBox_SpecificCharacters.Checked && entry.audioId != -1 && !CharacterPicked(fontAndAudioData.afs.Files[entry.audioId].Name))
+					if (Subtitles_CheckBox_OnlySelectedCharacters.IsChecked.Value && entry.audioId != -1 && !SubtitleCharacterPicked(fontAndAudioData.afs.Files[entry.audioId].Name))
 						continue;
 
-					if (FNTCheckBox_NoDuplicatesPreRandomization.Checked)
+					if (Subtitles_CheckBox_NoDuplicates.IsChecked.Value)
 					{
 						try
 						{
@@ -1023,7 +1050,7 @@ public partial class MainView : UserControl
 				{
 					// Chained entries not accounted for, so may produce wacky results
 					int donotFNTEntryIndex = r.Next(0, fntRandomPool.Count - 1);
-					if (FNTCheckBox_GiveAudioToNoLinkedAudio.Checked && fntRandomPool[donotFNTEntryIndex].audioId == -1)
+					if (Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsChecked.Value && fntRandomPool[donotFNTEntryIndex].audioId == -1)
 					{
 						int audio = r.Next(0, fontAndAudioData.afs.Files.Count - 1);
 						fontAndAudioData.mutatedFnt[i].SetEntryAudioId(j, audio);
@@ -1046,7 +1073,7 @@ public partial class MainView : UserControl
 					// Chained entries not accounted for, so may produce wacky results
 					int donorFNTIndex = r.Next(0, fontAndAudioData.mutatedFnt.Count - 1);
 					int donotFNTEntryIndex = r.Next(0, fontAndAudioData.initialFntState[donorFNTIndex].GetEntryTableCount() - 1);
-					if (FNTCheckBox_GiveAudioToNoLinkedAudio.Checked && fontAndAudioData.initialFntState[donorFNTIndex].GetEntryAudioId(donotFNTEntryIndex) == -1)
+					if (Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsChecked.Value && fontAndAudioData.initialFntState[donorFNTIndex].GetEntryAudioId(donotFNTEntryIndex) == -1)
 					{
 						int audio = r.Next(0, fontAndAudioData.afs.Files.Count - 1);
 						fontAndAudioData.mutatedFnt[i].SetEntryAudioId(j, audio);
@@ -1108,65 +1135,57 @@ public partial class MainView : UserControl
 		}
 		foreach (FNT fnt in filesToWrite)
 		{
-			try
-			{
-				fnt.RecomputeAllSubtitleAddresses();
-				string outfn = Path.Combine(settings.GamePath, "files", fnt.fileName.Substring(fnt.fileName.IndexOf("fonts")));
-				File.WriteAllBytes(outfn, fnt.ToBytes());
-				string prec = outfn.Remove(outfn.Length - 4);
-				File.Copy(AppDomain.CurrentDomain.BaseDirectory + "res/EN.txd", prec + ".txd", true);
-				File.Copy(AppDomain.CurrentDomain.BaseDirectory + "res/EN00.met", prec + "00.met", true);
-			}
-			catch (Exception ex)
-			{
-				MessageBox.Show("Failed on " + fnt.ToString(), "An Exception Occurred");
-				MessageBox.Show(ex.Message, "An Exception Occurred");
-			}
+			fnt.RecomputeAllSubtitleAddresses();
+			string outfn = Path.Combine(settings.GamePath, "files", fnt.fileName.Substring(fnt.fileName.IndexOf("fonts")));
+			File.WriteAllBytes(outfn, fnt.ToBytes());
+			string prec = outfn.Remove(outfn.Length - 4);
+			File.Copy(AppDomain.CurrentDomain.BaseDirectory + "res/EN.txd", prec + ".txd", true);
+			File.Copy(AppDomain.CurrentDomain.BaseDirectory + "res/EN00.met", prec + "00.met", true);
 		}
 	}
 
-	private bool CharacterPicked(string audioName)
+	private bool SubtitleCharacterPicked(string audioName)
 	{
-		if (FNTCheckBox_Chars_Shadow.Checked && audioName.EndsWith("_sd.adx"))
+		if (Subtitles_CheckBox_SelectedCharacter_Shadow.IsChecked.Value && audioName.EndsWith("_sd.adx"))
 			return true;
-		if (FNTCheckBox_Chars_Sonic.Checked && audioName.EndsWith("_sn.adx"))
+		if (Subtitles_CheckBox_SelectedCharacter_Sonic.IsChecked.Value && audioName.EndsWith("_sn.adx"))
 			return true;
-		if (FNTCheckBox_Chars_Tails.Checked && audioName.EndsWith("_tl.adx"))
+		if (Subtitles_CheckBox_SelectedCharacter_Tails.IsChecked.Value && audioName.EndsWith("_tl.adx"))
 			return true;
-		if (FNTCheckBox_Chars_Knuckles.Checked && audioName.EndsWith("_kn.adx"))
+		if (Subtitles_CheckBox_SelectedCharacter_Knuckles.IsChecked.Value && audioName.EndsWith("_kn.adx"))
 			return true;
-		if (FNTCheckBox_Chars_Amy.Checked && audioName.EndsWith("_am.adx"))
+		if (Subtitles_CheckBox_SelectedCharacter_Amy.IsChecked.Value && audioName.EndsWith("_am.adx"))
 			return true;
-		if (FNTCheckBox_Chars_Rouge.Checked && audioName.EndsWith("_rg.adx"))
+		if (Subtitles_CheckBox_SelectedCharacter_Rouge.IsChecked.Value && audioName.EndsWith("_rg.adx"))
 			return true;
-		if (FNTCheckBox_Chars_Omega.Checked && audioName.EndsWith("_om.adx"))
+		if (Subtitles_CheckBox_SelectedCharacter_Omega.IsChecked.Value && audioName.EndsWith("_om.adx"))
 			return true;
-		if (FNTCheckBox_Chars_Vector.Checked && audioName.EndsWith("_vc.adx"))
+		if (Subtitles_CheckBox_SelectedCharacter_Vector.IsChecked.Value && audioName.EndsWith("_vc.adx"))
 			return true;
-		if (FNTCheckBox_Chars_Espio.Checked && audioName.EndsWith("_es.adx"))
+		if (Subtitles_CheckBox_SelectedCharacter_Espio.IsChecked.Value && audioName.EndsWith("_es.adx"))
 			return true;
-		if (FNTCheckBox_Chars_Maria.Checked && (audioName.EndsWith("_mr.adx") || audioName.EndsWith("_mr2.adx")))
+		if (Subtitles_CheckBox_SelectedCharacter_Maria.IsChecked.Value && (audioName.EndsWith("_mr.adx") || audioName.EndsWith("_mr2.adx")))
 			return true;
-		if (FNTCheckBox_Chars_Charmy.Checked && audioName.EndsWith("_ch.adx"))
+		if (Subtitles_CheckBox_SelectedCharacter_Charmy.IsChecked.Value && audioName.EndsWith("_ch.adx"))
 			return true;
-		if (FNTCheckBox_Chars_Eggman.Checked && audioName.EndsWith("_eg.adx"))
+		if (Subtitles_CheckBox_SelectedCharacter_Eggman.IsChecked.Value && audioName.EndsWith("_eg.adx"))
 			return true;
-		if (FNTCheckBox_Chars_BlackDoom.Checked && audioName.EndsWith("_bd.adx"))
+		if (Subtitles_CheckBox_SelectedCharacter_BlackDoom.IsChecked.Value && audioName.EndsWith("_bd.adx"))
 			return true;
-		if (FNTCheckBox_Chars_Cream.Checked && audioName.EndsWith("_cr.adx"))
+		if (Subtitles_CheckBox_SelectedCharacter_Cream.IsChecked.Value && audioName.EndsWith("_cr.adx"))
 			return true;
-		if (FNTCheckBox_Chars_Cheese.Checked && audioName.EndsWith("_co.adx"))
+		if (Subtitles_CheckBox_SelectedCharacter_Cheese.IsChecked.Value && audioName.EndsWith("_co.adx"))
 			return true;
-		if (FNTCheckBox_Chars_GUNCommander.Checked && audioName.EndsWith("_cm.adx"))
+		if (Subtitles_CheckBox_SelectedCharacter_GUNCommander.IsChecked.Value && audioName.EndsWith("_cm.adx"))
 			return true;
-		if (FNTCheckBox_Chars_GUNSoldier.Checked && audioName.EndsWith("_sl.adx"))
+		if (Subtitles_CheckBox_SelectedCharacter_GUNSoldier.IsChecked.Value && audioName.EndsWith("_sl.adx"))
 			return true;
 		return false;
 	}
 
-	private void RandomizeSETs(Random r)
+	private void RandomizeLayouts(Random r)
 	{
-		var mode = (SETRandomizationModes)setLayout_Mode.SelectedIndex;
+		var enemyMode = (LayoutEnemyMode)Layout_Enemy_ComboBox_Mode.SelectedIndex;
 		var nukkoro2 = Nukkoro2.ReadFile(Path.Combine("backup", "nukkoro2.inf"));
 
 		ShadowSET.LayoutEditorSystem.SetupLayoutEditorSystem(); // Critical to load relevent data
@@ -1187,43 +1206,30 @@ public partial class MainView : UserControl
 				// some stages don't have nrm
 			}
 
-			if (setLayout_randomWeaponsInBoxes.Checked)
+			if (Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes.IsChecked.Value)
 			{
 				MakeAllBoxesHaveRandomWeapons(ref cmnLayoutData, r);
 				if (nrmLayoutData != null)
 					MakeAllBoxesHaveRandomWeapons(ref nrmLayoutData, r);
 			}
 
-			if (setLayout_randomPartners.Checked)
+			if ((LayoutPartnerMode)Layout_Partner_ComboBox_Mode.SelectedIndex == LayoutPartnerMode.Wild)
 			{
 				MakeAllPartnersRandom(ref cmnLayoutData, r);
 				if (nrmLayoutData != null)
 					MakeAllPartnersRandom(ref nrmLayoutData, r);
 			}
 
-			switch (mode)
+			switch (enemyMode)
 			{
-				case SETRandomizationModes.None:
+				case LayoutEnemyMode.None:
 					break;
-				case SETRandomizationModes.Wild:
+				case LayoutEnemyMode.Wild:
 					WildRandomizeAllEnemiesWithTranslations(ref cmnLayoutData, r);
 					if (nrmLayoutData != null)
 						WildRandomizeAllEnemiesWithTranslations(ref nrmLayoutData, r);
 					break;
-				case SETRandomizationModes.AllObjectsAreGUNSoldiers:
-					MakeAllObjectsGUNSoldiers(ref cmnLayoutData, r);
-					if (nrmLayoutData != null)
-						MakeAllObjectsGUNSoldiers(ref nrmLayoutData, r);
-					break;
-				case SETRandomizationModes.AllEnemiesAreGUNSoldiers:
-					MakeAllEnemiesGUNSoldiers(ref cmnLayoutData, r);
-					if (nrmLayoutData != null)
-						MakeAllEnemiesGUNSoldiers(ref nrmLayoutData, r);
-					break;
-				case SETRandomizationModes.AllEnemiesAreGUNSoldiersWithTranslations:
-					MakeAllEnemiesGUNSoldiersWithTranslations(ref cmnLayoutData, r);
-					if (nrmLayoutData != null)
-						MakeAllEnemiesGUNSoldiersWithTranslations(ref nrmLayoutData, r);
+				default:
 					break;
 			}
 
@@ -1231,7 +1237,7 @@ public partial class MainView : UserControl
 			if (nrmLayoutData != null)
 				LayoutEditorFunctions.SaveShadowLayout(nrmLayoutData, Path.Combine(settings.GamePath, "files", stageDataIdentifier, nrmLayout), false);
 
-			if (setLayout_adjustMissionCounts.Checked && nukkoro2EnemyCountStagesMap.TryGetValue(stageId, out var nukkoro2StageString))
+			if (Layout_Enemy_CheckBox_AdjustMissionCounts.IsChecked.Value && nukkoro2EnemyCountStagesMap.TryGetValue(stageId, out var nukkoro2StageString))
 			{
 				nukkoro2.TryGetValue(nukkoro2StageString.Item1, out var nukkoro2Stage);
 				switch (nukkoro2StageString.Item2)
@@ -1255,7 +1261,7 @@ public partial class MainView : UserControl
 				}
 			}
 
-			if (setLayout_makeCCSplinesAWRidable.Checked)
+			if (Layout_CheckBox_MakeCCSplinesVehicleCompatible.IsChecked.Value)
 			{
 				if (stageDataIdentifier == "stg0400" || stageDataIdentifier == "stg0700" || stageIdToModify >= 28)
 					continue;
@@ -1296,7 +1302,7 @@ public partial class MainView : UserControl
 				)
 			)
 			{
-				foreach (StageEntry stage in LayoutEditorSystem.shadowStageEntries)
+				foreach (ShadowSET.SETIDBIN.StageEntry stage in LayoutEditorSystem.shadowStageEntries)
 				{
 					entry.values0 |= stage.flag0;
 					entry.values1 |= stage.flag1;
@@ -1305,7 +1311,7 @@ public partial class MainView : UserControl
 			}
 		}
 
-		SetIdTableFunctions.SaveTable(Path.Combine(settings.GamePath, "files", "setid.bin"), true, setIdTable);
+        ShadowSET.SETIDBIN.SetIdTableFunctions.SaveTable(Path.Combine(settings.GamePath, "files", "setid.bin"), true, setIdTable);
 
 		// patch bi2.bin since we require 64MB Dolphin
 		var buf = BitConverter.GetBytes(0);
@@ -1314,12 +1320,12 @@ public partial class MainView : UserControl
 		File.WriteAllBytes(Path.Combine(settings.GamePath, "sys", "bi2.bin"), bi2);
 		// end patch
 
-		if (setLayout_adjustMissionCounts.Checked)
+		if (Layout_Enemy_CheckBox_AdjustMissionCounts.IsChecked.Value)
 		{
 			Nukkoro2.WriteFile(Path.Combine(settings.GamePath, "files", "nukkoro2.inf"), nukkoro2);
 		}
 
-		MessageBox.Show("WARNING: You must set Dolphin -> Config -> Advanced -> MEM1 value to 64MB!");
+		// MessageBox.Show("WARNING: You must set Dolphin -> Config -> Advanced -> MEM1 value to 64MB!");
 	}
 
 	private int GetTotalGUNEnemies(List<SetObjectShadow> cmn, List<SetObjectShadow> nrm = null)
@@ -1478,7 +1484,7 @@ public partial class MainView : UserControl
 			{
 				int randomEnemy;
 				Type randomEnemyType = typeof(Nullable);
-				if (setLayout_keepType.Checked)
+				if (Layout_Enemy_CheckBox_KeepType.IsChecked.Value)
 				{
 					if (IsFlyingEnemy(setData[i]))
 					{
@@ -1488,8 +1494,7 @@ public partial class MainView : UserControl
 							setData[i].PosY = setData[i].PosY + 50;
 						}
 						randomEnemy = r.Next(6);
-						flyingEnemyTypeMap.TryGetValue(randomEnemy, out Type enemyType);
-						randomEnemyType = enemyType;
+						randomEnemyType = flyingEnemyTypeMap[randomEnemy];
 						if (randomEnemy == 4) // special case for BkNinja and Bigfoot, since we need to force a specific 
 						{
 							var donor = new Object0066_GUNBigfoot
@@ -1554,8 +1559,7 @@ public partial class MainView : UserControl
 						{
 							randomEnemy = r.Next(1, 11); // skip GUN Soldiers otherwise
 						}
-						groundEnemyTypeMap.TryGetValue(randomEnemy, out Type enemyType);
-						randomEnemyType = enemyType;
+						randomEnemyType = groundEnemyTypeMap[randomEnemy];
 					}
 				}
 				else
@@ -1568,8 +1572,7 @@ public partial class MainView : UserControl
 					{
 						randomEnemy = r.Next(1, 15); // skip GUN Soldiers otherwise
 					}
-					enemyTypeMap.TryGetValue(randomEnemy, out Type enemyType);
-					randomEnemyType = enemyType;
+					randomEnemyType = enemyTypeMap[randomEnemy];
 				}
 				EnemySETMutations.MutateObjectAtIndex(i, randomEnemyType, ref setData, true, r);
 			}
@@ -1727,30 +1730,30 @@ public partial class MainView : UserControl
 		return LevelNames[id];
 	}
 
-	private void spoilerLevelList_SelectedIndexChanged(object sender, EventArgs e)
+	private void Spoilers_ListBox_LevelList_SelectedIndexChanged(object sender, EventArgs e)
 	{
-		if (spoilerLevelList.SelectedIndex != -1)
+		if (Spoilers_ListBox_LevelList.SelectedIndex != -1)
 		{
 			System.Text.StringBuilder sb = new System.Text.StringBuilder();
-			Stage stg = stages[stageids[spoilerLevelList.SelectedIndex]];
-			switch (settings.Mode)
+			Stage stg = stages[stageids[Spoilers_ListBox_LevelList.SelectedIndex]];
+			switch (settings.LevelOrderMode)
 			{
-				case Modes.AllStagesWarps:
+				case LevelOrderMode.AllStagesWarps:
 					if (stg.Neutral != -1)
-						sb.AppendLine($"Neutral -> {GetStageName(stg.Neutral)} ({Array.IndexOf(stageids, stg.Neutral) - spoilerLevelList.SelectedIndex:+##;-##;0})");
+						sb.AppendLine($"Neutral -> {GetStageName(stg.Neutral)} ({Array.IndexOf(stageids, stg.Neutral) - Spoilers_ListBox_LevelList.SelectedIndex:+##;-##;0})");
 					if (stg.Hero != -1)
-						sb.AppendLine($"Hero -> {GetStageName(stg.Hero)} ({Array.IndexOf(stageids, stg.Hero) - spoilerLevelList.SelectedIndex:+##;-##;0})");
+						sb.AppendLine($"Hero -> {GetStageName(stg.Hero)} ({Array.IndexOf(stageids, stg.Hero) - Spoilers_ListBox_LevelList.SelectedIndex:+##;-##;0})");
 					if (stg.Dark != -1)
-						sb.AppendLine($"Dark -> {GetStageName(stg.Dark)} ({Array.IndexOf(stageids, stg.Dark) - spoilerLevelList.SelectedIndex:+##;-##;0})");
+						sb.AppendLine($"Dark -> {GetStageName(stg.Dark)} ({Array.IndexOf(stageids, stg.Dark) - Spoilers_ListBox_LevelList.SelectedIndex:+##;-##;0})");
 					sb.Append("Shortest Path: ");
 					int[] shortestPath;
-					if (maxForwJump.Value < 2)
+					if (LevelOrder_NumericUpDown_MaxForwardsJump.Value < 2)
 					{
-						shortestPath = new int[stagecount - 1 - spoilerLevelList.SelectedIndex];
-						Array.Copy(stageids, spoilerLevelList.SelectedIndex, shortestPath, 0, shortestPath.Length);
+						shortestPath = new int[stagecount - 1 - Spoilers_ListBox_LevelList.SelectedIndex];
+						Array.Copy(stageids, Spoilers_ListBox_LevelList.SelectedIndex, shortestPath, 0, shortestPath.Length);
 					}
 					else
-						shortestPath = FindShortestPath(stageids[spoilerLevelList.SelectedIndex]);
+						shortestPath = FindShortestPath(stageids[Spoilers_ListBox_LevelList.SelectedIndex]);
 					for (int i = 0; i < shortestPath.Length - 1; i++)
 					{
 						string exit;
@@ -1764,7 +1767,7 @@ public partial class MainView : UserControl
 					}
 					sb.AppendFormat("Ending ({0} levels)", shortestPath.Length);
 					break;
-				case Modes.ReverseBranching:
+				case LevelOrderMode.ReverseBranching:
 					if (stg.Neutral != -1)
 						sb.AppendLine($"Neutral -> {GetStageName(stg.Neutral)}");
 					if (stg.Hero != -1)
@@ -1772,7 +1775,7 @@ public partial class MainView : UserControl
 					if (stg.Dark != -1)
 						sb.AppendLine($"Dark -> {GetStageName(stg.Dark)}");
 					sb.Append("Shortest Path: ");
-					shortestPath = FindShortestPath(stageids[spoilerLevelList.SelectedIndex]);
+					shortestPath = FindShortestPath(stageids[Spoilers_ListBox_LevelList.SelectedIndex]);
 					for (int i = 0; i < shortestPath.Length - 1; i++)
 					{
 						string exit;
@@ -1795,7 +1798,7 @@ public partial class MainView : UserControl
 						sb.AppendLine($"Dark -> {GetStageName(stg.Dark)}");
 					break;
 			}
-			spoilerLevelInfo.Text = sb.ToString();
+			Spoilers_TextBox_LevelInfo.Text = sb.ToString();
 		}
 	}
 
@@ -1866,24 +1869,24 @@ public partial class MainView : UserControl
 
 	private void saveLogButton_Click(object sender, EventArgs e)
 	{
-		saveFileDialog1.InitialDirectory = Directory.GetCurrentDirectory();
+/*		saveFileDialog1.InitialDirectory = Directory.GetCurrentDirectory();
 		if (saveFileDialog1.ShowDialog(this) == DialogResult.OK)
 			using (StreamWriter sw = File.CreateText(saveFileDialog1.FileName))
 			{
 				sw.WriteLine($"ShadowRando Version: {programVersion}");
 				sw.WriteLine($"Seed: {seedTextBox.Text}");
 				sw.WriteLine($"Mode: {settings.Mode}");
-				if (settings.Mode == Modes.AllStagesWarps)
+				if (settings.Mode == LevelOrderMode.AllStagesWarps)
 				{
 					sw.WriteLine($"Main Path: {mainPathSelector.SelectedItem}");
-					sw.WriteLine($"Max Backwards Jump: {maxBackJump.Value}");
-					sw.WriteLine($"Max Forwards Jump: {maxForwJump.Value}");
-					sw.WriteLine($"Backwards Jump Probability: {backJumpProb.Value}");
-					sw.WriteLine($"Allow Same Level: {allowSameLevel.Checked}");
+					sw.WriteLine($"Max Backwards Jump: {LevelOrder_NumericUpDown_MaxBackwardsJump.Value}");
+					sw.WriteLine($"Max Forwards Jump: {LevelOrder_NumericUpDown_MaxForwardsJump.Value}");
+					sw.WriteLine($"Backwards Jump Probability: {LevelOrder_NumericUpDown_BackwardsJumpProbability.Value}");
+					sw.WriteLine($"Allow Same Level: {allowSameLevel.IsChecked.Value}");
 				}
-				sw.WriteLine($"Include Last Story: {includeLast.Checked}");
-				sw.WriteLine($"Random Music: {randomMusic.Checked}");
-				sw.WriteLine($"Random Subtitles / Voicelines: {randomFNT.Checked}");
+				sw.WriteLine($"Include Last Story: {includeLast.IsChecked.Value}");
+				sw.WriteLine($"Random Music: {randomMusic.IsChecked.Value}");
+				sw.WriteLine($"Random Subtitles / Voicelines: {randomFNT.IsChecked.Value}");
 				sw.WriteLine();
 				for (int i = 0; i < stagecount; i++)
 				{
@@ -1897,29 +1900,29 @@ public partial class MainView : UserControl
 						sw.WriteLine($"Dark -> {GetStageName(stg.Dark)} ({Array.IndexOf(stageids, stg.Dark) - i:+##;-##;0})");
 					sw.WriteLine();
 				}
-			}
+			}*/
 	}
 
 	const int linespace = 8;
-	private void makeChartButton_Click(object sender, EventArgs e)
+/*	private void makeChartButton_Click(object sender, EventArgs e)
 	{
 		if (saveFileDialog2.ShowDialog(this) != DialogResult.OK)
 			return;
 		ChartNode[] levels = new ChartNode[totalstagecount + 2];
 		int gridmaxh = 0;
 		int gridmaxv = 0;
-		switch (settings.Mode)
+		switch (settings.LevelOrderMode)
 		{
-			case Modes.AllStagesWarps: // stages + warps
-			case Modes.BossRush: // boss rush
-			case Modes.Wild: // wild
+			case LevelOrderMode.AllStagesWarps: // stages + warps
+			case LevelOrderMode.BossRush: // boss rush
+			case LevelOrderMode.Wild: // wild
 				gridmaxh = 1;
 				gridmaxv = stagecount + 2;
 				for (int i = 0; i <= stagecount; i++)
 					levels[stageids[i]] = new ChartNode(0, i + 1);
 				levels[totalstagecount + 1] = new ChartNode(0, 0);
 				break;
-			case Modes.BranchingPaths: // branching paths
+			case LevelOrderMode.BranchingPaths: // branching paths
 				{
 					int row = 0;
 					int col = 0;
@@ -1940,7 +1943,7 @@ public partial class MainView : UserControl
 					levels[totalstagecount + 1] = new ChartNode(0, 0);
 				}
 				break;
-			case Modes.ReverseBranching: // reverse branching
+			case LevelOrderMode.ReverseBranching: // reverse branching
 				{
 					List<List<int>> depthstages = new List<List<int>>() { new List<int>() { totalstagecount } };
 					List<Stage> stages2 = new List<Stage>(stageids.Take(stagecount).Select(a => stages[a]));
@@ -1967,7 +1970,7 @@ public partial class MainView : UserControl
 				}
 				break;
 			default: // normal game structure
-				if (includeBosses.Checked)
+				if (LevelOrder_CheckBox_IncludeBosses.IsChecked.Value)
 				{
 					gridmaxh = 1;
 					gridmaxv = 11;
@@ -2484,29 +2487,29 @@ public partial class MainView : UserControl
 			bmp.Save(saveFileDialog2.FileName);
 		}
 	}
-
-	private void randomFNT_CheckedChanged(object sender, EventArgs e)
+*/
+/*	private void randomFNT_CheckedChanged(object sender, EventArgs e)
 	{
-		subtitleAndVoicelineConfigurationGroupBox.Enabled = randomFNT.Checked;
-		FNTCheckBox_NoDuplicatesPreRandomization.Enabled = randomFNT.Checked;
-		FNTCheckBox_NoSystemMessages.Enabled = randomFNT.Checked;
-		FNTCheckBox_OnlyLinkedAudio.Enabled = randomFNT.Checked;
-		FNTCheckBox_SpecificCharacters.Enabled = randomFNT.Checked;
-		FNTCheckBox_GiveAudioToNoLinkedAudio.Enabled = randomFNT.Checked;
-		SetEnabledStateSpecifiedCharGroup(randomFNT.Checked && FNTCheckBox_SpecificCharacters.Checked);
+		subtitleAndVoicelineConfigurationGroupBox.Enabled = randomFNT.IsChecked.Value;
+		FNTCheckBox_NoDuplicatesPreRandomization.Enabled = randomFNT.IsChecked.Value;
+		FNTCheckBox_NoSystemMessages.Enabled = randomFNT.IsChecked.Value;
+		FNTCheckBox_OnlyLinkedAudio.Enabled = randomFNT.IsChecked.Value;
+		FNTCheckBox_SpecificCharacters.Enabled = randomFNT.IsChecked.Value;
+		FNTCheckBox_GiveAudioToNoLinkedAudio.Enabled = randomFNT.IsChecked.Value;
+		SetEnabledStateSpecifiedCharGroup(randomFNT.IsChecked.Value && FNTCheckBox_SpecificCharacters.IsChecked.Value);
 	}
 
 	private void FNTCheckBox_OnlyLinkedAudio_CheckedChanged(object sender, EventArgs e)
 	{
-		if (FNTCheckBox_OnlyLinkedAudio.Checked)
-			FNTCheckBox_GiveAudioToNoLinkedAudio.Checked = false;
+		if (FNTCheckBox_OnlyLinkedAudio.IsChecked.Value)
+			FNTCheckBox_GiveAudioToNoLinkedAudio.IsChecked.Value = false;
 	}
 
 	private void FNTCheckBox_GiveAudioToNoLinkedAudio_CheckedChanged(object sender, EventArgs e)
 	{
-		if (FNTCheckBox_GiveAudioToNoLinkedAudio.Checked)
-			FNTCheckBox_OnlyLinkedAudio.Checked = false;
-	}
+		if (FNTCheckBox_GiveAudioToNoLinkedAudio.IsChecked.Value)
+			FNTCheckBox_OnlyLinkedAudio.IsChecked.Value = false;
+	}*/
 
 	static int CalculateSeed(string seedString)
 	{
@@ -2515,32 +2518,32 @@ public partial class MainView : UserControl
 			return BitConverter.ToInt32(sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(seedString)), 0);
 		}
 	}
-
+/*
 	private void FNTCheckBox_SpecificCharacters_CheckedChanged(object sender, EventArgs e)
 	{
-		SetEnabledStateSpecifiedCharGroup(randomFNT.Checked && FNTCheckBox_SpecificCharacters.Checked);
+		SetEnabledStateSpecifiedCharGroup(randomFNT.IsChecked.Value && FNTCheckBox_SpecificCharacters.IsChecked.Value);
 	}
 
 	private void SetEnabledStateSpecifiedCharGroup(bool enable)
 	{
 		subtitleAndVoicelineSpecifiedCharactersGroupBox.Enabled = enable;
-		FNTCheckBox_Chars_Shadow.Enabled = enable;
-		FNTCheckBox_Chars_Sonic.Enabled = enable;
-		FNTCheckBox_Chars_Tails.Enabled = enable;
-		FNTCheckBox_Chars_Knuckles.Enabled = enable;
-		FNTCheckBox_Chars_Amy.Enabled = enable;
-		FNTCheckBox_Chars_Rouge.Enabled = enable;
-		FNTCheckBox_Chars_Omega.Enabled = enable;
-		FNTCheckBox_Chars_Vector.Enabled = enable;
-		FNTCheckBox_Chars_Espio.Enabled = enable;
-		FNTCheckBox_Chars_Maria.Enabled = enable;
-		FNTCheckBox_Chars_Charmy.Enabled = enable;
-		FNTCheckBox_Chars_Eggman.Enabled = enable;
-		FNTCheckBox_Chars_BlackDoom.Enabled = enable;
-		FNTCheckBox_Chars_Cream.Enabled = enable;
-		FNTCheckBox_Chars_Cheese.Enabled = enable;
-		FNTCheckBox_Chars_GUNCommander.Enabled = enable;
-		FNTCheckBox_Chars_GUNSoldier.Enabled = enable;
+		Subtitles_CheckBox_SelectedCharacter_Shadow.Enabled = enable;
+		Subtitles_CheckBox_SelectedCharacter_Sonic.Enabled = enable;
+		Subtitles_CheckBox_SelectedCharacter_Tails.Enabled = enable;
+		Subtitles_CheckBox_SelectedCharacter_Knuckles.Enabled = enable;
+		Subtitles_CheckBox_SelectedCharacter_Amy.Enabled = enable;
+		Subtitles_CheckBox_SelectedCharacter_Rouge.Enabled = enable;
+		Subtitles_CheckBox_SelectedCharacter_Omega.Enabled = enable;
+		Subtitles_CheckBox_SelectedCharacter_Vector.Enabled = enable;
+		Subtitles_CheckBox_SelectedCharacter_Espio.Enabled = enable;
+		Subtitles_CheckBox_SelectedCharacter_Maria.Enabled = enable;
+		Subtitles_CheckBox_SelectedCharacter_Charmy.Enabled = enable;
+		Subtitles_CheckBox_SelectedCharacter_Eggman.Enabled = enable;
+		Subtitles_CheckBox_SelectedCharacter_BlackDoom.Enabled = enable;
+		Subtitles_CheckBox_SelectedCharacter_Cream.Enabled = enable;
+		Subtitles_CheckBox_SelectedCharacter_Cheese.Enabled = enable;
+		Subtitles_CheckBox_SelectedCharacter_GUNCommander.Enabled = enable;
+		Subtitles_CheckBox_SelectedCharacter_GUNSoldier.Enabled = enable;
 	}
 
 	private void SharedMouseEnter(object sender, EventArgs e)
@@ -2565,7 +2568,7 @@ public partial class MainView : UserControl
 
 	private void PlayAudio(string soundPath)
 	{
-		if (!checkBoxProgramSound.Checked)
+		if (!checkBoxProgramSound.IsChecked.Value)
 			return;
 
 		var outputDevice = new WaveOutEvent();
@@ -2586,20 +2589,20 @@ public partial class MainView : UserControl
 
 	private void randomSET_CheckedChanged(object sender, EventArgs e)
 	{
-		setLayout_groupBoxEnemyConfiguration.Enabled = randomSET.Checked;
-		setLayout_keepType.Enabled = randomSET.Checked;
-		setLayout_randomWeaponsInBoxes.Enabled = randomSET.Checked;
-		setLayout_randomPartners.Enabled = randomSET.Checked;
-		setLayout_adjustMissionCounts.Enabled = randomSET.Checked;
-		setLayout_makeCCSplinesAWRidable.Enabled = randomSET.Checked;
+		setLayout_groupBoxEnemyConfiguration.Enabled = randomSET.IsChecked.Value;
+		setLayout_keepType.Enabled = randomSET.IsChecked.Value;
+		setLayout_randomWeaponsInBoxes.Enabled = randomSET.IsChecked.Value;
+		setLayout_randomPartners.Enabled = randomSET.IsChecked.Value;
+		setLayout_adjustMissionCounts.Enabled = randomSET.IsChecked.Value;
+		setLayout_makeCCSplinesAWRidable.Enabled = randomSET.IsChecked.Value;
 	}
 
 	private void setLayout_randomPartners_CheckedChanged(object sender, EventArgs e)
 	{
-		if (setLayout_randomPartners.Checked && programInitialized)
+		if (setLayout_randomPartners.IsChecked.Value && programInitialized)
 		{
 			MessageBox.Show("Warning: If you are using a ROM based on Reloaded 1.0/1.1 or 2P-Reloaded 1.0b or earlier, the Random Partners feature will cause the game to hang for some mission completions.", "Warning");
 			MessageBox.Show("You can fix this by copying the: \n\n\\files\\events folder\n\n from the ORIGINAL (non Reloaded) game to your extracted folder.", "Mitigation");
 		}
-	}
+	}*/
 }
