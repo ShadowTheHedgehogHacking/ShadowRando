@@ -17,7 +17,6 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia;
 using NAudio.Wave;
 using Avalonia.Platform;
-using System.Threading.Tasks;
 
 namespace ShadowRando.Views;
 
@@ -1017,7 +1016,7 @@ public partial class MainView : UserControl
 		Spoilers_Button_SaveLog.IsEnabled = true;
 		Spoilers_Button_MakeChart.IsEnabled = true;
 		ProgressBar_RandomizationProgress.Value = 100;
-		var msgbox = MessageBoxManager.GetMessageBoxStandard("Shadow Randomizer", "Randomization Complete", ButtonEnum.Ok, Icon.Info);
+		var msgbox = MessageBoxManager.GetMessageBoxStandard("ShadowRando", "Randomization Complete", ButtonEnum.Ok, Icon.Info);
 		var result = await msgbox.ShowAsync();
 		if (result == ButtonResult.Ok)
 		{
@@ -1254,6 +1253,7 @@ public partial class MainView : UserControl
 					MakeAllBoxesHaveRandomWeapons(ref nrmLayoutData, r);
 			}
 
+
 			if ((LayoutPartnerMode)Layout_Partner_ComboBox_Mode.SelectedIndex == LayoutPartnerMode.Wild)
 			{
 				MakeAllPartnersRandom(ref cmnLayoutData, r);
@@ -1261,14 +1261,105 @@ public partial class MainView : UserControl
 					MakeAllPartnersRandom(ref nrmLayoutData, r);
 			}
 
+			List<Type> allEnemies = new List<Type>();
+			List<Type> groundEnemies = new List<Type>();
+			List<Type> flyingEnemies = new List<Type>();
+
+			if (Layout_Enemy_CheckBox_OnlySelectedEnemyTypes.IsChecked.Value && enemyMode != LayoutEnemyMode.Original)
+			{
+				if (Layout_Enemy_CheckBox_SelectedEnemy_GUNSoldier.IsChecked.Value)
+				{
+					groundEnemies.Add(typeof(Object0064_GUNSoldier));
+					allEnemies.Add(typeof(Object0064_GUNSoldier));
+				}
+				if (Layout_Enemy_CheckBox_SelectedEnemy_GUNBeetle.IsChecked.Value)
+				{
+					flyingEnemies.Add(typeof(Object0065_GUNBeetle));
+					allEnemies.Add(typeof(Object0065_GUNBeetle));
+				}
+				if (Layout_Enemy_CheckBox_SelectedEnemy_GUNBigfoot.IsChecked.Value)
+				{
+					groundEnemies.Add(typeof(Object0066_GUNBigfoot));
+					flyingEnemies.Add(typeof(Object0066_GUNBigfoot));
+					allEnemies.Add(typeof(Object0066_GUNBigfoot));
+				}
+				if (Layout_Enemy_CheckBox_SelectedEnemy_GUNRobot.IsChecked.Value)
+				{
+					groundEnemies.Add(typeof(Object0068_GUNRobot));
+					allEnemies.Add(typeof(Object0068_GUNRobot));
+				}
+				if (Layout_Enemy_CheckBox_SelectedEnemy_EggPierrot.IsChecked.Value)
+				{
+					groundEnemies.Add(typeof(Object0078_EggPierrot));
+					allEnemies.Add(typeof(Object0078_EggPierrot));
+				}
+				if (Layout_Enemy_CheckBox_SelectedEnemy_EggPawn.IsChecked.Value)
+				{
+					groundEnemies.Add(typeof(Object0079_EggPawn));
+					allEnemies.Add(typeof(Object0079_EggPawn));
+				}
+				if (Layout_Enemy_CheckBox_SelectedEnemy_ShadowAndroid.IsChecked.Value)
+				{
+					groundEnemies.Add(typeof(Object007A_EggShadowAndroid));
+					allEnemies.Add(typeof(Object007A_EggShadowAndroid));
+				}
+				if (Layout_Enemy_CheckBox_SelectedEnemy_BAGiant.IsChecked.Value)
+				{
+					groundEnemies.Add(typeof(Object008C_BkGiant));
+					allEnemies.Add(typeof(Object008C_BkGiant));
+				}
+				if (Layout_Enemy_CheckBox_SelectedEnemy_BASoldier.IsChecked.Value)
+				{
+					groundEnemies.Add(typeof(Object008D_BkSoldier));
+					allEnemies.Add(typeof(Object008D_BkSoldier));
+				}
+				if (Layout_Enemy_CheckBox_SelectedEnemy_BAHawkVolt.IsChecked.Value)
+				{
+					flyingEnemies.Add(typeof(Object008E_BkWingLarge));
+					allEnemies.Add(typeof(Object008E_BkWingLarge));
+				}
+				if (Layout_Enemy_CheckBox_SelectedEnemy_BAWing.IsChecked.Value)
+				{
+					flyingEnemies.Add(typeof(Object008F_BkWingSmall));
+					allEnemies.Add(typeof(Object008F_BkWingSmall));
+				}
+				if (Layout_Enemy_CheckBox_SelectedEnemy_BAWorm.IsChecked.Value)
+				{
+					groundEnemies.Add(typeof(Object0090_BkWorm));
+					allEnemies.Add(typeof(Object0090_BkWorm));
+				}
+				if (Layout_Enemy_CheckBox_SelectedEnemy_BALarva.IsChecked.Value)
+				{
+					groundEnemies.Add(typeof(Object0091_BkLarva));
+					allEnemies.Add(typeof(Object0091_BkLarva));
+				}
+				if (Layout_Enemy_CheckBox_SelectedEnemy_ArtificialChaos.IsChecked.Value)
+				{
+					flyingEnemies.Add(typeof(Object0092_BkChaos));
+					allEnemies.Add(typeof(Object0092_BkChaos));
+				}
+				if (Layout_Enemy_CheckBox_SelectedEnemy_BAAssassin.IsChecked.Value)
+				{
+					groundEnemies.Add(typeof(Object0093_BkNinja));
+					flyingEnemies.Add(typeof(Object0093_BkNinja));
+					allEnemies.Add(typeof(Object0093_BkNinja));
+				}
+			}
+			else
+			{
+				groundEnemies.AddRange(groundEnemyTypeMap);
+				flyingEnemies.AddRange(flyingEnemyTypeMap);
+				allEnemies.AddRange(enemyTypeMap);
+			}
+
 			switch (enemyMode)
 			{
 				case LayoutEnemyMode.Original:
 					break;
 				case LayoutEnemyMode.Wild:
-					WildRandomizeAllEnemiesWithTranslations(ref cmnLayoutData, r);
+					WildRandomizeAllEnemiesWithTranslations(ref cmnLayoutData, allEnemies, groundEnemies, flyingEnemies, r);
 					if (nrmLayoutData != null)
-						WildRandomizeAllEnemiesWithTranslations(ref nrmLayoutData, r);
+						WildRandomizeAllEnemiesWithTranslations(ref nrmLayoutData, allEnemies, groundEnemies, flyingEnemies, r);
 					break;
 				default:
 					break;
@@ -1516,7 +1607,7 @@ public partial class MainView : UserControl
 		}
 	}
 
-	private void WildRandomizeAllEnemiesWithTranslations(ref List<SetObjectShadow> setData, Random r)
+	private void WildRandomizeAllEnemiesWithTranslations(ref List<SetObjectShadow> setData, List<Type> allEnemies, List<Type> groundEnemies, List<Type> flyingEnemies, Random r)
 	{
 		// Wild Randomize of all Enemies
 		for (int i = 0; i < setData.Count(); i++)
@@ -1534,8 +1625,8 @@ public partial class MainView : UserControl
 							// if BkWorm, mutate original posY +50
 							setData[i].PosY = setData[i].PosY + 50;
 						}
-						randomEnemy = r.Next(6);
-						randomEnemyType = flyingEnemyTypeMap[randomEnemy];
+						randomEnemy = r.Next(flyingEnemies.Count);
+						randomEnemyType = flyingEnemies[randomEnemy];
 						if (randomEnemy == 4) // special case for BkNinja and Bigfoot, since we need to force a specific 
 						{
 							var donor = new Object0066_GUNBigfoot
@@ -1594,26 +1685,32 @@ public partial class MainView : UserControl
 					{ // ground enemies
 						if (setData[i].Type == 0x64 && (setData[i].Link == 0 || setData[i].Link == 50))
 						{
-							randomEnemy = r.Next(11); // All enemies if LinkID = 0 or 50
+							randomEnemy = r.Next(groundEnemies.Count); // All enemies if LinkID = 0 or 50
 						}
 						else
 						{
-							randomEnemy = r.Next(1, 11); // skip GUN Soldiers otherwise
+							if (groundEnemies[0] == typeof(Object0064_GUNSoldier))
+								randomEnemy = r.Next(1, groundEnemies.Count); // skip GUN Soldiers otherwise
+							else
+								randomEnemy = r.Next(groundEnemies.Count);
 						}
-						randomEnemyType = groundEnemyTypeMap[randomEnemy];
+						randomEnemyType = groundEnemies[randomEnemy];
 					}
 				}
 				else
 				{
 					if (setData[i].Type == 0x64 && (setData[i].Link == 0 || setData[i].Link == 50))
 					{
-						randomEnemy = r.Next(15); // All enemies if LinkID = 0 or 50
+						randomEnemy = r.Next(allEnemies.Count); // All enemies if LinkID = 0 or 50
 					}
 					else
 					{
-						randomEnemy = r.Next(1, 15); // skip GUN Soldiers otherwise
+						if (groundEnemies[0] == typeof(Object0064_GUNSoldier))
+							randomEnemy = r.Next(1, allEnemies.Count); // skip GUN Soldiers otherwise
+						else
+							randomEnemy = r.Next(allEnemies.Count);
 					}
-					randomEnemyType = enemyTypeMap[randomEnemy];
+					randomEnemyType = allEnemies[randomEnemy];
 				}
 				EnemySETMutations.MutateObjectAtIndex(i, randomEnemyType, ref setData, true, r);
 			}
