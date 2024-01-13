@@ -10,13 +10,14 @@ using System.Linq;
 using HeroesONE_R.Structures.Common;
 using HeroesONE_R.Structures;
 using System.Diagnostics;
-using Avalonia.Media.Imaging;
-using Avalonia.Media;
-using System.Drawing;
 using Avalonia.Platform.Storage;
 using MsBox.Avalonia.Enums;
 using MsBox.Avalonia;
-using Reloaded.Memory.Utilities;
+using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia;
+using NAudio.Wave;
+using Avalonia.Platform;
+using System.Threading.Tasks;
 
 namespace ShadowRando.Views;
 
@@ -228,18 +229,20 @@ public partial class MainView : UserControl
 	];
 
 	const string programVersion = "0.5.0-dev";
-	private static string hoverSoundPath = AppDomain.CurrentDomain.BaseDirectory + "res/hover.wav";
-	private static string selectSoundPath = AppDomain.CurrentDomain.BaseDirectory + "res/select.wav";
+	private static string hoverSoundPath = AppDomain.CurrentDomain.BaseDirectory + "Assets/hover.wav";
+	private static string selectSoundPath = AppDomain.CurrentDomain.BaseDirectory + "Assets/select.wav";
 	Settings settings;
 	private bool programInitialized = false;
 
 	public MainView()
-    {
-        InitializeComponent();
-    }
+	{
+		InitializeComponent();
+	}
 
-    private async void UserControl_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
+	private void UserControl_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+	{
+		var topLevel = TopLevel.GetTopLevel(this);
+		topLevel.IsVisible = false;
 		settings = Settings.Load();
 
 		// Program Configuration
@@ -302,77 +305,7 @@ public partial class MainView : UserControl
 		Music_CheckBox_SkipChaosPowerUseJingles.IsChecked = settings.MusicSkipChaosPowers;
 		Music_CheckBox_SkipRankTheme.IsChecked = settings.MusicSkipRankTheme;
 
-		programInitialized = true;
-
-
-		var topLevel = TopLevel.GetTopLevel(this);
-		var folderPath = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
-		{
-			Title = "Select the root folder of an extracted Shadow the Hedgehog disc image.",
-		});
-
-		if (folderPath is not null)
-		{
-			if (settings.GamePath != folderPath.First().Path.AbsolutePath && Directory.Exists("backup"))
-			{
-				var msgbox = MessageBoxManager.GetMessageBoxStandard("Shadow Randomizer", "New game directory selected!\n\nDo you wish to erase the previous backup data and use the new data as a base?", ButtonEnum.YesNo, Icon.Question);
-				var result = await msgbox.ShowAsync();
-				switch(result)
-				{
-					case ButtonResult.Yes:
-						Directory.Delete("backup", true);
-						break;
-					case ButtonResult.No:
-						break;
-					default:
-						break;
-				}
-			}
-			settings.GamePath = folderPath.First().Path.AbsolutePath;
-			if (!Directory.Exists("backup"))
-				Directory.CreateDirectory("backup");
-			if (!File.Exists(Path.Combine("backup", "main.dol")))
-				File.Copy(Path.Combine(settings.GamePath, "sys", "main.dol"), Path.Combine("backup", "main.dol"));
-			if (!File.Exists(Path.Combine("backup", "bi2.bin")))
-				File.Copy(Path.Combine(settings.GamePath, "sys", "bi2.bin"), Path.Combine("backup", "bi2.bin"));
-			if (!File.Exists(Path.Combine("backup", "setid.bin")))
-				File.Copy(Path.Combine(settings.GamePath, "files", "setid.bin"), Path.Combine("backup", "setid.bin"));
-			if (!File.Exists(Path.Combine("backup", "nukkoro2.inf")))
-				File.Copy(Path.Combine(settings.GamePath, "files", "nukkoro2.inf"), Path.Combine("backup", "nukkoro2.inf"));
-			if (!Directory.Exists(Path.Combine("backup", "fonts")))
-				CopyDirectory(Path.Combine(settings.GamePath, "files", "fonts"), Path.Combine("backup", "fonts"));
-			if (!Directory.Exists(Path.Combine("backup", "music")))
-			{
-				Directory.CreateDirectory(Path.Combine("backup", "music"));
-				foreach (var fil in Directory.EnumerateFiles(Path.Combine(settings.GamePath, "files"), "*.adx"))
-					File.Copy(fil, Path.Combine("backup", "music", Path.GetFileName(fil)));
-			}
-			if (!Directory.Exists(Path.Combine("backup", "sets")))
-			{
-				Directory.CreateDirectory(Path.Combine("backup", "sets"));
-				for (int stageIdToModify = 5; stageIdToModify < 45; stageIdToModify++)
-				{
-					stageAssociationIDMap.TryGetValue(stageIdToModify, out var stageId);
-					var stageDataIdentifier = "stg0" + stageId.ToString();
-					var datOne = stageDataIdentifier + "_dat.one";
-					var cmnLayout = stageDataIdentifier + "_cmn.dat";
-					var nrmLayout = stageDataIdentifier + "_nrm.dat";
-					var hrdLayout = stageDataIdentifier + "_hrd.dat";
-					var datOnePath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, datOne);
-					var cmnLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, cmnLayout);
-					var nrmLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, nrmLayout);
-					var hrdLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, hrdLayout);
-
-					if (!Directory.Exists(Path.Combine("backup", "sets", stageDataIdentifier)))
-						Directory.CreateDirectory(Path.Combine("backup", "sets", stageDataIdentifier));
-					File.Copy(datOnePath, Path.Combine("backup", "sets", stageDataIdentifier, datOne));
-					File.Copy(cmnLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, cmnLayout));
-					try { File.Copy(nrmLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, nrmLayout)); } catch (FileNotFoundException) { } // some stages don't have nrm
-					try { File.Copy(hrdLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, hrdLayout)); } catch (FileNotFoundException) { } // some stages don't have hrd
-				}
-			}
-		}
-
+		LoadGameData();
 	}
 
 	private void UserControl_Unloaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -438,6 +371,86 @@ public partial class MainView : UserControl
 		settings.Save();
 	}
 
+	private async void LoadGameData()
+	{
+		var topLevel = TopLevel.GetTopLevel(this);
+		var folderPath = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+		{
+			Title = "Select the root folder of an extracted Shadow the Hedgehog disc image.",
+		});
+
+		if (folderPath is not null && folderPath.Count > 0)
+		{
+			if (settings.GamePath != folderPath.First().Path.AbsolutePath && Directory.Exists("backup"))
+			{
+				var msgbox = MessageBoxManager.GetMessageBoxStandard("Shadow Randomizer", "New game directory selected!\n\nDo you wish to erase the previous backup data and use the new data as a base?", ButtonEnum.YesNo, Icon.Question);
+				var result = await msgbox.ShowAsync();
+				switch (result)
+				{
+					case ButtonResult.Yes:
+						Directory.Delete("backup", true);
+						break;
+					case ButtonResult.No:
+						break;
+					default:
+						break;
+				}
+			}
+			settings.GamePath = folderPath.First().Path.AbsolutePath;
+			if (!Directory.Exists("backup"))
+				Directory.CreateDirectory("backup");
+			if (!File.Exists(Path.Combine("backup", "main.dol")))
+				File.Copy(Path.Combine(settings.GamePath, "sys", "main.dol"), Path.Combine("backup", "main.dol"));
+			if (!File.Exists(Path.Combine("backup", "bi2.bin")))
+				File.Copy(Path.Combine(settings.GamePath, "sys", "bi2.bin"), Path.Combine("backup", "bi2.bin"));
+			if (!File.Exists(Path.Combine("backup", "setid.bin")))
+				File.Copy(Path.Combine(settings.GamePath, "files", "setid.bin"), Path.Combine("backup", "setid.bin"));
+			if (!File.Exists(Path.Combine("backup", "nukkoro2.inf")))
+				File.Copy(Path.Combine(settings.GamePath, "files", "nukkoro2.inf"), Path.Combine("backup", "nukkoro2.inf"));
+			if (!Directory.Exists(Path.Combine("backup", "fonts")))
+				CopyDirectory(Path.Combine(settings.GamePath, "files", "fonts"), Path.Combine("backup", "fonts"));
+			if (!Directory.Exists(Path.Combine("backup", "music")))
+			{
+				Directory.CreateDirectory(Path.Combine("backup", "music"));
+				foreach (var fil in Directory.EnumerateFiles(Path.Combine(settings.GamePath, "files"), "*.adx"))
+					File.Copy(fil, Path.Combine("backup", "music", Path.GetFileName(fil)));
+			}
+			if (!Directory.Exists(Path.Combine("backup", "sets")))
+			{
+				Directory.CreateDirectory(Path.Combine("backup", "sets"));
+				for (int stageIdToModify = 5; stageIdToModify < 45; stageIdToModify++)
+				{
+					stageAssociationIDMap.TryGetValue(stageIdToModify, out var stageId);
+					var stageDataIdentifier = "stg0" + stageId.ToString();
+					var datOne = stageDataIdentifier + "_dat.one";
+					var cmnLayout = stageDataIdentifier + "_cmn.dat";
+					var nrmLayout = stageDataIdentifier + "_nrm.dat";
+					var hrdLayout = stageDataIdentifier + "_hrd.dat";
+					var datOnePath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, datOne);
+					var cmnLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, cmnLayout);
+					var nrmLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, nrmLayout);
+					var hrdLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, hrdLayout);
+
+					if (!Directory.Exists(Path.Combine("backup", "sets", stageDataIdentifier)))
+						Directory.CreateDirectory(Path.Combine("backup", "sets", stageDataIdentifier));
+					File.Copy(datOnePath, Path.Combine("backup", "sets", stageDataIdentifier, datOne));
+					File.Copy(cmnLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, cmnLayout));
+					try { File.Copy(nrmLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, nrmLayout)); } catch (FileNotFoundException) { } // some stages don't have nrm
+					try { File.Copy(hrdLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, hrdLayout)); } catch (FileNotFoundException) { } // some stages don't have hrd
+				}
+			}
+			topLevel.IsVisible = true;
+			programInitialized = true;
+		}
+		else
+		{
+			if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktopApp)
+			{
+				desktopApp.Shutdown();
+			}
+		}
+	}
+
 	static int CalculateSeed(string seedString)
 	{
 		using (SHA256 sha256 = SHA256.Create())
@@ -447,7 +460,15 @@ public partial class MainView : UserControl
 	}
 
 	private void Button_Randomize_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
+	{
+		PlayAudio(AssetLoader.Open(new Uri("avares://ShadowRando/Assets/shadow_menu_select.wav")));
+		ProgressBar_RandomizationProgress.Value = 0;
+		RandomizationProcess();
+		// Task.Run(() => RandomizationProcess()); // We can't do this (yet) until we properly MVVM-ify since the UI Thread is actively used to evaluate CheckBox state
+	}
+
+	private async void RandomizationProcess()
+	{
 		byte[] dolfile = File.ReadAllBytes(Path.Combine("backup", "main.dol"));
 		int seed;
 		if (LevelOrder_CheckBox_Random_Seed.IsChecked.Value)
@@ -935,6 +956,9 @@ public partial class MainView : UserControl
 			Array.Reverse(buf);
 			buf.CopyTo(dolfile, storyModeStartAddress);
 		}
+
+		ProgressBar_RandomizationProgress.Value = 15;
+
 		// patch the route menu to allow stg06xx+ to display next stages
 		buf = BitConverter.GetBytes(routeMenu6xxStagePreviewPatchValue);
 		Array.Reverse(buf);
@@ -973,11 +997,17 @@ public partial class MainView : UserControl
 			}
 		}
 
+		ProgressBar_RandomizationProgress.Value = 25;
+
 		if (Layout_CheckBox_RandomizeLayouts.IsChecked.Value)
 			RandomizeLayouts(r);
 
+		ProgressBar_RandomizationProgress.Value = 50;
+
 		if (Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value)
 			RandomizeSubtitles(r);
+
+		ProgressBar_RandomizationProgress.Value = 75;
 
 		Spoilers_ListBox_LevelList.Items.Clear();
 		for (int i = 0; i < stagecount; i++)
@@ -988,7 +1018,11 @@ public partial class MainView : UserControl
 		Spoilers_Button_MakeChart.IsEnabled = true;
 		ProgressBar_RandomizationProgress.Value = 100;
 		var msgbox = MessageBoxManager.GetMessageBoxStandard("Shadow Randomizer", "Randomization Complete", ButtonEnum.Ok, Icon.Info);
-		var result = msgbox.ShowAsync();
+		var result = await msgbox.ShowAsync();
+		if (result == ButtonResult.Ok)
+		{
+			ProgressBar_RandomizationProgress.Value = 0;
+		}
 	}
 
 	private void CopyDirectory(DirectoryInfo srcDir, string dstDir)
@@ -1146,8 +1180,8 @@ public partial class MainView : UserControl
 			string outfn = Path.Combine(settings.GamePath, "files", fnt.fileName.Substring(fnt.fileName.IndexOf("fonts")));
 			File.WriteAllBytes(outfn, fnt.ToBytes());
 			string prec = outfn.Remove(outfn.Length - 4);
-			File.Copy(AppDomain.CurrentDomain.BaseDirectory + "res/EN.txd", prec + ".txd", true);
-			File.Copy(AppDomain.CurrentDomain.BaseDirectory + "res/EN00.met", prec + "00.met", true);
+			File.Copy(AppDomain.CurrentDomain.BaseDirectory + "Assets/EN.txd", prec + ".txd", true);
+			File.Copy(AppDomain.CurrentDomain.BaseDirectory + "Assets/EN00.met", prec + "00.met", true);
 		}
 	}
 
@@ -1318,7 +1352,7 @@ public partial class MainView : UserControl
 			}
 		}
 
-        ShadowSET.SETIDBIN.SetIdTableFunctions.SaveTable(Path.Combine(settings.GamePath, "files", "setid.bin"), true, setIdTable);
+		ShadowSET.SETIDBIN.SetIdTableFunctions.SaveTable(Path.Combine(settings.GamePath, "files", "setid.bin"), true, setIdTable);
 
 		// patch bi2.bin since we require 64MB Dolphin
 		var buf = BitConverter.GetBytes(0);
@@ -1804,6 +1838,7 @@ public partial class MainView : UserControl
 
 	private void LevelOrder_Button_ProjectPage_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
 	{
+		PlayAudio(AssetLoader.Open(new Uri("avares://ShadowRando/Assets/shadow_menu_select.wav")));
 		Process.Start(new ProcessStartInfo("https://github.com/ShadowTheHedgehogHacking/ShadowRando") { UseShellExecute = true });
 	}
 
@@ -1817,25 +1852,6 @@ public partial class MainView : UserControl
 		LevelOrder_NumericUpDown_MaxBackwardsJump.Minimum = LevelOrder_NumericUpDown_MaxForwardsJump.Minimum = LevelOrder_CheckBox_AllowJumpsToSameLevel.IsChecked.Value ? 0 : 1;
 	}
 
-	private void Layout_CheckBox_RandomizeLayouts_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-	{
-		Layout_Enemy_CheckBox_KeepType.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
-		Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
-		Layout_Partner_ComboBox_Mode.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
-		Layout_Enemy_CheckBox_AdjustMissionCounts.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
-		Layout_CheckBox_MakeCCSplinesVehicleCompatible.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
-	}
-
-	private void Subtitles_CheckBox_RandomizeSubtitlesVoicelines_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-	{
-		Subtitles_CheckBox_NoDuplicates.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
-		Subtitles_CheckBox_NoSystemMessages.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
-		Subtitles_CheckBox_OnlyWithLinkedAudio.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
-		Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
-		Subtitles_CheckBox_OnlySelectedCharacters.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
-		SetSubtitlesEnabledStateSelectedCharacters(Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value && Subtitles_CheckBox_OnlySelectedCharacters.IsChecked.Value);
-	}
-
 	private void Subtitles_CheckBox_OnlyWithLinkedAudio_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
 		if (Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked.Value)
@@ -1846,32 +1862,6 @@ public partial class MainView : UserControl
     {
 		if (Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsChecked.Value)
 			Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked = false;
-	}
-
-	private void Subtitles_CheckBox_OnlySelectedCharacters_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-	{
-		SetSubtitlesEnabledStateSelectedCharacters(Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value && Subtitles_CheckBox_OnlySelectedCharacters.IsChecked.Value);
-	}
-
-	private void SetSubtitlesEnabledStateSelectedCharacters(bool state)
-	{
-		Subtitles_CheckBox_SelectedCharacter_Shadow.IsEnabled = state;
-		Subtitles_CheckBox_SelectedCharacter_Sonic.IsEnabled = state;
-		Subtitles_CheckBox_SelectedCharacter_Tails.IsEnabled = state;
-		Subtitles_CheckBox_SelectedCharacter_Knuckles.IsEnabled = state;
-		Subtitles_CheckBox_SelectedCharacter_Amy.IsEnabled = state;
-		Subtitles_CheckBox_SelectedCharacter_Rouge.IsEnabled = state;
-		Subtitles_CheckBox_SelectedCharacter_Omega.IsEnabled = state;
-		Subtitles_CheckBox_SelectedCharacter_Vector.IsEnabled = state;
-		Subtitles_CheckBox_SelectedCharacter_Espio.IsEnabled = state;
-		Subtitles_CheckBox_SelectedCharacter_Maria.IsEnabled = state;
-		Subtitles_CheckBox_SelectedCharacter_Charmy.IsEnabled = state;
-		Subtitles_CheckBox_SelectedCharacter_Eggman.IsEnabled = state;
-		Subtitles_CheckBox_SelectedCharacter_BlackDoom.IsEnabled = state;
-		Subtitles_CheckBox_SelectedCharacter_Cream.IsEnabled = state;
-		Subtitles_CheckBox_SelectedCharacter_Cheese.IsEnabled = state;
-		Subtitles_CheckBox_SelectedCharacter_GUNCommander.IsEnabled = state;
-		Subtitles_CheckBox_SelectedCharacter_GUNSoldier.IsEnabled = state;
 	}
 
     private void Spoilers_Button_MakeChart_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -2009,44 +1999,24 @@ public partial class MainView : UserControl
 		}
 	}
 
-    /*private void SharedMouseEnter(object sender, EventArgs e)
-    {
-      PlayAudio(hoverSoundPath);
-    }
+	private void PlayAudio(Stream sound)
+	{
+		if (!LevelOrder_CheckBox_ProgramSound.IsChecked.Value)
+			return;
 
-    private void SharedMouseDown_Shoot(object sender, MouseEventArgs e)
-    {
-      PlayAudio(selectSoundPath);
-    }
+		var outputDevice = new WaveOutEvent();
 
-    private void SharedMouseDown_Chkchk(object sender, MouseEventArgs e)
-    {
-      PlayAudio(hoverSoundPath);
-    }
+		// Create a new instance of WaveFileReader for each call to playsound
+		WaveFileReader reader = new WaveFileReader(sound);
 
-    private void SharedMouseDown(object sender, EventArgs e)
-    {
-      PlayAudio(selectSoundPath);
-    }
+		outputDevice.Init(reader);
+		outputDevice.Play();
 
-    private void PlayAudio(string soundPath)
-    {
-      if (!checkBoxProgramSound.IsChecked.Value)
-          return;
-
-      var outputDevice = new WaveOutEvent();
-
-      // Create a new instance of WaveFileReader for each call to playsound
-      WaveFileReader reader = new WaveFileReader(soundPath);
-
-      outputDevice.Init(reader);
-      outputDevice.Play();
-
-      // Hook the PlaybackStopped event to dispose of resources when playback is finished
-      outputDevice.PlaybackStopped += (sender, args) =>
-      {
-          outputDevice.Dispose();
-          reader.Dispose();
-      };
-    }*/
+		// Hook the PlaybackStopped event to dispose of resources when playback is finished
+		outputDevice.PlaybackStopped += (sender, args) =>
+		{
+			outputDevice.Dispose();
+			reader.Dispose();
+		};
+	}
 }
