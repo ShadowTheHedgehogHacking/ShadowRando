@@ -8,11 +8,15 @@ namespace ShadowRando
 {
 	public static class Nukkoro2
 	{
-		static readonly Encoding shift_jis = Encoding.GetEncoding(932);
+		static Nukkoro2()
+		{
+			Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+		}
+
 		public static Dictionary<string, Nukkoro2Stage> ReadFile(string path)
 		{
 			Dictionary<string, Nukkoro2Stage> result = new Dictionary<string, Nukkoro2Stage>();
-			string[] data = File.ReadAllLines(path, shift_jis);
+			string[] data = File.ReadAllLines(path, Encoding.GetEncoding(932));
 			Nukkoro2Stage stage = null;
 			for (int i = 0; i < data.Length; i++)
 			{
@@ -114,7 +118,7 @@ namespace ShadowRando
 		public static void WriteFile(string path, Dictionary<string, Nukkoro2Stage> map)
 		{
 			using (var fs = File.Create(path))
-			using (var sw = new StreamWriter(fs, shift_jis))
+			using (var sw = new StreamWriter(fs, Encoding.GetEncoding(932)))
 			{
 				foreach (var stage in map)
 				{
