@@ -243,7 +243,7 @@
 				</StackPanel>
 			</TabItem>
 			<TabItem Header="Spoilers">
-				<Grid ColumnDefinitions="*,*">
+				<Grid ColumnDefinitions="Auto,*">
 					<ListBox x:Name="Spoilers_ListBox_LevelList" Margin="0,0,0,70" Grid.Column="0" SelectionChanged="Spoilers_ListBox_LevelList_SelectionChanged"></ListBox>
 					<Grid Grid.Column="1" RowDefinitions="*, Auto">
 						<TextBox x:Name="Spoilers_TextBox_LevelInfo" Grid.Row="0" IsReadOnly="True" AcceptsReturn="True" ScrollViewer.HorizontalScrollBarVisibility="Visible" ></TextBox>

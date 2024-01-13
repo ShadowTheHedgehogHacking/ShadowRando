@@ -228,8 +228,6 @@ public partial class MainView : UserControl
 	];
 
 	const string programVersion = "0.5.0-dev";
-	private static string hoverSoundPath = AppDomain.CurrentDomain.BaseDirectory + "Assets/hover.wav";
-	private static string selectSoundPath = AppDomain.CurrentDomain.BaseDirectory + "Assets/select.wav";
 	Settings settings;
 	private bool programInitialized = false;
 
@@ -2132,7 +2130,7 @@ public partial class MainView : UserControl
 						sb.AppendLine($"Hero -> {GetStageName(stg.Hero)} ({Array.IndexOf(stageids, stg.Hero) - Spoilers_ListBox_LevelList.SelectedIndex:+##;-##;0})");
 					if (stg.Dark != -1)
 						sb.AppendLine($"Dark -> {GetStageName(stg.Dark)} ({Array.IndexOf(stageids, stg.Dark) - Spoilers_ListBox_LevelList.SelectedIndex:+##;-##;0})");
-					sb.Append("Shortest Path: ");
+					sb.AppendFormat("{0}Shortest Path: ", Environment.NewLine);
 					int[] shortestPath;
 					if (LevelOrder_NumericUpDown_MaxForwardsJump.Value < 2)
 					{
@@ -2150,9 +2148,9 @@ public partial class MainView : UserControl
 							exit = "Hero";
 						else
 							exit = "Dark";
-						sb.AppendFormat("{0} ({1}) -> ", GetStageName(shortestPath[i]), exit);
+						sb.AppendFormat("{2}{0} ({1}) -> ", GetStageName(shortestPath[i]), exit, Environment.NewLine);
 					}
-					sb.AppendFormat("Ending ({0} levels)", shortestPath.Length);
+					sb.AppendFormat("{1}Ending ({0} levels)", shortestPath.Length, Environment.NewLine);
 					break;
 				case LevelOrderMode.ReverseBranching:
 					if (stg.Neutral != -1)
@@ -2161,7 +2159,7 @@ public partial class MainView : UserControl
 						sb.AppendLine($"Hero -> {GetStageName(stg.Hero)}");
 					if (stg.Dark != -1)
 						sb.AppendLine($"Dark -> {GetStageName(stg.Dark)}");
-					sb.Append("Shortest Path: ");
+					sb.AppendFormat("{0}Shortest Path: ", Environment.NewLine);
 					shortestPath = FindShortestPath(stageids[Spoilers_ListBox_LevelList.SelectedIndex]);
 					for (int i = 0; i < shortestPath.Length - 1; i++)
 					{
@@ -2172,9 +2170,9 @@ public partial class MainView : UserControl
 							exit = "Hero";
 						else
 							exit = "Dark";
-						sb.AppendFormat("{0} ({1}) -> ", GetStageName(shortestPath[i]), exit);
+						sb.AppendFormat("{2}{0} ({1}) -> ", GetStageName(shortestPath[i]), exit, Environment.NewLine);
 					}
-					sb.AppendFormat("Ending ({0} levels)", shortestPath.Length);
+					sb.AppendFormat("{1}Ending ({0} levels)", shortestPath.Length, Environment.NewLine);
 					break;
 				default:
 					if (stg.Neutral != -1)
