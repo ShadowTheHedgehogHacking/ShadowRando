@@ -186,7 +186,7 @@ public partial class MainView : UserControl
 		EWeapon.MachineGun,
 		EWeapon.HeavyMachineGun,
 		EWeapon.GatlingGun,
-		EWeapon.None06,
+		// EWeapon.None06,
 		EWeapon.EggGun,
 		EWeapon.LightShot,
 		EWeapon.FlashShot,
@@ -208,8 +208,8 @@ public partial class MainView : UserControl
 		EWeapon.LaserRifle,
 		EWeapon.Splitter,
 		EWeapon.Refractor,
-		EWeapon.UnusedGUNWeaponSlot,
-		EWeapon.UnusedBlackArmsWeaponSlot,
+		// EWeapon.UnusedGUNWeaponSlot,
+		// EWeapon.UnusedBlackArmsWeaponSlot,
 		EWeapon.Knife,
 		EWeapon.BlackSword,
 		EWeapon.DarkHammer,
@@ -1246,11 +1246,105 @@ public partial class MainView : UserControl
 				// some stages don't have nrm
 			}
 
+			List<EWeapon> weaponsPool = new List<EWeapon>();
+
+			if (Layout_Weapon_CheckBox_OnlySelectedWeapons.IsChecked.Value && Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes.IsChecked.Value)
+			{
+				if (Layout_Weapon_CheckBox_SelectedWeapon_None.IsChecked.Value)
+					weaponsPool.Add(EWeapon.None);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_Pistol.IsChecked.Value)
+					weaponsPool.Add(EWeapon.Pistol);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_SubmachineGun.IsChecked.Value)
+					weaponsPool.Add(EWeapon.SubmachineGun);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_AssaultRifle.IsChecked.Value)
+					weaponsPool.Add(EWeapon.MachineGun);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_HeavyMachineGun.IsChecked.Value)
+					weaponsPool.Add(EWeapon.HeavyMachineGun);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_GatlingGun.IsChecked.Value)
+					weaponsPool.Add(EWeapon.GatlingGun);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_EggPistol.IsChecked.Value)
+					weaponsPool.Add(EWeapon.EggGun);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_LightShot.IsChecked.Value)
+					weaponsPool.Add(EWeapon.LightShot);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_FlashShot.IsChecked.Value)
+					weaponsPool.Add(EWeapon.FlashShot);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_RingShot.IsChecked.Value)
+					weaponsPool.Add(EWeapon.RingShot);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_HeavyShot.IsChecked.Value)
+					weaponsPool.Add(EWeapon.HeavyShot);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_GrenadeLauncher.IsChecked.Value)
+					weaponsPool.Add(EWeapon.GrenadeLauncher);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_GUNBazooka.IsChecked.Value)
+					weaponsPool.Add(EWeapon.GUNBazooka);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_TankCannon.IsChecked.Value)
+					weaponsPool.Add(EWeapon.TankCannon);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_BlackBarrel.IsChecked.Value)
+					weaponsPool.Add(EWeapon.BlackBarrel);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_BigBarrel.IsChecked.Value)
+					weaponsPool.Add(EWeapon.BigBarrel);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_EggBazooka.IsChecked.Value)
+					weaponsPool.Add(EWeapon.EggBazooka);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_RPG.IsChecked.Value)
+					weaponsPool.Add(EWeapon.RPG);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_FourShot.IsChecked.Value)
+					weaponsPool.Add(EWeapon.FourShot);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_EightShot.IsChecked.Value)
+					weaponsPool.Add(EWeapon.EightShot);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_WormShooterBlack.IsChecked.Value)
+					weaponsPool.Add(EWeapon.WormShooterBlack);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_WormShooterRed.IsChecked.Value)
+					weaponsPool.Add(EWeapon.WideWormShooterRed);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_WormShooterGold.IsChecked.Value)
+					weaponsPool.Add(EWeapon.BigWormShooterGold);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_VacuumPod.IsChecked.Value)
+					weaponsPool.Add(EWeapon.VacuumPod);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_LaserRifle.IsChecked.Value)
+					weaponsPool.Add(EWeapon.LaserRifle);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_Splitter.IsChecked.Value)
+					weaponsPool.Add(EWeapon.Splitter);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_Refractor.IsChecked.Value)
+					weaponsPool.Add(EWeapon.Refractor);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_Knife.IsChecked.Value)
+					weaponsPool.Add(EWeapon.Knife);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_BlackSword.IsChecked.Value)
+					weaponsPool.Add(EWeapon.BlackSword);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_DarkHammer.IsChecked.Value)
+					weaponsPool.Add(EWeapon.DarkHammer);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_EggLance.IsChecked.Value)
+					weaponsPool.Add(EWeapon.EggLance);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_SamuraiSwordLv1.IsChecked.Value)
+					weaponsPool.Add(EWeapon.SamuraiSwordLv1);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_SamuraiSwordLv2.IsChecked.Value)
+					weaponsPool.Add(EWeapon.SamuraiSwordLv2);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_SatelliteLaserLv1.IsChecked.Value)
+					weaponsPool.Add(EWeapon.SatelliteLaserLv1);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_SatelliteLaserLv2.IsChecked.Value)
+					weaponsPool.Add(EWeapon.SatelliteLaserLv2);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_EggVacuumLv1.IsChecked.Value)
+					weaponsPool.Add(EWeapon.EggVacLv1);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_EggVacuumLv2.IsChecked.Value)
+					weaponsPool.Add(EWeapon.EggVacLv2);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_OmochaoGunLv1.IsChecked.Value)
+					weaponsPool.Add(EWeapon.OmochaoLv1);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_OmochaoGunLv2.IsChecked.Value)
+					weaponsPool.Add(EWeapon.OmochaoLv2);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_HealCannonLv1.IsChecked.Value)
+					weaponsPool.Add(EWeapon.HealCannonLv1);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_HealCannonLv2.IsChecked.Value)
+					weaponsPool.Add(EWeapon.HealCannonLv2);
+				if (Layout_Weapon_CheckBox_SelectedWeapon_ShadowRifle.IsChecked.Value)
+					weaponsPool.Add(EWeapon.ShadowRifle);
+			} 
+			else
+			{
+				weaponsPool.AddRange(weapons);
+			}
+
 			if (Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes.IsChecked.Value)
 			{
-				MakeAllBoxesHaveRandomWeapons(ref cmnLayoutData, r);
+				MakeAllBoxesHaveRandomWeapons(ref cmnLayoutData, weaponsPool, r);
 				if (nrmLayoutData != null)
-					MakeAllBoxesHaveRandomWeapons(ref nrmLayoutData, r);
+					MakeAllBoxesHaveRandomWeapons(ref nrmLayoutData, weaponsPool, r);
 			}
 
 
@@ -1456,8 +1550,6 @@ public partial class MainView : UserControl
 		{
 			Nukkoro2.WriteFile(Path.Combine(settings.GamePath, "files", "nukkoro2.inf"), nukkoro2);
 		}
-
-		// MessageBox.Show("WARNING: You must set Dolphin -> Config -> Advanced -> MEM1 value to 64MB!");
 	}
 
 	private int GetTotalGUNEnemies(List<SetObjectShadow> cmn, List<SetObjectShadow> nrm = null)
@@ -1539,7 +1631,7 @@ public partial class MainView : UserControl
 		}
 	}
 
-	private void MakeAllBoxesHaveRandomWeapons(ref List<SetObjectShadow> setData, Random r)
+	private void MakeAllBoxesHaveRandomWeapons(ref List<SetObjectShadow> setData, List<EWeapon> weaponsPool, Random r)
 	{
 		List<(Object0009_WoodBox item, int index)> woodBoxItems = setData
 			.Select((item, index) => new { Item = item, Index = index })
@@ -1577,20 +1669,20 @@ public partial class MainView : UserControl
 		foreach (var woodbox in woodBoxItems)
 		{
 			woodbox.item.BoxItem = EBoxItem.Weapon;
-			woodbox.item.ModifierWeapon = weapons[r.Next(weapons.Length)];
+			woodbox.item.ModifierWeapon = weaponsPool[r.Next(weaponsPool.Count)];
 			setData[woodbox.index] = woodbox.item;
 		}
 
 		foreach (var weaponbox in weaponBoxItems)
 		{
-			weaponbox.item.Weapon = weapons[r.Next(weapons.Length)];
+			weaponbox.item.Weapon = weaponsPool[r.Next(weaponsPool.Count)];
 			setData[weaponbox.index] = weaponbox.item;
 		}
 
 		foreach (var metalbox in metalBoxItems)
 		{
 			metalbox.item.BoxItem = EBoxItem.Weapon;
-			metalbox.item.ModifierWeapon = weapons[r.Next(weapons.Length)];
+			metalbox.item.ModifierWeapon = weaponsPool[r.Next(weaponsPool.Count)];
 			setData[metalbox.index] = metalbox.item;
 		}
 
@@ -1602,7 +1694,7 @@ public partial class MainView : UserControl
 
 		foreach (var weaponOnGround in weaponsOnGroundItems)
 		{
-			weaponOnGround.item.Weapon = weapons[r.Next(weapons.Length)];
+			weaponOnGround.item.Weapon = weaponsPool[r.Next(weaponsPool.Count)];
 			setData[weaponOnGround.index] = weaponOnGround.item;
 		}
 	}
