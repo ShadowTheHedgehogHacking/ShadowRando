@@ -59,6 +59,9 @@ namespace ShadowRando
 		public bool LayoutMakeCCSplinesVehicleCompatible { get; set; }
 		[IniAlwaysInclude]
 		public bool LayoutAdjustMissionCounts { get; set; }
+		[System.ComponentModel.DefaultValue(20)]
+		[IniAlwaysInclude]
+		public int LayoutAdjustMissionCountsReductionPercent { get; set; } = 20;
 		// FNT
 		[IniAlwaysInclude]
 		public bool SubtitlesNoDuplicates;

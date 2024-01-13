@@ -79,7 +79,11 @@
 									<ComboBoxItem IsEnabled="False">1:1 Per Stage (Not Ready Yet)</ComboBoxItem>
 									<ComboBoxItem IsEnabled="False">1:1 Global (Not Ready Yet)</ComboBoxItem>
 								</ComboBox>
-								<CheckBox x:Name="Layout_Enemy_CheckBox_AdjustMissionCounts" IsChecked="True">Adjust Mission Counts</CheckBox>
+								<Grid ColumnDefinitions="Auto, Auto, Auto">
+									<CheckBox x:Name="Layout_Enemy_CheckBox_AdjustMissionCounts" Grid.Column="0" IsChecked="True">Adjust Mission Counts</CheckBox>
+									<Label Margin="10,5,5,0" Grid.Column="1">Reduction %</Label>
+									<NumericUpDown x:Name="Layout_Enemy_NumericUpDown_AdjustMissionsReductionPercent" Grid.Column="2" Increment="1" Value="10" Maximum="50" Minimum="0"></NumericUpDown>
+								</Grid>
 								<CheckBox x:Name="Layout_Enemy_CheckBox_KeepType" IsChecked="True">Keep Type (Flying -> Flying)</CheckBox>
 								<CheckBox x:Name="Layout_Enemy_CheckBox_KeepAffiliation" IsEnabled="False">Keep Affiliation (GUN -> GUN)</CheckBox>
 								<CheckBox x:Name="Layout_Enemy_CheckBox_RandomWeapons" IsEnabled="False">Random Weapons (Overriding 1:1 Modes)</CheckBox>

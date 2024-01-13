@@ -265,6 +265,7 @@ public partial class MainView : UserControl
 		Layout_CheckBox_MakeCCSplinesVehicleCompatible.IsChecked = settings.LayoutMakeCCSplinesVehicleCompatible;
 		// Enemy
 		Layout_Enemy_CheckBox_AdjustMissionCounts.IsChecked = settings.LayoutAdjustMissionCounts;
+		Layout_Enemy_NumericUpDown_AdjustMissionsReductionPercent.Value = settings.LayoutAdjustMissionCountsReductionPercent;
 		Layout_Enemy_ComboBox_Mode.SelectedIndex = (int)settings.LayoutEnemyMode;
 		Layout_Enemy_CheckBox_KeepType.IsChecked = settings.LayoutEnemyKeepType;
 		// Weapon
@@ -1470,17 +1471,17 @@ public partial class MainView : UserControl
 				{
 					case 0:
 						var total = GetTotalGUNEnemies(cmnLayoutData, nrmLayoutData);
-						nukkoro2Stage.MissionCountDark.Success = total - (int)(total * 0.1);
+						nukkoro2Stage.MissionCountDark.Success = total - (int)(total * (Layout_Enemy_NumericUpDown_AdjustMissionsReductionPercent.Value / 100));
 						break;
 					case 1:
 						total = GetTotalBlackArmsEnemies(cmnLayoutData, nrmLayoutData);
-						nukkoro2Stage.MissionCountHero.Success = total - (int)(total * 0.1);
+						nukkoro2Stage.MissionCountHero.Success = total - (int)(total * (Layout_Enemy_NumericUpDown_AdjustMissionsReductionPercent.Value / 100));
 						break;
 					case 2:
 						total = GetTotalGUNEnemies(cmnLayoutData, nrmLayoutData);
-						nukkoro2Stage.MissionCountDark.Success = total - (int)(total * 0.1);
+						nukkoro2Stage.MissionCountDark.Success = total - (int)(total * (Layout_Enemy_NumericUpDown_AdjustMissionsReductionPercent.Value / 100));
 						total = GetTotalBlackArmsEnemies(cmnLayoutData, nrmLayoutData);
-						nukkoro2Stage.MissionCountHero.Success = total - (int)(total * 0.1);
+						nukkoro2Stage.MissionCountHero.Success = total - (int)(total * (Layout_Enemy_NumericUpDown_AdjustMissionsReductionPercent.Value / 100));
 						break;
 					default:
 						break;
@@ -1775,7 +1776,7 @@ public partial class MainView : UserControl
 					}
 					else
 					{ // ground enemies
-						if (setData[i].Type == 0x64 && (setData[i].Link == 0 || setData[i].Link == 50))
+						if (setData[i].Link == 0 || setData[i].Link == 50)
 						{
 							randomEnemy = r.Next(groundEnemies.Count); // All enemies if LinkID = 0 or 50
 						}
@@ -1791,7 +1792,7 @@ public partial class MainView : UserControl
 				}
 				else
 				{
-					if (setData[i].Type == 0x64 && (setData[i].Link == 0 || setData[i].Link == 50))
+					if (setData[i].Link == 0 || setData[i].Link == 50)
 					{
 						randomEnemy = r.Next(allEnemies.Count); // All enemies if LinkID = 0 or 50
 					}

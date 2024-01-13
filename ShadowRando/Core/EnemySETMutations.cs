@@ -143,14 +143,39 @@ namespace ShadowRando
 			switch (targetEntry)
 			{
 				case Object0064_GUNSoldier originalEnemy when targetEntry is Object0064_GUNSoldier:
-					break; // for now do nothing, but we may want to extend this to copy the attributions of the donor, depending on the options picked
+					{
+						var newEntry = (Object0064_GUNSoldier)LayoutEditorFunctions.CreateShadowObject(donor.List, donor.Type, originalEnemy.PosX, originalEnemy.PosY,
+							originalEnemy.PosZ, originalEnemy.RotX, originalEnemy.RotY, originalEnemy.RotZ, originalEnemy.Link, originalEnemy.Rend, originalEnemy.UnkBytes);
+						// EnemyBase
+						newEntry.MoveRange = originalEnemy.MoveRange;
+						newEntry.SearchRange = originalEnemy.SearchRange;
+						newEntry.SearchAngle = originalEnemy.SearchAngle;
+						newEntry.SearchWidth = originalEnemy.SearchWidth;
+						newEntry.SearchHeight = originalEnemy.SearchHeight;
+						newEntry.SearchHeightOffset = originalEnemy.SearchHeightOffset;
+						newEntry.MoveSpeedRatio = originalEnemy.MoveSpeedRatio;
+						// end EnemyBase
+						newEntry.AppearType = Object0064_GUNSoldier.EAppear.RANDOM_MOVE;
+						newEntry.WeaponType = donor.WeaponType;
+						newEntry.HaveShield = donor.HaveShield;
+						newEntry.Pos0_WaitSec = donor.Pos0_WaitSec;
+						newEntry.Pos0_WaitType = donor.Pos0_WaitType;
+						newEntry.Pos0_MoveSpeedRatio = donor.Pos0_MoveSpeedRatio;
+						newEntry.Pos0_TranslationXFromOrigin = donor.Pos0_TranslationXFromOrigin;
+						newEntry.Pos0_TranslationZFromOrigin = donor.Pos0_TranslationZFromOrigin;
+						newEntry.Pos1_WaitType = donor.Pos1_WaitType;
+						newEntry.Pos1_WaitSec = donor.Pos1_WaitSec;
+						newEntry.Pos1_MoveSpeedRatio = donor.Pos1_MoveSpeedRatio;
+						newEntry.Pos1_TranslationXFromOrigin = donor.Pos1_TranslationXFromOrigin;
+						newEntry.Pos1_TranslationZFromOrigin = donor.Pos1_TranslationZFromOrigin;
+						newEntry.Pos2_WaitType = donor.Pos2_WaitType;
+						newEntry.Pos2_WaitSec = donor.Pos2_WaitSec;
+						newEntry.Pos2_MoveSpeedRatio = donor.Pos2_MoveSpeedRatio;
+						setData[index] = newEntry;
+						break;
+					}
 				case Object0065_GUNBeetle originalEnemy when targetEntry is Object0065_GUNBeetle:
 					{
-						if (originalEnemy.PathType == Object0065_GUNBeetle.EPathType.FLY_FORWARD_UPDOWN
-							|| originalEnemy.PathType == Object0065_GUNBeetle.EPathType.FLY_FORWARD_SWOOP
-							|| originalEnemy.PathType == Object0065_GUNBeetle.EPathType.FLY_FORWARD
-							|| originalEnemy.PathType == Object0065_GUNBeetle.EPathType.FLY_LEFT)
-							break; // We cannot safely convert FLY_* PathType to GroundEnemy, since these are usually way off screen | Probably drop this, should be the responsibility of the caller?
 						var newEntry = (Object0064_GUNSoldier)LayoutEditorFunctions.CreateShadowObject(donor.List, donor.Type, originalEnemy.PosX, originalEnemy.PosY,
 								originalEnemy.PosZ, originalEnemy.RotX, originalEnemy.RotY, originalEnemy.RotZ, originalEnemy.Link, originalEnemy.Rend, originalEnemy.UnkBytes);
 						// EnemyBase
@@ -483,11 +508,6 @@ namespace ShadowRando
 					}
 				case Object008E_BkWingLarge originalEnemy when targetEntry is Object008E_BkWingLarge:
 					{
-						if (originalEnemy.PathType == Object008E_BkWingLarge.EPathType.FLY_FORWARD_UPDOWN
-							|| originalEnemy.PathType == Object008E_BkWingLarge.EPathType.FLY_FORWARD_SWOOP
-							|| originalEnemy.PathType == Object008E_BkWingLarge.EPathType.FLY_FORWARD
-							|| originalEnemy.PathType == Object008E_BkWingLarge.EPathType.FLY_LEFT)
-							break; // We cannot safely convert FLY_* PathType to GroundEnemy, since these are usually way off screen | Probably drop this, should be the responsibility of the caller?
 						var newEntry = (Object0064_GUNSoldier)LayoutEditorFunctions.CreateShadowObject(donor.List, donor.Type, originalEnemy.PosX, originalEnemy.PosY,
 								originalEnemy.PosZ, originalEnemy.RotX, originalEnemy.RotY, originalEnemy.RotZ, originalEnemy.Link, originalEnemy.Rend, originalEnemy.UnkBytes);
 						// EnemyBase
@@ -507,11 +527,6 @@ namespace ShadowRando
 					}
 				case Object008F_BkWingSmall originalEnemy when targetEntry is Object008F_BkWingSmall:
 					{
-						if (originalEnemy.PathType == Object008F_BkWingSmall.EPathType.FLY_FORWARD_UPDOWN
-							|| originalEnemy.PathType == Object008F_BkWingSmall.EPathType.FLY_FORWARD_SWOOP
-							|| originalEnemy.PathType == Object008F_BkWingSmall.EPathType.FLY_FORWARD
-							|| originalEnemy.PathType == Object008F_BkWingSmall.EPathType.FLY_LEFT)
-							break; // We cannot safely convert FLY_* PathType to GroundEnemy, since these are usually way off screen | Probably drop this, should be the responsibility of the caller?
 						var newEntry = (Object0064_GUNSoldier)LayoutEditorFunctions.CreateShadowObject(donor.List, donor.Type, originalEnemy.PosX, originalEnemy.PosY,
 								originalEnemy.PosZ, originalEnemy.RotX, originalEnemy.RotY, originalEnemy.RotZ, originalEnemy.Link, originalEnemy.Rend, originalEnemy.UnkBytes);
 						// EnemyBase
