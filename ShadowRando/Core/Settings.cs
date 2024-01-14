@@ -45,12 +45,42 @@ namespace ShadowRando
 		public bool RandomizeSubtitlesVoicelines { get; set; }
 		[IniAlwaysInclude]
 		public bool RandomizeLayouts { get; set; }
-		// SET
 		[IniAlwaysInclude]
 		public LayoutEnemyMode LayoutEnemyMode { get; set; }
-		//public SETMode
 		[IniAlwaysInclude]
 		public bool LayoutEnemyKeepType { get; set; }
+		[IniAlwaysInclude]
+		public bool LayoutEnemyOnlySelectedTypes { get; set; }
+		[IniAlwaysInclude]
+		public bool LayoutEnemySelectedEnemyGUNSoldier { get; set; }
+		[IniAlwaysInclude]
+		public bool LayoutEnemySelectedEnemyGUNBeetle { get; set; }
+		[IniAlwaysInclude]
+		public bool LayoutEnemySelectedEnemyGUNBigfoot { get; set; }
+		[IniAlwaysInclude]
+		public bool LayoutEnemySelectedEnemyGUNRobot { get; set; }
+		[IniAlwaysInclude]
+		public bool LayoutEnemySelectedEnemyEggPierrot { get; set; }
+		[IniAlwaysInclude]
+		public bool LayoutEnemySelectedEnemyEggPawn { get; set; }
+		[IniAlwaysInclude]
+		public bool LayoutEnemySelectedEnemyShadowAndroid { get; set; }
+		[IniAlwaysInclude]
+		public bool LayoutEnemySelectedEnemyBAGiant { get; set; }
+		[IniAlwaysInclude]
+		public bool LayoutEnemySelectedEnemyBASoldier { get; set; }
+		[IniAlwaysInclude]
+		public bool LayoutEnemySelectedEnemyBAHawkVolt { get; set; }
+		[IniAlwaysInclude]
+		public bool LayoutEnemySelectedEnemyBAWing { get; set; }
+		[IniAlwaysInclude]
+		public bool LayoutEnemySelectedEnemyBAWorm { get; set; }
+		[IniAlwaysInclude]
+		public bool LayoutEnemySelectedEnemyBALarva { get; set; }
+		[IniAlwaysInclude]
+		public bool LayoutEnemySelectedEnemyArtificialChaos { get; set; }
+		[IniAlwaysInclude]
+		public bool LayoutEnemySelectedEnemyBAAssassin { get; set; }
 		[IniAlwaysInclude]
 		public LayoutPartnerMode LayoutPartnerMode { get; set; }
 		[IniAlwaysInclude]

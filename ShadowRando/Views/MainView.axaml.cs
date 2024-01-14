@@ -267,6 +267,23 @@ public partial class MainView : UserControl
 		Layout_Enemy_NumericUpDown_AdjustMissionsReductionPercent.Value = settings.LayoutAdjustMissionCountsReductionPercent;
 		Layout_Enemy_ComboBox_Mode.SelectedIndex = (int)settings.LayoutEnemyMode;
 		Layout_Enemy_CheckBox_KeepType.IsChecked = settings.LayoutEnemyKeepType;
+		Layout_Enemy_CheckBox_OnlySelectedEnemyTypes.IsChecked = settings.LayoutEnemyOnlySelectedTypes;
+		// Selected Enemies
+		Layout_Enemy_CheckBox_SelectedEnemy_GUNSoldier.IsChecked = settings.LayoutEnemySelectedEnemyGUNSoldier;
+		Layout_Enemy_CheckBox_SelectedEnemy_GUNBeetle.IsChecked = settings.LayoutEnemySelectedEnemyGUNBeetle;
+		Layout_Enemy_CheckBox_SelectedEnemy_GUNBigfoot.IsChecked = settings.LayoutEnemySelectedEnemyGUNBigfoot;
+		Layout_Enemy_CheckBox_SelectedEnemy_GUNRobot.IsChecked = settings.LayoutEnemySelectedEnemyGUNRobot;
+		Layout_Enemy_CheckBox_SelectedEnemy_EggPierrot.IsChecked = settings.LayoutEnemySelectedEnemyEggPierrot;
+		Layout_Enemy_CheckBox_SelectedEnemy_EggPawn.IsChecked = settings.LayoutEnemySelectedEnemyEggPawn;
+		Layout_Enemy_CheckBox_SelectedEnemy_ShadowAndroid.IsChecked = settings.LayoutEnemySelectedEnemyShadowAndroid;
+		Layout_Enemy_CheckBox_SelectedEnemy_BAGiant.IsChecked = settings.LayoutEnemySelectedEnemyBAGiant;
+		Layout_Enemy_CheckBox_SelectedEnemy_BASoldier.IsChecked = settings.LayoutEnemySelectedEnemyBASoldier;
+		Layout_Enemy_CheckBox_SelectedEnemy_BAHawkVolt.IsChecked = settings.LayoutEnemySelectedEnemyBAHawkVolt;
+		Layout_Enemy_CheckBox_SelectedEnemy_BAWing.IsChecked = settings.LayoutEnemySelectedEnemyBAWing;
+		Layout_Enemy_CheckBox_SelectedEnemy_BAWorm.IsChecked = settings.LayoutEnemySelectedEnemyBAWorm;
+		Layout_Enemy_CheckBox_SelectedEnemy_BALarva.IsChecked = settings.LayoutEnemySelectedEnemyBALarva;
+		Layout_Enemy_CheckBox_SelectedEnemy_ArtificialChaos.IsChecked = settings.LayoutEnemySelectedEnemyArtificialChaos;
+		Layout_Enemy_CheckBox_SelectedEnemy_BAAssassin.IsChecked = settings.LayoutEnemySelectedEnemyBAAssassin;
 		// Weapon
 		Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes.IsChecked = settings.LayoutRandomWeaponsInAllBoxes;
 		Layout_Weapon_CheckBox_RandomWeaponsInWeaponBoxes.IsChecked = settings.LayoutRandomWeaponsInWeaponBoxes;
@@ -332,8 +349,26 @@ public partial class MainView : UserControl
 		settings.LayoutMakeCCSplinesVehicleCompatible = Layout_CheckBox_MakeCCSplinesVehicleCompatible.IsChecked.Value;
 		// Enemy
 		settings.LayoutAdjustMissionCounts = Layout_Enemy_CheckBox_AdjustMissionCounts.IsChecked.Value;
+		settings.LayoutAdjustMissionCountsReductionPercent = (int)Layout_Enemy_NumericUpDown_AdjustMissionsReductionPercent.Value;
 		settings.LayoutEnemyMode = (LayoutEnemyMode)Layout_Enemy_ComboBox_Mode.SelectedIndex;
 		settings.LayoutEnemyKeepType = Layout_Enemy_CheckBox_KeepType.IsChecked.Value;
+		settings.LayoutEnemyOnlySelectedTypes = Layout_Enemy_CheckBox_OnlySelectedEnemyTypes.IsChecked.Value;
+		// Selected Enemies
+		settings.LayoutEnemySelectedEnemyGUNSoldier = Layout_Enemy_CheckBox_SelectedEnemy_GUNSoldier.IsChecked.Value;
+		settings.LayoutEnemySelectedEnemyGUNBeetle = Layout_Enemy_CheckBox_SelectedEnemy_GUNBeetle.IsChecked.Value;
+		settings.LayoutEnemySelectedEnemyGUNBigfoot = Layout_Enemy_CheckBox_SelectedEnemy_GUNBigfoot.IsChecked.Value;
+		settings.LayoutEnemySelectedEnemyGUNRobot = Layout_Enemy_CheckBox_SelectedEnemy_GUNRobot.IsChecked.Value;
+		settings.LayoutEnemySelectedEnemyEggPierrot = Layout_Enemy_CheckBox_SelectedEnemy_EggPierrot.IsChecked.Value;
+		settings.LayoutEnemySelectedEnemyEggPawn = Layout_Enemy_CheckBox_SelectedEnemy_EggPawn.IsChecked.Value;
+		settings.LayoutEnemySelectedEnemyShadowAndroid = Layout_Enemy_CheckBox_SelectedEnemy_ShadowAndroid.IsChecked.Value;
+		settings.LayoutEnemySelectedEnemyBAGiant = Layout_Enemy_CheckBox_SelectedEnemy_BAGiant.IsChecked.Value;
+		settings.LayoutEnemySelectedEnemyBASoldier = Layout_Enemy_CheckBox_SelectedEnemy_BASoldier.IsChecked.Value;
+		settings.LayoutEnemySelectedEnemyBAHawkVolt = Layout_Enemy_CheckBox_SelectedEnemy_BAHawkVolt.IsChecked.Value;
+		settings.LayoutEnemySelectedEnemyBAWing = Layout_Enemy_CheckBox_SelectedEnemy_BAWing.IsChecked.Value;
+		settings.LayoutEnemySelectedEnemyBAWorm = Layout_Enemy_CheckBox_SelectedEnemy_BAWorm.IsChecked.Value;
+		settings.LayoutEnemySelectedEnemyBALarva = Layout_Enemy_CheckBox_SelectedEnemy_BALarva.IsChecked.Value;
+		settings.LayoutEnemySelectedEnemyArtificialChaos = Layout_Enemy_CheckBox_SelectedEnemy_ArtificialChaos.IsChecked.Value;
+		settings.LayoutEnemySelectedEnemyBAAssassin = Layout_Enemy_CheckBox_SelectedEnemy_BAAssassin.IsChecked.Value;
 		// Weapon
 		settings.LayoutRandomWeaponsInAllBoxes = Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes.IsChecked.Value;
 		settings.LayoutRandomWeaponsInWeaponBoxes = Layout_Weapon_CheckBox_RandomWeaponsInWeaponBoxes.IsChecked.Value;
