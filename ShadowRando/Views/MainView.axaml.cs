@@ -1346,7 +1346,12 @@ public partial class MainView : UserControl
 					weaponsPool.Add(EWeapon.HealCannonLv2);
 				if (Layout_Weapon_CheckBox_SelectedWeapon_ShadowRifle.IsChecked.Value)
 					weaponsPool.Add(EWeapon.ShadowRifle);
-			} 
+				if (weaponsPool.Count == 0)
+				{
+					ShowErrorMessage("Error", "Must select at least one weapon.", ButtonEnum.Ok, Icon.Error);
+					return 1;
+				}
+			}
 			else
 			{
 				weaponsPool.AddRange(weapons);
@@ -1711,8 +1716,6 @@ public partial class MainView : UserControl
 			.Select(pair => (Item: (Object0020_Weapon)pair.Item, Index: pair.Index))
 			.ToList();
 
-
-		// valid weapons are 0x0 - 0x21
 
 		foreach (var woodbox in woodBoxItems)
 		{
