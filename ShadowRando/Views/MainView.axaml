@@ -116,10 +116,10 @@
 							<Border Height="475">
 								<ScrollViewer AllowAutoHide="False">
 									<StackPanel>
-										<CheckBox x:Name="Layout_Weapon_CheckBox_RandomWeaponsInWeaponBoxes" IsEnabled="False">Random Weapons in Weapon Boxes</CheckBox>
-										<CheckBox x:Name="Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes" IsChecked="True">Random Weapons in All Boxes</CheckBox>
-										<CheckBox x:Name="Layout_Weapon_CheckBox_RandomExposedWeapons" IsEnabled="False">Random Exposed Weapons</CheckBox>
-										<CheckBox x:Name="Layout_Weapon_CheckBox_RandomWeaponsFromEnvironment" IsEnabled="False">Random Weapons from Environment</CheckBox>
+										<CheckBox x:Name="Layout_Weapon_CheckBox_RandomWeaponsInWeaponBoxes" Click="Layout_Weapon_CheckBox_RandomWeaponsInWeaponBoxes_Click">Random Weapons in Weapon Boxes</CheckBox>
+										<CheckBox x:Name="Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes" Click="Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes_Click" IsChecked="True">Random Weapons in All Boxes</CheckBox>
+										<CheckBox x:Name="Layout_Weapon_CheckBox_RandomExposedWeapons" IsChecked="True">Random Exposed Weapons</CheckBox>
+										<CheckBox x:Name="Layout_Weapon_CheckBox_RandomWeaponsFromEnvironment" IsEnabled="False">Environment (ex: Tree / Speedlimit Sign) Drops Random Weapons</CheckBox>
 										<CheckBox x:Name="Layout_Weapon_CheckBox_OnlySelectedWeapons">Only Selected Weapons</CheckBox>
 										<Label Margin="0,10,0,0">Selected Weapons</Label>
 										<Grid ColumnDefinitions="*, *, *" RowDefinitions="*, *, *, *, *, *, *, *, *, *, *, *, *, *">

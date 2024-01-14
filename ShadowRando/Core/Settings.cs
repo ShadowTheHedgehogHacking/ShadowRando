@@ -56,6 +56,12 @@ namespace ShadowRando
 		[IniAlwaysInclude]
 		public bool LayoutRandomWeaponsInAllBoxes { get; set; }
 		[IniAlwaysInclude]
+		public bool LayoutRandomWeaponsInWeaponBoxes { get; set; }
+		[IniAlwaysInclude]
+		public bool LayoutRandomExposedWeapons { get; set; }
+		[IniAlwaysInclude]
+		public bool LayoutRandomWeaponsFromEnvironment { get; set; }
+		[IniAlwaysInclude]
 		public bool LayoutMakeCCSplinesVehicleCompatible { get; set; }
 		[IniAlwaysInclude]
 		public bool LayoutAdjustMissionCounts { get; set; }

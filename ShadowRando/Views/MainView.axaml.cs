@@ -17,6 +17,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia;
 using NAudio.Wave;
 using Avalonia.Platform;
+using Microsoft.CodeAnalysis;
 
 namespace ShadowRando.Views;
 
@@ -268,6 +269,9 @@ public partial class MainView : UserControl
 		Layout_Enemy_CheckBox_KeepType.IsChecked = settings.LayoutEnemyKeepType;
 		// Weapon
 		Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes.IsChecked = settings.LayoutRandomWeaponsInAllBoxes;
+		Layout_Weapon_CheckBox_RandomWeaponsInWeaponBoxes.IsChecked = settings.LayoutRandomWeaponsInWeaponBoxes;
+		Layout_Weapon_CheckBox_RandomExposedWeapons.IsChecked = settings.LayoutRandomExposedWeapons;
+		Layout_Weapon_CheckBox_RandomWeaponsFromEnvironment.IsChecked = settings.LayoutRandomWeaponsFromEnvironment;
 		// Partner
 		Layout_Partner_ComboBox_Mode.SelectedIndex = (int)settings.LayoutPartnerMode;
 
@@ -332,6 +336,9 @@ public partial class MainView : UserControl
 		settings.LayoutEnemyKeepType = Layout_Enemy_CheckBox_KeepType.IsChecked.Value;
 		// Weapon
 		settings.LayoutRandomWeaponsInAllBoxes = Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes.IsChecked.Value;
+		settings.LayoutRandomWeaponsInWeaponBoxes = Layout_Weapon_CheckBox_RandomWeaponsInWeaponBoxes.IsChecked.Value;
+		settings.LayoutRandomExposedWeapons = Layout_Weapon_CheckBox_RandomExposedWeapons.IsChecked.Value;
+		settings.LayoutRandomWeaponsFromEnvironment = Layout_Weapon_CheckBox_RandomWeaponsFromEnvironment.IsChecked.Value;
 		// Partner
 		settings.LayoutPartnerMode = (LayoutPartnerMode)Layout_Partner_ComboBox_Mode.SelectedIndex;
 
@@ -1362,6 +1369,25 @@ public partial class MainView : UserControl
 				MakeAllBoxesHaveRandomWeapons(ref cmnLayoutData, weaponsPool, r);
 				if (nrmLayoutData != null)
 					MakeAllBoxesHaveRandomWeapons(ref nrmLayoutData, weaponsPool, r);
+			} else if (Layout_Weapon_CheckBox_RandomWeaponsInWeaponBoxes.IsChecked.Value)
+			{
+				MakeAllWeaponBoxesHaveRandomWeapons(ref cmnLayoutData, weaponsPool, r);
+				if (nrmLayoutData != null)
+					MakeAllWeaponBoxesHaveRandomWeapons(ref nrmLayoutData, weaponsPool, r);
+			}
+
+			if (Layout_Weapon_CheckBox_RandomExposedWeapons.IsChecked.Value)
+			{
+				RandomizeWeaponsOnGround(ref cmnLayoutData, weaponsPool, r);
+				if (nrmLayoutData != null)
+					RandomizeWeaponsOnGround(ref nrmLayoutData, weaponsPool, r);
+			}
+
+			if (Layout_Weapon_CheckBox_RandomWeaponsFromEnvironment.IsChecked.Value)
+			{
+				RandomizeEnvironmentWeaponDrops(ref cmnLayoutData, weaponsPool, r);
+				if (nrmLayoutData != null)
+					RandomizeEnvironmentWeaponDrops(ref nrmLayoutData, weaponsPool, r);
 			}
 
 
@@ -1684,6 +1710,66 @@ public partial class MainView : UserControl
 		}
 	}
 
+	private EBoxType? GetWeaponAffiliationBoxType(EWeapon weapon)
+	{
+		switch (weapon)
+		{
+			case EWeapon.Pistol:
+			case EWeapon.SubmachineGun:
+			case EWeapon.MachineGun:
+			case EWeapon.HeavyMachineGun:
+			case EWeapon.GatlingGun:
+			case EWeapon.GrenadeLauncher:
+			case EWeapon.GUNBazooka:
+			case EWeapon.TankCannon:
+			case EWeapon.RPG:
+			case EWeapon.FourShot:
+			case EWeapon.EightShot:
+			case EWeapon.LaserRifle:
+			case EWeapon.Knife:
+				return EBoxType.GUN;
+			case EWeapon.LightShot:
+			case EWeapon.FlashShot:
+			case EWeapon.RingShot:
+			case EWeapon.HeavyShot:
+			case EWeapon.BlackBarrel:
+			case EWeapon.BigBarrel:
+			case EWeapon.WormShooterBlack:
+			case EWeapon.WideWormShooterRed:
+			case EWeapon.BigWormShooterGold:
+			case EWeapon.VacuumPod:
+			case EWeapon.Splitter:
+			case EWeapon.Refractor:
+			case EWeapon.BlackSword:
+			case EWeapon.DarkHammer:
+				return EBoxType.BlackArms;
+			case EWeapon.EggGun:
+			case EWeapon.EggBazooka:
+			case EWeapon.EggLance:
+				return EBoxType.Eggman;
+			default:
+				return null;
+		}
+	}
+
+	private void MakeAllWeaponBoxesHaveRandomWeapons(ref List<SetObjectShadow> setData, List<EWeapon> weaponsPool, Random r)
+	{
+		List<(Object000C_WeaponBox item, int index)> weaponBoxItems = setData
+			.Select((item, index) => new { Item = item, Index = index })
+			.Where(pair => pair.Item is Object000C_WeaponBox)
+			.Select(pair => (Item: (Object000C_WeaponBox)pair.Item, Index: pair.Index))
+			.ToList();
+
+		foreach (var weaponbox in weaponBoxItems)
+		{
+			weaponbox.item.Weapon = weaponsPool[r.Next(weaponsPool.Count)];
+			var boxType = GetWeaponAffiliationBoxType(weaponbox.item.Weapon);
+			if (boxType.HasValue)
+				weaponbox.item.BoxType = boxType.Value;
+			setData[weaponbox.index] = weaponbox.item;
+		}
+	}
+
 	private void MakeAllBoxesHaveRandomWeapons(ref List<SetObjectShadow> setData, List<EWeapon> weaponsPool, Random r)
 	{
 		List<(Object0009_WoodBox item, int index)> woodBoxItems = setData
@@ -1710,23 +1796,22 @@ public partial class MainView : UserControl
 						.Select(pair => (Item: (Object003A_SpecialWeaponBox)pair.Item, Index: pair.Index))
 						.ToList(); */
 
-		List<(Object0020_Weapon item, int index)> weaponsOnGroundItems = setData
-			.Select((item, index) => new { Item = item, Index = index })
-			.Where(pair => pair.Item is Object0020_Weapon)
-			.Select(pair => (Item: (Object0020_Weapon)pair.Item, Index: pair.Index))
-			.ToList();
-
-
 		foreach (var woodbox in woodBoxItems)
 		{
 			woodbox.item.BoxItem = EBoxItem.Weapon;
 			woodbox.item.ModifierWeapon = weaponsPool[r.Next(weaponsPool.Count)];
+			var boxType = GetWeaponAffiliationBoxType(woodbox.item.ModifierWeapon);
+			if (boxType.HasValue)
+				woodbox.item.BoxType = boxType.Value;
 			setData[woodbox.index] = woodbox.item;
 		}
 
 		foreach (var weaponbox in weaponBoxItems)
 		{
 			weaponbox.item.Weapon = weaponsPool[r.Next(weaponsPool.Count)];
+			var boxType = GetWeaponAffiliationBoxType(weaponbox.item.Weapon);
+			if (boxType.HasValue)
+				weaponbox.item.BoxType = boxType.Value;
 			setData[weaponbox.index] = weaponbox.item;
 		}
 
@@ -1734,6 +1819,9 @@ public partial class MainView : UserControl
 		{
 			metalbox.item.BoxItem = EBoxItem.Weapon;
 			metalbox.item.ModifierWeapon = weaponsPool[r.Next(weaponsPool.Count)];
+			var boxType = GetWeaponAffiliationBoxType(metalbox.item.ModifierWeapon);
+			if (boxType.HasValue)
+				metalbox.item.BoxType = boxType.Value;
 			setData[metalbox.index] = metalbox.item;
 		}
 
@@ -1742,11 +1830,37 @@ public partial class MainView : UserControl
 						specialWeaponsBox.item.Weapon = weapons[r.Next(weapons.Length)];
 						setData[specialWeaponsBox.index] = specialWeaponsBox.item;
 					}*/
+	}
+
+	private void RandomizeWeaponsOnGround(ref List<SetObjectShadow> setData, List<EWeapon> weaponsPool, Random r)
+	{
+		List<(Object0020_Weapon item, int index)> weaponsOnGroundItems = setData
+			.Select((item, index) => new { Item = item, Index = index })
+			.Where(pair => pair.Item is Object0020_Weapon)
+			.Select(pair => (Item: (Object0020_Weapon)pair.Item, Index: pair.Index))
+			.ToList();
 
 		foreach (var weaponOnGround in weaponsOnGroundItems)
 		{
 			weaponOnGround.item.Weapon = weaponsPool[r.Next(weaponsPool.Count)];
 			setData[weaponOnGround.index] = weaponOnGround.item;
+		}
+	}
+
+	private void RandomizeEnvironmentWeaponDrops(ref List<SetObjectShadow> setData, List<EWeapon> weaponsPool, Random r)
+	{
+		List<(Object012C_EnvironmentalWeapon item, int index)> environmentWeaponItems = setData
+			.Select((item, index) => new { Item = item, Index = index })
+			.Where(pair => pair.Item is Object012C_EnvironmentalWeapon)
+			.Select(pair => (Item: (Object012C_EnvironmentalWeapon)pair.Item, Index: pair.Index))
+			.ToList();
+
+		foreach (var environmentWeapon in environmentWeaponItems)
+		{
+			if (environmentWeapon.item.DropType == Object012C_EnvironmentalWeapon.EDropType.LanternTorch_CrypticCastle)
+				continue; // skip Cryptic Castle Torch to prevent breaking mission
+			environmentWeapon.item.DropType = (Object012C_EnvironmentalWeapon.EDropType)weaponsPool[r.Next(weaponsPool.Count)];
+			setData[environmentWeapon.index] = environmentWeapon.item;
 		}
 	}
 
@@ -2092,6 +2206,18 @@ public partial class MainView : UserControl
 		LevelOrder_NumericUpDown_MaxBackwardsJump.Minimum = LevelOrder_NumericUpDown_MaxForwardsJump.Minimum = LevelOrder_CheckBox_AllowJumpsToSameLevel.IsChecked.Value ? 0 : 1;
 	}
 
+	private void Layout_Weapon_CheckBox_RandomWeaponsInWeaponBoxes_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+	{
+		if (Layout_Weapon_CheckBox_RandomWeaponsInWeaponBoxes.IsChecked.Value)
+			Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes.IsChecked = false;
+	}
+
+	private void Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+	{
+		if (Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes.IsChecked.Value)
+			Layout_Weapon_CheckBox_RandomWeaponsInWeaponBoxes.IsChecked = false;
+	}
+
 	private void Subtitles_CheckBox_OnlyWithLinkedAudio_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
 		if (Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked.Value)
@@ -2144,6 +2270,9 @@ public partial class MainView : UserControl
 			{
 				sw.WriteLine($"Enemy Mode: {settings.LayoutEnemyMode}");
 				sw.WriteLine($"Random Weapons In All Boxes: {Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes.IsChecked.Value}");
+				sw.WriteLine($"Random Weapons In Weapon Boxes: {Layout_Weapon_CheckBox_RandomWeaponsInWeaponBoxes.IsChecked.Value}");
+				sw.WriteLine($"Random Exposed Weapons: {Layout_Weapon_CheckBox_RandomExposedWeapons.IsChecked.Value}");
+				sw.WriteLine($"Environment Drops Random Weapons: {Layout_Weapon_CheckBox_RandomWeaponsFromEnvironment.IsChecked.Value}");
 				sw.WriteLine($"Partner Mode: {settings.LayoutPartnerMode}");
 			}
 			sw.WriteLine($"Randomize Subtitles / Voicelines: {Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value}");
