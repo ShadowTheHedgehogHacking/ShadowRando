@@ -449,7 +449,7 @@ public partial class MainView : UserControl
 		}
 	}
 
-	static int CalculateSeed(string seedString)
+	private static int CalculateSeed(string seedString)
 	{
 		using (SHA256 sha256 = SHA256.Create())
 		{
@@ -478,6 +478,13 @@ public partial class MainView : UserControl
 			}
 			LevelOrder_TextBox_Seed.Text = Convert.ToBase64String(randomBytes);
 		}
+		if (LevelOrder_TextBox_Seed.Text == null || LevelOrder_TextBox_Seed.Text == "")
+		{
+			ShowErrorMessage("Error", "Invalid Seed", ButtonEnum.Ok, Icon.Error);
+			ProgressBar_RandomizationProgress.Value = 0;
+			return;
+		}
+
 		seed = CalculateSeed(LevelOrder_TextBox_Seed.Text);
 		settings.LevelOrderMode = (LevelOrderMode)LevelOrder_ComboBox_Mode.SelectedIndex;
 		Random r = new Random(seed);
@@ -997,8 +1004,14 @@ public partial class MainView : UserControl
 
 		ProgressBar_RandomizationProgress.Value = 25;
 
-		if (Layout_CheckBox_RandomizeLayouts.IsChecked.Value)
-			RandomizeLayouts(r);
+		if (Layout_CheckBox_RandomizeLayouts.IsChecked.Value) {
+			var layoutResult = RandomizeLayouts(r);
+			if (layoutResult == 1)
+			{
+				ProgressBar_RandomizationProgress.Value = 0;
+				return;
+			}
+		}
 
 		ProgressBar_RandomizationProgress.Value = 50;
 
@@ -1222,7 +1235,7 @@ public partial class MainView : UserControl
 		return false;
 	}
 
-	private void RandomizeLayouts(Random r)
+	private int RandomizeLayouts(Random r)
 	{
 		var enemyMode = (LayoutEnemyMode)Layout_Enemy_ComboBox_Mode.SelectedIndex;
 		var nukkoro2 = Nukkoro2.ReadFile(Path.Combine("backup", "nukkoro2.inf"));
@@ -1437,6 +1450,35 @@ public partial class MainView : UserControl
 					flyingEnemies.Add(typeof(Object0093_BkNinja));
 					allEnemies.Add(typeof(Object0093_BkNinja));
 				}
+				// error checking
+				if (Layout_Enemy_CheckBox_KeepType.IsChecked.Value)
+				{
+					if (groundEnemies.Count == 0 || flyingEnemies.Count == 0)
+					{
+						ShowErrorMessage("Error", "Must have at least one ground and one flying enemy.", ButtonEnum.Ok, Icon.Error);
+						return 1; // TODO do we want to throw errors?
+					}
+					if (groundEnemies.Count == 1)
+					{
+						// make sure there is at least one other enemy if GUN Soldiers are only picked
+						if (groundEnemies[0] == typeof(Object0064_GUNSoldier))
+						{
+							ShowErrorMessage("Error", "GUN Soldiers have an issue with some Link IDs, add an extra ground enemy type.", ButtonEnum.Ok, Icon.Error);
+							return 1;
+						}
+					}
+				} else
+				{
+					if (allEnemies.Count == 1)
+					{
+						// make sure there is at least one other enemy if GUN Soldiers are only picked
+						if (allEnemies[0] == typeof(Object0064_GUNSoldier))
+						{
+							ShowErrorMessage("Error", "GUN Soldiers have an issue with some Link IDs, add an extra enemy type.", ButtonEnum.Ok, Icon.Error);
+							return 1;
+						}
+					}
+				}
 			}
 			else
 			{
@@ -1549,6 +1591,13 @@ public partial class MainView : UserControl
 		{
 			Nukkoro2.WriteFile(Path.Combine(settings.GamePath, "files", "nukkoro2.inf"), nukkoro2);
 		}
+
+		return 0;
+	}
+
+	private async void ShowErrorMessage(string title, string message, ButtonEnum messageType, Icon messageIcon) {
+		var error = MessageBoxManager.GetMessageBoxStandard(title, message, messageType, messageIcon);
+		await error.ShowAsync();
 	}
 
 	private int GetTotalGUNEnemies(List<SetObjectShadow> cmn, List<SetObjectShadow> nrm = null)
