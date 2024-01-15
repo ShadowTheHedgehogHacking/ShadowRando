@@ -15,9 +15,8 @@ using MsBox.Avalonia.Enums;
 using MsBox.Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia;
-using NAudio.Wave;
 using Avalonia.Platform;
-using Microsoft.CodeAnalysis;
+using LibVLCSharp.Shared;
 
 namespace ShadowRando.Views;
 
@@ -592,6 +591,7 @@ public partial class MainView : UserControl
 	private void Button_Randomize_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
 	{
 		PlayAudio(AssetLoader.Open(new Uri("avares://ShadowRando/Assets/shadow_menu_select.wav")));
+		
 		ProgressBar_RandomizationProgress.Value = 0;
 		RandomizationProcess();
 		// Task.Run(() => RandomizationProcess()); // We can't do this (yet) until we properly MVVM-ify since the UI Thread is actively used to evaluate CheckBox state
@@ -2507,20 +2507,12 @@ public partial class MainView : UserControl
 	{
 		if (!LevelOrder_CheckBox_ProgramSound.IsChecked.Value)
 			return;
+		
+		using var libvlc = new LibVLC(enableDebugLogs: true);
+		using var media = new Media(libvlc, new StreamMediaInput(sound));
+		using var mediaplayer = new MediaPlayer(media);
+		
+		mediaplayer.Play();
 
-		var outputDevice = new WaveOutEvent();
-
-		// Create a new instance of WaveFileReader for each call to playsound
-		WaveFileReader reader = new WaveFileReader(sound);
-
-		outputDevice.Init(reader);
-		outputDevice.Play();
-
-		// Hook the PlaybackStopped event to dispose of resources when playback is finished
-		outputDevice.PlaybackStopped += (sender, args) =>
-		{
-			outputDevice.Dispose();
-			reader.Dispose();
-		};
 	}
 }
