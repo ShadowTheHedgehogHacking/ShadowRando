@@ -510,7 +510,7 @@ public partial class MainView : UserControl
 
 		if (folderPath is not null && folderPath.Count > 0)
 		{
-			if (settings.GamePath != folderPath.First().Path.AbsolutePath && Directory.Exists("backup"))
+			if (settings.GamePath != folderPath.First().Path.LocalPath && Directory.Exists("backup"))
 			{
 				var msgbox = MessageBoxManager.GetMessageBoxStandard("Shadow Randomizer", "New game directory selected!\n\nDo you wish to erase the previous backup data and use the new data as a base?", ButtonEnum.YesNo, Icon.Question);
 				var result = await msgbox.ShowAsync();
@@ -525,7 +525,7 @@ public partial class MainView : UserControl
 						break;
 				}
 			}
-			settings.GamePath = folderPath.First().Path.AbsolutePath;
+			settings.GamePath = folderPath.First().Path.LocalPath;
 			if (!Directory.Exists("backup"))
 				Directory.CreateDirectory("backup");
 			if (!File.Exists(Path.Combine("backup", "main.dol")))
