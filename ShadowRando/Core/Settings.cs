@@ -6,99 +6,195 @@ namespace ShadowRando
 	public class Settings
 	{
 		[IniAlwaysInclude]
-		public bool ProgramSound { get; set; } = false;
+		public bool ProgramSound = false;
 		[IniAlwaysInclude]
-		public int ProgramTheme { get; set; } = 2;
+		public int ProgramTheme = 2;
 		[IniAlwaysInclude]
-		public string GamePath { get; set; }
+		public string GamePath;
 		[IniAlwaysInclude]
-		public string Seed { get; set; }
+		public string Seed;
 		[IniAlwaysInclude]
-		public bool RandomSeed { get; set; }
+		public bool RandomSeed;
 		[IniAlwaysInclude]
-		public LevelOrderMode LevelOrderMode { get; set; } = LevelOrderMode.AllStagesWarps;
+		public LevelOrderMode LevelOrderMode = LevelOrderMode.AllStagesWarps;
 		[IniAlwaysInclude]
-		public LevelOrderMainPath LevelOrderMainPath { get; set; }
+		public LevelOrderMainPath LevelOrderMainPath;
 		[System.ComponentModel.DefaultValue(22)]
 		[IniAlwaysInclude]
-		public int LevelOrderMaxForwardsJump { get; set; } = 22;
+		public int LevelOrderMaxForwardsJump = 22;
 		[System.ComponentModel.DefaultValue(4)]
 		[IniAlwaysInclude]
-		public int LevelOrderMaxBackwardsJump { get; set; } = 4;
+		public int LevelOrderMaxBackwardsJump = 4;
 		[System.ComponentModel.DefaultValue(10)]
 		[IniAlwaysInclude]
-		public int LevelOrderBackwardsJumpProbability { get; set; } = 10;
+		public int LevelOrderBackwardsJumpProbability = 10;
 		[IniAlwaysInclude]
-		public bool LevelOrderAllowJumpsToSameLevel { get; set; }
+		public bool LevelOrderAllowJumpsToSameLevel;
 		[System.ComponentModel.DefaultValue(true)]
 		[IniAlwaysInclude]
-		public bool LevelOrderIncludeLastStory { get; set; }
+		public bool LevelOrderIncludeLastStory;
 		[System.ComponentModel.DefaultValue(true)]
 		[IniAlwaysInclude]
-		public bool LevelOrderIncludeBosses { get; set; } = true;
+		public bool LevelOrderIncludeBosses = true;
+
+		// Layout
 		[IniAlwaysInclude]
-		public bool RandomizeMusic { get; set; }
+		public bool RandomizeLayouts;
 		[IniAlwaysInclude]
-		public bool MusicSkipRankTheme { get; set; }
+		public bool LayoutMakeCCSplinesVehicleCompatible;
+
+		// Enemy
 		[IniAlwaysInclude]
-		public bool MusicSkipChaosPowers { get; set; }
-		public bool RandomizeSubtitlesVoicelines { get; set; }
-		[IniAlwaysInclude]
-		public bool RandomizeLayouts { get; set; }
-		[IniAlwaysInclude]
-		public LayoutEnemyMode LayoutEnemyMode { get; set; }
-		[IniAlwaysInclude]
-		public bool LayoutEnemyKeepType { get; set; }
-		[IniAlwaysInclude]
-		public bool LayoutEnemyOnlySelectedTypes { get; set; }
-		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyGUNSoldier { get; set; }
-		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyGUNBeetle { get; set; }
-		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyGUNBigfoot { get; set; }
-		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyGUNRobot { get; set; }
-		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyEggPierrot { get; set; }
-		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyEggPawn { get; set; }
-		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyShadowAndroid { get; set; }
-		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyBAGiant { get; set; }
-		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyBASoldier { get; set; }
-		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyBAHawkVolt { get; set; }
-		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyBAWing { get; set; }
-		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyBAWorm { get; set; }
-		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyBALarva { get; set; }
-		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyArtificialChaos { get; set; }
-		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyBAAssassin { get; set; }
-		[IniAlwaysInclude]
-		public LayoutPartnerMode LayoutPartnerMode { get; set; }
-		[IniAlwaysInclude]
-		public bool LayoutRandomWeaponsInAllBoxes { get; set; }
-		[IniAlwaysInclude]
-		public bool LayoutRandomWeaponsInWeaponBoxes { get; set; }
-		[IniAlwaysInclude]
-		public bool LayoutRandomExposedWeapons { get; set; }
-		[IniAlwaysInclude]
-		public bool LayoutRandomWeaponsFromEnvironment { get; set; }
-		[IniAlwaysInclude]
-		public bool LayoutMakeCCSplinesVehicleCompatible { get; set; }
-		[IniAlwaysInclude]
-		public bool LayoutAdjustMissionCounts { get; set; }
+		public bool LayoutAdjustMissionCounts;
 		[System.ComponentModel.DefaultValue(20)]
 		[IniAlwaysInclude]
-		public int LayoutAdjustMissionCountsReductionPercent { get; set; } = 20;
-		// FNT
+		public int LayoutAdjustMissionCountsReductionPercent = 20;
+		[IniAlwaysInclude]
+		public LayoutEnemyMode LayoutEnemyMode;
+		[IniAlwaysInclude]
+		public bool LayoutEnemyKeepType;
+		[IniAlwaysInclude]
+		public bool LayoutEnemyOnlySelectedTypes;
+
+		// Enemy Selected Types
+		[IniAlwaysInclude]
+		public bool LayoutEnemySelectedEnemyGUNSoldier;
+		[IniAlwaysInclude]
+		public bool LayoutEnemySelectedEnemyGUNBeetle;
+		[IniAlwaysInclude]
+		public bool LayoutEnemySelectedEnemyGUNBigfoot;
+		[IniAlwaysInclude]
+		public bool LayoutEnemySelectedEnemyGUNRobot;
+		[IniAlwaysInclude]
+		public bool LayoutEnemySelectedEnemyEggPierrot;
+		[IniAlwaysInclude]
+		public bool LayoutEnemySelectedEnemyEggPawn;
+		[IniAlwaysInclude]
+		public bool LayoutEnemySelectedEnemyShadowAndroid;
+		[IniAlwaysInclude]
+		public bool LayoutEnemySelectedEnemyBAGiant;
+		[IniAlwaysInclude]
+		public bool LayoutEnemySelectedEnemyBASoldier;
+		[IniAlwaysInclude]
+		public bool LayoutEnemySelectedEnemyBAHawkVolt;
+		[IniAlwaysInclude]
+		public bool LayoutEnemySelectedEnemyBAWing;
+		[IniAlwaysInclude]
+		public bool LayoutEnemySelectedEnemyBAWorm;
+		[IniAlwaysInclude]
+		public bool LayoutEnemySelectedEnemyBALarva;
+		[IniAlwaysInclude]
+		public bool LayoutEnemySelectedEnemyArtificialChaos;
+		[IniAlwaysInclude]
+		public bool LayoutEnemySelectedEnemyBAAssassin;
+
+		// Weapon
+		[IniAlwaysInclude]
+		public bool LayoutWeaponRandomWeaponsInAllBoxes;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponRandomWeaponsInWeaponBoxes;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponRandomExposedWeapons;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponRandomWeaponsFromEnvironment;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponOnlySelectedTypes;
+
+		// Weapon Selected Types
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponNone;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponPistol;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponSubmachineGun;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponAssaultRifle;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponHeavyMachineGun;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponGatlingGun;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponEggPistol;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponLightShot;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponFlashShot;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponRingShot;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponHeavyShot;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponGrenadeLauncher;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponGUNBazooka;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponTankCannon;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponBlackBarrel;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponBigBarrel;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponEggBazooka;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponRPG;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponFourShot;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponEightShot;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponWormShooterBlack;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponWormShooterRed;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponWormShooterGold;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponVacuumPod;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponLaserRifle;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponSplitter;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponRefractor;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponKnife;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponBlackSword;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponDarkHammer;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponEggLance;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponSamuraiSwordLv1;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponSamuraiSwordLv2;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponSatelliteLaserLv1;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponSatelliteLaserLv2;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponEggVacuumLv1;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponEggVacuumLv2;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponOmochaoGunLv1;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponOmochaoGunLv2;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponHealCannonLv1;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponHealCannonLv2;
+		[IniAlwaysInclude]
+		public bool LayoutWeaponSelectedWeaponShadowRifle;
+
+		// Partner
+		[IniAlwaysInclude]
+		public LayoutPartnerMode LayoutPartnerMode;
+		[IniAlwaysInclude]
+		public bool LayoutPartnerKeepOriginalObjectAffiliation;
+
+		// Subtitles
+		[IniAlwaysInclude]
+		public bool RandomizeSubtitlesVoicelines;
 		[IniAlwaysInclude]
 		public bool SubtitlesNoDuplicates;
 		[IniAlwaysInclude]
@@ -109,7 +205,7 @@ namespace ShadowRando
 		public bool SubtitlesOnlySelectedCharacters;
 		[IniAlwaysInclude]
 		public bool SubtitlesGiveAudioToNoLinkedAudio;
-		// FNT Specific Chars Section
+		// Subtitle Selected Characters
 		[IniAlwaysInclude]
 		public bool SubtitlesSelectedCharacterShadow;
 		[IniAlwaysInclude]
@@ -145,6 +241,13 @@ namespace ShadowRando
 		[IniAlwaysInclude]
 		public bool SubtitlesSelectedCharacterGUNSoldier;
 
+		// Music
+		[IniAlwaysInclude]
+		public bool RandomizeMusic;
+		[IniAlwaysInclude]
+		public bool MusicSkipRankTheme;
+		[IniAlwaysInclude]
+		public bool MusicSkipChaosPowers;
 
 		public static Settings Load()
 		{
