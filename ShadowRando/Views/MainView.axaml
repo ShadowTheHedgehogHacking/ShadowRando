@@ -180,7 +180,7 @@
 									<ComboBoxItem IsEnabled="False">1:1 Global (Not Ready Yet)</ComboBoxItem>
 								</ComboBox>
 								<CheckBox x:Name="Layout_Partner_CheckBox_ReclassifyAffiliation" IsEnabled="False">Reclassify Affiliation of Dark/Hero Partners</CheckBox>
-								<CheckBox x:Name="Layout_Partner_CheckBox_KeepAffiliationOfOriginalObject" IsEnabled="False">Keep Affiliation of Original Object (Dark -> Dark)</CheckBox>
+								<CheckBox x:Name="Layout_Partner_CheckBox_KeepAffiliationOfOriginalObject">Keep Affiliation of Original Object (Dark -> Dark)</CheckBox>
 								<CheckBox x:Name="Layout_Partner_CheckBox_OnlySelectedPartners" IsEnabled="False">Only Selected Partners</CheckBox>
 								<Label Margin="0,10,0,0">Selected Partners</Label>
 								<Grid IsEnabled="False" ColumnDefinitions="*, *, *" RowDefinitions="*, *, *, *">

@@ -1518,9 +1518,9 @@ public partial class MainView : UserControl
 
 			if ((LayoutPartnerMode)Layout_Partner_ComboBox_Mode.SelectedIndex == LayoutPartnerMode.Wild)
 			{
-				MakeAllPartnersRandom(ref cmnLayoutData, r);
+				MakeAllPartnersRandom(ref cmnLayoutData, Layout_Partner_CheckBox_KeepAffiliationOfOriginalObject.IsChecked.Value, r);
 				if (nrmLayoutData != null)
-					MakeAllPartnersRandom(ref nrmLayoutData, r);
+					MakeAllPartnersRandom(ref nrmLayoutData, Layout_Partner_CheckBox_KeepAffiliationOfOriginalObject.IsChecked.Value, r);
 			}
 
 			List<Type> allEnemies = new List<Type>();
@@ -1820,7 +1820,7 @@ public partial class MainView : UserControl
 		return total;
 	}
 
-	private void MakeAllPartnersRandom(ref List<SetObjectShadow> setData, Random r)
+	private void MakeAllPartnersRandom(ref List<SetObjectShadow> setData, bool keepOriginalObjectAffiliation, Random r)
 	{
 		List<(Object0190_Partner item, int index)> partnerItems = setData
 			.Select((item, index) => new { Item = item, Index = index })
@@ -1830,7 +1830,17 @@ public partial class MainView : UserControl
 
 		foreach (var partner in partnerItems)
 		{
-			partner.item.Partner = (Object0190_Partner.EPartner)r.Next(0x01, 0x0D);
+			if (keepOriginalObjectAffiliation)
+			{
+				if (partner.item.Partner == Object0190_Partner.EPartner.Eggman || partner.item.Partner == Object0190_Partner.EPartner.DoomsEye) 
+					partner.item.Partner = (Object0190_Partner.EPartner)r.Next(0x0B, 0x0D);
+				else
+					partner.item.Partner = (Object0190_Partner.EPartner)r.Next(0x01, 0x0B);
+			}
+			else
+			{
+				partner.item.Partner = (Object0190_Partner.EPartner)r.Next(0x01, 0x0D);
+			}
 			setData[partner.index] = partner.item;
 		}
 	}
