@@ -661,32 +661,94 @@ namespace ShadowRando
 
 			switch (targetEntry)
 			{
+				case Object008E_BkWingLarge originalEnemy when targetEntry is Object008E_BkWingLarge:
+					{
+						var actionType = Object0065_GUNBeetle.EAction.NONE;
+						if (originalEnemy.ActionType == Object008E_BkWingLarge.EAction.AIR_CUTTER)
+							actionType = r.Next(2) == 1 ? Object0065_GUNBeetle.EAction.USE_WEAPON : Object0065_GUNBeetle.EAction.SHOCK;
+
+						var newEntry = (Object0065_GUNBeetle)LayoutEditorFunctions.CreateShadowObject(donor.List, donor.Type, targetEntry.PosX, targetEntry.PosY,
+							targetEntry.PosZ, targetEntry.RotX, targetEntry.RotY, targetEntry.RotZ, targetEntry.Link, targetEntry.Rend, targetEntry.UnkBytes);
+						newEntry.MoveRange = originalEnemy.MoveRange;
+						newEntry.SearchRange = originalEnemy.SearchRange;
+						newEntry.SearchAngle = originalEnemy.SearchAngle;
+						newEntry.SearchWidth = originalEnemy.SearchWidth;
+						newEntry.SearchHeight = originalEnemy.SearchHeight;
+						newEntry.SearchHeightOffset = originalEnemy.SearchHeightOffset;
+						newEntry.MoveSpeedRatio = originalEnemy.MoveSpeedRatio;
+						newEntry.MoveRange = originalEnemy.MoveRange;
+						newEntry.AppearType = (Object0065_GUNBeetle.EAppear)originalEnemy.AppearType;
+						newEntry.ActionType = actionType;
+						newEntry.WeaponType = (Object0065_GUNBeetle.EWeapon)r.Next(6);
+						newEntry.PathType = (Object0065_GUNBeetle.EPathType)originalEnemy.PathType;
+						newEntry.PathVariable = originalEnemy.MoveRange;
+						newEntry.AttackStart = originalEnemy.AttackStart;
+						newEntry.AttackEnd = originalEnemy.AttackEnd;
+						newEntry.SparkWait = originalEnemy.AttackStart;
+						newEntry.SparkDischarge = originalEnemy.AttackEnd;
+						newEntry.PatrolReversed = originalEnemy.PatrolReversed;
+						newEntry.IsGolden = r.Next(20) == 1 ? (ENoYes)1 : (ENoYes)0; // 5% chance of golden
+						setData[index] = newEntry;
+						break;
+					}
+				case Object008F_BkWingSmall originalEnemy when targetEntry is Object008F_BkWingSmall:
+					{
+						var actionType = Object0065_GUNBeetle.EAction.NONE;
+						if (originalEnemy.ActionType == Object008F_BkWingSmall.EAction.ATTACK)
+							actionType = r.Next(2) == 1 ? Object0065_GUNBeetle.EAction.USE_WEAPON : Object0065_GUNBeetle.EAction.SHOCK;
+
+						var newEntry = (Object0065_GUNBeetle)LayoutEditorFunctions.CreateShadowObject(donor.List, donor.Type, targetEntry.PosX, targetEntry.PosY,
+							targetEntry.PosZ, targetEntry.RotX, targetEntry.RotY, targetEntry.RotZ, targetEntry.Link, targetEntry.Rend, targetEntry.UnkBytes);
+						newEntry.MoveRange = originalEnemy.MoveRange;
+						newEntry.SearchRange = originalEnemy.SearchRange;
+						newEntry.SearchAngle = originalEnemy.SearchAngle;
+						newEntry.SearchWidth = originalEnemy.SearchWidth;
+						newEntry.SearchHeight = originalEnemy.SearchHeight;
+						newEntry.SearchHeightOffset = originalEnemy.SearchHeightOffset;
+						newEntry.MoveSpeedRatio = originalEnemy.MoveSpeedRatio;
+						newEntry.MoveRange = originalEnemy.MoveRange;
+						newEntry.AppearType = (Object0065_GUNBeetle.EAppear)originalEnemy.AppearType;
+						newEntry.ActionType = actionType;
+						newEntry.WeaponType = (Object0065_GUNBeetle.EWeapon)r.Next(6);
+						newEntry.PathType = (Object0065_GUNBeetle.EPathType)originalEnemy.PathType;
+						newEntry.PathVariable = originalEnemy.MoveRange;
+						newEntry.AttackStart = originalEnemy.AttackStart;
+						newEntry.AttackEnd = originalEnemy.AttackEnd;
+						newEntry.SparkWait = originalEnemy.AttackStart;
+						newEntry.SparkDischarge = originalEnemy.AttackEnd;
+						newEntry.PatrolReversed = originalEnemy.PatrolReversed;
+						newEntry.IsGolden = r.Next(20) == 1 ? (ENoYes)1 : (ENoYes)0; // 5% chance of golden
+						setData[index] = newEntry;
+						break;
+					}
 				case Object0064_GUNSoldier originalEnemy when targetEntry is Object0064_GUNSoldier:
 				default:
-					var newEntry = (Object0065_GUNBeetle)LayoutEditorFunctions.CreateShadowObject(donor.List, donor.Type, targetEntry.PosX, targetEntry.PosY,
-					targetEntry.PosZ, targetEntry.RotX, targetEntry.RotY, targetEntry.RotZ, targetEntry.Link, targetEntry.Rend, targetEntry.UnkBytes);
-					// EnemyBase
-					newEntry.MoveRange = donor.MoveRange;
-					newEntry.SearchRange = donor.SearchRange;
-					newEntry.SearchAngle = donor.SearchAngle;
-					newEntry.SearchWidth = donor.SearchWidth;
-					newEntry.SearchHeight = donor.SearchHeight;
-					newEntry.SearchHeightOffset = donor.SearchHeightOffset;
-					newEntry.MoveSpeedRatio = donor.MoveSpeedRatio;
-					// end EnemyBase
-					newEntry.AppearType = donor.AppearType;
-					newEntry.ActionType = donor.ActionType;
-					newEntry.PathType = donor.PathType;
-					newEntry.PathVariable = donor.PathVariable;
-					newEntry.AttackStart = donor.AttackStart;
-					newEntry.AttackEnd = donor.AttackEnd;
-					newEntry.PatrolReversed = donor.PatrolReversed;
-					newEntry.IsGolden = donor.IsGolden;
-					newEntry.WeaponType = donor.WeaponType;
-					newEntry.SparkDischarge = donor.SparkDischarge;
-					newEntry.SparkWait = donor.SparkWait;
-					setData[index] = newEntry;
-					break;
+					{
+						var newEntry = (Object0065_GUNBeetle)LayoutEditorFunctions.CreateShadowObject(donor.List, donor.Type, targetEntry.PosX, targetEntry.PosY,
+						targetEntry.PosZ, targetEntry.RotX, targetEntry.RotY, targetEntry.RotZ, targetEntry.Link, targetEntry.Rend, targetEntry.UnkBytes);
+						// EnemyBase
+						newEntry.MoveRange = donor.MoveRange;
+						newEntry.SearchRange = donor.SearchRange;
+						newEntry.SearchAngle = donor.SearchAngle;
+						newEntry.SearchWidth = donor.SearchWidth;
+						newEntry.SearchHeight = donor.SearchHeight;
+						newEntry.SearchHeightOffset = donor.SearchHeightOffset;
+						newEntry.MoveSpeedRatio = donor.MoveSpeedRatio;
+						// end EnemyBase
+						newEntry.AppearType = donor.AppearType;
+						newEntry.ActionType = donor.ActionType;
+						newEntry.PathType = donor.PathType;
+						newEntry.PathVariable = donor.PathVariable;
+						newEntry.AttackStart = donor.AttackStart;
+						newEntry.AttackEnd = donor.AttackEnd;
+						newEntry.PatrolReversed = donor.PatrolReversed;
+						newEntry.IsGolden = donor.IsGolden;
+						newEntry.WeaponType = donor.WeaponType;
+						newEntry.SparkDischarge = donor.SparkDischarge;
+						newEntry.SparkWait = donor.SparkWait;
+						setData[index] = newEntry;
+						break;
+					}
 			}
 		}
 
@@ -937,29 +999,91 @@ namespace ShadowRando
 
 			switch (targetEntry)
 			{
+				case Object0065_GUNBeetle originalEnemy when targetEntry is Object0065_GUNBeetle:
+					{
+						// account for BlackVolt non standard enum
+						var bodyType = r.Next(4);
+						if (bodyType == 2)
+							bodyType = 16;
+						if (bodyType == 3)
+							bodyType = 17;
+
+						var newEntry = (Object008E_BkWingLarge)LayoutEditorFunctions.CreateShadowObject(donor.List, donor.Type, targetEntry.PosX, targetEntry.PosY,
+							targetEntry.PosZ, targetEntry.RotX, targetEntry.RotY, targetEntry.RotZ, targetEntry.Link, targetEntry.Rend, targetEntry.UnkBytes);
+						newEntry.MoveRange = originalEnemy.MoveRange;
+						newEntry.SearchRange = originalEnemy.SearchRange;
+						newEntry.SearchAngle = originalEnemy.SearchAngle;
+						newEntry.SearchWidth = originalEnemy.SearchWidth;
+						newEntry.SearchHeight = originalEnemy.SearchHeight;
+						newEntry.SearchHeightOffset = originalEnemy.SearchHeightOffset;
+						newEntry.MoveSpeedRatio = originalEnemy.MoveSpeedRatio;
+						newEntry.MoveRange = originalEnemy.MoveRange;
+						newEntry.AppearType = (Object008E_BkWingLarge.EAppear)originalEnemy.AppearType;
+						newEntry.ActionType = (originalEnemy.ActionType == Object0065_GUNBeetle.EAction.SHOCK || originalEnemy.ActionType == Object0065_GUNBeetle.EAction.USE_WEAPON) ? Object008E_BkWingLarge.EAction.AIR_CUTTER : Object008E_BkWingLarge.EAction.NONE;
+						newEntry.PathType = (Object008E_BkWingLarge.EPathType)originalEnemy.PathType;
+						newEntry.PathVariable = originalEnemy.MoveRange;
+						newEntry.AttackStart = originalEnemy.AttackStart;
+						newEntry.AttackEnd = originalEnemy.AttackEnd;
+						newEntry.PatrolReversed = originalEnemy.PatrolReversed;
+						newEntry.BodyAndDeathType = (Object008E_BkWingLarge.EBodyAndDeathType)bodyType;
+						setData[index] = newEntry;
+						break;
+					}
+				case Object008F_BkWingSmall originalEnemy when targetEntry is Object008F_BkWingSmall:
+					{
+						// account for BlackVolt non standard enum
+						var bodyType = r.Next(4);
+						if (bodyType == 2)
+							bodyType = 16;
+						if (bodyType == 3)
+							bodyType = 17;
+
+						var newEntry = (Object008E_BkWingLarge)LayoutEditorFunctions.CreateShadowObject(donor.List, donor.Type, targetEntry.PosX, targetEntry.PosY,
+							targetEntry.PosZ, targetEntry.RotX, targetEntry.RotY, targetEntry.RotZ, targetEntry.Link, targetEntry.Rend, targetEntry.UnkBytes);
+						newEntry.MoveRange = originalEnemy.MoveRange;
+						newEntry.SearchRange = originalEnemy.SearchRange;
+						newEntry.SearchAngle = originalEnemy.SearchAngle;
+						newEntry.SearchWidth = originalEnemy.SearchWidth;
+						newEntry.SearchHeight = originalEnemy.SearchHeight;
+						newEntry.SearchHeightOffset = originalEnemy.SearchHeightOffset;
+						newEntry.MoveSpeedRatio = originalEnemy.MoveSpeedRatio;
+						newEntry.MoveRange = originalEnemy.MoveRange;
+						newEntry.AppearType = (Object008E_BkWingLarge.EAppear)originalEnemy.AppearType;
+						newEntry.ActionType = (Object008E_BkWingLarge.EAction)originalEnemy.ActionType;
+						newEntry.PathType = (Object008E_BkWingLarge.EPathType)originalEnemy.PathType;
+						newEntry.PathVariable = originalEnemy.MoveRange;
+						newEntry.AttackStart = originalEnemy.AttackStart;
+						newEntry.AttackEnd = originalEnemy.AttackEnd;
+						newEntry.PatrolReversed = originalEnemy.PatrolReversed;
+						newEntry.BodyAndDeathType = (Object008E_BkWingLarge.EBodyAndDeathType)bodyType;
+						setData[index] = newEntry;
+						break;
+					}
 				case Object0064_GUNSoldier originalEnemy when targetEntry is Object0064_GUNSoldier:
 				default:
-					var newEntry = (Object008E_BkWingLarge)LayoutEditorFunctions.CreateShadowObject(donor.List, donor.Type, targetEntry.PosX, targetEntry.PosY,
-					targetEntry.PosZ, targetEntry.RotX, targetEntry.RotY, targetEntry.RotZ, targetEntry.Link, targetEntry.Rend, targetEntry.UnkBytes);
-					// EnemyBase
-					newEntry.MoveRange = donor.MoveRange;
-					newEntry.SearchRange = donor.SearchRange;
-					newEntry.SearchAngle = donor.SearchAngle;
-					newEntry.SearchWidth = donor.SearchWidth;
-					newEntry.SearchHeight = donor.SearchHeight;
-					newEntry.SearchHeightOffset = donor.SearchHeightOffset;
-					newEntry.MoveSpeedRatio = donor.MoveSpeedRatio;
-					// end EnemyBase
-					newEntry.AppearType = donor.AppearType;
-					newEntry.ActionType = donor.ActionType;
-					newEntry.PathType = donor.PathType;
-					newEntry.PathVariable = donor.PathVariable;
-					newEntry.AttackStart = donor.AttackStart;
-					newEntry.AttackEnd = donor.AttackEnd;
-					newEntry.PatrolReversed = donor.PatrolReversed;
-					newEntry.BodyAndDeathType = donor.BodyAndDeathType;
-					setData[index] = newEntry;
-					break;
+					{
+						var newEntry = (Object008E_BkWingLarge)LayoutEditorFunctions.CreateShadowObject(donor.List, donor.Type, targetEntry.PosX, targetEntry.PosY,
+						targetEntry.PosZ, targetEntry.RotX, targetEntry.RotY, targetEntry.RotZ, targetEntry.Link, targetEntry.Rend, targetEntry.UnkBytes);
+						// EnemyBase
+						newEntry.MoveRange = donor.MoveRange;
+						newEntry.SearchRange = donor.SearchRange;
+						newEntry.SearchAngle = donor.SearchAngle;
+						newEntry.SearchWidth = donor.SearchWidth;
+						newEntry.SearchHeight = donor.SearchHeight;
+						newEntry.SearchHeightOffset = donor.SearchHeightOffset;
+						newEntry.MoveSpeedRatio = donor.MoveSpeedRatio;
+						// end EnemyBase
+						newEntry.AppearType = donor.AppearType;
+						newEntry.ActionType = donor.ActionType;
+						newEntry.PathType = donor.PathType;
+						newEntry.PathVariable = donor.PathVariable;
+						newEntry.AttackStart = donor.AttackStart;
+						newEntry.AttackEnd = donor.AttackEnd;
+						newEntry.PatrolReversed = donor.PatrolReversed;
+						newEntry.BodyAndDeathType = donor.BodyAndDeathType;
+						setData[index] = newEntry;
+						break;
+					}
 			}
 		}
 
@@ -969,27 +1093,73 @@ namespace ShadowRando
 
 			switch (targetEntry)
 			{
+				case Object0065_GUNBeetle originalEnemy when targetEntry is Object0065_GUNBeetle:
+					{
+						var newEntry = (Object008F_BkWingSmall)LayoutEditorFunctions.CreateShadowObject(donor.List, donor.Type, targetEntry.PosX, targetEntry.PosY,
+							targetEntry.PosZ, targetEntry.RotX, targetEntry.RotY, targetEntry.RotZ, targetEntry.Link, targetEntry.Rend, targetEntry.UnkBytes);
+						newEntry.MoveRange = originalEnemy.MoveRange;
+						newEntry.SearchRange = originalEnemy.SearchRange;
+						newEntry.SearchAngle = originalEnemy.SearchAngle;
+						newEntry.SearchWidth = originalEnemy.SearchWidth;
+						newEntry.SearchHeight = originalEnemy.SearchHeight;
+						newEntry.SearchHeightOffset = originalEnemy.SearchHeightOffset;
+						newEntry.MoveSpeedRatio = originalEnemy.MoveSpeedRatio;
+						newEntry.MoveRange = originalEnemy.MoveRange;
+						newEntry.AppearType = (Object008F_BkWingSmall.EAppear)originalEnemy.AppearType;
+						newEntry.ActionType = (originalEnemy.ActionType == Object0065_GUNBeetle.EAction.SHOCK || originalEnemy.ActionType == Object0065_GUNBeetle.EAction.USE_WEAPON) ? Object008F_BkWingSmall.EAction.ATTACK : Object008F_BkWingSmall.EAction.NONE;
+						newEntry.PathType = (Object008F_BkWingSmall.EPathType)originalEnemy.PathType;
+						newEntry.PathVariable = originalEnemy.MoveRange;
+						newEntry.AttackStart = originalEnemy.AttackStart;
+						newEntry.AttackEnd = originalEnemy.AttackEnd;
+						newEntry.PatrolReversed = originalEnemy.PatrolReversed;
+						setData[index] = newEntry;
+						break;
+					}
+				case Object008E_BkWingLarge originalEnemy when targetEntry is Object008E_BkWingLarge:
+					{
+						var newEntry = (Object008F_BkWingSmall)LayoutEditorFunctions.CreateShadowObject(donor.List, donor.Type, targetEntry.PosX, targetEntry.PosY,
+							targetEntry.PosZ, targetEntry.RotX, targetEntry.RotY, targetEntry.RotZ, targetEntry.Link, targetEntry.Rend, targetEntry.UnkBytes);
+						newEntry.MoveRange = originalEnemy.MoveRange;
+						newEntry.SearchRange = originalEnemy.SearchRange;
+						newEntry.SearchAngle = originalEnemy.SearchAngle;
+						newEntry.SearchWidth = originalEnemy.SearchWidth;
+						newEntry.SearchHeight = originalEnemy.SearchHeight;
+						newEntry.SearchHeightOffset = originalEnemy.SearchHeightOffset;
+						newEntry.MoveSpeedRatio = originalEnemy.MoveSpeedRatio;
+						newEntry.MoveRange = originalEnemy.MoveRange;
+						newEntry.AppearType = (Object008F_BkWingSmall.EAppear)originalEnemy.AppearType;
+						newEntry.ActionType = (Object008F_BkWingSmall.EAction)originalEnemy.ActionType;
+						newEntry.PathType = (Object008F_BkWingSmall.EPathType)originalEnemy.PathType;
+						newEntry.PathVariable = originalEnemy.MoveRange;
+						newEntry.AttackStart = originalEnemy.AttackStart;
+						newEntry.AttackEnd = originalEnemy.AttackEnd;
+						newEntry.PatrolReversed = originalEnemy.PatrolReversed;
+						setData[index] = newEntry;
+						break;
+					}
 				case Object0064_GUNSoldier originalEnemy when targetEntry is Object0064_GUNSoldier:
 				default:
-					var newEntry = (Object008F_BkWingSmall)LayoutEditorFunctions.CreateShadowObject(donor.List, donor.Type, targetEntry.PosX, targetEntry.PosY,
-					targetEntry.PosZ, targetEntry.RotX, targetEntry.RotY, targetEntry.RotZ, targetEntry.Link, targetEntry.Rend, targetEntry.UnkBytes);
-					newEntry.MoveRange = donor.MoveRange;
-					newEntry.SearchRange = donor.SearchRange;
-					newEntry.SearchAngle = donor.SearchAngle;
-					newEntry.SearchWidth = donor.SearchWidth;
-					newEntry.SearchHeight = donor.SearchHeight;
-					newEntry.SearchHeightOffset = donor.SearchHeightOffset;
-					newEntry.MoveSpeedRatio = donor.MoveSpeedRatio;
-					// end EnemyBase
-					newEntry.AppearType = donor.AppearType;
-					newEntry.ActionType = donor.ActionType;
-					newEntry.PathType = donor.PathType;
-					newEntry.PathVariable = donor.PathVariable;
-					newEntry.AttackStart = donor.AttackStart;
-					newEntry.AttackEnd = donor.AttackEnd;
-					newEntry.PatrolReversed = donor.PatrolReversed;
-					setData[index] = newEntry;
-					break;
+					{
+						var newEntry = (Object008F_BkWingSmall)LayoutEditorFunctions.CreateShadowObject(donor.List, donor.Type, targetEntry.PosX, targetEntry.PosY,
+						targetEntry.PosZ, targetEntry.RotX, targetEntry.RotY, targetEntry.RotZ, targetEntry.Link, targetEntry.Rend, targetEntry.UnkBytes);
+						newEntry.MoveRange = donor.MoveRange;
+						newEntry.SearchRange = donor.SearchRange;
+						newEntry.SearchAngle = donor.SearchAngle;
+						newEntry.SearchWidth = donor.SearchWidth;
+						newEntry.SearchHeight = donor.SearchHeight;
+						newEntry.SearchHeightOffset = donor.SearchHeightOffset;
+						newEntry.MoveSpeedRatio = donor.MoveSpeedRatio;
+						// end EnemyBase
+						newEntry.AppearType = donor.AppearType;
+						newEntry.ActionType = donor.ActionType;
+						newEntry.PathType = donor.PathType;
+						newEntry.PathVariable = donor.PathVariable;
+						newEntry.AttackStart = donor.AttackStart;
+						newEntry.AttackEnd = donor.AttackEnd;
+						newEntry.PatrolReversed = donor.PatrolReversed;
+						setData[index] = newEntry;
+						break;
+					}
 			}
 		}
 

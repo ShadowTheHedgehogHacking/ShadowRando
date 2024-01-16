@@ -1381,6 +1381,11 @@ public partial class MainView : UserControl
 			var cmnLayoutData = LayoutEditorFunctions.GetShadowLayout(Path.Combine("backup", "sets", stageDataIdentifier, cmnLayout), out var resultcmn);
 			var nrmLayout = stageDataIdentifier + "_nrm.dat";
 			List<SetObjectShadow> nrmLayoutData = null;
+			var hrdLayout = stageDataIdentifier + "_hrd.dat";
+			List<SetObjectShadow> hrdLayoutData = null;
+			var ds1Layout = stageDataIdentifier + "_ds1.dat";
+			List<SetObjectShadow> ds1LayoutData = null;
+
 			try
 			{
 				nrmLayoutData = LayoutEditorFunctions.GetShadowLayout(Path.Combine("backup", "sets", stageDataIdentifier, nrmLayout), out var resultnrm);
@@ -1390,9 +1395,27 @@ public partial class MainView : UserControl
 				// some stages don't have nrm
 			}
 
+			try
+			{
+				hrdLayoutData = LayoutEditorFunctions.GetShadowLayout(Path.Combine("backup", "sets", stageDataIdentifier, hrdLayout), out var resulthrd);
+			}
+			catch (FileNotFoundException)
+			{
+				// some stages don't have hrd
+			}
+
+			try
+			{
+				ds1LayoutData = LayoutEditorFunctions.GetShadowLayout(Path.Combine("backup", "sets", stageDataIdentifier, ds1Layout), out var resultds1);
+			}
+			catch (FileNotFoundException)
+			{
+				// some stages don't have ds1
+			}
+
 			List<EWeapon> weaponsPool = new List<EWeapon>();
 
-			if (Layout_Weapon_CheckBox_OnlySelectedWeapons.IsChecked.Value && Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes.IsChecked.Value)
+			if (Layout_Weapon_CheckBox_OnlySelectedWeapons.IsChecked.Value)
 			{
 				if (Layout_Weapon_CheckBox_SelectedWeapon_None.IsChecked.Value)
 					weaponsPool.Add(EWeapon.None);
@@ -1494,11 +1517,15 @@ public partial class MainView : UserControl
 				MakeAllBoxesHaveRandomWeapons(ref cmnLayoutData, weaponsPool, r);
 				if (nrmLayoutData != null)
 					MakeAllBoxesHaveRandomWeapons(ref nrmLayoutData, weaponsPool, r);
+				if (hrdLayoutData != null)
+					MakeAllBoxesHaveRandomWeapons(ref hrdLayoutData, weaponsPool, r);
 			} else if (Layout_Weapon_CheckBox_RandomWeaponsInWeaponBoxes.IsChecked.Value)
 			{
 				MakeAllWeaponBoxesHaveRandomWeapons(ref cmnLayoutData, weaponsPool, r);
 				if (nrmLayoutData != null)
 					MakeAllWeaponBoxesHaveRandomWeapons(ref nrmLayoutData, weaponsPool, r);
+				if (hrdLayoutData != null)
+					MakeAllWeaponBoxesHaveRandomWeapons(ref hrdLayoutData, weaponsPool, r);
 			}
 
 			if (Layout_Weapon_CheckBox_RandomExposedWeapons.IsChecked.Value)
@@ -1506,19 +1533,18 @@ public partial class MainView : UserControl
 				RandomizeWeaponsOnGround(ref cmnLayoutData, weaponsPool, r);
 				if (nrmLayoutData != null)
 					RandomizeWeaponsOnGround(ref nrmLayoutData, weaponsPool, r);
+				if (hrdLayoutData != null)
+					RandomizeWeaponsOnGround(ref hrdLayoutData, weaponsPool, r);
 			}
 
 			if (Layout_Weapon_CheckBox_RandomWeaponsFromEnvironment.IsChecked.Value)
 			{
-				RandomizeEnvironmentWeaponDrops(ref cmnLayoutData, weaponsPool, r);
-				if (nrmLayoutData != null)
-					RandomizeEnvironmentWeaponDrops(ref nrmLayoutData, weaponsPool, r);
+				RandomizeEnvironmentWeaponDrops(ref ds1LayoutData, weaponsPool, r);
 			}
 
 
 			if ((LayoutPartnerMode)Layout_Partner_ComboBox_Mode.SelectedIndex == LayoutPartnerMode.Wild)
 			{
-				MakeAllPartnersRandom(ref cmnLayoutData, Layout_Partner_CheckBox_KeepAffiliationOfOriginalObject.IsChecked.Value, r);
 				if (nrmLayoutData != null)
 					MakeAllPartnersRandom(ref nrmLayoutData, Layout_Partner_CheckBox_KeepAffiliationOfOriginalObject.IsChecked.Value, r);
 			}
@@ -1526,6 +1552,7 @@ public partial class MainView : UserControl
 			List<Type> allEnemies = new List<Type>();
 			List<Type> groundEnemies = new List<Type>();
 			List<Type> flyingEnemies = new List<Type>();
+			List<Type> pathTypeFlyingEnemies = new List<Type>();
 
 			if (Layout_Enemy_CheckBox_OnlySelectedEnemyTypes.IsChecked.Value && enemyMode != LayoutEnemyMode.Original)
 			{
@@ -1537,6 +1564,7 @@ public partial class MainView : UserControl
 				if (Layout_Enemy_CheckBox_SelectedEnemy_GUNBeetle.IsChecked.Value)
 				{
 					flyingEnemies.Add(typeof(Object0065_GUNBeetle));
+					pathTypeFlyingEnemies.Add(typeof(Object0065_GUNBeetle));
 					allEnemies.Add(typeof(Object0065_GUNBeetle));
 				}
 				if (Layout_Enemy_CheckBox_SelectedEnemy_GUNBigfoot.IsChecked.Value)
@@ -1578,11 +1606,13 @@ public partial class MainView : UserControl
 				if (Layout_Enemy_CheckBox_SelectedEnemy_BAHawkVolt.IsChecked.Value)
 				{
 					flyingEnemies.Add(typeof(Object008E_BkWingLarge));
+					pathTypeFlyingEnemies.Add(typeof(Object008E_BkWingLarge));
 					allEnemies.Add(typeof(Object008E_BkWingLarge));
 				}
 				if (Layout_Enemy_CheckBox_SelectedEnemy_BAWing.IsChecked.Value)
 				{
 					flyingEnemies.Add(typeof(Object008F_BkWingSmall));
+					pathTypeFlyingEnemies.Add(typeof(Object008F_BkWingSmall));
 					allEnemies.Add(typeof(Object008F_BkWingSmall));
 				}
 				if (Layout_Enemy_CheckBox_SelectedEnemy_BAWorm.IsChecked.Value)
@@ -1648,9 +1678,11 @@ public partial class MainView : UserControl
 				case LayoutEnemyMode.Original:
 					break;
 				case LayoutEnemyMode.Wild:
-					WildRandomizeAllEnemiesWithTranslations(ref cmnLayoutData, allEnemies, groundEnemies, flyingEnemies, r);
+					WildRandomizeAllEnemiesWithTranslations(ref cmnLayoutData, allEnemies, groundEnemies, flyingEnemies, pathTypeFlyingEnemies, r);
 					if (nrmLayoutData != null)
-						WildRandomizeAllEnemiesWithTranslations(ref nrmLayoutData, allEnemies, groundEnemies, flyingEnemies, r);
+						WildRandomizeAllEnemiesWithTranslations(ref nrmLayoutData, allEnemies, groundEnemies, flyingEnemies, pathTypeFlyingEnemies, r);
+					if (hrdLayoutData != null)
+						WildRandomizeAllEnemiesWithTranslations(ref hrdLayoutData, allEnemies, groundEnemies, flyingEnemies, pathTypeFlyingEnemies, r);
 					break;
 				default:
 					break;
@@ -1659,6 +1691,10 @@ public partial class MainView : UserControl
 			LayoutEditorFunctions.SaveShadowLayout(cmnLayoutData, Path.Combine(settings.GamePath, "files", stageDataIdentifier, cmnLayout), false);
 			if (nrmLayoutData != null)
 				LayoutEditorFunctions.SaveShadowLayout(nrmLayoutData, Path.Combine(settings.GamePath, "files", stageDataIdentifier, nrmLayout), false);
+			if (hrdLayoutData != null)
+				LayoutEditorFunctions.SaveShadowLayout(hrdLayoutData, Path.Combine(settings.GamePath, "files", stageDataIdentifier, hrdLayout), false);
+			if (ds1LayoutData != null)
+				LayoutEditorFunctions.SaveShadowLayout(ds1LayoutData, Path.Combine(settings.GamePath, "files", stageDataIdentifier, ds1Layout), false);
 
 			if (Layout_Enemy_CheckBox_AdjustMissionCounts.IsChecked.Value && nukkoro2EnemyCountStagesMap.TryGetValue(stageId, out var nukkoro2StageString))
 			{
@@ -1999,14 +2035,13 @@ public partial class MainView : UserControl
 		}
 	}
 
-	private void WildRandomizeAllEnemiesWithTranslations(ref List<SetObjectShadow> setData, List<Type> allEnemies, List<Type> groundEnemies, List<Type> flyingEnemies, Random r)
+	private void WildRandomizeAllEnemiesWithTranslations(ref List<SetObjectShadow> setData, List<Type> allEnemies, List<Type> groundEnemies, List<Type> flyingEnemies, List<Type> pathTypeFlyingEnemies, Random r)
 	{
 		// Wild Randomize of all Enemies
 		for (int i = 0; i < setData.Count(); i++)
 		{
 			if (setData[i].List == 0x00 && (setData[i].Type >= 0x64 && setData[i].Type <= 0x93))
 			{
-				int randomEnemy;
 				Type randomEnemyType = typeof(Nullable);
 				if (Layout_Enemy_CheckBox_KeepType.IsChecked.Value)
 				{
@@ -2017,64 +2052,77 @@ public partial class MainView : UserControl
 							// if BkWorm, mutate original posY +50
 							setData[i].PosY = setData[i].PosY + 50;
 						}
-						randomEnemy = r.Next(flyingEnemies.Count);
-						randomEnemyType = flyingEnemies[randomEnemy];
-						if (randomEnemy == 4) // special case for BkNinja and Bigfoot, since we need to force a specific 
+						// if path type enemy
+						if (IsPathTypeFlyingEnemy(setData[i]))
 						{
-							var donor = new Object0066_GUNBigfoot
+							if (pathTypeFlyingEnemies.Count == 0)
 							{
-								List = 0x00,
-								Type = 0x66,
-								MoveRange = 200, // EnemyBase
-								SearchRange = 200,
-								SearchAngle = 0,
-								SearchWidth = 600,
-								SearchHeight = 400,
-								SearchHeightOffset = 0,
-								MoveSpeedRatio = 1, // end EnemyBase
-								AppearType = Object0066_GUNBigfoot.EAppear.ZUTTO_HOVERING,
-								WeaponType = (Object0066_GUNBigfoot.EWeapon)r.Next(2),
-								OffsetPos_Y = 50
-							};
-							EnemySETMutations.MutateObjectAtIndex(i, donor, ref setData, true, r);
-							continue; // skip the MutateObject below since we handled it ourselves
+								// delete the object? for now just skip it
+								continue;
+							}
+							randomEnemyType = pathTypeFlyingEnemies[r.Next(pathTypeFlyingEnemies.Count)];
 						}
-						else if (randomEnemy == 5)
+						else
 						{
-							var donor = new Object0093_BkNinja
+							randomEnemyType = flyingEnemies[r.Next(flyingEnemies.Count)];
+							if (randomEnemyType == typeof(Object0066_GUNBigfoot)) // special case for BkNinja and Bigfoot, since we need to force a specific 
 							{
-								List = 0x00,
-								Type = 0x93,
-								MoveRange = 300,
-								SearchRange = 0,
-								SearchAngle = 0,
-								SearchWidth = 500,
-								SearchHeight = 300,
-								SearchHeightOffset = 0,
-								MoveSpeedRatio = 1,
-								AppearType = Object0093_BkNinja.EAppear.ON_AIR_SAUCER_WARP,
-								ShootCount = r.Next(1, 5),
-								AttackInterval = 1,
-								WaitInterval = 1,
-								Pos0_X = 0,
-								Pos0_Y = 0,
-								Pos0_Z = 0,
-								UNUSED_Pos0_IntWaitType = 0,
-								UNUSED_Pos0_DisappearTime = 0,
-								UNUSED_Pos1_X = 0,
-								UNUSED_Pos1_Y = 0,
-								UNUSED_Pos1_Z = 0,
-								UNUSED_Pos1_WaitType = 0,
-								UNUSED_Pos1_DisappearTime = 0,
-								UNUSED_Float21 = 0,
-								UNUSED_Float22 = 0
-							};
-							EnemySETMutations.MutateObjectAtIndex(i, donor, ref setData, true, r);
-							continue; // skip the MutateObject below since we handled it ourselves
+								var donor = new Object0066_GUNBigfoot
+								{
+									List = 0x00,
+									Type = 0x66,
+									MoveRange = 200, // EnemyBase
+									SearchRange = 200,
+									SearchAngle = 0,
+									SearchWidth = 600,
+									SearchHeight = 400,
+									SearchHeightOffset = 0,
+									MoveSpeedRatio = 1, // end EnemyBase
+									AppearType = Object0066_GUNBigfoot.EAppear.ZUTTO_HOVERING,
+									WeaponType = (Object0066_GUNBigfoot.EWeapon)r.Next(2),
+									OffsetPos_Y = 50
+								};
+								EnemySETMutations.MutateObjectAtIndex(i, donor, ref setData, true, r);
+								continue; // skip the MutateObject below since we handled it ourselves
+							}
+							else if (randomEnemyType == typeof(Object0093_BkNinja))
+							{
+								var donor = new Object0093_BkNinja
+								{
+									List = 0x00,
+									Type = 0x93,
+									MoveRange = 300,
+									SearchRange = 0,
+									SearchAngle = 0,
+									SearchWidth = 500,
+									SearchHeight = 300,
+									SearchHeightOffset = 0,
+									MoveSpeedRatio = 1,
+									AppearType = Object0093_BkNinja.EAppear.ON_AIR_SAUCER_WARP,
+									ShootCount = r.Next(1, 5),
+									AttackInterval = 1,
+									WaitInterval = 1,
+									Pos0_X = 0,
+									Pos0_Y = 0,
+									Pos0_Z = 0,
+									UNUSED_Pos0_IntWaitType = 0,
+									UNUSED_Pos0_DisappearTime = 0,
+									UNUSED_Pos1_X = 0,
+									UNUSED_Pos1_Y = 0,
+									UNUSED_Pos1_Z = 0,
+									UNUSED_Pos1_WaitType = 0,
+									UNUSED_Pos1_DisappearTime = 0,
+									UNUSED_Float21 = 0,
+									UNUSED_Float22 = 0
+								};
+								EnemySETMutations.MutateObjectAtIndex(i, donor, ref setData, true, r);
+								continue; // skip the MutateObject below since we handled it ourselves
+							}
 						}
 					}
 					else
 					{ // ground enemies
+						int randomEnemy = -1;
 						if (setData[i].Link == 0 || setData[i].Link == 50)
 						{
 							randomEnemy = r.Next(groundEnemies.Count); // All enemies if LinkID = 0 or 50
@@ -2091,6 +2139,7 @@ public partial class MainView : UserControl
 				}
 				else
 				{
+					int randomEnemy = -1;
 					if (setData[i].Link == 0 || setData[i].Link == 50)
 					{
 						randomEnemy = r.Next(allEnemies.Count); // All enemies if LinkID = 0 or 50
@@ -2140,6 +2189,19 @@ public partial class MainView : UserControl
 				return false;
 		}
 		return false;
+	}
+
+	private bool IsPathTypeFlyingEnemy(SetObjectShadow enemy)
+	{
+		switch (enemy.Type)
+		{
+			case 0x65: // GUNBeetle
+			case 0x8E: // BkWingLarge
+			case 0x8F: // BkWingSmall
+				return true;
+			default:
+				return false;
+		}
 	}
 
 	private void MakeAllEnemiesGUNSoldiers(ref List<SetObjectShadow> setData, Random r)
