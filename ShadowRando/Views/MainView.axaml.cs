@@ -555,10 +555,12 @@ public partial class MainView : UserControl
 					var cmnLayout = stageDataIdentifier + "_cmn.dat";
 					var nrmLayout = stageDataIdentifier + "_nrm.dat";
 					var hrdLayout = stageDataIdentifier + "_hrd.dat";
+					var ds1Layout = stageDataIdentifier + "_ds1.dat";
 					var datOnePath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, datOne);
 					var cmnLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, cmnLayout);
 					var nrmLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, nrmLayout);
 					var hrdLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, hrdLayout);
+					var ds1LayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, ds1Layout);
 
 					if (!Directory.Exists(Path.Combine("backup", "sets", stageDataIdentifier)))
 						Directory.CreateDirectory(Path.Combine("backup", "sets", stageDataIdentifier));
@@ -566,6 +568,7 @@ public partial class MainView : UserControl
 					File.Copy(cmnLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, cmnLayout));
 					try { File.Copy(nrmLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, nrmLayout)); } catch (FileNotFoundException) { } // some stages don't have nrm
 					try { File.Copy(hrdLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, hrdLayout)); } catch (FileNotFoundException) { } // some stages don't have hrd
+					try { File.Copy(ds1LayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, ds1Layout)); } catch (FileNotFoundException) { } // some stages don't have ds1
 				}
 			}
 			topLevel.IsVisible = true;
@@ -1670,6 +1673,7 @@ public partial class MainView : UserControl
 			{
 				groundEnemies.AddRange(groundEnemyTypeMap);
 				flyingEnemies.AddRange(flyingEnemyTypeMap);
+				pathTypeFlyingEnemies.AddRange([typeof(Object0065_GUNBeetle), typeof(Object008E_BkWingLarge), typeof(Object008F_BkWingSmall)]);
 				allEnemies.AddRange(enemyTypeMap);
 			}
 
