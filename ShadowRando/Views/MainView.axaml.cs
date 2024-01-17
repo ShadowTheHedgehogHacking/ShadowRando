@@ -238,135 +238,139 @@ public partial class MainView : UserControl
 	private void UserControl_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
 	{
 		var topLevel = TopLevel.GetTopLevel(this);
-		topLevel.IsVisible = false;
-		settings = Settings.Load();
+		if (!OperatingSystem.IsBrowser()) // TODO: rowser context only is allowed to read/write file dialogs if a user triggers the context, need to add buttons for browser to target
+		{
 
-		// Program Configuration
-		LevelOrder_Label_ProgramTitle.Content += " " + programVersion;
+			topLevel.IsVisible = false;
+			settings = Settings.Load();
 
-		// Level Order
-		LevelOrder_TextBox_Seed.Text = settings.Seed;
-		LevelOrder_CheckBox_Random_Seed.IsChecked = settings.RandomSeed;
-		LevelOrder_ComboBox_Mode.SelectedIndex = (int)settings.LevelOrderMode;
-		LevelOrder_ComboBox_MainPath.SelectedIndex = (int)settings.LevelOrderMainPath;
-		LevelOrder_NumericUpDown_MaxForwardsJump.Value = settings.LevelOrderMaxForwardsJump;
-		LevelOrder_NumericUpDown_MaxBackwardsJump.Value = settings.LevelOrderMaxBackwardsJump;
-		LevelOrder_NumericUpDown_BackwardsJumpProbability.Value = settings.LevelOrderBackwardsJumpProbability;
-		LevelOrder_CheckBox_AllowJumpsToSameLevel.IsChecked = settings.LevelOrderAllowJumpsToSameLevel;
-		LevelOrder_CheckBox_IncludeLastStory.IsChecked = settings.LevelOrderIncludeLastStory;
-		LevelOrder_CheckBox_IncludeBosses.IsChecked = settings.LevelOrderIncludeBosses;
+			// Program Configuration
+			LevelOrder_Label_ProgramTitle.Content += " " + programVersion;
 
-		// Layout
-		Layout_CheckBox_RandomizeLayouts.IsChecked = settings.RandomizeLayouts;
-		Layout_CheckBox_MakeCCSplinesVehicleCompatible.IsChecked = settings.LayoutMakeCCSplinesVehicleCompatible;
-		// Enemy
-		Layout_Enemy_CheckBox_AdjustMissionCounts.IsChecked = settings.LayoutAdjustMissionCounts;
-		Layout_Enemy_NumericUpDown_AdjustMissionsReductionPercent.Value = settings.LayoutAdjustMissionCountsReductionPercent;
-		Layout_Enemy_ComboBox_Mode.SelectedIndex = (int)settings.LayoutEnemyMode;
-		Layout_Enemy_CheckBox_KeepType.IsChecked = settings.LayoutEnemyKeepType;
-		Layout_Enemy_CheckBox_OnlySelectedEnemyTypes.IsChecked = settings.LayoutEnemyOnlySelectedTypes;
-		// Selected Enemies
-		Layout_Enemy_CheckBox_SelectedEnemy_GUNSoldier.IsChecked = settings.LayoutEnemySelectedEnemyGUNSoldier;
-		Layout_Enemy_CheckBox_SelectedEnemy_GUNBeetle.IsChecked = settings.LayoutEnemySelectedEnemyGUNBeetle;
-		Layout_Enemy_CheckBox_SelectedEnemy_GUNBigfoot.IsChecked = settings.LayoutEnemySelectedEnemyGUNBigfoot;
-		Layout_Enemy_CheckBox_SelectedEnemy_GUNRobot.IsChecked = settings.LayoutEnemySelectedEnemyGUNRobot;
-		Layout_Enemy_CheckBox_SelectedEnemy_EggPierrot.IsChecked = settings.LayoutEnemySelectedEnemyEggPierrot;
-		Layout_Enemy_CheckBox_SelectedEnemy_EggPawn.IsChecked = settings.LayoutEnemySelectedEnemyEggPawn;
-		Layout_Enemy_CheckBox_SelectedEnemy_ShadowAndroid.IsChecked = settings.LayoutEnemySelectedEnemyShadowAndroid;
-		Layout_Enemy_CheckBox_SelectedEnemy_BAGiant.IsChecked = settings.LayoutEnemySelectedEnemyBAGiant;
-		Layout_Enemy_CheckBox_SelectedEnemy_BASoldier.IsChecked = settings.LayoutEnemySelectedEnemyBASoldier;
-		Layout_Enemy_CheckBox_SelectedEnemy_BAHawkVolt.IsChecked = settings.LayoutEnemySelectedEnemyBAHawkVolt;
-		Layout_Enemy_CheckBox_SelectedEnemy_BAWing.IsChecked = settings.LayoutEnemySelectedEnemyBAWing;
-		Layout_Enemy_CheckBox_SelectedEnemy_BAWorm.IsChecked = settings.LayoutEnemySelectedEnemyBAWorm;
-		Layout_Enemy_CheckBox_SelectedEnemy_BALarva.IsChecked = settings.LayoutEnemySelectedEnemyBALarva;
-		Layout_Enemy_CheckBox_SelectedEnemy_ArtificialChaos.IsChecked = settings.LayoutEnemySelectedEnemyArtificialChaos;
-		Layout_Enemy_CheckBox_SelectedEnemy_BAAssassin.IsChecked = settings.LayoutEnemySelectedEnemyBAAssassin;
-		// Weapon
-		Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes.IsChecked = settings.LayoutWeaponRandomWeaponsInAllBoxes;
-		Layout_Weapon_CheckBox_RandomWeaponsInWeaponBoxes.IsChecked = settings.LayoutWeaponRandomWeaponsInWeaponBoxes;
-		Layout_Weapon_CheckBox_RandomExposedWeapons.IsChecked = settings.LayoutWeaponRandomExposedWeapons;
-		Layout_Weapon_CheckBox_RandomWeaponsFromEnvironment.IsChecked = settings.LayoutWeaponRandomWeaponsFromEnvironment;
-		Layout_Weapon_CheckBox_OnlySelectedWeapons.IsChecked = settings.LayoutWeaponOnlySelectedTypes;
-		// Selected Weapons
-		Layout_Weapon_CheckBox_SelectedWeapon_None.IsChecked = settings.LayoutWeaponSelectedWeaponNone;
-		Layout_Weapon_CheckBox_SelectedWeapon_Pistol.IsChecked = settings.LayoutWeaponSelectedWeaponPistol;
-		Layout_Weapon_CheckBox_SelectedWeapon_SubmachineGun.IsChecked = settings.LayoutWeaponSelectedWeaponSubmachineGun;
-		Layout_Weapon_CheckBox_SelectedWeapon_AssaultRifle.IsChecked = settings.LayoutWeaponSelectedWeaponAssaultRifle;
-		Layout_Weapon_CheckBox_SelectedWeapon_HeavyMachineGun.IsChecked = settings.LayoutWeaponSelectedWeaponHeavyMachineGun;
-		Layout_Weapon_CheckBox_SelectedWeapon_GatlingGun.IsChecked = settings.LayoutWeaponSelectedWeaponGatlingGun;
-		Layout_Weapon_CheckBox_SelectedWeapon_EggPistol.IsChecked = settings.LayoutWeaponSelectedWeaponEggPistol;
-		Layout_Weapon_CheckBox_SelectedWeapon_LightShot.IsChecked = settings.LayoutWeaponSelectedWeaponLightShot;
-		Layout_Weapon_CheckBox_SelectedWeapon_FlashShot.IsChecked = settings.LayoutWeaponSelectedWeaponFlashShot;
-		Layout_Weapon_CheckBox_SelectedWeapon_RingShot.IsChecked = settings.LayoutWeaponSelectedWeaponRingShot;
-		Layout_Weapon_CheckBox_SelectedWeapon_HeavyShot.IsChecked = settings.LayoutWeaponSelectedWeaponHeavyShot;
-		Layout_Weapon_CheckBox_SelectedWeapon_GrenadeLauncher.IsChecked = settings.LayoutWeaponSelectedWeaponGrenadeLauncher;
-		Layout_Weapon_CheckBox_SelectedWeapon_GUNBazooka.IsChecked = settings.LayoutWeaponSelectedWeaponGUNBazooka;
-		Layout_Weapon_CheckBox_SelectedWeapon_TankCannon.IsChecked = settings.LayoutWeaponSelectedWeaponTankCannon;
-		Layout_Weapon_CheckBox_SelectedWeapon_BlackBarrel.IsChecked = settings.LayoutWeaponSelectedWeaponBlackBarrel;
-		Layout_Weapon_CheckBox_SelectedWeapon_BigBarrel.IsChecked = settings.LayoutWeaponSelectedWeaponBigBarrel;
-		Layout_Weapon_CheckBox_SelectedWeapon_EggBazooka.IsChecked = settings.LayoutWeaponSelectedWeaponEggBazooka;
-		Layout_Weapon_CheckBox_SelectedWeapon_RPG.IsChecked = settings.LayoutWeaponSelectedWeaponRPG;
-		Layout_Weapon_CheckBox_SelectedWeapon_FourShot.IsChecked = settings.LayoutWeaponSelectedWeaponFourShot;
-		Layout_Weapon_CheckBox_SelectedWeapon_EightShot.IsChecked = settings.LayoutWeaponSelectedWeaponEightShot;
-		Layout_Weapon_CheckBox_SelectedWeapon_WormShooterBlack.IsChecked = settings.LayoutWeaponSelectedWeaponWormShooterBlack;
-		Layout_Weapon_CheckBox_SelectedWeapon_WormShooterRed.IsChecked = settings.LayoutWeaponSelectedWeaponWormShooterRed;
-		Layout_Weapon_CheckBox_SelectedWeapon_WormShooterGold.IsChecked = settings.LayoutWeaponSelectedWeaponWormShooterGold;
-		Layout_Weapon_CheckBox_SelectedWeapon_VacuumPod.IsChecked = settings.LayoutWeaponSelectedWeaponVacuumPod;
-		Layout_Weapon_CheckBox_SelectedWeapon_LaserRifle.IsChecked = settings.LayoutWeaponSelectedWeaponLaserRifle;
-		Layout_Weapon_CheckBox_SelectedWeapon_Splitter.IsChecked = settings.LayoutWeaponSelectedWeaponSplitter;
-		Layout_Weapon_CheckBox_SelectedWeapon_Refractor.IsChecked = settings.LayoutWeaponSelectedWeaponRefractor;
-		Layout_Weapon_CheckBox_SelectedWeapon_Knife.IsChecked = settings.LayoutWeaponSelectedWeaponKnife;
-		Layout_Weapon_CheckBox_SelectedWeapon_BlackSword.IsChecked = settings.LayoutWeaponSelectedWeaponBlackSword;
-		Layout_Weapon_CheckBox_SelectedWeapon_DarkHammer.IsChecked = settings.LayoutWeaponSelectedWeaponDarkHammer;
-		Layout_Weapon_CheckBox_SelectedWeapon_EggLance.IsChecked = settings.LayoutWeaponSelectedWeaponEggLance;
-		Layout_Weapon_CheckBox_SelectedWeapon_SamuraiSwordLv1.IsChecked = settings.LayoutWeaponSelectedWeaponSamuraiSwordLv1;
-		Layout_Weapon_CheckBox_SelectedWeapon_SamuraiSwordLv2.IsChecked = settings.LayoutWeaponSelectedWeaponSamuraiSwordLv2;
-		Layout_Weapon_CheckBox_SelectedWeapon_SatelliteLaserLv1.IsChecked = settings.LayoutWeaponSelectedWeaponSatelliteLaserLv1;
-		Layout_Weapon_CheckBox_SelectedWeapon_SatelliteLaserLv2.IsChecked = settings.LayoutWeaponSelectedWeaponSatelliteLaserLv2;
-		Layout_Weapon_CheckBox_SelectedWeapon_EggVacuumLv1.IsChecked = settings.LayoutWeaponSelectedWeaponEggVacuumLv1;
-		Layout_Weapon_CheckBox_SelectedWeapon_EggVacuumLv2.IsChecked = settings.LayoutWeaponSelectedWeaponEggVacuumLv2;
-		Layout_Weapon_CheckBox_SelectedWeapon_OmochaoGunLv1.IsChecked = settings.LayoutWeaponSelectedWeaponOmochaoGunLv1;
-		Layout_Weapon_CheckBox_SelectedWeapon_OmochaoGunLv2.IsChecked = settings.LayoutWeaponSelectedWeaponOmochaoGunLv2;
-		Layout_Weapon_CheckBox_SelectedWeapon_HealCannonLv1.IsChecked = settings.LayoutWeaponSelectedWeaponHealCannonLv1;
-		Layout_Weapon_CheckBox_SelectedWeapon_HealCannonLv2.IsChecked = settings.LayoutWeaponSelectedWeaponHealCannonLv2;
-		Layout_Weapon_CheckBox_SelectedWeapon_ShadowRifle.IsChecked = settings.LayoutWeaponSelectedWeaponShadowRifle;
-		// Partner
-		Layout_Partner_ComboBox_Mode.SelectedIndex = (int)settings.LayoutPartnerMode;
-		Layout_Partner_CheckBox_KeepAffiliationOfOriginalObject.IsChecked = settings.LayoutPartnerKeepOriginalObjectAffiliation;
+			// Level Order
+			LevelOrder_TextBox_Seed.Text = settings.Seed;
+			LevelOrder_CheckBox_Random_Seed.IsChecked = settings.RandomSeed;
+			LevelOrder_ComboBox_Mode.SelectedIndex = (int)settings.LevelOrderMode;
+			LevelOrder_ComboBox_MainPath.SelectedIndex = (int)settings.LevelOrderMainPath;
+			LevelOrder_NumericUpDown_MaxForwardsJump.Value = settings.LevelOrderMaxForwardsJump;
+			LevelOrder_NumericUpDown_MaxBackwardsJump.Value = settings.LevelOrderMaxBackwardsJump;
+			LevelOrder_NumericUpDown_BackwardsJumpProbability.Value = settings.LevelOrderBackwardsJumpProbability;
+			LevelOrder_CheckBox_AllowJumpsToSameLevel.IsChecked = settings.LevelOrderAllowJumpsToSameLevel;
+			LevelOrder_CheckBox_IncludeLastStory.IsChecked = settings.LevelOrderIncludeLastStory;
+			LevelOrder_CheckBox_IncludeBosses.IsChecked = settings.LevelOrderIncludeBosses;
 
-		// Subtitles
-		Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked = settings.RandomizeSubtitlesVoicelines;
-		Subtitles_CheckBox_NoDuplicates.IsChecked = settings.SubtitlesNoDuplicates;
-		Subtitles_CheckBox_NoSystemMessages.IsChecked = settings.SubtitlesNoSystemMessages;
-		Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked = settings.SubtitlesOnlyLinkedAudio;
-		Subtitles_CheckBox_OnlySelectedCharacters.IsChecked = settings.SubtitlesOnlySelectedCharacters;
-		Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsChecked = settings.SubtitlesGiveAudioToNoLinkedAudio;
+			// Layout
+			Layout_CheckBox_RandomizeLayouts.IsChecked = settings.RandomizeLayouts;
+			Layout_CheckBox_MakeCCSplinesVehicleCompatible.IsChecked = settings.LayoutMakeCCSplinesVehicleCompatible;
+			// Enemy
+			Layout_Enemy_CheckBox_AdjustMissionCounts.IsChecked = settings.LayoutAdjustMissionCounts;
+			Layout_Enemy_NumericUpDown_AdjustMissionsReductionPercent.Value = settings.LayoutAdjustMissionCountsReductionPercent;
+			Layout_Enemy_ComboBox_Mode.SelectedIndex = (int)settings.LayoutEnemyMode;
+			Layout_Enemy_CheckBox_KeepType.IsChecked = settings.LayoutEnemyKeepType;
+			Layout_Enemy_CheckBox_OnlySelectedEnemyTypes.IsChecked = settings.LayoutEnemyOnlySelectedTypes;
+			// Selected Enemies
+			Layout_Enemy_CheckBox_SelectedEnemy_GUNSoldier.IsChecked = settings.LayoutEnemySelectedEnemyGUNSoldier;
+			Layout_Enemy_CheckBox_SelectedEnemy_GUNBeetle.IsChecked = settings.LayoutEnemySelectedEnemyGUNBeetle;
+			Layout_Enemy_CheckBox_SelectedEnemy_GUNBigfoot.IsChecked = settings.LayoutEnemySelectedEnemyGUNBigfoot;
+			Layout_Enemy_CheckBox_SelectedEnemy_GUNRobot.IsChecked = settings.LayoutEnemySelectedEnemyGUNRobot;
+			Layout_Enemy_CheckBox_SelectedEnemy_EggPierrot.IsChecked = settings.LayoutEnemySelectedEnemyEggPierrot;
+			Layout_Enemy_CheckBox_SelectedEnemy_EggPawn.IsChecked = settings.LayoutEnemySelectedEnemyEggPawn;
+			Layout_Enemy_CheckBox_SelectedEnemy_ShadowAndroid.IsChecked = settings.LayoutEnemySelectedEnemyShadowAndroid;
+			Layout_Enemy_CheckBox_SelectedEnemy_BAGiant.IsChecked = settings.LayoutEnemySelectedEnemyBAGiant;
+			Layout_Enemy_CheckBox_SelectedEnemy_BASoldier.IsChecked = settings.LayoutEnemySelectedEnemyBASoldier;
+			Layout_Enemy_CheckBox_SelectedEnemy_BAHawkVolt.IsChecked = settings.LayoutEnemySelectedEnemyBAHawkVolt;
+			Layout_Enemy_CheckBox_SelectedEnemy_BAWing.IsChecked = settings.LayoutEnemySelectedEnemyBAWing;
+			Layout_Enemy_CheckBox_SelectedEnemy_BAWorm.IsChecked = settings.LayoutEnemySelectedEnemyBAWorm;
+			Layout_Enemy_CheckBox_SelectedEnemy_BALarva.IsChecked = settings.LayoutEnemySelectedEnemyBALarva;
+			Layout_Enemy_CheckBox_SelectedEnemy_ArtificialChaos.IsChecked = settings.LayoutEnemySelectedEnemyArtificialChaos;
+			Layout_Enemy_CheckBox_SelectedEnemy_BAAssassin.IsChecked = settings.LayoutEnemySelectedEnemyBAAssassin;
+			// Weapon
+			Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes.IsChecked = settings.LayoutWeaponRandomWeaponsInAllBoxes;
+			Layout_Weapon_CheckBox_RandomWeaponsInWeaponBoxes.IsChecked = settings.LayoutWeaponRandomWeaponsInWeaponBoxes;
+			Layout_Weapon_CheckBox_RandomExposedWeapons.IsChecked = settings.LayoutWeaponRandomExposedWeapons;
+			Layout_Weapon_CheckBox_RandomWeaponsFromEnvironment.IsChecked = settings.LayoutWeaponRandomWeaponsFromEnvironment;
+			Layout_Weapon_CheckBox_OnlySelectedWeapons.IsChecked = settings.LayoutWeaponOnlySelectedTypes;
+			// Selected Weapons
+			Layout_Weapon_CheckBox_SelectedWeapon_None.IsChecked = settings.LayoutWeaponSelectedWeaponNone;
+			Layout_Weapon_CheckBox_SelectedWeapon_Pistol.IsChecked = settings.LayoutWeaponSelectedWeaponPistol;
+			Layout_Weapon_CheckBox_SelectedWeapon_SubmachineGun.IsChecked = settings.LayoutWeaponSelectedWeaponSubmachineGun;
+			Layout_Weapon_CheckBox_SelectedWeapon_AssaultRifle.IsChecked = settings.LayoutWeaponSelectedWeaponAssaultRifle;
+			Layout_Weapon_CheckBox_SelectedWeapon_HeavyMachineGun.IsChecked = settings.LayoutWeaponSelectedWeaponHeavyMachineGun;
+			Layout_Weapon_CheckBox_SelectedWeapon_GatlingGun.IsChecked = settings.LayoutWeaponSelectedWeaponGatlingGun;
+			Layout_Weapon_CheckBox_SelectedWeapon_EggPistol.IsChecked = settings.LayoutWeaponSelectedWeaponEggPistol;
+			Layout_Weapon_CheckBox_SelectedWeapon_LightShot.IsChecked = settings.LayoutWeaponSelectedWeaponLightShot;
+			Layout_Weapon_CheckBox_SelectedWeapon_FlashShot.IsChecked = settings.LayoutWeaponSelectedWeaponFlashShot;
+			Layout_Weapon_CheckBox_SelectedWeapon_RingShot.IsChecked = settings.LayoutWeaponSelectedWeaponRingShot;
+			Layout_Weapon_CheckBox_SelectedWeapon_HeavyShot.IsChecked = settings.LayoutWeaponSelectedWeaponHeavyShot;
+			Layout_Weapon_CheckBox_SelectedWeapon_GrenadeLauncher.IsChecked = settings.LayoutWeaponSelectedWeaponGrenadeLauncher;
+			Layout_Weapon_CheckBox_SelectedWeapon_GUNBazooka.IsChecked = settings.LayoutWeaponSelectedWeaponGUNBazooka;
+			Layout_Weapon_CheckBox_SelectedWeapon_TankCannon.IsChecked = settings.LayoutWeaponSelectedWeaponTankCannon;
+			Layout_Weapon_CheckBox_SelectedWeapon_BlackBarrel.IsChecked = settings.LayoutWeaponSelectedWeaponBlackBarrel;
+			Layout_Weapon_CheckBox_SelectedWeapon_BigBarrel.IsChecked = settings.LayoutWeaponSelectedWeaponBigBarrel;
+			Layout_Weapon_CheckBox_SelectedWeapon_EggBazooka.IsChecked = settings.LayoutWeaponSelectedWeaponEggBazooka;
+			Layout_Weapon_CheckBox_SelectedWeapon_RPG.IsChecked = settings.LayoutWeaponSelectedWeaponRPG;
+			Layout_Weapon_CheckBox_SelectedWeapon_FourShot.IsChecked = settings.LayoutWeaponSelectedWeaponFourShot;
+			Layout_Weapon_CheckBox_SelectedWeapon_EightShot.IsChecked = settings.LayoutWeaponSelectedWeaponEightShot;
+			Layout_Weapon_CheckBox_SelectedWeapon_WormShooterBlack.IsChecked = settings.LayoutWeaponSelectedWeaponWormShooterBlack;
+			Layout_Weapon_CheckBox_SelectedWeapon_WormShooterRed.IsChecked = settings.LayoutWeaponSelectedWeaponWormShooterRed;
+			Layout_Weapon_CheckBox_SelectedWeapon_WormShooterGold.IsChecked = settings.LayoutWeaponSelectedWeaponWormShooterGold;
+			Layout_Weapon_CheckBox_SelectedWeapon_VacuumPod.IsChecked = settings.LayoutWeaponSelectedWeaponVacuumPod;
+			Layout_Weapon_CheckBox_SelectedWeapon_LaserRifle.IsChecked = settings.LayoutWeaponSelectedWeaponLaserRifle;
+			Layout_Weapon_CheckBox_SelectedWeapon_Splitter.IsChecked = settings.LayoutWeaponSelectedWeaponSplitter;
+			Layout_Weapon_CheckBox_SelectedWeapon_Refractor.IsChecked = settings.LayoutWeaponSelectedWeaponRefractor;
+			Layout_Weapon_CheckBox_SelectedWeapon_Knife.IsChecked = settings.LayoutWeaponSelectedWeaponKnife;
+			Layout_Weapon_CheckBox_SelectedWeapon_BlackSword.IsChecked = settings.LayoutWeaponSelectedWeaponBlackSword;
+			Layout_Weapon_CheckBox_SelectedWeapon_DarkHammer.IsChecked = settings.LayoutWeaponSelectedWeaponDarkHammer;
+			Layout_Weapon_CheckBox_SelectedWeapon_EggLance.IsChecked = settings.LayoutWeaponSelectedWeaponEggLance;
+			Layout_Weapon_CheckBox_SelectedWeapon_SamuraiSwordLv1.IsChecked = settings.LayoutWeaponSelectedWeaponSamuraiSwordLv1;
+			Layout_Weapon_CheckBox_SelectedWeapon_SamuraiSwordLv2.IsChecked = settings.LayoutWeaponSelectedWeaponSamuraiSwordLv2;
+			Layout_Weapon_CheckBox_SelectedWeapon_SatelliteLaserLv1.IsChecked = settings.LayoutWeaponSelectedWeaponSatelliteLaserLv1;
+			Layout_Weapon_CheckBox_SelectedWeapon_SatelliteLaserLv2.IsChecked = settings.LayoutWeaponSelectedWeaponSatelliteLaserLv2;
+			Layout_Weapon_CheckBox_SelectedWeapon_EggVacuumLv1.IsChecked = settings.LayoutWeaponSelectedWeaponEggVacuumLv1;
+			Layout_Weapon_CheckBox_SelectedWeapon_EggVacuumLv2.IsChecked = settings.LayoutWeaponSelectedWeaponEggVacuumLv2;
+			Layout_Weapon_CheckBox_SelectedWeapon_OmochaoGunLv1.IsChecked = settings.LayoutWeaponSelectedWeaponOmochaoGunLv1;
+			Layout_Weapon_CheckBox_SelectedWeapon_OmochaoGunLv2.IsChecked = settings.LayoutWeaponSelectedWeaponOmochaoGunLv2;
+			Layout_Weapon_CheckBox_SelectedWeapon_HealCannonLv1.IsChecked = settings.LayoutWeaponSelectedWeaponHealCannonLv1;
+			Layout_Weapon_CheckBox_SelectedWeapon_HealCannonLv2.IsChecked = settings.LayoutWeaponSelectedWeaponHealCannonLv2;
+			Layout_Weapon_CheckBox_SelectedWeapon_ShadowRifle.IsChecked = settings.LayoutWeaponSelectedWeaponShadowRifle;
+			// Partner
+			Layout_Partner_ComboBox_Mode.SelectedIndex = (int)settings.LayoutPartnerMode;
+			Layout_Partner_CheckBox_KeepAffiliationOfOriginalObject.IsChecked = settings.LayoutPartnerKeepOriginalObjectAffiliation;
 
-		// Selected Characters
-		Subtitles_CheckBox_SelectedCharacter_Shadow.IsChecked = settings.SubtitlesSelectedCharacterShadow;
-		Subtitles_CheckBox_SelectedCharacter_Sonic.IsChecked = settings.SubtitlesSelectedCharacterSonic;
-		Subtitles_CheckBox_SelectedCharacter_Tails.IsChecked = settings.SubtitlesSelectedCharacterTails;
-		Subtitles_CheckBox_SelectedCharacter_Knuckles.IsChecked = settings.SubtitlesSelectedCharacterKnuckles;
-		Subtitles_CheckBox_SelectedCharacter_Amy.IsChecked = settings.SubtitlesSelectedCharacterAmy;
-		Subtitles_CheckBox_SelectedCharacter_Rouge.IsChecked = settings.SubtitlesSelectedCharacterRouge;
-		Subtitles_CheckBox_SelectedCharacter_Omega.IsChecked = settings.SubtitlesSelectedCharacterOmega;
-		Subtitles_CheckBox_SelectedCharacter_Vector.IsChecked = settings.SubtitlesSelectedCharacterVector;
-		Subtitles_CheckBox_SelectedCharacter_Espio.IsChecked = settings.SubtitlesSelectedCharacterEspio;
-		Subtitles_CheckBox_SelectedCharacter_Maria.IsChecked = settings.SubtitlesSelectedCharacterMaria;
-		Subtitles_CheckBox_SelectedCharacter_Charmy.IsChecked = settings.SubtitlesSelectedCharacterCharmy;
-		Subtitles_CheckBox_SelectedCharacter_Eggman.IsChecked = settings.SubtitlesSelectedCharacterEggman;
-		Subtitles_CheckBox_SelectedCharacter_BlackDoom.IsChecked = settings.SubtitlesSelectedCharacterBlackDoom;
-		Subtitles_CheckBox_SelectedCharacter_Cream.IsChecked = settings.SubtitlesSelectedCharacterCream;
-		Subtitles_CheckBox_SelectedCharacter_Cheese.IsChecked = settings.SubtitlesSelectedCharacterCheese;
-		Subtitles_CheckBox_SelectedCharacter_GUNCommander.IsChecked = settings.SubtitlesSelectedCharacterGUNCommander;
-		Subtitles_CheckBox_SelectedCharacter_GUNSoldier.IsChecked = settings.SubtitlesSelectedCharacterGUNSoldier;
+			// Subtitles
+			Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked = settings.RandomizeSubtitlesVoicelines;
+			Subtitles_CheckBox_NoDuplicates.IsChecked = settings.SubtitlesNoDuplicates;
+			Subtitles_CheckBox_NoSystemMessages.IsChecked = settings.SubtitlesNoSystemMessages;
+			Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked = settings.SubtitlesOnlyLinkedAudio;
+			Subtitles_CheckBox_OnlySelectedCharacters.IsChecked = settings.SubtitlesOnlySelectedCharacters;
+			Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsChecked = settings.SubtitlesGiveAudioToNoLinkedAudio;
 
-		// Music
-		Music_CheckBox_RandomizeMusic.IsChecked = settings.RandomizeMusic;
-		Music_CheckBox_SkipChaosPowerUseJingles.IsChecked = settings.MusicSkipChaosPowers;
-		Music_CheckBox_SkipRankTheme.IsChecked = settings.MusicSkipRankTheme;
+			// Selected Characters
+			Subtitles_CheckBox_SelectedCharacter_Shadow.IsChecked = settings.SubtitlesSelectedCharacterShadow;
+			Subtitles_CheckBox_SelectedCharacter_Sonic.IsChecked = settings.SubtitlesSelectedCharacterSonic;
+			Subtitles_CheckBox_SelectedCharacter_Tails.IsChecked = settings.SubtitlesSelectedCharacterTails;
+			Subtitles_CheckBox_SelectedCharacter_Knuckles.IsChecked = settings.SubtitlesSelectedCharacterKnuckles;
+			Subtitles_CheckBox_SelectedCharacter_Amy.IsChecked = settings.SubtitlesSelectedCharacterAmy;
+			Subtitles_CheckBox_SelectedCharacter_Rouge.IsChecked = settings.SubtitlesSelectedCharacterRouge;
+			Subtitles_CheckBox_SelectedCharacter_Omega.IsChecked = settings.SubtitlesSelectedCharacterOmega;
+			Subtitles_CheckBox_SelectedCharacter_Vector.IsChecked = settings.SubtitlesSelectedCharacterVector;
+			Subtitles_CheckBox_SelectedCharacter_Espio.IsChecked = settings.SubtitlesSelectedCharacterEspio;
+			Subtitles_CheckBox_SelectedCharacter_Maria.IsChecked = settings.SubtitlesSelectedCharacterMaria;
+			Subtitles_CheckBox_SelectedCharacter_Charmy.IsChecked = settings.SubtitlesSelectedCharacterCharmy;
+			Subtitles_CheckBox_SelectedCharacter_Eggman.IsChecked = settings.SubtitlesSelectedCharacterEggman;
+			Subtitles_CheckBox_SelectedCharacter_BlackDoom.IsChecked = settings.SubtitlesSelectedCharacterBlackDoom;
+			Subtitles_CheckBox_SelectedCharacter_Cream.IsChecked = settings.SubtitlesSelectedCharacterCream;
+			Subtitles_CheckBox_SelectedCharacter_Cheese.IsChecked = settings.SubtitlesSelectedCharacterCheese;
+			Subtitles_CheckBox_SelectedCharacter_GUNCommander.IsChecked = settings.SubtitlesSelectedCharacterGUNCommander;
+			Subtitles_CheckBox_SelectedCharacter_GUNSoldier.IsChecked = settings.SubtitlesSelectedCharacterGUNSoldier;
 
-		LoadGameData();
+			// Music
+			Music_CheckBox_RandomizeMusic.IsChecked = settings.RandomizeMusic;
+			Music_CheckBox_SkipChaosPowerUseJingles.IsChecked = settings.MusicSkipChaosPowers;
+			Music_CheckBox_SkipRankTheme.IsChecked = settings.MusicSkipRankTheme;
+
+			LoadGameData();
+		}
 	}
 
 	private void UserControl_Unloaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
