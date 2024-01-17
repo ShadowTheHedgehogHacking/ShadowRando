@@ -661,6 +661,12 @@ namespace ShadowRando
 
 			switch (targetEntry)
 			{
+				case Object0065_GUNBeetle originalEnemy when targetEntry is Object0065_GUNBeetle:
+					{
+						if (originalEnemy.AppearType == Object0065_GUNBeetle.EAppear.MOVE_ON_PATH)
+							break;
+						goto default; // fall to default case if non-path 
+					}
 				case Object008E_BkWingLarge originalEnemy when targetEntry is Object008E_BkWingLarge:
 					{
 						var actionType = Object0065_GUNBeetle.EAction.NONE;
@@ -676,12 +682,11 @@ namespace ShadowRando
 						newEntry.SearchHeight = originalEnemy.SearchHeight;
 						newEntry.SearchHeightOffset = originalEnemy.SearchHeightOffset;
 						newEntry.MoveSpeedRatio = originalEnemy.MoveSpeedRatio;
-						newEntry.MoveRange = originalEnemy.MoveRange;
 						newEntry.AppearType = (Object0065_GUNBeetle.EAppear)originalEnemy.AppearType;
 						newEntry.ActionType = actionType;
 						newEntry.WeaponType = (Object0065_GUNBeetle.EWeapon)r.Next(6);
 						newEntry.PathType = (Object0065_GUNBeetle.EPathType)originalEnemy.PathType;
-						newEntry.PathVariable = originalEnemy.MoveRange;
+						newEntry.PathVariable = originalEnemy.PathVariable;
 						newEntry.AttackStart = originalEnemy.AttackStart;
 						newEntry.AttackEnd = originalEnemy.AttackEnd;
 						newEntry.SparkWait = originalEnemy.AttackStart;
@@ -706,12 +711,11 @@ namespace ShadowRando
 						newEntry.SearchHeight = originalEnemy.SearchHeight;
 						newEntry.SearchHeightOffset = originalEnemy.SearchHeightOffset;
 						newEntry.MoveSpeedRatio = originalEnemy.MoveSpeedRatio;
-						newEntry.MoveRange = originalEnemy.MoveRange;
 						newEntry.AppearType = (Object0065_GUNBeetle.EAppear)originalEnemy.AppearType;
 						newEntry.ActionType = actionType;
 						newEntry.WeaponType = (Object0065_GUNBeetle.EWeapon)r.Next(6);
 						newEntry.PathType = (Object0065_GUNBeetle.EPathType)originalEnemy.PathType;
-						newEntry.PathVariable = originalEnemy.MoveRange;
+						newEntry.PathVariable = originalEnemy.PathVariable;
 						newEntry.AttackStart = originalEnemy.AttackStart;
 						newEntry.AttackEnd = originalEnemy.AttackEnd;
 						newEntry.SparkWait = originalEnemy.AttackStart;
@@ -1017,17 +1021,22 @@ namespace ShadowRando
 						newEntry.SearchHeight = originalEnemy.SearchHeight;
 						newEntry.SearchHeightOffset = originalEnemy.SearchHeightOffset;
 						newEntry.MoveSpeedRatio = originalEnemy.MoveSpeedRatio;
-						newEntry.MoveRange = originalEnemy.MoveRange;
 						newEntry.AppearType = (Object008E_BkWingLarge.EAppear)originalEnemy.AppearType;
 						newEntry.ActionType = (originalEnemy.ActionType == Object0065_GUNBeetle.EAction.SHOCK || originalEnemy.ActionType == Object0065_GUNBeetle.EAction.USE_WEAPON) ? Object008E_BkWingLarge.EAction.AIR_CUTTER : Object008E_BkWingLarge.EAction.NONE;
 						newEntry.PathType = (Object008E_BkWingLarge.EPathType)originalEnemy.PathType;
-						newEntry.PathVariable = originalEnemy.MoveRange;
+						newEntry.PathVariable = originalEnemy.PathVariable;
 						newEntry.AttackStart = originalEnemy.AttackStart;
 						newEntry.AttackEnd = originalEnemy.AttackEnd;
 						newEntry.PatrolReversed = originalEnemy.PatrolReversed;
 						newEntry.BodyAndDeathType = (Object008E_BkWingLarge.EBodyAndDeathType)bodyType;
 						setData[index] = newEntry;
 						break;
+					}
+				case Object008E_BkWingLarge originalEnemy when targetEntry is Object008E_BkWingLarge:
+					{
+						if (originalEnemy.AppearType == Object008E_BkWingLarge.EAppear.MOVE_ON_PATH)
+							break;
+						goto default; // fall to default case if non-path
 					}
 				case Object008F_BkWingSmall originalEnemy when targetEntry is Object008F_BkWingSmall:
 					{
@@ -1047,11 +1056,10 @@ namespace ShadowRando
 						newEntry.SearchHeight = originalEnemy.SearchHeight;
 						newEntry.SearchHeightOffset = originalEnemy.SearchHeightOffset;
 						newEntry.MoveSpeedRatio = originalEnemy.MoveSpeedRatio;
-						newEntry.MoveRange = originalEnemy.MoveRange;
 						newEntry.AppearType = (Object008E_BkWingLarge.EAppear)originalEnemy.AppearType;
 						newEntry.ActionType = (Object008E_BkWingLarge.EAction)originalEnemy.ActionType;
 						newEntry.PathType = (Object008E_BkWingLarge.EPathType)originalEnemy.PathType;
-						newEntry.PathVariable = originalEnemy.MoveRange;
+						newEntry.PathVariable = originalEnemy.PathVariable;
 						newEntry.AttackStart = originalEnemy.AttackStart;
 						newEntry.AttackEnd = originalEnemy.AttackEnd;
 						newEntry.PatrolReversed = originalEnemy.PatrolReversed;
@@ -1104,11 +1112,10 @@ namespace ShadowRando
 						newEntry.SearchHeight = originalEnemy.SearchHeight;
 						newEntry.SearchHeightOffset = originalEnemy.SearchHeightOffset;
 						newEntry.MoveSpeedRatio = originalEnemy.MoveSpeedRatio;
-						newEntry.MoveRange = originalEnemy.MoveRange;
 						newEntry.AppearType = (Object008F_BkWingSmall.EAppear)originalEnemy.AppearType;
 						newEntry.ActionType = (originalEnemy.ActionType == Object0065_GUNBeetle.EAction.SHOCK || originalEnemy.ActionType == Object0065_GUNBeetle.EAction.USE_WEAPON) ? Object008F_BkWingSmall.EAction.ATTACK : Object008F_BkWingSmall.EAction.NONE;
 						newEntry.PathType = (Object008F_BkWingSmall.EPathType)originalEnemy.PathType;
-						newEntry.PathVariable = originalEnemy.MoveRange;
+						newEntry.PathVariable = originalEnemy.PathVariable;
 						newEntry.AttackStart = originalEnemy.AttackStart;
 						newEntry.AttackEnd = originalEnemy.AttackEnd;
 						newEntry.PatrolReversed = originalEnemy.PatrolReversed;
@@ -1126,16 +1133,21 @@ namespace ShadowRando
 						newEntry.SearchHeight = originalEnemy.SearchHeight;
 						newEntry.SearchHeightOffset = originalEnemy.SearchHeightOffset;
 						newEntry.MoveSpeedRatio = originalEnemy.MoveSpeedRatio;
-						newEntry.MoveRange = originalEnemy.MoveRange;
 						newEntry.AppearType = (Object008F_BkWingSmall.EAppear)originalEnemy.AppearType;
 						newEntry.ActionType = (Object008F_BkWingSmall.EAction)originalEnemy.ActionType;
 						newEntry.PathType = (Object008F_BkWingSmall.EPathType)originalEnemy.PathType;
-						newEntry.PathVariable = originalEnemy.MoveRange;
+						newEntry.PathVariable = originalEnemy.PathVariable;
 						newEntry.AttackStart = originalEnemy.AttackStart;
 						newEntry.AttackEnd = originalEnemy.AttackEnd;
 						newEntry.PatrolReversed = originalEnemy.PatrolReversed;
 						setData[index] = newEntry;
 						break;
+					}
+				case Object008F_BkWingSmall originalEnemy when targetEntry is Object008F_BkWingSmall:
+					{
+						if (originalEnemy.AppearType == Object008F_BkWingSmall.EAppear.MOVE_ON_PATH)
+							break;
+						goto default; // fall to default case if non-path
 					}
 				case Object0064_GUNSoldier originalEnemy when targetEntry is Object0064_GUNSoldier:
 				default:
