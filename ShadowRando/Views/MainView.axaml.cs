@@ -16,7 +16,6 @@ using MsBox.Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia;
 using Avalonia.Platform;
-using LibVLCSharp.Shared;
 
 namespace ShadowRando.Views;
 
@@ -244,7 +243,6 @@ public partial class MainView : UserControl
 
 		// Program Configuration
 		LevelOrder_Label_ProgramTitle.Content += " " + programVersion;
-		LevelOrder_CheckBox_ProgramSound.IsChecked = settings.ProgramSound;
 
 		// Level Order
 		LevelOrder_TextBox_Seed.Text = settings.Seed;
@@ -373,9 +371,6 @@ public partial class MainView : UserControl
 
 	private void UserControl_Unloaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
 	{
-		// Program Configuration
-		settings.ProgramSound = LevelOrder_CheckBox_ProgramSound.IsChecked.Value;
-
 		// Level Order
 		settings.Seed = LevelOrder_TextBox_Seed.Text;
 		settings.RandomSeed = LevelOrder_CheckBox_Random_Seed.IsChecked.Value;
@@ -593,8 +588,6 @@ public partial class MainView : UserControl
 
 	private void Button_Randomize_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
 	{
-		PlayAudio(AssetLoader.Open(new Uri("avares://ShadowRando/Assets/shadow_menu_select.wav")));
-		
 		ProgressBar_RandomizationProgress.Value = 0;
 		RandomizationProcess();
 		// Task.Run(() => RandomizationProcess()); // We can't do this (yet) until we properly MVVM-ify since the UI Thread is actively used to evaluate CheckBox state
@@ -2394,7 +2387,6 @@ public partial class MainView : UserControl
 
 	private void LevelOrder_Button_ProjectPage_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
 	{
-		PlayAudio(AssetLoader.Open(new Uri("avares://ShadowRando/Assets/shadow_menu_select.wav")));
 		Process.Start(new ProcessStartInfo("https://github.com/ShadowTheHedgehogHacking/ShadowRando") { UseShellExecute = true });
 	}
 
@@ -2568,18 +2560,5 @@ public partial class MainView : UserControl
 			}
 			Spoilers_TextBox_LevelInfo.Text = sb.ToString();
 		}
-	}
-
-	private void PlayAudio(Stream sound)
-	{
-		if (!LevelOrder_CheckBox_ProgramSound.IsChecked.Value)
-			return;
-		
-		using var libvlc = new LibVLC(enableDebugLogs: true);
-		using var media = new Media(libvlc, new StreamMediaInput(sound));
-		using var mediaplayer = new MediaPlayer(media);
-		
-		mediaplayer.Play();
-
 	}
 }

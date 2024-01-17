@@ -6,8 +6,6 @@ namespace ShadowRando
 	public class Settings
 	{
 		[IniAlwaysInclude]
-		public bool ProgramSound = false;
-		[IniAlwaysInclude]
 		public int ProgramTheme = 2;
 		[IniAlwaysInclude]
 		public string GamePath;

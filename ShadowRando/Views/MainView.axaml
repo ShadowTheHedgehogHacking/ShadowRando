@@ -61,7 +61,6 @@
 							<ComboBoxItem>Light</ComboBoxItem>
 							<ComboBoxItem>Dark</ComboBoxItem>
 						</ComboBox>
-						<CheckBox x:Name="LevelOrder_CheckBox_ProgramSound" Margin="20,0,0,0">Program Sound</CheckBox>
 					</StackPanel>
 				</StackPanel>
 			</TabItem>
