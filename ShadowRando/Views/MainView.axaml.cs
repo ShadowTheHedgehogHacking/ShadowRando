@@ -1539,6 +1539,7 @@ public partial class MainView : UserControl
 
 			if (Layout_Weapon_CheckBox_RandomWeaponsFromEnvironment.IsChecked.Value)
 			{
+				RandomizeEnvironmentWeaponDrops(ref cmnLayoutData, weaponsPool, r);
 				if (ds1LayoutData != null)
 					RandomizeEnvironmentWeaponDrops(ref ds1LayoutData, weaponsPool, r);
 			}
