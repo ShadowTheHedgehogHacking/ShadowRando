@@ -1540,13 +1540,15 @@ public partial class MainView : UserControl
 			if (Layout_Weapon_CheckBox_RandomWeaponsFromEnvironment.IsChecked.Value)
 			{
 				RandomizeEnvironmentWeaponDrops(ref cmnLayoutData, weaponsPool, r);
+				if (nrmLayoutData != null)
+					RandomizeEnvironmentWeaponDrops(ref nrmLayoutData, weaponsPool, r);
 				if (ds1LayoutData != null)
 					RandomizeEnvironmentWeaponDrops(ref ds1LayoutData, weaponsPool, r);
 			}
 
-
 			if ((LayoutPartnerMode)Layout_Partner_ComboBox_Mode.SelectedIndex == LayoutPartnerMode.Wild)
 			{
+				MakeAllPartnersRandom(ref cmnLayoutData, Layout_Partner_CheckBox_KeepAffiliationOfOriginalObject.IsChecked.Value, r);
 				if (nrmLayoutData != null)
 					MakeAllPartnersRandom(ref nrmLayoutData, Layout_Partner_CheckBox_KeepAffiliationOfOriginalObject.IsChecked.Value, r);
 			}
