@@ -1214,6 +1214,7 @@ public partial class MainView : UserControl
 		Spoilers_Button_SaveLog.IsEnabled = true;
 		Spoilers_Button_MakeChart.IsEnabled = true;
 		ProgressBar_RandomizationProgress.Value = 100;
+		settings.Save();
 		var msgbox = MessageBoxManager.GetMessageBoxStandard("ShadowRando", "Randomization Complete", ButtonEnum.Ok, Icon.Info);
 		var result = await msgbox.ShowAsync();
 		if (result == ButtonResult.Ok)
