@@ -2502,12 +2502,11 @@ public partial class MainView : UserControl
 
 		if (file is not null)
 		{
-			// Open writing stream from the file.
 			await using var stream = await file.OpenWriteAsync();
 			using var sw = new StreamWriter(stream);
-			// Write some content to the file.
 			sw.WriteLine($"ShadowRando Version: {programVersion}");
 			sw.WriteLine($"Seed: {LevelOrder_TextBox_Seed.Text}");
+			sw.WriteLine("---- Level Order ----");
 			sw.WriteLine($"Level Order Mode: {settings.LevelOrderMode}");
 			if (settings.LevelOrderMode == LevelOrderMode.AllStagesWarps)
 			{
@@ -2521,21 +2520,125 @@ public partial class MainView : UserControl
 			sw.WriteLine($"Include Bosses: {LevelOrder_CheckBox_IncludeBosses.IsChecked.Value}");
 			sw.WriteLine($"Allow Boss -> Boss: {LevelOrder_CheckBox_AllowBossToBoss.IsChecked.Value}");
 
+			sw.WriteLine("---- Layout ----");
 			sw.WriteLine($"Randomize Layouts: {Layout_CheckBox_RandomizeLayouts.IsChecked.Value}");
 			if (settings.RandomizeLayouts == true)
 			{
+				sw.WriteLine($"Make CC Splines Vehicle Compatible: {Layout_CheckBox_MakeCCSplinesVehicleCompatible.IsChecked.Value}");
+				sw.WriteLine("--- Enemy ---");
 				sw.WriteLine($"Enemy Mode: {settings.LayoutEnemyMode}");
-				sw.WriteLine($"Random Weapons In All Boxes: {Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes.IsChecked.Value}");
+				sw.WriteLine($"Adjust Mission Counts: {Layout_Enemy_CheckBox_AdjustMissionCounts.IsChecked.Value}");
+				sw.WriteLine($"Adjust Mission Counts Reduction %: {Layout_Enemy_NumericUpDown_AdjustMissionsReductionPercent.Value}");
+				sw.WriteLine($"Keep Type: {Layout_Enemy_CheckBox_KeepType.IsChecked.Value}");
+				sw.WriteLine($"Only Selected Enemy Types: {Layout_Enemy_CheckBox_OnlySelectedEnemyTypes.IsChecked.Value}");
+				if (Layout_Enemy_CheckBox_OnlySelectedEnemyTypes.IsChecked.Value)
+				{
+					sw.WriteLine($"GUN Soldier: {Layout_Enemy_CheckBox_SelectedEnemy_GUNSoldier.IsChecked.Value}");
+					sw.WriteLine($"GUN Beetle: {Layout_Enemy_CheckBox_SelectedEnemy_GUNBeetle.IsChecked.Value}");
+					sw.WriteLine($"GUN Bigfoot: {Layout_Enemy_CheckBox_SelectedEnemy_GUNBigfoot.IsChecked.Value}");
+					sw.WriteLine($"GUN Robot: {Layout_Enemy_CheckBox_SelectedEnemy_GUNRobot.IsChecked.Value}");
+					sw.WriteLine($"Egg Pierrot: {Layout_Enemy_CheckBox_SelectedEnemy_EggPierrot.IsChecked.Value}");
+					sw.WriteLine($"Egg Pawn: {Layout_Enemy_CheckBox_SelectedEnemy_EggPawn.IsChecked.Value}");
+					sw.WriteLine($"Shadow Android: {Layout_Enemy_CheckBox_SelectedEnemy_ShadowAndroid.IsChecked.Value}");
+					sw.WriteLine($"BA Giant: {Layout_Enemy_CheckBox_SelectedEnemy_BAGiant.IsChecked.Value}");
+					sw.WriteLine($"BA Soldier: {Layout_Enemy_CheckBox_SelectedEnemy_BASoldier.IsChecked.Value}");
+					sw.WriteLine($"BA Hawk/Volt: {Layout_Enemy_CheckBox_SelectedEnemy_BAHawkVolt.IsChecked.Value}");
+					sw.WriteLine($"BA Wing: {Layout_Enemy_CheckBox_SelectedEnemy_BAWing.IsChecked.Value}");
+					sw.WriteLine($"BA Worm: {Layout_Enemy_CheckBox_SelectedEnemy_BAWorm.IsChecked.Value}");
+					sw.WriteLine($"BA Larva: {Layout_Enemy_CheckBox_SelectedEnemy_BALarva.IsChecked.Value}");
+					sw.WriteLine($"Artificial Chaos: {Layout_Enemy_CheckBox_SelectedEnemy_ArtificialChaos.IsChecked.Value}");
+					sw.WriteLine($"BA Assassin: {Layout_Enemy_CheckBox_SelectedEnemy_BAAssassin.IsChecked.Value}");
+				}
+				sw.WriteLine("--- Weapon ---");
 				sw.WriteLine($"Random Weapons In Weapon Boxes: {Layout_Weapon_CheckBox_RandomWeaponsInWeaponBoxes.IsChecked.Value}");
+				sw.WriteLine($"Random Weapons In All Boxes: {Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes.IsChecked.Value}");
 				sw.WriteLine($"Random Exposed Weapons: {Layout_Weapon_CheckBox_RandomExposedWeapons.IsChecked.Value}");
 				sw.WriteLine($"Environment Drops Random Weapons: {Layout_Weapon_CheckBox_RandomWeaponsFromEnvironment.IsChecked.Value}");
+				sw.WriteLine($"Only Selected Weapons: {Layout_Weapon_CheckBox_OnlySelectedWeapons.IsChecked.Value}");
+				if (Layout_Weapon_CheckBox_OnlySelectedWeapons.IsChecked.Value)
+				{
+					sw.WriteLine($"None: {Layout_Weapon_CheckBox_SelectedWeapon_None.IsChecked.Value}");
+					sw.WriteLine($"Pistol: {Layout_Weapon_CheckBox_SelectedWeapon_Pistol.IsChecked.Value}");
+					sw.WriteLine($"Submachine Gun: {Layout_Weapon_CheckBox_SelectedWeapon_SubmachineGun.IsChecked.Value}");
+					sw.WriteLine($"Assault Rifle: {Layout_Weapon_CheckBox_SelectedWeapon_AssaultRifle.IsChecked.Value}");
+					sw.WriteLine($"Heavy Machine Gun: {Layout_Weapon_CheckBox_SelectedWeapon_HeavyMachineGun.IsChecked.Value}");
+					sw.WriteLine($"Gatling Gun: {Layout_Weapon_CheckBox_SelectedWeapon_GatlingGun.IsChecked.Value}");
+					sw.WriteLine($"Egg Pistol: {Layout_Weapon_CheckBox_SelectedWeapon_EggPistol.IsChecked.Value}");
+					sw.WriteLine($"Light Shot: {Layout_Weapon_CheckBox_SelectedWeapon_LightShot.IsChecked.Value}");
+					sw.WriteLine($"Flash Shot: {Layout_Weapon_CheckBox_SelectedWeapon_FlashShot.IsChecked.Value}");
+					sw.WriteLine($"Ring Shot: {Layout_Weapon_CheckBox_SelectedWeapon_RingShot.IsChecked.Value}");
+					sw.WriteLine($"Heavy Shot: {Layout_Weapon_CheckBox_SelectedWeapon_HeavyShot.IsChecked.Value}");
+					sw.WriteLine($"Grenade Launcher: {Layout_Weapon_CheckBox_SelectedWeapon_GrenadeLauncher.IsChecked.Value}");
+					sw.WriteLine($"GUN Bazooka: {Layout_Weapon_CheckBox_SelectedWeapon_GUNBazooka.IsChecked.Value}");
+					sw.WriteLine($"Tank Cannon: {Layout_Weapon_CheckBox_SelectedWeapon_TankCannon.IsChecked.Value}");
+					sw.WriteLine($"Black Barrel: {Layout_Weapon_CheckBox_SelectedWeapon_BlackBarrel.IsChecked.Value}");
+					sw.WriteLine($"Big Barrel: {Layout_Weapon_CheckBox_SelectedWeapon_BigBarrel.IsChecked.Value}");
+					sw.WriteLine($"Egg Bazooka: {Layout_Weapon_CheckBox_SelectedWeapon_EggBazooka.IsChecked.Value}");
+					sw.WriteLine($"RPG: {Layout_Weapon_CheckBox_SelectedWeapon_RPG.IsChecked.Value}");
+					sw.WriteLine($"Four Shot: {Layout_Weapon_CheckBox_SelectedWeapon_FourShot.IsChecked.Value}");
+					sw.WriteLine($"Eight Shot: {Layout_Weapon_CheckBox_SelectedWeapon_EightShot.IsChecked.Value}");
+					sw.WriteLine($"Worm Shooter Black: {Layout_Weapon_CheckBox_SelectedWeapon_WormShooterBlack.IsChecked.Value}");
+					sw.WriteLine($"Worm Shooter Red: {Layout_Weapon_CheckBox_SelectedWeapon_WormShooterRed.IsChecked.Value}");
+					sw.WriteLine($"Worm Shooter Gold: {Layout_Weapon_CheckBox_SelectedWeapon_WormShooterGold.IsChecked.Value}");
+					sw.WriteLine($"Vacuum Pod: {Layout_Weapon_CheckBox_SelectedWeapon_VacuumPod.IsChecked.Value}");
+					sw.WriteLine($"Laser Rifle: {Layout_Weapon_CheckBox_SelectedWeapon_LaserRifle.IsChecked.Value}");
+					sw.WriteLine($"Splitter: {Layout_Weapon_CheckBox_SelectedWeapon_Splitter.IsChecked.Value}");
+					sw.WriteLine($"Refractor: {Layout_Weapon_CheckBox_SelectedWeapon_Refractor.IsChecked.Value}");
+					sw.WriteLine($"Knife: {Layout_Weapon_CheckBox_SelectedWeapon_Knife.IsChecked.Value}");
+					sw.WriteLine($"Black Sword: {Layout_Weapon_CheckBox_SelectedWeapon_BlackSword.IsChecked.Value}");
+					sw.WriteLine($"Dark Hammer: {Layout_Weapon_CheckBox_SelectedWeapon_DarkHammer.IsChecked.Value}");
+					sw.WriteLine($"Egg Lance: {Layout_Weapon_CheckBox_SelectedWeapon_EggLance.IsChecked.Value}");
+					sw.WriteLine($"Samurai Sword Lv1: {Layout_Weapon_CheckBox_SelectedWeapon_SamuraiSwordLv1.IsChecked.Value}");
+					sw.WriteLine($"Samurai Sword Lv2: {Layout_Weapon_CheckBox_SelectedWeapon_SamuraiSwordLv2.IsChecked.Value}");
+					sw.WriteLine($"Satellite Laser Lv1: {Layout_Weapon_CheckBox_SelectedWeapon_SatelliteLaserLv1.IsChecked.Value}");
+					sw.WriteLine($"Satellite Laser Lv2: {Layout_Weapon_CheckBox_SelectedWeapon_SatelliteLaserLv2.IsChecked.Value}");
+					sw.WriteLine($"Egg Vacuum Lv1: {Layout_Weapon_CheckBox_SelectedWeapon_EggVacuumLv1.IsChecked.Value}");
+					sw.WriteLine($"Egg Vacuum Lv2: {Layout_Weapon_CheckBox_SelectedWeapon_EggVacuumLv2.IsChecked.Value}");
+					sw.WriteLine($"Omochao Gun Lv1: {Layout_Weapon_CheckBox_SelectedWeapon_OmochaoGunLv1.IsChecked.Value}");
+					sw.WriteLine($"Omochao Gun Lv2: {Layout_Weapon_CheckBox_SelectedWeapon_OmochaoGunLv2.IsChecked.Value}");
+					sw.WriteLine($"Heal Cannon Lv1: {Layout_Weapon_CheckBox_SelectedWeapon_HealCannonLv1.IsChecked.Value}");
+					sw.WriteLine($"Heal Cannon Lv2: {Layout_Weapon_CheckBox_SelectedWeapon_HealCannonLv2.IsChecked.Value}");
+					sw.WriteLine($"Shadow Rifle: {Layout_Weapon_CheckBox_SelectedWeapon_ShadowRifle.IsChecked.Value}");
+				}
+				sw.WriteLine("--- Partner ---");
 				sw.WriteLine($"Partner Mode: {settings.LayoutPartnerMode}");
+				sw.WriteLine($"Keep Affiliation of Original Object: {Layout_Partner_CheckBox_KeepAffiliationOfOriginalObject.IsChecked.Value}");
 			}
+			
+			sw.WriteLine("---- Subtitles ----");
 			sw.WriteLine($"Randomize Subtitles / Voicelines: {Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value}");
+			sw.WriteLine($"Only With Linked Audio: {Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked.Value}");
+			sw.WriteLine($"Give Audio to No Linked Audio Subtitles: {Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsChecked.Value}");
+			sw.WriteLine($"No System Messages: {Subtitles_CheckBox_NoSystemMessages.IsChecked.Value}");
+			sw.WriteLine($"No Duplicates: {Subtitles_CheckBox_NoDuplicates.IsChecked.Value}");
+			sw.WriteLine($"Only Selected Characters: {Subtitles_CheckBox_OnlySelectedCharacters.IsChecked.Value}");
+			if (Subtitles_CheckBox_OnlySelectedCharacters.IsChecked.Value)
+			{
+				sw.WriteLine($"Shadow: {Subtitles_CheckBox_SelectedCharacter_Shadow.IsChecked.Value}");
+				sw.WriteLine($"Sonic: {Subtitles_CheckBox_SelectedCharacter_Sonic.IsChecked.Value}");
+				sw.WriteLine($"Tails: {Subtitles_CheckBox_SelectedCharacter_Tails.IsChecked.Value}");
+				sw.WriteLine($"Knuckles: {Subtitles_CheckBox_SelectedCharacter_Knuckles.IsChecked.Value}");
+				sw.WriteLine($"Amy: {Subtitles_CheckBox_SelectedCharacter_Amy.IsChecked.Value}");
+				sw.WriteLine($"Rouge: {Subtitles_CheckBox_SelectedCharacter_Rouge.IsChecked.Value}");
+				sw.WriteLine($"Omega: {Subtitles_CheckBox_SelectedCharacter_Omega.IsChecked.Value}");
+				sw.WriteLine($"Vector: {Subtitles_CheckBox_SelectedCharacter_Vector.IsChecked.Value}");
+				sw.WriteLine($"Espio: {Subtitles_CheckBox_SelectedCharacter_Espio.IsChecked.Value}");
+				sw.WriteLine($"Maria: {Subtitles_CheckBox_SelectedCharacter_Maria.IsChecked.Value}");
+				sw.WriteLine($"Charmy: {Subtitles_CheckBox_SelectedCharacter_Charmy.IsChecked.Value}");
+				sw.WriteLine($"Eggman: {Subtitles_CheckBox_SelectedCharacter_Eggman.IsChecked.Value}");
+				sw.WriteLine($"Black Doom: {Subtitles_CheckBox_SelectedCharacter_BlackDoom.IsChecked.Value}");
+				sw.WriteLine($"Cream: {Subtitles_CheckBox_SelectedCharacter_Cream.IsChecked.Value}");
+				sw.WriteLine($"Cheese: {Subtitles_CheckBox_SelectedCharacter_Cheese.IsChecked.Value}");
+				sw.WriteLine($"GUN Soldier: {Subtitles_CheckBox_SelectedCharacter_GUNSoldier.IsChecked.Value}");
+				sw.WriteLine($"GUN Commander: {Subtitles_CheckBox_SelectedCharacter_GUNCommander.IsChecked.Value}");
+			}
+
+			sw.WriteLine("---- Music ----");
 			sw.WriteLine($"Randomize Music: {Music_CheckBox_RandomizeMusic.IsChecked.Value}");
 			sw.WriteLine($"Skip Chaos Power Use Jingles: {Music_CheckBox_SkipChaosPowerUseJingles.IsChecked.Value}");
 			sw.WriteLine($"Skip Rank Theme: {Music_CheckBox_SkipRankTheme.IsChecked.Value}");
 			sw.WriteLine();
+			sw.WriteLine("---- Stage Reorder Result ----");
 			for (int i = 0; i < stagecount; i++)
 			{
 				Stage stg = stages[stageids[i]];
@@ -2548,6 +2651,7 @@ public partial class MainView : UserControl
 					sw.WriteLine($"Dark -> {GetStageName(stg.Dark)} ({Array.IndexOf(stageids, stg.Dark) - i:+##;-##;0})");
 				sw.WriteLine();
 			}
+			sw.Close();
 		}
 
 	}
