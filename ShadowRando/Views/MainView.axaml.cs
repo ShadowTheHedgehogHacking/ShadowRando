@@ -258,6 +258,7 @@ public partial class MainView : UserControl
 			LevelOrder_CheckBox_AllowJumpsToSameLevel.IsChecked = settings.LevelOrderAllowJumpsToSameLevel;
 			LevelOrder_CheckBox_IncludeLastStory.IsChecked = settings.LevelOrderIncludeLastStory;
 			LevelOrder_CheckBox_IncludeBosses.IsChecked = settings.LevelOrderIncludeBosses;
+			LevelOrder_CheckBox_AllowBossToBoss.IsChecked = settings.LevelOrderAllowBossToBoss;
 
 			// Layout
 			Layout_CheckBox_RandomizeLayouts.IsChecked = settings.RandomizeLayouts;
@@ -386,6 +387,7 @@ public partial class MainView : UserControl
 		settings.LevelOrderAllowJumpsToSameLevel = LevelOrder_CheckBox_AllowJumpsToSameLevel.IsChecked.Value;
 		settings.LevelOrderIncludeLastStory = LevelOrder_CheckBox_IncludeLastStory.IsChecked.Value;
 		settings.LevelOrderIncludeBosses = LevelOrder_CheckBox_IncludeBosses.IsChecked.Value;
+		settings.LevelOrderAllowBossToBoss = LevelOrder_CheckBox_AllowBossToBoss.IsChecked.Value;
 
 		// Layout
 		settings.RandomizeLayouts = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
@@ -663,7 +665,23 @@ public partial class MainView : UserControl
 				break;
 			case LevelOrderMode.AllStagesWarps:
 				{
-					Shuffle(r, stageids, stagecount);
+					if (!LevelOrder_CheckBox_IncludeBosses.IsChecked.Value || LevelOrder_CheckBox_AllowBossToBoss.IsChecked.Value)
+						Shuffle(r, stageids, stagecount);
+					else
+					{
+						int[] tmparr = stageids.Take(stagecount).Where(a => !stages[a].IsBoss).ToArray();
+						Shuffle(r, tmparr);
+						tmpids = tmparr.ToList();
+						tmparr = stageids.Take(stagecount).Where(a => stages[a].IsBoss).ToArray();
+						Shuffle(r, tmparr);
+						int[] inds = Enumerable.Range(0, tmpids.Count).ToArray();
+						Shuffle(r, inds);
+						inds = inds.Take(tmparr.Length).ToArray();
+						Array.Sort(inds);
+						for (int i = 0; i < tmparr.Length; i++)
+							tmpids.Insert(inds[inds.Length - i - 1], tmparr[i]);
+						tmpids.CopyTo(stageids);
+					}
 					switch ((LevelOrderMainPath)LevelOrder_ComboBox_MainPath.SelectedIndex)
 					{
 						case LevelOrderMainPath.ActClear:
@@ -906,24 +924,42 @@ public partial class MainView : UserControl
 						for (int i = 0; i < curset.Count; i++)
 						{
 							Stage stg = stages[curset[i]];
-							int next = GetStageFromLists(r, newset, stagepool, stagepool.Count / 6);
+							int next;
+							int l = 0;
+							do
+							{
+								next = GetStageFromLists(r, newset, stagepool, stagepool.Count / 6);
+							}
+							while (l++ < 10 && !LevelOrder_CheckBox_AllowBossToBoss.IsChecked.Value && stg.IsBoss && stages[next].IsBoss);
 							stg.SetExit(0, next);
 							if (!newset.Contains(next))
 								newset.Add(next);
 							if (stg.HasHero && stg.Hero == -1)
 							{
-								stg.Hero = GetStageFromLists(r, newset, stagepool, stagepool.Count / 6);
+								l = 0;
+								do
+								{
+									next = GetStageFromLists(r, newset, stagepool, stagepool.Count / 6);
+								}
+								while (l++ < 10 && !LevelOrder_CheckBox_AllowBossToBoss.IsChecked.Value && stg.IsBoss && stages[next].IsBoss);
+								stg.Hero = next;
 								if (!newset.Contains(stg.Hero))
 									newset.Add(stg.Hero);
 							}
 							if (stg.HasDark && stg.Dark == -1)
 							{
-								stg.Dark = GetStageFromLists(r, newset, stagepool, stagepool.Count / 6);
+								l = 0;
+								do
+								{
+									next = GetStageFromLists(r, newset, stagepool, stagepool.Count / 6);
+								}
+								while (l++ < 10 && !LevelOrder_CheckBox_AllowBossToBoss.IsChecked.Value && stg.IsBoss && stages[next].IsBoss);
+								stg.Dark = next;
 								if (!newset.Contains(stg.Dark))
 									newset.Add(stg.Dark);
 							}
 						}
-						stagepool.RemoveAll(a => newset.Contains(a));
+						stagepool.RemoveAll(newset.Contains);
 						curset = newset;
 						ids2.AddRange(newset);
 					}
@@ -952,7 +988,13 @@ public partial class MainView : UserControl
 						int stgid = stagepool.Pop();
 						Stage stg = stages[stgid];
 						exitcnt -= stg.CountExits();
-						int next = GetStageFromLists(r, orphans, usedstg, 2);
+						int next;
+						int l = 0;
+						do
+						{
+							next = GetStageFromLists(r, orphans, usedstg, 2);
+						}
+						while (l++ < 10 && !LevelOrder_CheckBox_AllowBossToBoss.IsChecked.Value && stg.IsBoss && stages[next].IsBoss);
 						int depth = stagedepths[next] + 1;
 						stagedepths[stgid] = depth;
 						while (depthstages.Count <= depth)
@@ -971,7 +1013,12 @@ public partial class MainView : UserControl
 						int depth = 0;
 						if (stg.IsBoss || stg.HasNeutral)
 						{
-							next = orphans[r.Next(orphans.Count)];
+							int l = 0;
+							do
+							{
+								next = orphans[r.Next(orphans.Count)];
+							}
+							while (l++ < 10 && !LevelOrder_CheckBox_AllowBossToBoss.IsChecked.Value && stg.IsBoss && stages[next].IsBoss);
 							stg.Neutral = next;
 							orphans.Remove(next);
 							depth = stagedepths[next] + 1;
@@ -1003,7 +1050,14 @@ public partial class MainView : UserControl
 						if ((stg.IsBoss || stg.HasNeutral) && stg.Neutral == -1)
 						{
 							var pool = depthstages[Math.Min(stagedepths[stg.ID] + r.Next(-1, 2), depthstages.Count - 1)];
-							stg.Neutral = pool[r.Next(pool.Count)];
+							int next;
+							int l = 0;
+							do
+							{
+								next = pool[r.Next(pool.Count)];
+							}
+							while (l++ < 10 && !LevelOrder_CheckBox_AllowBossToBoss.IsChecked.Value && stg.IsBoss && stages[next].IsBoss);
+							stg.Neutral = next;
 						}
 						if (stg.HasHero && stg.Hero == -1)
 						{
@@ -2465,6 +2519,7 @@ public partial class MainView : UserControl
 			}
 			sw.WriteLine($"Include Last Story: {LevelOrder_CheckBox_IncludeLastStory.IsChecked.Value}");
 			sw.WriteLine($"Include Bosses: {LevelOrder_CheckBox_IncludeBosses.IsChecked.Value}");
+			sw.WriteLine($"Allow Boss -> Boss: {LevelOrder_CheckBox_AllowBossToBoss.IsChecked.Value}");
 
 			sw.WriteLine($"Randomize Layouts: {Layout_CheckBox_RandomizeLayouts.IsChecked.Value}");
 			if (settings.RandomizeLayouts == true)

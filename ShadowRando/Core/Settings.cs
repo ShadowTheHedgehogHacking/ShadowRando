@@ -34,6 +34,9 @@ namespace ShadowRando
 		[System.ComponentModel.DefaultValue(true)]
 		[IniAlwaysInclude]
 		public bool LevelOrderIncludeBosses = true;
+		[System.ComponentModel.DefaultValue(true)]
+		[IniAlwaysInclude]
+		public bool LevelOrderAllowBossToBoss = true;
 
 		// Layout
 		[IniAlwaysInclude]
