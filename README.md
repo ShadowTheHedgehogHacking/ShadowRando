@@ -2,8 +2,9 @@
 This project is a work in progress
 
 ### Randomization Features
-* Story Route Randomization with no deadlocking. You may warp back, but there is always a way forward! Keep trying! A detailed breakdown of Route Options is below.
-* 'FNT' Randomization - This randomizes the in-game subtitles / audio hints. Currently if an entry has an audio association, it is kept. If it does not have one, a random audio line is picked.
+* Level Order / Story Route Randomization with no deadlocking. You may warp back, but there is always a way forward! Keep trying! A detailed breakdown of Route Options is below.
+* Layout Randomization - 64 MB / Dolphin ONLY - This has configurations to randomize enemies, weapons, and partners. Only compatible with Dolphin due to the extra RAM usage from object usage in stage where they are not normally present.
+* Subtitles Randomization - This randomizes the in-game subtitles / audio hints. Has configurations.
 * Music Randomization - This randomizes the in-game music, split up by category. Also supports including Custom Music in the randomization.
 
 ### How to use / play
@@ -20,8 +21,14 @@ I would pick that folder, not the `..\Desktop\ShadowExtracted\sys` folder, unlik
 
 3. Configure the Randomization Options as you please
 4. Click Randomize
-5. Launch the **Extracted Game** in Dolphin and enjoy!
+5. Set Dolphin's MEM1 to 64 MB if using Layout Randomization (See below `Setting Dolphin MEM1 to 64MB` if you do not know how)
+6. Launch the **Extracted Game** in Dolphin and enjoy!
 
+### How to Interpret the Route Menu (Story Mode -> Pause In-Stage -> Y Button):
+* Seeing a Dark Mission going to Digital Circuit can mean Digital Circuit, a Boss Stage, Westopolis, Last Way, or the end of route.
+* Seeing a Normal Mission going to Glyphic Canyon can mean Glyphic Canyon, a Boss Stage, Westopolis, Last Way, or the end of route.
+* Seeing a Hero Mission going to Lethal Highway can mean Lethal Highway, a Boss Stage, Westopolis, Last Way, or the end of route.
+* All other cases reflect the actual mission you will progress to, though the possibility exists of a single boss in between the progression.
 
 ### Route Randomization Options
 
@@ -37,15 +44,49 @@ I would pick that folder, not the `..\Desktop\ShadowExtracted\sys` folder, unlik
 
 `Any Exit` - randomly selects one of the available exits from a level to take you to the next stage in the order.
 
+### Layout Randomization Options
+
+----
+#### This feature requires setting Dolphin MEM1 to 64MB mode! Be aware of this if you choose to use Layout Randomization, otherwise your game will crash on level load.
+
+#### A Warning about Reloaded <= 1.1 & 2P-Reloaded <= 1.0b
+If you use the "Random Partners" option, you may be unable to complete certain missions. To fix this issue, download the '[missing_events_reloaded_based_roms](https://github.com/ShadowTheHedgehogHacking/ShadowRando/releases/download/0.4.0/missing_events_reloaded_based_roms.7z)' and merge these into your extracted game's `events` folder. It can be done before or after your randomization.
+
+----
+
+`Make CC Splines Vehicle Compatible` - turns most splines in the game into Black Hawk / Black Volt compatible splines. Allows you to use them in areas you normally cannot. Note, very experimental - expect weirdness.
+
+`Adjust Mission Counts` - adjusts the mission counts based on the newly randomized enemies. Reduction % allows you to reduce the amount of enemies for a mission complete.
+``
+
+`Enemy - Keep Type` - keeps ground enemies mapped to ground enemies, and flying enemies mapped to flying enemies. Recommended.
+
+`Enemy - Only Selected Enemy Types` - allows you to choose which enemies to use in randomization. Note you must have at least one ground and one flying enemy. Additionally, GUN Soldiers require at least one other enemy type due to Link ID constraints relating to them.
+
+`Weapon - Random Weapons in Weapon Boxes` - randomizes weapon boxes only
+
+`Weapon - Random Weapons in All Boxes` - randomizes all boxes to contain weapons, even if they had nothing or something else in them
+
+`Weapon - Random Exposed Weapons` - randomizes weapons found outside of crates (such as Air Fleet Armory)
+
+`Weapon - Environment Drops Random Weapons` - randomizes what drops when you destroy EnvWeapon objects (trees, stop signs, etc...)
+
+`Weapon - Only Selected Weapons` - allows you to choose which weapons to use in randomization
+
+`Partner - Keep Affiliation of Original Object` - Ensures originally dark partner objects only pick a dark partner, and hero only picks a hero partner. Recommended for non-reloaded variants of the game.
+
+Both Enemy and Partner only feature "Original (untouched)" and "Wild" randomization options as of v0.5. In the future 1:1 mappings will be possible.
+
+----
+
 ### Custom Music
 Warning: in-game stage music expects louder source files. The rank/stage clear jingle is uniquely abnormally loud.
 1. Create a folder `RandoMusic` in the same directory as the ShadowRando program.
 2. Create `Stage.txt`, `Jingle.txt`, `Menu.txt`, and `Credits.txt` - each containing the filename(s) of the songs you want to be included in the randomization category. Note if you only want to add custom Stage music, you don't need to add the other `.txt` files besides `Stage.txt`. If you have subfolders, you must also create these files in those folders to include files from subfolders.
 3. Place any `*.adx` music files that you reference in this folder, or subfolders. You cannot use `*.mp3 / *.wav`! You must convert to `*.adx`.
 
-
 ### Extraction of Original Game / FST Format
-1. Get the latest beta or dev Dolphin - [5.0-20201 or newer recommended](https://dolphin-emu.org/download/)
+1. Get the latest release or dev Dolphin - [5.0-20347 or newer recommended](https://dolphin-emu.org/download/)
 2. (Optional: only do this step if you want to keep config separate) Before launching dolphin, create an empty file
    `portable.txt` in the same folder as Dolphin.exe
 3. Open Dolphin
@@ -56,6 +97,13 @@ Warning: in-game stage music expects louder source files. The rank/stage clear j
 8. Right-click `Disc`
 9. Select `Extract Entire Disc...`
 10. Select a new folder where you will store the game content and modify its files
+
+### Setting Dolphin MEM1 to 64MB
+1. Open Dolphin
+2. Click `Config`
+3. Click `Advanced` Tab
+4. In `Memory Override` section, check `Enable Emulated Memory Size Override`
+5. Slide `MEM1` to 64 MB (maximum)
 
 ### Playing the Extracted Game
 1. Open Dolphin
