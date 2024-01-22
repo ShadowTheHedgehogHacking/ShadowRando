@@ -1797,7 +1797,7 @@ public partial class MainView : UserControl
 							spline.Setting2 = 1;
 					}
 					var updatedPATHPTP = SplineReader.ShadowSplinesToByteArray(stageDataIdentifier, splines);
-					datOneDataContent.Files[0].CompressedData = Prs.Compress(ref updatedPATHPTP);
+					datOneDataContent.Files[0].CompressedData = FraGag.Compression.Prs.Compress(updatedPATHPTP);
 					var updatedDatOneData = datOneDataContent.BuildShadowONEArchive(archiveType == ONEArchiveType.Shadow060);
 					File.WriteAllBytes(Path.Combine(settings.GamePath, "files", stageDataIdentifier, datOneFile), updatedDatOneData.ToArray());
 				}

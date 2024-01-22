@@ -31,7 +31,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Submodules\HeroesONE-Reloaded\HeroesONE++\HeroesONE_R.csproj" />
+    <ProjectReference Include="..\Submodules\HeroesONE++\HeroesONE++\HeroesONE_R.csproj" />
+    <ProjectReference Include="..\Submodules\HeroesONE++\prs.net\FraGag.Compression.Prs\FraGag.Compression.Prs.csproj" />
     <ProjectReference Include="..\Submodules\ShadowSET\ShadowSET\ShadowSET.csproj" />
   </ItemGroup>
 
