@@ -1826,6 +1826,7 @@ public partial class MainView : UserControl
 			if (entry.objectEntry.List == 0x00 &&
 				(
 					(entry.objectEntry.Type >= 0x00 && entry.objectEntry.Type <= 0x0C) || // is a box/spring
+					(entry.objectEntry.Type == 0x3A) || // special weapons box
 					(entry.objectEntry.Type >= 0x64 && entry.objectEntry.Type <= 0x93) ||  // is an enemy
 					(entry.objectEntry.Type >= 0xC8 && entry.objectEntry.Type <= 0xFD) || // is a weapon
 					(entry.objectEntry.Type >= 0x46 && entry.objectEntry.Type <= 0x4E) // is a vehicle
