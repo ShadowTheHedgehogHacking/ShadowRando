@@ -74,6 +74,8 @@ public partial class MainView : UserControl
 	const int neutOffset = 0x28;
 	const int heroOffset = 0x34;
 	const int stageOffset = 0x50;
+	const int shadowBoxPatchOffset = 0x3382E0;
+	const int shadowBoxPatchValue = 0x480001B0;
 	static readonly Dictionary<int, int> stageAssociationIDMap = new Dictionary<int, int>
 	{
 			{ 5, 100 }, // first stage
@@ -1156,6 +1158,15 @@ public partial class MainView : UserControl
 		buf.CopyTo(dolfile, routeMenu6xxStagePreviewBlockerOffset);
 		// end patch
 
+		if (Layout_CheckBox_RandomizeLayouts.IsChecked.Value && (Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes.IsChecked.Value || Layout_Weapon_CheckBox_RandomWeaponsInWeaponBoxes.IsChecked.Value))
+		{
+			// special weapons box patch
+			buf = BitConverter.GetBytes(shadowBoxPatchValue);
+			Array.Reverse(buf);
+			buf.CopyTo(dolfile, shadowBoxPatchOffset);
+			// end special weapons box patch
+		}
+
 		File.WriteAllBytes(Path.Combine(settings.GamePath, "sys", "main.dol"), dolfile);
 		if (Music_CheckBox_RandomizeMusic.IsChecked.Value)
 		{
@@ -1941,48 +1952,6 @@ public partial class MainView : UserControl
 		}
 	}
 
-	private EBoxType? GetWeaponAffiliationBoxType(EWeapon weapon)
-	{
-		switch (weapon)
-		{
-			case EWeapon.Pistol:
-			case EWeapon.SubmachineGun:
-			case EWeapon.MachineGun:
-			case EWeapon.HeavyMachineGun:
-			case EWeapon.GatlingGun:
-			case EWeapon.GrenadeLauncher:
-			case EWeapon.GUNBazooka:
-			case EWeapon.TankCannon:
-			case EWeapon.RPG:
-			case EWeapon.FourShot:
-			case EWeapon.EightShot:
-			case EWeapon.LaserRifle:
-			case EWeapon.Knife:
-				return EBoxType.GUN;
-			case EWeapon.LightShot:
-			case EWeapon.FlashShot:
-			case EWeapon.RingShot:
-			case EWeapon.HeavyShot:
-			case EWeapon.BlackBarrel:
-			case EWeapon.BigBarrel:
-			case EWeapon.WormShooterBlack:
-			case EWeapon.WideWormShooterRed:
-			case EWeapon.BigWormShooterGold:
-			case EWeapon.VacuumPod:
-			case EWeapon.Splitter:
-			case EWeapon.Refractor:
-			case EWeapon.BlackSword:
-			case EWeapon.DarkHammer:
-				return EBoxType.BlackArms;
-			case EWeapon.EggGun:
-			case EWeapon.EggBazooka:
-			case EWeapon.EggLance:
-				return EBoxType.Eggman;
-			default:
-				return null;
-		}
-	}
-
 	private void MakeAllWeaponBoxesHaveRandomWeapons(ref List<SetObjectShadow> setData, List<EWeapon> weaponsPool, Random r)
 	{
 		List<(Object000C_WeaponBox item, int index)> weaponBoxItems = setData
@@ -1991,13 +1960,69 @@ public partial class MainView : UserControl
 			.Select(pair => (Item: (Object000C_WeaponBox)pair.Item, Index: pair.Index))
 			.ToList();
 
+		List<(Object003A_SpecialWeaponBox item, int index)> specialWeaponsBoxItems = setData
+			.Select((item, index) => new { Item = item, Index = index })
+			.Where(pair => pair.Item is Object003A_SpecialWeaponBox)
+			.Select(pair => (Item: (Object003A_SpecialWeaponBox)pair.Item, Index: pair.Index))
+			.ToList();
+
 		foreach (var weaponbox in weaponBoxItems)
 		{
 			weaponbox.item.Weapon = weaponsPool[r.Next(weaponsPool.Count)];
-			var boxType = GetWeaponAffiliationBoxType(weaponbox.item.Weapon);
+			var boxType = EnemySETMutations.GetWeaponAffiliationBoxType(weaponbox.item.Weapon);
 			if (boxType.HasValue)
+			{
 				weaponbox.item.BoxType = boxType.Value;
-			setData[weaponbox.index] = weaponbox.item;
+				setData[weaponbox.index] = weaponbox.item;
+			}
+			else
+			{
+				switch (weaponbox.item.Weapon)
+				{
+					case EWeapon.SamuraiSwordLv1:
+					case EWeapon.SamuraiSwordLv2:
+					case EWeapon.SatelliteLaserLv1:
+					case EWeapon.SatelliteLaserLv2:
+					case EWeapon.EggVacLv1:
+					case EWeapon.EggVacLv2:
+					case EWeapon.OmochaoLv1:
+					case EWeapon.OmochaoLv2:
+					case EWeapon.HealCannonLv1:
+					case EWeapon.HealCannonLv2:
+					case EWeapon.ShadowRifle:
+						EnemySETMutations.ToSpecialWeaponBox(weaponbox.index, ref setData);
+						break;
+					default:
+						setData[weaponbox.index] = weaponbox.item;
+						break;
+				}
+			}
+		}
+
+		foreach (var specialWeaponsBox in specialWeaponsBoxItems)
+		{
+			specialWeaponsBox.item.Weapon = weaponsPool[r.Next(weaponsPool.Count)];
+			setData[specialWeaponsBox.index] = specialWeaponsBox.item;
+
+			switch (specialWeaponsBox.item.Weapon)
+			{
+				case EWeapon.SamuraiSwordLv1:
+				case EWeapon.SamuraiSwordLv2:
+				case EWeapon.SatelliteLaserLv1:
+				case EWeapon.SatelliteLaserLv2:
+				case EWeapon.EggVacLv1:
+				case EWeapon.EggVacLv2:
+				case EWeapon.OmochaoLv1:
+				case EWeapon.OmochaoLv2:
+				case EWeapon.HealCannonLv1:
+				case EWeapon.HealCannonLv2:
+				case EWeapon.ShadowRifle:
+					setData[specialWeaponsBox.index] = specialWeaponsBox.item;
+					break;
+				default:
+					EnemySETMutations.ToWeaponBox(specialWeaponsBox.index, ref setData);
+					break;
+			}
 		}
 	}
 
@@ -2021,46 +2046,138 @@ public partial class MainView : UserControl
 			.Select(pair => (Item: (Object000A_MetalBox)pair.Item, Index: pair.Index))
 			.ToList();
 
-		/*			List<(Object003A_SpecialWeaponBox item, int index)> specialWeaponsBoxItems = setData // Only do this when we can override spawning spw to use single default setdata weapon
-						.Select((item, index) => new { Item = item, Index = index })
-						.Where(pair => pair.Item is Object003A_SpecialWeaponBox)
-						.Select(pair => (Item: (Object003A_SpecialWeaponBox)pair.Item, Index: pair.Index))
-						.ToList(); */
+		List<(Object003A_SpecialWeaponBox item, int index)> specialWeaponsBoxItems = setData
+			.Select((item, index) => new { Item = item, Index = index })
+			.Where(pair => pair.Item is Object003A_SpecialWeaponBox)
+			.Select(pair => (Item: (Object003A_SpecialWeaponBox)pair.Item, Index: pair.Index))
+			.ToList();
 
 		foreach (var woodbox in woodBoxItems)
 		{
 			woodbox.item.BoxItem = EBoxItem.Weapon;
 			woodbox.item.ModifierWeapon = weaponsPool[r.Next(weaponsPool.Count)];
-			var boxType = GetWeaponAffiliationBoxType(woodbox.item.ModifierWeapon);
+			var boxType = EnemySETMutations.GetWeaponAffiliationBoxType(woodbox.item.ModifierWeapon);
 			if (boxType.HasValue)
+			{
 				woodbox.item.BoxType = boxType.Value;
-			setData[woodbox.index] = woodbox.item;
+				setData[woodbox.index] = woodbox.item;
+			}
+			else
+			{
+				switch (woodbox.item.ModifierWeapon)
+				{
+					case EWeapon.SamuraiSwordLv1:
+					case EWeapon.SamuraiSwordLv2:
+					case EWeapon.SatelliteLaserLv1:
+					case EWeapon.SatelliteLaserLv2:
+					case EWeapon.EggVacLv1:
+					case EWeapon.EggVacLv2:
+					case EWeapon.OmochaoLv1:
+					case EWeapon.OmochaoLv2:
+					case EWeapon.HealCannonLv1:
+					case EWeapon.HealCannonLv2:
+					case EWeapon.ShadowRifle:
+						EnemySETMutations.ToSpecialWeaponBox(woodbox.index, ref setData);
+						break;
+					default:
+						setData[woodbox.index] = woodbox.item;
+						break;
+				}
+			}
 		}
 
 		foreach (var weaponbox in weaponBoxItems)
 		{
 			weaponbox.item.Weapon = weaponsPool[r.Next(weaponsPool.Count)];
-			var boxType = GetWeaponAffiliationBoxType(weaponbox.item.Weapon);
+			var boxType = EnemySETMutations.GetWeaponAffiliationBoxType(weaponbox.item.Weapon);
 			if (boxType.HasValue)
+			{
 				weaponbox.item.BoxType = boxType.Value;
-			setData[weaponbox.index] = weaponbox.item;
+				setData[weaponbox.index] = weaponbox.item;
+			}
+			else
+			{
+				switch (weaponbox.item.Weapon)
+				{
+					case EWeapon.SamuraiSwordLv1:
+					case EWeapon.SamuraiSwordLv2:
+					case EWeapon.SatelliteLaserLv1:
+					case EWeapon.SatelliteLaserLv2:
+					case EWeapon.EggVacLv1:
+					case EWeapon.EggVacLv2:
+					case EWeapon.OmochaoLv1:
+					case EWeapon.OmochaoLv2:
+					case EWeapon.HealCannonLv1:
+					case EWeapon.HealCannonLv2:
+					case EWeapon.ShadowRifle:
+						EnemySETMutations.ToSpecialWeaponBox(weaponbox.index, ref setData);
+						break;
+					default:
+						setData[weaponbox.index] = weaponbox.item;
+						break;
+				}
+			}
 		}
 
 		foreach (var metalbox in metalBoxItems)
 		{
 			metalbox.item.BoxItem = EBoxItem.Weapon;
 			metalbox.item.ModifierWeapon = weaponsPool[r.Next(weaponsPool.Count)];
-			var boxType = GetWeaponAffiliationBoxType(metalbox.item.ModifierWeapon);
+			var boxType = EnemySETMutations.GetWeaponAffiliationBoxType(metalbox.item.ModifierWeapon);
 			if (boxType.HasValue)
+			{
 				metalbox.item.BoxType = boxType.Value;
-			setData[metalbox.index] = metalbox.item;
+				setData[metalbox.index] = metalbox.item;
+			}
+			else
+			{
+				switch (metalbox.item.ModifierWeapon)
+				{
+					case EWeapon.SamuraiSwordLv1:
+					case EWeapon.SamuraiSwordLv2:
+					case EWeapon.SatelliteLaserLv1:
+					case EWeapon.SatelliteLaserLv2:
+					case EWeapon.EggVacLv1:
+					case EWeapon.EggVacLv2:
+					case EWeapon.OmochaoLv1:
+					case EWeapon.OmochaoLv2:
+					case EWeapon.HealCannonLv1:
+					case EWeapon.HealCannonLv2:
+					case EWeapon.ShadowRifle:
+						EnemySETMutations.ToSpecialWeaponBox(metalbox.index, ref setData);
+						break;
+					default:
+						setData[metalbox.index] = metalbox.item;
+						break;
+				}
+			}
 		}
 
-		/*			foreach (var specialWeaponsBox in specialWeaponsBoxItems) // Only do this when we can override spawning spw to use single default setdata weapon
-					{
-						specialWeaponsBox.item.Weapon = weapons[r.Next(weapons.Length)];
-						setData[specialWeaponsBox.index] = specialWeaponsBox.item;
-					}*/
+		foreach (var specialWeaponsBox in specialWeaponsBoxItems)
+		{
+			specialWeaponsBox.item.Weapon = weaponsPool[r.Next(weaponsPool.Count)];
+			setData[specialWeaponsBox.index] = specialWeaponsBox.item;
+
+			switch (specialWeaponsBox.item.Weapon)
+			{
+				case EWeapon.SamuraiSwordLv1:
+				case EWeapon.SamuraiSwordLv2:
+				case EWeapon.SatelliteLaserLv1:
+				case EWeapon.SatelliteLaserLv2:
+				case EWeapon.EggVacLv1:
+				case EWeapon.EggVacLv2:
+				case EWeapon.OmochaoLv1:
+				case EWeapon.OmochaoLv2:
+				case EWeapon.HealCannonLv1:
+				case EWeapon.HealCannonLv2:
+				case EWeapon.ShadowRifle:
+					setData[specialWeaponsBox.index] = specialWeaponsBox.item;
+					break;
+				default:
+					EnemySETMutations.ToWeaponBox(specialWeaponsBox.index, ref setData);
+					break;
+			}
+		}
 	}
 
 	private void RandomizeWeaponsOnGround(ref List<SetObjectShadow> setData, List<EWeapon> weaponsPool, Random r)
