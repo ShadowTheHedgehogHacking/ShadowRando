@@ -189,7 +189,6 @@ public partial class MainView : UserControl
 		EWeapon.MachineGun,
 		EWeapon.HeavyMachineGun,
 		EWeapon.GatlingGun,
-		// EWeapon.None06,
 		EWeapon.EggGun,
 		EWeapon.LightShot,
 		EWeapon.FlashShot,
@@ -211,8 +210,6 @@ public partial class MainView : UserControl
 		EWeapon.LaserRifle,
 		EWeapon.Splitter,
 		EWeapon.Refractor,
-		// EWeapon.UnusedGUNWeaponSlot,
-		// EWeapon.UnusedBlackArmsWeaponSlot,
 		EWeapon.Knife,
 		EWeapon.BlackSword,
 		EWeapon.DarkHammer,
@@ -232,7 +229,6 @@ public partial class MainView : UserControl
 
 	const string programVersion = "0.5.0-dev";
 	Settings settings;
-	private bool programInitialized = false;
 
 	public MainView()
 	{
@@ -577,7 +573,6 @@ public partial class MainView : UserControl
 				}
 			}
 			topLevel.IsVisible = true;
-			programInitialized = true;
 		}
 		else
 		{
@@ -1444,7 +1439,7 @@ public partial class MainView : UserControl
 		for (int stageIdToModify = 5; stageIdToModify < 45; stageIdToModify++)
 		{
 			stageAssociationIDMap.TryGetValue(stageIdToModify, out var stageId);
-			var stageDataIdentifier = "stg0" + stageId.ToString();
+			var stageDataIdentifier = "stg0" + stageId;
 			var cmnLayout = stageDataIdentifier + "_cmn.dat";
 			var cmnLayoutData = LayoutEditorFunctions.GetShadowLayout(Path.Combine("backup", "sets", stageDataIdentifier, cmnLayout), out var resultcmn);
 			var nrmLayout = stageDataIdentifier + "_nrm.dat";
@@ -1481,7 +1476,7 @@ public partial class MainView : UserControl
 				// some stages don't have ds1
 			}
 
-			List<EWeapon> weaponsPool = new List<EWeapon>();
+			List<EWeapon> weaponsPool = [];
 
 			if (Layout_Weapon_CheckBox_OnlySelectedWeapons.IsChecked.Value)
 			{
