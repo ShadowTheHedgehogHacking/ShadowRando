@@ -2393,15 +2393,15 @@ public partial class MainView : UserControl
 		switch (enemy)
 		{
 			case Object0065_GUNBeetle beetle when enemy is Object0065_GUNBeetle:
-				if (beetle.PathType == Object0065_GUNBeetle.EPathType.FLY_FORWARD_UPDOWN || beetle.PathType == Object0065_GUNBeetle.EPathType.FLY_FORWARD_SWOOP || beetle.PathType == Object0065_GUNBeetle.EPathType.FLY_FORWARD || beetle.PathType == Object0065_GUNBeetle.EPathType.FLY_LEFT || beetle.PathType == Object0065_GUNBeetle.EPathType.CIRCLE)
+				if (beetle.AppearType == Object0065_GUNBeetle.EAppear.MOVE_ON_PATH)
 					return true;
 				break;
 			case Object008E_BkWingLarge bkWingLarge when enemy is Object008E_BkWingLarge:
-				if (bkWingLarge.PathType == Object008E_BkWingLarge.EPathType.FLY_FORWARD_UPDOWN || bkWingLarge.PathType == Object008E_BkWingLarge.EPathType.FLY_FORWARD_SWOOP || bkWingLarge.PathType == Object008E_BkWingLarge.EPathType.FLY_FORWARD || bkWingLarge.PathType == Object008E_BkWingLarge.EPathType.FLY_LEFT || bkWingLarge.PathType == Object008E_BkWingLarge.EPathType.CIRCLE)
+				if (bkWingLarge.AppearType == Object008E_BkWingLarge.EAppear.MOVE_ON_PATH)
 					return true;
 				break;
 			case Object008F_BkWingSmall bkWingSmall when enemy is Object008F_BkWingSmall:
-				if (bkWingSmall.PathType == Object008F_BkWingSmall.EPathType.FLY_FORWARD_UPDOWN || bkWingSmall.PathType == Object008F_BkWingSmall.EPathType.FLY_FORWARD_SWOOP || bkWingSmall.PathType == Object008F_BkWingSmall.EPathType.FLY_FORWARD || bkWingSmall.PathType == Object008F_BkWingSmall.EPathType.FLY_LEFT || bkWingSmall.PathType == Object008F_BkWingSmall.EPathType.CIRCLE)
+				if (bkWingSmall.AppearType == Object008F_BkWingSmall.EAppear.MOVE_ON_PATH)
 					return true;
 				break;
 			default:
