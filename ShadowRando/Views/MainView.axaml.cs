@@ -16,6 +16,8 @@ using MsBox.Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia;
 using Avalonia.Platform;
+using Microsoft.CodeAnalysis;
+using System.Reflection;
 
 namespace ShadowRando.Views;
 
@@ -2371,15 +2373,24 @@ public partial class MainView : UserControl
 
 	private bool IsPathTypeFlyingEnemy(SetObjectShadow enemy)
 	{
-		switch (enemy.Type)
+		switch (enemy)
 		{
-			case 0x65: // GUNBeetle
-			case 0x8E: // BkWingLarge
-			case 0x8F: // BkWingSmall
-				return true;
+			case Object0065_GUNBeetle beetle when enemy is Object0065_GUNBeetle:
+				if (beetle.PathType == Object0065_GUNBeetle.EPathType.FLY_FORWARD_UPDOWN || beetle.PathType == Object0065_GUNBeetle.EPathType.FLY_FORWARD_SWOOP || beetle.PathType == Object0065_GUNBeetle.EPathType.FLY_FORWARD || beetle.PathType == Object0065_GUNBeetle.EPathType.FLY_LEFT || beetle.PathType == Object0065_GUNBeetle.EPathType.CIRCLE)
+					return true;
+				break;
+			case Object008E_BkWingLarge bkWingLarge when enemy is Object008E_BkWingLarge:
+				if (bkWingLarge.PathType == Object008E_BkWingLarge.EPathType.FLY_FORWARD_UPDOWN || bkWingLarge.PathType == Object008E_BkWingLarge.EPathType.FLY_FORWARD_SWOOP || bkWingLarge.PathType == Object008E_BkWingLarge.EPathType.FLY_FORWARD || bkWingLarge.PathType == Object008E_BkWingLarge.EPathType.FLY_LEFT || bkWingLarge.PathType == Object008E_BkWingLarge.EPathType.CIRCLE)
+					return true;
+				break;
+			case Object008F_BkWingSmall bkWingSmall when enemy is Object008F_BkWingSmall:
+				if (bkWingSmall.PathType == Object008F_BkWingSmall.EPathType.FLY_FORWARD_UPDOWN || bkWingSmall.PathType == Object008F_BkWingSmall.EPathType.FLY_FORWARD_SWOOP || bkWingSmall.PathType == Object008F_BkWingSmall.EPathType.FLY_FORWARD || bkWingSmall.PathType == Object008F_BkWingSmall.EPathType.FLY_LEFT || bkWingSmall.PathType == Object008F_BkWingSmall.EPathType.CIRCLE)
+					return true;
+				break;
 			default:
 				return false;
 		}
+		return false;
 	}
 
 	private void MakeAllEnemiesGUNSoldiers(ref List<SetObjectShadow> setData, Random r)
