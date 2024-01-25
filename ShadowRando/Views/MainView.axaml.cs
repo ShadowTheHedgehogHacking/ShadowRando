@@ -1752,10 +1752,17 @@ public partial class MainView : UserControl
 					break;
 				case LayoutEnemyMode.Wild:
 					WildRandomizeAllEnemiesWithTranslations(ref cmnLayoutData, allEnemies, groundEnemies, flyingEnemies, pathTypeFlyingEnemies, r);
+					DelinkVehicleObjects(ref cmnLayoutData);
 					if (nrmLayoutData != null)
+					{
 						WildRandomizeAllEnemiesWithTranslations(ref nrmLayoutData, allEnemies, groundEnemies, flyingEnemies, pathTypeFlyingEnemies, r);
+						DelinkVehicleObjects(ref nrmLayoutData);
+					}
 					if (hrdLayoutData != null)
+					{
 						WildRandomizeAllEnemiesWithTranslations(ref hrdLayoutData, allEnemies, groundEnemies, flyingEnemies, pathTypeFlyingEnemies, r);
+						DelinkVehicleObjects(ref hrdLayoutData);
+					}
 					break;
 				default:
 					break;
@@ -2215,7 +2222,22 @@ public partial class MainView : UserControl
 		}
 	}
 
-	private void WildRandomizeAllEnemiesWithTranslations(ref List<SetObjectShadow> setData, List<Type> allEnemies, List<Type> groundEnemies, List<Type> flyingEnemies, List<Type> pathTypeFlyingEnemies, Random r)
+	private void DelinkVehicleObjects(ref List<SetObjectShadow> setData)
+	{
+		List<(Object004F_Vehicle item, int index)> vehicleItems = setData
+			.Select((item, index) => new { Item = item, Index = index })
+			.Where(pair => pair.Item is Object004F_Vehicle)
+			.Select(pair => (Item: (Object004F_Vehicle)pair.Item, Index: pair.Index))
+			.ToList();
+
+		foreach (var vehicle in vehicleItems)
+		{
+			vehicle.item.Link = 0;
+			setData[vehicle.index] = vehicle.item;
+		}
+	}
+
+		private void WildRandomizeAllEnemiesWithTranslations(ref List<SetObjectShadow> setData, List<Type> allEnemies, List<Type> groundEnemies, List<Type> flyingEnemies, List<Type> pathTypeFlyingEnemies, Random r)
 	{
 		// Wild Randomize of all Enemies
 		for (int i = 0; i < setData.Count(); i++)
