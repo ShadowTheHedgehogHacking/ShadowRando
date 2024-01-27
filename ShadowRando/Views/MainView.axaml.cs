@@ -17,6 +17,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia;
 using Avalonia.Platform;
 using Microsoft.CodeAnalysis;
+using SkiaSharp;
 using System.Reflection;
 
 namespace ShadowRando.Views;
@@ -2632,12 +2633,652 @@ public partial class MainView : UserControl
 			Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked = false;
 	}
 
-    private void Spoilers_Button_MakeChart_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+	const int linespace = 8;
+	private async void Spoilers_Button_MakeChart_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-		// TODO: Implement cross platform MakeChart OR make it Windows exclusive
+		var topLevel = TopLevel.GetTopLevel(this);
+		var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
+		{
+			Title = "Save chart",
+			DefaultExtension = ".png",
+			FileTypeChoices = [FilePickerFileTypes.ImagePng]
+		});
+
+		if (file is null)
+			return;
+		ChartNode[] levels = new ChartNode[totalstagecount + 2];
+		int gridmaxh = 0;
+		int gridmaxv = 0;
+		switch (settings.LevelOrderMode)
+		{
+			case LevelOrderMode.AllStagesWarps: // stages + warps
+			case LevelOrderMode.BossRush: // boss rush
+			case LevelOrderMode.Wild: // wild
+				gridmaxh = 1;
+				gridmaxv = stagecount + 2;
+				for (int i = 0; i <= stagecount; i++)
+					levels[stageids[i]] = new ChartNode(0, i + 1);
+				levels[totalstagecount + 1] = new ChartNode(0, 0);
+				break;
+			case LevelOrderMode.BranchingPaths: // branching paths
+				{
+					int row = 0;
+					int col = 0;
+					int nextrow = stageids[0];
+					for (int i = 0; i < stagecount; i++)
+					{
+						if (stageids[i] == nextrow)
+						{
+							++row;
+							col = 0;
+							nextrow = stages[stageids[i]].Neutral;
+						}
+						levels[stageids[i]] = new ChartNode(col++, row);
+						gridmaxh = Math.Max(col, gridmaxh);
+					}
+					levels[totalstagecount] = new ChartNode(0, ++row);
+					gridmaxv = row + 1;
+					levels[totalstagecount + 1] = new ChartNode(0, 0);
+				}
+				break;
+			case LevelOrderMode.ReverseBranching: // reverse branching
+				{
+					List<List<int>> depthstages = new List<List<int>>() { new List<int>() { totalstagecount } };
+					List<Stage> stages2 = new List<Stage>(stageids.Take(stagecount).Select(a => stages[a]));
+					while (stages2.Count > 0)
+					{
+						var next = stages2.Where(a => depthstages[depthstages.Count - 1].Contains(a.Neutral) || depthstages[depthstages.Count - 1].Contains(a.Hero) || depthstages[depthstages.Count - 1].Contains(a.Dark)).Select(a => a.ID).ToList();
+						depthstages.Add(next);
+						stages2.RemoveAll(a => next.Contains(a.ID));
+					}
+					depthstages.Add(new List<int>() { totalstagecount + 1 });
+					depthstages.Reverse();
+					gridmaxh = depthstages.Max(a => a.Count);
+					gridmaxv = depthstages.Count;
+					int row = 0;
+					int col = 0;
+					foreach (var ds in depthstages)
+					{
+						foreach (var id in ds)
+							levels[id] = new ChartNode(col++, row);
+						gridmaxh = Math.Max(col, gridmaxh);
+						++row;
+						col = 0;
+					}
+				}
+				break;
+			default: // normal game structure
+				if (LevelOrder_CheckBox_IncludeBosses.IsChecked ?? false)
+				{
+					gridmaxh = 1;
+					gridmaxv = 11;
+					int[] stgcnts = [1, 3, 3, 5, 5, 5, 0];
+					int[][] bosses = [[], [8], [4], [4, 8, 10], [2, 6], [], [0, 1, 2, 3, 5, 7, 8, 9, 10]];
+					int ind = 0;
+					for (int i = 0; i < stgcnts.Length; i++)
+					{
+						int y = gridmaxv / 4 - stgcnts[i] / 2;
+						for (int j = 0; j < stgcnts[i]; j++)
+							levels[stageids[ind++]] = new ChartNode(gridmaxh, y++ * 2 + 1);
+						if (bosses[i].Length > 0)
+							for (int j = 0; j < bosses[i].Length; j++)
+								levels[stageids[ind++]] = new ChartNode(gridmaxh, bosses[i][j]);
+						gridmaxh++;
+					}
+					levels[totalstagecount] = new ChartNode(gridmaxh++, 5);
+					levels[totalstagecount + 1] = new ChartNode(0, 5);
+				}
+				else
+				{
+					gridmaxh = 1;
+					gridmaxv = 5;
+					int[] stgcnts = [1, 3, 3, 5, 5, 5];
+					int ind = 0;
+					for (int i = 0; i < stgcnts.Length; i++)
+					{
+						int y = gridmaxv / 2 - stgcnts[i] / 2;
+						for (int j = 0; j < stgcnts[i]; j++)
+							levels[stageids[ind++]] = new ChartNode(gridmaxh, y++);
+						gridmaxh++;
+					}
+					levels[totalstagecount] = new ChartNode(gridmaxh++, 2);
+					levels[totalstagecount + 1] = new ChartNode(0, 2);
+				}
+				break;
+		}
+		levels[totalstagecount + 1].Connect(ConnectionType.Neutral, levels[stageids[0]]);
+		for (int i = 0; i < totalstagecount; i++)
+		{
+			ChartNode node = levels[i];
+			if (node == null)
+				continue;
+			Stage stage = stages[i];
+			if (stage.Neutral != -1)
+				node.Connect(ConnectionType.Neutral, levels[stage.Neutral]);
+			if (stage.Hero != -1)
+				node.Connect(ConnectionType.Hero, levels[stage.Hero]);
+			if (stage.Dark != -1)
+				node.Connect(ConnectionType.Dark, levels[stage.Dark]);
+		}
+		SKSizeI textsz = SKSizeI.Empty;
+		using (var g = new SKPaint())
+		{
+			foreach (string item in LevelNames)
+			{
+				SKRect bounds = default;
+				g.MeasureText(item, ref bounds);
+				if (bounds.Width > textsz.Width)
+					textsz.Width = (int)bounds.Width;
+				if (bounds.Height > textsz.Height)
+					textsz.Height = (int)bounds.Height;
+			}
+			textsz.Width += 6;
+			textsz.Height += 6;
+		}
+		List<(ChartNode src, ChartConnection con)> shortcons = new List<(ChartNode src, ChartConnection con)>();
+		List<ChartConnection>[] vcons = new List<ChartConnection>[gridmaxh * 2];
+		for (int i = 0; i < gridmaxh * 2; i++)
+			vcons[i] = new List<ChartConnection>();
+		List<ChartConnection>[] hcons = new List<ChartConnection>[gridmaxv * 2];
+		for (int i = 0; i < gridmaxv * 2; i++)
+			hcons[i] = new List<ChartConnection>();
+		foreach (var item in levels)
+		{
+			if (item == null)
+				continue;
+			textsz.Height = Math.Max((item.OutgoingConnections[Direction.Left].Count + item.IncomingConnections[Direction.Left].Count) * linespace, textsz.Height);
+			textsz.Width = Math.Max((item.OutgoingConnections[Direction.Top].Count + item.IncomingConnections[Direction.Top].Count) * linespace, textsz.Width);
+			textsz.Height = Math.Max((item.OutgoingConnections[Direction.Right].Count + item.IncomingConnections[Direction.Right].Count) * linespace, textsz.Height);
+			textsz.Width = Math.Max((item.OutgoingConnections[Direction.Bottom].Count + item.IncomingConnections[Direction.Bottom].Count) * linespace, textsz.Width);
+			shortcons.AddRange(item.OutgoingConnections.SelectMany(a => a.Value).Where(a => item.GetDistance(a.Node) == 1).Select(a => (item, a)));
+			vcons[item.GridX * 2].AddRange(item.IncomingConnections[Direction.Left].Where(a => a.Distance != 1));
+			vcons[item.GridX * 2 + 1].AddRange(item.IncomingConnections[Direction.Right].Where(a => a.Distance != 1));
+			if (item.GridY > 0)
+				hcons[item.GridY * 2 - 1].AddRange(item.IncomingConnections[Direction.Top].Where(a => a.Distance != 1 && a.MinY == item.GridY - 1));
+			hcons[item.GridY * 2].AddRange(item.IncomingConnections[Direction.Top].Where(a => a.Distance != 1 && a.MinY != item.GridY - 1));
+			hcons[item.GridY * 2 + 1].AddRange(item.IncomingConnections[Direction.Bottom].Where(a => a.Distance != 1));
+		}
+		int conslotsh = textsz.Height / linespace;
+		int conslotsv = textsz.Width / linespace;
+		int hconoff = (textsz.Height - (conslotsh * linespace)) / 2;
+		int vconoff = (textsz.Width - (conslotsv * linespace)) / 2;
+		foreach (var item in levels)
+		{
+			if (item == null)
+				continue;
+			item.ConnectionOrder[Direction.Left] = new ChartConnection[conslotsh];
+			item.ConnectionOrder[Direction.Top] = new ChartConnection[conslotsv];
+			item.ConnectionOrder[Direction.Right] = new ChartConnection[conslotsh];
+			item.ConnectionOrder[Direction.Bottom] = new ChartConnection[conslotsv];
+		}
+		foreach (var (src, con) in shortcons)
+		{
+			ChartConnection[] srcord = src.ConnectionOrder[src.OutgoingConnections.First(a => a.Value.Contains(con)).Key];
+			ChartConnection[] dstord = con.Node.ConnectionOrder[con.Side];
+			int mid = srcord.Length / 2;
+			int slot = mid;
+			while (slot < srcord.Length && (srcord[slot] != null || dstord[slot] != null))
+				++slot;
+			if (slot == srcord.Length)
+			{
+				slot = mid - 1;
+				while (srcord[slot] != null || dstord[slot] != null)
+					--slot;
+			}
+			srcord[slot] = con;
+			dstord[slot] = con;
+		}
+		foreach (var item in levels)
+		{
+			if (item == null)
+				continue;
+			int preslots = Array.FindIndex(item.ConnectionOrder[Direction.Left], a => a != null);
+			int postslots;
+			List<ChartConnection> prelist = new List<ChartConnection>();
+			List<ChartConnection> postlist = new List<ChartConnection>();
+			if (preslots == -1)
+			{
+				prelist.AddRange(item.IncomingConnections[Direction.Left]);
+				prelist.AddRange(item.OutgoingConnections[Direction.Left]);
+				prelist.Sort(CompareConnV);
+				prelist.CopyTo(item.ConnectionOrder[Direction.Left], (item.ConnectionOrder[Direction.Left].Length - prelist.Count) / 2);
+			}
+			else
+			{
+				postslots = item.ConnectionOrder[Direction.Left].Length - Array.FindIndex(item.ConnectionOrder[Direction.Left], preslots, a => a == null);
+				foreach (var con in item.IncomingConnections[Direction.Left].Where(a => Array.IndexOf(item.ConnectionOrder[Direction.Left], a) == -1))
+				{
+					if (con.MaxY == item.GridY)
+						prelist.Add(con);
+					else if (con.MinY == item.GridY)
+						postlist.Add(con);
+					else if (Math.Abs(con.MinY - item.GridY) > Math.Abs(con.MaxY - item.GridY))
+						prelist.Add(con);
+					else
+						postlist.Add(con);
+				}
+				foreach (var con in item.OutgoingConnections[Direction.Left].Where(a => Array.IndexOf(item.ConnectionOrder[Direction.Left], a) == -1))
+				{
+					if (con.MinY == item.GridY)
+						postlist.Add(con);
+					else if (con.MaxY == item.GridY)
+						prelist.Add(con);
+					else if (Math.Abs(con.MinY - item.GridY) > Math.Abs(con.MaxY - item.GridY))
+						prelist.Add(con);
+					else
+						postlist.Add(con);
+				}
+				if (prelist.Count > 0 || postlist.Count > 0)
+				{
+					prelist.Sort(CompareConnV);
+					postlist.Sort(CompareConnV);
+					if (prelist.Count > preslots)
+					{
+						postlist.InsertRange(0, prelist.Skip(preslots));
+						prelist.RemoveRange(preslots, prelist.Count - preslots);
+					}
+					else if (postlist.Count > postslots)
+					{
+						prelist.AddRange(postlist.Take(postlist.Count - postslots));
+						postlist.RemoveRange(0, postlist.Count - postslots);
+					}
+					prelist.CopyTo(item.ConnectionOrder[Direction.Left], preslots - prelist.Count);
+					postlist.CopyTo(item.ConnectionOrder[Direction.Left], Math.Max(item.ConnectionOrder[Direction.Left].Length - postslots, 0));
+				}
+			}
+			preslots = Array.FindIndex(item.ConnectionOrder[Direction.Top], a => a != null);
+			prelist.Clear();
+			postlist.Clear();
+			if (preslots == -1)
+			{
+				prelist.AddRange(item.IncomingConnections[Direction.Top]);
+				prelist.AddRange(item.OutgoingConnections[Direction.Top]);
+				prelist.Sort(CompareConnV);
+				prelist.CopyTo(item.ConnectionOrder[Direction.Top], (item.ConnectionOrder[Direction.Top].Length - prelist.Count) / 2);
+			}
+			else
+			{
+				postslots = item.ConnectionOrder[Direction.Top].Length - Array.FindIndex(item.ConnectionOrder[Direction.Top], preslots, a => a == null);
+				foreach (var con in item.IncomingConnections[Direction.Top].Where(a => Array.IndexOf(item.ConnectionOrder[Direction.Top], a) == -1))
+				{
+					if (con.MaxX == item.GridX)
+						prelist.Add(con);
+					else if (con.MinX == item.GridX)
+						postlist.Add(con);
+					else if (Math.Abs(con.MinX - item.GridX) > Math.Abs(con.MaxX - item.GridX))
+						prelist.Add(con);
+					else
+						postlist.Add(con);
+				}
+				foreach (var con in item.OutgoingConnections[Direction.Top].Where(a => Array.IndexOf(item.ConnectionOrder[Direction.Top], a) == -1))
+				{
+					if (con.MinX == item.GridX)
+						postlist.Add(con);
+					else if (con.MaxX == item.GridX)
+						prelist.Add(con);
+					else if (Math.Abs(con.MinX - item.GridX) > Math.Abs(con.MaxX - item.GridX))
+						prelist.Add(con);
+					else
+						postlist.Add(con);
+				}
+				if (prelist.Count > 0 || postlist.Count > 0)
+				{
+					prelist.Sort(CompareConnH);
+					postlist.Sort(CompareConnH);
+					if (prelist.Count > preslots)
+					{
+						postlist.InsertRange(0, prelist.Skip(preslots));
+						prelist.RemoveRange(preslots, prelist.Count - preslots);
+					}
+					else if (postlist.Count > postslots)
+					{
+						prelist.AddRange(postlist.Take(postlist.Count - postslots));
+						postlist.RemoveRange(0, postlist.Count - postslots);
+					}
+					prelist.CopyTo(item.ConnectionOrder[Direction.Top], preslots - prelist.Count);
+					postlist.CopyTo(item.ConnectionOrder[Direction.Top], item.ConnectionOrder[Direction.Top].Length - postslots);
+				}
+			}
+			preslots = Array.FindIndex(item.ConnectionOrder[Direction.Right], a => a != null);
+			prelist.Clear();
+			postlist.Clear();
+			if (preslots == -1)
+			{
+				prelist.AddRange(item.IncomingConnections[Direction.Right]);
+				prelist.AddRange(item.OutgoingConnections[Direction.Right]);
+				prelist.Sort(CompareConnV);
+				prelist.CopyTo(item.ConnectionOrder[Direction.Right], (item.ConnectionOrder[Direction.Right].Length - prelist.Count) / 2);
+			}
+			else
+			{
+				postslots = item.ConnectionOrder[Direction.Right].Length - Array.FindIndex(item.ConnectionOrder[Direction.Right], preslots, a => a == null);
+				foreach (var con in item.IncomingConnections[Direction.Right].Where(a => Array.IndexOf(item.ConnectionOrder[Direction.Right], a) == -1))
+				{
+					if (con.MaxY == item.GridY)
+						prelist.Add(con);
+					else if (con.MinY == item.GridY)
+						postlist.Add(con);
+					else if (Math.Abs(con.MinY - item.GridY) > Math.Abs(con.MaxY - item.GridY))
+						prelist.Add(con);
+					else
+						postlist.Add(con);
+				}
+				foreach (var con in item.OutgoingConnections[Direction.Right].Where(a => Array.IndexOf(item.ConnectionOrder[Direction.Right], a) == -1))
+				{
+					if (con.MinY == item.GridY)
+						postlist.Add(con);
+					else if (con.MaxY == item.GridY)
+						prelist.Add(con);
+					else if (Math.Abs(con.MinY - item.GridY) > Math.Abs(con.MaxY - item.GridY))
+						prelist.Add(con);
+					else
+						postlist.Add(con);
+				}
+				if (prelist.Count > 0 || postlist.Count > 0)
+				{
+					prelist.Sort(CompareConnV);
+					postlist.Sort(CompareConnV);
+					if (prelist.Count > preslots)
+					{
+						postlist.InsertRange(0, prelist.Skip(preslots));
+						prelist.RemoveRange(preslots, prelist.Count - preslots);
+					}
+					else if (postlist.Count > postslots)
+					{
+						prelist.AddRange(postlist.Take(postlist.Count - postslots));
+						postlist.RemoveRange(0, postlist.Count - postslots);
+					}
+					prelist.CopyTo(item.ConnectionOrder[Direction.Right], preslots - prelist.Count);
+					postlist.CopyTo(item.ConnectionOrder[Direction.Right], item.ConnectionOrder[Direction.Right].Length - postslots);
+				}
+			}
+			preslots = Array.FindIndex(item.ConnectionOrder[Direction.Bottom], a => a != null);
+			prelist.Clear();
+			postlist.Clear();
+			if (preslots == -1)
+			{
+				prelist.AddRange(item.IncomingConnections[Direction.Bottom]);
+				prelist.AddRange(item.OutgoingConnections[Direction.Bottom]);
+				prelist.Sort(CompareConnV);
+				prelist.CopyTo(item.ConnectionOrder[Direction.Bottom], (item.ConnectionOrder[Direction.Bottom].Length - prelist.Count) / 2);
+			}
+			else
+			{
+				postslots = item.ConnectionOrder[Direction.Bottom].Length - Array.FindIndex(item.ConnectionOrder[Direction.Bottom], preslots, a => a == null);
+				foreach (var con in item.IncomingConnections[Direction.Bottom].Where(a => Array.IndexOf(item.ConnectionOrder[Direction.Bottom], a) == -1))
+				{
+					if (con.MaxX == item.GridX)
+						prelist.Add(con);
+					else if (con.MinX == item.GridX)
+						postlist.Add(con);
+					else if (Math.Abs(con.MinX - item.GridX) > Math.Abs(con.MaxX - item.GridX))
+						prelist.Add(con);
+					else
+						postlist.Add(con);
+				}
+				foreach (var con in item.OutgoingConnections[Direction.Bottom].Where(a => Array.IndexOf(item.ConnectionOrder[Direction.Bottom], a) == -1))
+				{
+					if (con.MinX == item.GridX)
+						postlist.Add(con);
+					else if (con.MaxX == item.GridX)
+						prelist.Add(con);
+					else if (Math.Abs(con.MinX - item.GridX) > Math.Abs(con.MaxX - item.GridX))
+						prelist.Add(con);
+					else
+						postlist.Add(con);
+				}
+				if (prelist.Count > 0 || postlist.Count > 0)
+				{
+					prelist.Sort(CompareConnH);
+					postlist.Sort(CompareConnH);
+					if (prelist.Count > preslots)
+					{
+						postlist.InsertRange(0, prelist.Skip(preslots));
+						prelist.RemoveRange(preslots, prelist.Count - preslots);
+					}
+					else if (postlist.Count > postslots)
+					{
+						prelist.AddRange(postlist.Take(postlist.Count - postslots));
+						postlist.RemoveRange(0, postlist.Count - postslots);
+					}
+					prelist.CopyTo(item.ConnectionOrder[Direction.Bottom], preslots - prelist.Count);
+					postlist.CopyTo(item.ConnectionOrder[Direction.Bottom], item.ConnectionOrder[Direction.Bottom].Length - postslots);
+				}
+			}
+		}
+		int vlanemax = 0;
+		foreach (var list in vcons)
+		{
+			list.Sort((a, b) =>
+			{
+				int r = a.Distance.CompareTo(b.Distance);
+				if (r == 0)
+				{
+					r = a.MinY.CompareTo(b.MinY);
+					if (r == 0)
+						r = a.Type.CompareTo(b.Type);
+				}
+				return r;
+			});
+			for (int i = 0; i < list.Count; i++)
+			{
+				var line = list[i];
+				for (int j = 0; j < i; j++)
+					if (list[j].Lane == line.Lane && line.MaxY >= list[j].MinY && list[j].MaxY >= line.MinY)
+					{
+						line.Lane++;
+						j = -1;
+					}
+				vlanemax = Math.Max(line.Lane + 1, vlanemax);
+			}
+		}
+		int hlanemax = 0;
+		foreach (var list in hcons)
+		{
+			list.Sort((a, b) =>
+			{
+				int r = a.Distance.CompareTo(b.Distance);
+				if (r == 0)
+				{
+					r = a.MinX.CompareTo(b.MinX);
+					if (r == 0)
+						r = a.Type.CompareTo(b.Type);
+				}
+				return r;
+			});
+			for (int i = 0; i < list.Count; i++)
+			{
+				var line = list[i];
+				for (int j = 0; j < i; j++)
+					if (list[j].Lane == line.Lane && line.MaxX >= list[j].MinX && list[j].MaxX >= line.MinX)
+					{
+						line.Lane++;
+						j = -1;
+					}
+				hlanemax = Math.Max(line.Lane + 1, hlanemax);
+			}
+		}
+		int margin = Math.Min(textsz.Width / 2, textsz.Height / 2);
+		int hmargin = Math.Max(vlanemax * linespace + 5, margin);
+		int vmargin = Math.Max(hlanemax * linespace + 5, margin);
+		int colwidth = textsz.Width + hmargin * 2;
+		int rowheight = textsz.Height + vmargin * 2;
+		var info = new SKImageInfo(colwidth * gridmaxh, rowheight * gridmaxv);
+		using (SKSurface surface = SKSurface.Create(info))
+		{
+			SKCanvas gfx = surface.Canvas;
+			using (SKPaint rectPaint = new SKPaint() { Color = SKColors.Black, Style = SKPaintStyle.Stroke, StrokeWidth = 1 })
+			using (SKPaint textPaint = new SKPaint() { Color = SKColors.Black, Style = SKPaintStyle.Stroke, StrokeWidth = 1, TextAlign = SKTextAlign.Center, IsAntialias = true })
+			using (SKPaint linePaint = new SKPaint() { Color = SKColors.Black, Style = SKPaintStyle.Stroke, StrokeWidth = 3 })
+			using (SKPaint triPaint = new SKPaint() { Color = SKColors.Black, Style = SKPaintStyle.Fill, IsAntialias = true })
+			using (var dash = SKPathEffect.CreateDash([9, 3], 0))
+			{
+				gfx.Clear(SKColors.White);
+				List<int> stageorder = new List<int>(totalstagecount + 2)
+				{
+					totalstagecount + 1
+				};
+				stageorder.AddRange(stageids);
+				stageorder.Reverse();
+				foreach (var id in stageorder)
+				{
+					var node = levels[id];
+					int x = colwidth * node.GridX + hmargin;
+					int y = rowheight * node.GridY + vmargin;
+					gfx.DrawRect(x, y, textsz.Width, textsz.Height, rectPaint);
+					gfx.DrawText(GetStageName(id), x + textsz.Width / 2, y + textsz.Height / 2 + textPaint.FontMetrics.XHeight / 2, textPaint);
+					foreach (var (dir, list) in node.OutgoingConnections)
+						foreach (var con in list)
+						{
+							int srclane = Array.LastIndexOf(node.ConnectionOrder[dir], con);
+							int srcx = 0;
+							int srcy = 0;
+							switch (dir)
+							{
+								case Direction.Left:
+									srcx = x;
+									srcy = y + hconoff + (srclane * linespace) + (linespace / 2);
+									break;
+								case Direction.Top:
+									srcx = x + vconoff + (srclane * linespace) + (linespace / 2);
+									srcy = y;
+									break;
+								case Direction.Right:
+									srcx = x + textsz.Width + 1;
+									srcy = y + hconoff + (srclane * linespace) + (linespace / 2);
+									break;
+								case Direction.Bottom:
+									srcx = x + vconoff + (srclane * linespace) + (linespace / 2);
+									srcy = y + textsz.Height + 1;
+									break;
+							}
+							int dstlane = Array.IndexOf(con.Node.ConnectionOrder[con.Side], con);
+							int dstx = colwidth * con.Node.GridX + hmargin;
+							int dsty = rowheight * con.Node.GridY + vmargin;
+							switch (con.Side)
+							{
+								case Direction.Left:
+									dsty += hconoff + (dstlane * linespace) + (linespace / 2);
+									break;
+								case Direction.Top:
+									dstx += vconoff + (dstlane * linespace) + (linespace / 2);
+									break;
+								case Direction.Right:
+									dstx += textsz.Width + 1;
+									dsty += hconoff + (dstlane * linespace) + (linespace / 2);
+									break;
+								case Direction.Bottom:
+									dstx += vconoff + (dstlane * linespace) + (linespace / 2);
+									dsty += textsz.Height + 1;
+									break;
+							}
+							switch (con.Type)
+							{
+								case ConnectionType.Neutral:
+									triPaint.Color = linePaint.Color = SKColors.Black;
+									break;
+								case ConnectionType.Hero:
+									triPaint.Color = linePaint.Color = SKColors.Blue;
+									break;
+								case ConnectionType.Dark:
+									triPaint.Color = linePaint.Color = SKColors.Red;
+									break;
+							}
+							if (con.MaxX - con.MinX != 1 && con.MaxY - con.MinY != 1)
+								linePaint.PathEffect = dash;
+							if (node.GetDistance(con.Node) == 1)
+								gfx.DrawLine(srcx, srcy, dstx, dsty, linePaint);
+							else
+							{
+								using (var path = new SKPath())
+								{
+									path.MoveTo(srcx, srcy);
+									int midx = srcx;
+									int midy = srcy;
+									switch (dir)
+									{
+										case Direction.Left:
+											midx -= con.Lane * linespace + (linespace / 2) + 5;
+											break;
+										case Direction.Top:
+											midy -= con.Lane * linespace + (linespace / 2) + 5;
+											break;
+										case Direction.Right:
+											midx += con.Lane * linespace + (linespace / 2) + 5;
+											break;
+										case Direction.Bottom:
+											midy += con.Lane * linespace + (linespace / 2) + 5;
+											break;
+									}
+									path.LineTo(midx, midy);
+									switch (dir)
+									{
+										case Direction.Left:
+										case Direction.Right:
+											path.LineTo(midx, dsty);
+											path.LineTo(dstx, dsty);
+											break;
+										case Direction.Top:
+										case Direction.Bottom:
+											path.LineTo(dstx, midy);
+											path.LineTo(dstx, dsty);
+											break;
+									}
+									gfx.DrawPath(path, linePaint);
+								}
+							}
+							using (var tri = new SKPath())
+							{
+								tri.MoveTo(dstx, dsty);
+								switch (con.Side)
+								{
+									case Direction.Left:
+										tri.RLineTo(-8.5f, -5);
+										tri.RLineTo(0, 10);
+										break;
+									case Direction.Top:
+										tri.RLineTo(-5, -8.5f);
+										tri.RLineTo(10, 0);
+										break;
+									case Direction.Right:
+										tri.RLineTo(8.5f, 5);
+										tri.RLineTo(0, -10);
+										break;
+									case Direction.Bottom:
+										tri.RLineTo(5, 8.5f);
+										tri.RLineTo(-10, 0);
+										break;
+								}
+								tri.Close();
+								gfx.DrawPath(tri, triPaint);
+							}
+						}
+				}
+			}
+			using (var img = surface.Snapshot())
+			using (var data = img.Encode())
+			using (var stream = await file.OpenWriteAsync())
+				data.SaveTo(stream);
+		}
 	}
 
-    private async void Spoilers_Button_SaveLog_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+	private static int CompareConnV(ChartConnection a, ChartConnection b)
+	{
+		int r = a.MinY.CompareTo(b.MinY);
+		if (r == 0)
+			r = a.MaxY.CompareTo(b.MaxY);
+		return r;
+	}
+
+	private static int CompareConnH(ChartConnection a, ChartConnection b)
+	{
+		int r = a.MinX.CompareTo(b.MinX);
+		if (r == 0)
+			r = a.MaxX.CompareTo(b.MaxX);
+		return r;
+	}
+
+	private async void Spoilers_Button_SaveLog_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
 		var topLevel = TopLevel.GetTopLevel(this);
 		var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions

@@ -250,7 +250,7 @@
 					<Grid Grid.Column="1" RowDefinitions="*, Auto">
 						<TextBox x:Name="Spoilers_TextBox_LevelInfo" Grid.Row="0" IsReadOnly="True" AcceptsReturn="True" ScrollViewer.HorizontalScrollBarVisibility="Visible" ></TextBox>
 						<StackPanel Grid.Row="1" Orientation="Horizontal">
-							<Button x:Name="Spoilers_Button_MakeChart" IsEnabled="False" HorizontalAlignment="Left" Margin="20,20,20,20" Click="Spoilers_Button_MakeChart_Click">Make Chart...</Button>
+							<Button x:Name="Spoilers_Button_MakeChart" HorizontalAlignment="Left" Margin="20,20,20,20" Click="Spoilers_Button_MakeChart_Click">Make Chart...</Button>
 							<Button x:Name="Spoilers_Button_SaveLog" HorizontalAlignment="Right" Margin="20,20,20,20" Click="Spoilers_Button_SaveLog_Click">Save Log...</Button>
 						</StackPanel>
 					</Grid>
