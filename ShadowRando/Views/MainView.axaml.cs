@@ -3104,6 +3104,11 @@ public partial class MainView : UserControl
 		int colwidth = textsz.Width + hmargin * 2;
 		int rowheight = textsz.Height + vmargin * 2;
 		var info = new SKImageInfo(colwidth * gridmaxh, rowheight * gridmaxv);
+		
+		//Color Adjustments per side
+		int leftSideCount = 0;
+		int rightSideCount = 0;
+		
 		using (SKSurface surface = SKSurface.Create(info))
 		{
 			SKCanvas gfx = surface.Canvas;
@@ -3155,10 +3160,27 @@ public partial class MainView : UserControl
 							int dstlane = Array.IndexOf(con.Node.ConnectionOrder[con.Side], con);
 							int dstx = colwidth * con.Node.GridX + hmargin;
 							int dsty = rowheight * con.Node.GridY + vmargin;
+
+							SKColor lineColor = new SKColor();
+							switch (con.Type)
+							{
+								case ConnectionType.Neutral:
+									lineColor = SKColors.Black;
+									break;
+								case ConnectionType.Hero:
+									lineColor = SKColors.Blue;
+									break;
+								case ConnectionType.Dark:
+									lineColor = SKColors.Red;
+									break;
+							}
+							
+							var shiftAmount = 0;
 							switch (con.Side)
 							{
 								case Direction.Left:
 									dsty += hconoff + (dstlane * linespace) + (linespace / 2);
+									shiftAmount = leftSideCount++;
 									break;
 								case Direction.Top:
 									dstx += vconoff + (dstlane * linespace) + (linespace / 2);
@@ -3166,24 +3188,27 @@ public partial class MainView : UserControl
 								case Direction.Right:
 									dstx += textsz.Width + 1;
 									dsty += hconoff + (dstlane * linespace) + (linespace / 2);
+									shiftAmount = rightSideCount++;
 									break;
 								case Direction.Bottom:
 									dstx += vconoff + (dstlane * linespace) + (linespace / 2);
 									dsty += textsz.Height + 1;
 									break;
 							}
-							switch (con.Type)
+
+							var lineHSV = new float[3];
+							lineColor.ToHsv(out lineHSV[0], out lineHSV[1], out lineHSV[2]);
+							if (shiftAmount % 2 == 0)
 							{
-								case ConnectionType.Neutral:
-									triPaint.Color = linePaint.Color = SKColors.Black;
-									break;
-								case ConnectionType.Hero:
-									triPaint.Color = linePaint.Color = SKColors.Blue;
-									break;
-								case ConnectionType.Dark:
-									triPaint.Color = linePaint.Color = SKColors.Red;
-									break;
+								//Darkness Shfit
+								triPaint.Color = linePaint.Color = SKColor.FromHsv(lineHSV[0], lineHSV[1], lineHSV[2] - ((float)Spoilers_NumericUpDown_DarknessShift.Value * (shiftAmount/2)));
 							}
+							else
+							{
+								//Hue Shift
+								triPaint.Color = linePaint.Color = SKColor.FromHsv(lineHSV[0] + ((float)Spoilers_NumericUpDown_HueShift.Value * (shiftAmount/2)), lineHSV[1], lineHSV[2]);
+							}
+							
 							if (con.MaxX - con.MinX != 1 && con.MaxY - con.MinY != 1)
 								linePaint.PathEffect = dash;
 							if (node.GetDistance(con.Node) == 1)

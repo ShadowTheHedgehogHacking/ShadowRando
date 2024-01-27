@@ -252,6 +252,12 @@
 						<StackPanel Grid.Row="1" Orientation="Horizontal">
 							<Button x:Name="Spoilers_Button_MakeChart" HorizontalAlignment="Left" Margin="20,20,20,20" Click="Spoilers_Button_MakeChart_Click">Make Chart...</Button>
 							<Button x:Name="Spoilers_Button_SaveLog" HorizontalAlignment="Right" Margin="20,20,20,20" Click="Spoilers_Button_SaveLog_Click">Save Log...</Button>
+							<StackPanel Margin="20">
+								<TextBlock Margin="0 5">Hue Shift:</TextBlock>
+								<NumericUpDown x:Name="Spoilers_NumericUpDown_HueShift" Value="3" Increment="0.05" FormatString="0.00" Minimum="0" Maximum="100"/>
+								<TextBlock Margin="0 5">Darkness Shift:</TextBlock>
+								<NumericUpDown x:Name="Spoilers_NumericUpDown_DarknessShift" Value="4" Increment="0.05" FormatString="0.00" Minimum="0" Maximum="100"/>
+							</StackPanel>
 						</StackPanel>
 					</Grid>
 				</Grid>
