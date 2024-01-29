@@ -8,7 +8,7 @@ using IniGroup = System.Collections.Generic.Dictionary<string, string>;
 using IniNameGroup = System.Collections.Generic.KeyValuePair<string, System.Collections.Generic.Dictionary<string, string>>;
 using IniNameValue = System.Collections.Generic.KeyValuePair<string, string>;
 
-namespace IniFile
+namespace ShadowRando.Core
 {
 	public static class IniSerializer
 	{
@@ -52,7 +52,7 @@ namespace IniFile
 
 		public static IniDictionary Serialize(object Object, IniCollectionSettings CollectionSettings, TypeConverter Converter)
 		{
-			IniDictionary ini = new IniDictionary() { { string.Empty, new IniGroup() } };
+			IniDictionary ini = new IniDictionary { { string.Empty, new IniGroup() } };
 			SerializeInternal("value", Object, ini, string.Empty, true, CollectionSettings, Converter);
 			return ini;
 		}
@@ -149,7 +149,7 @@ namespace IniFile
 				DefaultValueAttribute defattr = (DefaultValueAttribute)Attribute.GetCustomAttribute(member, typeof(DefaultValueAttribute), true);
 				if (defattr != null)
 					defval = defattr.Value;
-				if (Attribute.GetCustomAttribute(member, typeof(IniAlwaysIncludeAttribute), true) != null || !object.Equals(item, defval))
+				if (Attribute.GetCustomAttribute(member, typeof(IniAlwaysIncludeAttribute), true) != null || !Equals(item, defval))
 				{
 					IniCollectionSettings settings = defaultCollectionSettings;
 					IniCollectionAttribute collattr = (IniCollectionAttribute)Attribute.GetCustomAttribute(member, typeof(IniCollectionAttribute));
@@ -309,8 +309,8 @@ namespace IniFile
 								group.Remove(name);
 								return _obj;
 							}
-							else
-								return null;
+
+							return null;
 					}
 				}
 				else
@@ -471,7 +471,7 @@ namespace IniFile
 						object propval = DeserializeInternal(membername, property.PropertyType, defval, ini, fullname, false, colset, conv);
 						MethodInfo setmethod = property.GetSetMethod();
 						if (setmethod == null) continue;
-						setmethod.Invoke(result, new object[] { propval });
+						setmethod.Invoke(result, new[] { propval });
 						break;
 				}
 			}
@@ -487,7 +487,7 @@ namespace IniFile
 						object propval = DeserializeInternal(collection.Name, property.PropertyType, property.PropertyType.GetDefaultValue(), ini, fullname, false, ((IniCollectionAttribute)Attribute.GetCustomAttribute(collection, typeof(IniCollectionAttribute), true)).Settings, null);
 						MethodInfo setmethod = property.GetSetMethod();
 						if (setmethod == null) break;
-						setmethod.Invoke(result, new object[] { propval });
+						setmethod.Invoke(result, new[] { propval });
 						break;
 				}
 			ini.Remove(fullname);
@@ -748,7 +748,7 @@ namespace IniFile
 							break;
 						case IniCollectionMode.NoSquareBrackets:
 							for (int i = 0; i < length; i++)
-								list.Add((T)DeserializeInternal("value", valuetype, valuetype.GetDefaultValue(), ini, fullname + keyconverter.ConvertToInvariantString(i + collectionSettings.StartIndex).ToString(), true, defaultCollectionSettings, collectionSettings.ValueConverter));
+								list.Add((T)DeserializeInternal("value", valuetype, valuetype.GetDefaultValue(), ini, fullname + keyconverter.ConvertToInvariantString(i + collectionSettings.StartIndex), true, defaultCollectionSettings, collectionSettings.ValueConverter));
 							break;
 					}
 			}
@@ -851,7 +851,7 @@ namespace IniFile
 		}
 	}
 
-	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = true, AllowMultiple = false)]
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
 	public sealed class IniIgnoreAttribute : Attribute { }
 
 	public class IniCollectionSettings
@@ -901,7 +901,7 @@ namespace IniFile
 		SingleLine
 	}
 
-	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = true, AllowMultiple = false)]
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
 	public sealed class IniCollectionAttribute : Attribute
 	{
 		public IniCollectionAttribute(IniCollectionMode mode)
@@ -945,7 +945,7 @@ namespace IniFile
 		public IniCollectionSettings Settings { get; private set; }
 	}
 
-	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = true, AllowMultiple = false)]
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
 	public sealed class IniNameAttribute : Attribute
 	{
 		public IniNameAttribute(string name)
@@ -956,6 +956,6 @@ namespace IniFile
 		public string Name { get; private set; }
 	}
 
-	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field, Inherited = true, AllowMultiple = false)]
+	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
 	public sealed class IniAlwaysIncludeAttribute : Attribute { }
 }

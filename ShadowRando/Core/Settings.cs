@@ -1,5 +1,5 @@
-﻿using IniFile;
-using System.IO;
+﻿using System.IO;
+using ShadowRando.Core;
 
 namespace ShadowRando
 {

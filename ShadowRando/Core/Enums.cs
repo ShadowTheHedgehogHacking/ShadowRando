@@ -1,4 +1,4 @@
-﻿namespace ShadowRando
+﻿namespace ShadowRando.Core
 {
 	public enum LevelOrderMode
 	{

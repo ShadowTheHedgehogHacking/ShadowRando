@@ -19,6 +19,8 @@ using Avalonia.Platform;
 using Microsoft.CodeAnalysis;
 using System.Reflection;
 using Avalonia.Interactivity;
+using ShadowRando.Core;
+using ShadowRando.Core.SETMutations;
 
 namespace ShadowRando.Views;
 
@@ -1975,7 +1977,7 @@ public partial class MainView : UserControl
 		foreach (var weaponbox in weaponBoxItems)
 		{
 			weaponbox.item.Weapon = weaponsPool[r.Next(weaponsPool.Count)];
-			var boxType = EnemySETMutations.GetWeaponAffiliationBoxType(weaponbox.item.Weapon);
+			var boxType = WeaponContainers.GetWeaponAffiliationBoxType(weaponbox.item.Weapon);
 			if (boxType.HasValue)
 			{
 				weaponbox.item.BoxType = boxType.Value;
@@ -1996,7 +1998,7 @@ public partial class MainView : UserControl
 					case EWeapon.HealCannonLv1:
 					case EWeapon.HealCannonLv2:
 					case EWeapon.ShadowRifle:
-						EnemySETMutations.ToSpecialWeaponBox(weaponbox.index, ref setData);
+						WeaponContainers.ToSpecialWeaponBox(weaponbox.index, ref setData);
 						break;
 					default:
 						setData[weaponbox.index] = weaponbox.item;
@@ -2026,7 +2028,7 @@ public partial class MainView : UserControl
 					setData[specialWeaponsBox.index] = specialWeaponsBox.item;
 					break;
 				default:
-					EnemySETMutations.ToWeaponBox(specialWeaponsBox.index, ref setData);
+					WeaponContainers.ToWeaponBox(specialWeaponsBox.index, ref setData);
 					break;
 			}
 		}
@@ -2062,7 +2064,7 @@ public partial class MainView : UserControl
 		{
 			woodbox.item.BoxItem = EBoxItem.Weapon;
 			woodbox.item.ModifierWeapon = weaponsPool[r.Next(weaponsPool.Count)];
-			var boxType = EnemySETMutations.GetWeaponAffiliationBoxType(woodbox.item.ModifierWeapon);
+			var boxType = WeaponContainers.GetWeaponAffiliationBoxType(woodbox.item.ModifierWeapon);
 			if (boxType.HasValue)
 			{
 				woodbox.item.BoxType = boxType.Value;
@@ -2083,7 +2085,7 @@ public partial class MainView : UserControl
 					case EWeapon.HealCannonLv1:
 					case EWeapon.HealCannonLv2:
 					case EWeapon.ShadowRifle:
-						EnemySETMutations.ToSpecialWeaponBox(woodbox.index, ref setData);
+						WeaponContainers.ToSpecialWeaponBox(woodbox.index, ref setData);
 						break;
 					default:
 						setData[woodbox.index] = woodbox.item;
@@ -2095,7 +2097,7 @@ public partial class MainView : UserControl
 		foreach (var weaponbox in weaponBoxItems)
 		{
 			weaponbox.item.Weapon = weaponsPool[r.Next(weaponsPool.Count)];
-			var boxType = EnemySETMutations.GetWeaponAffiliationBoxType(weaponbox.item.Weapon);
+			var boxType = WeaponContainers.GetWeaponAffiliationBoxType(weaponbox.item.Weapon);
 			if (boxType.HasValue)
 			{
 				weaponbox.item.BoxType = boxType.Value;
@@ -2116,7 +2118,7 @@ public partial class MainView : UserControl
 					case EWeapon.HealCannonLv1:
 					case EWeapon.HealCannonLv2:
 					case EWeapon.ShadowRifle:
-						EnemySETMutations.ToSpecialWeaponBox(weaponbox.index, ref setData);
+						WeaponContainers.ToSpecialWeaponBox(weaponbox.index, ref setData);
 						break;
 					default:
 						setData[weaponbox.index] = weaponbox.item;
@@ -2129,7 +2131,7 @@ public partial class MainView : UserControl
 		{
 			metalbox.item.BoxItem = EBoxItem.Weapon;
 			metalbox.item.ModifierWeapon = weaponsPool[r.Next(weaponsPool.Count)];
-			var boxType = EnemySETMutations.GetWeaponAffiliationBoxType(metalbox.item.ModifierWeapon);
+			var boxType = WeaponContainers.GetWeaponAffiliationBoxType(metalbox.item.ModifierWeapon);
 			if (boxType.HasValue)
 			{
 				metalbox.item.BoxType = boxType.Value;
@@ -2150,7 +2152,7 @@ public partial class MainView : UserControl
 					case EWeapon.HealCannonLv1:
 					case EWeapon.HealCannonLv2:
 					case EWeapon.ShadowRifle:
-						EnemySETMutations.ToSpecialWeaponBox(metalbox.index, ref setData);
+						WeaponContainers.ToSpecialWeaponBox(metalbox.index, ref setData);
 						break;
 					default:
 						setData[metalbox.index] = metalbox.item;
@@ -2180,7 +2182,7 @@ public partial class MainView : UserControl
 					setData[specialWeaponsBox.index] = specialWeaponsBox.item;
 					break;
 				default:
-					EnemySETMutations.ToWeaponBox(specialWeaponsBox.index, ref setData);
+					WeaponContainers.ToWeaponBox(specialWeaponsBox.index, ref setData);
 					break;
 			}
 		}
@@ -2233,7 +2235,7 @@ public partial class MainView : UserControl
 		}
 	}
 
-		private void WildRandomizeAllEnemiesWithTranslations(ref List<SetObjectShadow> setData, List<Type> allEnemies, List<Type> groundEnemies, List<Type> flyingEnemies, List<Type> pathTypeFlyingEnemies, Random r)
+	private void WildRandomizeAllEnemiesWithTranslations(ref List<SetObjectShadow> setData, List<Type> allEnemies, List<Type> groundEnemies, List<Type> flyingEnemies, List<Type> pathTypeFlyingEnemies, Random r)
 	{
 		// Wild Randomize of all Enemies
 		for (int i = 0; i < setData.Count(); i++)
@@ -2243,7 +2245,7 @@ public partial class MainView : UserControl
 				Type randomEnemyType = typeof(Nullable);
 				if (Layout_Enemy_CheckBox_KeepType.IsChecked.Value)
 				{
-					if (IsFlyingEnemy(setData[i]))
+					if (EnemyHelpers.IsFlyingEnemy(setData[i]))
 					{
 						if (setData[i].List == 0x00 && setData[i].Type == 0x90)
 						{
@@ -2251,7 +2253,7 @@ public partial class MainView : UserControl
 							setData[i].PosY = setData[i].PosY + 50;
 						}
 						// if path type enemy
-						if (IsPathTypeFlyingEnemy(setData[i]))
+						if (EnemyHelpers.IsPathTypeFlyingEnemy(setData[i]))
 						{
 							if (pathTypeFlyingEnemies.Count == 0)
 							{
@@ -2280,7 +2282,7 @@ public partial class MainView : UserControl
 									WeaponType = (Object0066_GUNBigfoot.EWeapon)r.Next(2),
 									OffsetPos_Y = 50
 								};
-								EnemySETMutations.MutateObjectAtIndex(i, donor, ref setData, true, r);
+								SETMutations.MutateObjectAtIndex(i, donor, ref setData, true, r);
 								continue; // skip the MutateObject below since we handled it ourselves
 							}
 							else if (randomEnemyType == typeof(Object0093_BkNinja))
@@ -2313,7 +2315,7 @@ public partial class MainView : UserControl
 									UNUSED_Float21 = 0,
 									UNUSED_Float22 = 0
 								};
-								EnemySETMutations.MutateObjectAtIndex(i, donor, ref setData, true, r);
+								SETMutations.MutateObjectAtIndex(i, donor, ref setData, true, r);
 								continue; // skip the MutateObject below since we handled it ourselves
 							}
 						}
@@ -2351,151 +2353,9 @@ public partial class MainView : UserControl
 					}
 					randomEnemyType = allEnemies[randomEnemy];
 				}
-				EnemySETMutations.MutateObjectAtIndex(i, randomEnemyType, ref setData, true, r);
+				SETMutations.MutateObjectAtIndex(i, randomEnemyType, ref setData, true, r);
 			}
 		}
-	}
-
-	private bool IsFlyingEnemy(SetObjectShadow enemy)
-	{
-		switch (enemy.Type)
-		{
-			case 0x65: // GUNBeetle
-			case 0x8E: // BkWingLarge
-			case 0x8F: // BkWingSmall
-			case 0x92: // BkChaos
-				return true;
-			case 0x66: // GUNBigfoot
-				if (((Object0066_GUNBigfoot)enemy).AppearType == Object0066_GUNBigfoot.EAppear.ZUTTO_HOVERING)
-				{
-					return true;
-				}
-				break;
-			case 0x90: // BkWorm
-				if (enemy.UnkBytes[2] == 0x40 && enemy.UnkBytes[6] == 0x40) // BkWorms that spawn on killplanes
-				{
-					return true;
-				}
-				break;
-			case 0x93: // BkNinja
-				if (((Object0093_BkNinja)enemy).AppearType == Object0093_BkNinja.EAppear.ON_AIR_SAUCER_WARP)
-				{
-					return true;
-				}
-				break;
-			default:
-				return false;
-		}
-		return false;
-	}
-
-	private bool IsPathTypeFlyingEnemy(SetObjectShadow enemy)
-	{
-		switch (enemy)
-		{
-			case Object0065_GUNBeetle beetle when enemy is Object0065_GUNBeetle:
-				if (beetle.AppearType == Object0065_GUNBeetle.EAppear.MOVE_ON_PATH)
-					return true;
-				break;
-			case Object008E_BkWingLarge bkWingLarge when enemy is Object008E_BkWingLarge:
-				if (bkWingLarge.AppearType == Object008E_BkWingLarge.EAppear.MOVE_ON_PATH)
-					return true;
-				break;
-			case Object008F_BkWingSmall bkWingSmall when enemy is Object008F_BkWingSmall:
-				if (bkWingSmall.AppearType == Object008F_BkWingSmall.EAppear.MOVE_ON_PATH)
-					return true;
-				break;
-			default:
-				return false;
-		}
-		return false;
-	}
-
-	private void MakeAllEnemiesGUNSoldiers(ref List<SetObjectShadow> setData, Random r)
-	{
-		var soldier = new Object0064_GUNSoldier();
-		soldier.List = 0x00;
-		soldier.Type = 0x64;
-
-		// make all enemies a gun soldier
-		for (int i = 0; i < setData.Count(); i++)
-		{
-			if (setData[i].List == 0x00 &&
-					(
-						(setData[i].Type >= 0x64 && setData[i].Type <= 0x93)
-					)
-				)
-			{
-				if (setData[i].Link == 0 || setData[i].Link == 50) // Skip enemies with LinkID to prevent softlock
-					CloneObjectOverIndex(i, soldier, ref setData, true, r);
-			}
-		}
-	}
-
-	private void MakeAllEnemiesGUNSoldiersWithTranslations(ref List<SetObjectShadow> setData, Random r)
-	{
-		// make all enemies a gun soldier
-		for (int i = 0; i < setData.Count(); i++)
-		{
-			if (setData[i].List == 0x00 &&
-					(
-						(setData[i].Type >= 0x64 && setData[i].Type <= 0x93)
-					)
-				)
-			{
-				if (setData[i].Link == 0 || setData[i].Link == 50) // Skip enemies with LinkID to prevent softlock
-					EnemySETMutations.MutateObjectAtIndex(i, typeof(Object0064_GUNSoldier), ref setData, true, r);
-			}
-		}
-	}
-
-	private void MakeAllObjectsGUNSoldiers(ref List<SetObjectShadow> setData, Random r)
-	{
-		var soldier = new Object0064_GUNSoldier();
-		soldier.List = 0x00;
-		soldier.Type = 0x64;
-
-		// make all objects a gun soldier
-		for (int i = 0; i < setData.Count(); i++)
-		{
-			// skip core objs
-			if (setData[i].List == 0x00 &&
-					(
-						(setData[i].Type >= 0x00 && setData[i].Type <= 0x07) ||
-						(setData[i].Type == 0x14) || // goal ring
-						(setData[i].Type == 0x3A) || // shadow box
-						(setData[i].Type == 0x4F) || // vehicles
-						(setData[i].Type == 0x61) || // dark spin entrance
-						(setData[i].Type >= 0xB4 && setData[i].Type <= 0xBE) // bosses
-					)
-				|| setData[i].List == 0x14) // gravity related
-			{
-				continue;
-			}
-			CloneObjectOverIndex(i, soldier, ref setData, true, r);
-		}
-	}
-
-	// TODO move this to ShadowSET library?
-	private void CloneObjectOverIndex(int index, Object0064_GUNSoldier cloneObject, ref List<SetObjectShadow> setData, bool isShadow, Random r)
-	{
-		// isShadow ?
-		var oldEntry = setData[index];
-		// may need to make clone entry unkbytes instead , but for now leaving
-		var newEntry = LayoutEditorFunctions.CreateShadowObject(cloneObject.List, cloneObject.Type, oldEntry.PosX, oldEntry.PosY,
-			oldEntry.PosZ, oldEntry.RotX, oldEntry.RotY, oldEntry.RotZ, oldEntry.Link, oldEntry.Rend, oldEntry.UnkBytes); // :
-		var modifier = (Object0064_GUNSoldier)newEntry;                                                                                                                                    //LayoutEditorFunctions.CreateHeroesObject(newEntry.List, newEntry.Type, pos, rot, link, rend, unkb);
-
-		modifier.WeaponType = (Object0064_GUNSoldier.EWeapon)r.Next(0x7);
-		// 10% chance of shield
-		var hasShield = r.Next(10) == 1;
-		modifier.HaveShield = hasShield ? (ENoYes)1 : (ENoYes)0;
-		modifier.SearchRange = 500;
-		modifier.SearchWidth = 500;
-		modifier.SearchHeight = 200;
-		modifier.MoveRange = 2000;
-
-		setData[index] = modifier;
 	}
 
 	private static void Shuffle<T>(Random r, T[] array, int count)

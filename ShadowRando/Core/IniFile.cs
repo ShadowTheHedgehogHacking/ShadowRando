@@ -8,16 +8,16 @@ using IniGroup = System.Collections.Generic.Dictionary<string, string>;
 using IniNameGroup = System.Collections.Generic.KeyValuePair<string, System.Collections.Generic.Dictionary<string, string>>;
 using IniNameValue = System.Collections.Generic.KeyValuePair<string, string>;
 
-namespace IniFile
+namespace ShadowRando.Core
 {
 	public static class IniFile
 	{
-		public static IniDictionary Load(params string[] data)
+		private static IniDictionary Load(params string[] data)
 		{
 			IniDictionary result = new IniDictionary();
-			IniGroup curent = new IniGroup();
-			result.Add(string.Empty, curent);
-			string curgroup = string.Empty;
+			IniGroup current = new IniGroup();
+			result.Add(string.Empty, current);
+			string currentGroup = string.Empty;
 			for (int i = 0; i < data.Length; i++)
 			{
 				string line = data[i];
@@ -65,15 +65,15 @@ namespace IniFile
 				line = sb.ToString();
 				if (startswithbracket & endbracket != -1)
 				{
-					curgroup = line.Substring(1, endbracket - 1);
-					curent = new IniGroup();
+					currentGroup = line.Substring(1, endbracket - 1);
+					current = new IniGroup();
 					try
 					{
-						result.Add(curgroup, curent);
+						result.Add(currentGroup, current);
 					}
 					catch (ArgumentException ex)
 					{
-						throw new Exception("INI File error: Group \"" + curgroup + "\" already exists.\nline " + (i + 1), ex);
+						throw new Exception("INI File error: Group \"" + currentGroup + "\" already exists.\nline " + (i + 1), ex);
 					}
 				}
 				else if (!IsNullOrWhiteSpace(line))
@@ -89,11 +89,11 @@ namespace IniFile
 						key = line;
 					try
 					{
-						curent.Add(key, value);
+						current.Add(key, value);
 					}
 					catch (ArgumentException ex)
 					{
-						throw new Exception("INI File error: Value \"" + key + "\" already exists in group \"" + curgroup + "\".\nline " + (i + 1), ex);
+						throw new Exception("INI File error: Value \"" + key + "\" already exists in group \"" + currentGroup + "\".\nline " + (i + 1), ex);
 					}
 				}
 			}
@@ -108,16 +108,16 @@ namespace IniFile
 		{
 			List<string> data = new List<string>();
 			StreamReader reader = new StreamReader(stream);
-			string line;
+			string? line;
 			while ((line = reader.ReadLine()) != null)
 				data.Add(line);
 			return Load(data.ToArray());
 		}
 
-		public static string[] Save(IniDictionary INI)
+		private static string[] Save(IniDictionary ini)
 		{
 			List<string> result = new List<string>();
-			foreach (IniNameGroup group in INI)
+			foreach (IniNameGroup group in ini)
 			{
 				if (!string.IsNullOrEmpty(group.Key))
 					result.Add("[" + group.Key.Replace(@"\", @"\\").Replace("\n", @"\n").Replace("\r", @"\r").Replace(";", @"\;") + "]");
@@ -132,12 +132,12 @@ namespace IniFile
 			return result.ToArray();
 		}
 
-		public static void Save(IniDictionary INI, string filename) { File.WriteAllLines(filename, Save(INI)); }
+		public static void Save(IniDictionary ini, string filename) { File.WriteAllLines(filename, Save(ini)); }
 
-		public static void Save(IniDictionary INI, Stream stream)
+		public static void Save(IniDictionary ini, Stream stream)
 		{
 			StreamWriter writer = new StreamWriter(stream);
-			foreach (string line in Save(INI))
+			foreach (string line in Save(ini))
 				writer.WriteLine(line);
 		}
 
@@ -155,7 +155,7 @@ namespace IniFile
 			return result;
 		}
 
-		internal static bool IsNullOrWhiteSpace(string value)
+		private static bool IsNullOrWhiteSpace(string value)
 		{
 			if (string.IsNullOrEmpty(value))
 				return true;

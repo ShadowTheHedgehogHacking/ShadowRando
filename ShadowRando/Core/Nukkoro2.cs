@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace ShadowRando
+namespace ShadowRando.Core
 {
 	public static class Nukkoro2
 	{
@@ -17,7 +17,7 @@ namespace ShadowRando
 		{
 			Dictionary<string, Nukkoro2Stage> result = new Dictionary<string, Nukkoro2Stage>();
 			string[] data = File.ReadAllLines(path, Encoding.GetEncoding(932));
-			Nukkoro2Stage stage = null;
+			Nukkoro2Stage? stage = null;
 			for (int i = 0; i < data.Length; i++)
 			{
 				string line = data[i].Split('#')[0];
@@ -29,7 +29,10 @@ namespace ShadowRando
 					{
 						result.Add(line.Substring(1, endbracket - 1), stage);
 					}
-					catch { }
+					catch
+					{
+						// ignored
+					}
 				}
 				else if (!string.IsNullOrWhiteSpace(line))
 				{
