@@ -1721,7 +1721,12 @@ public partial class MainView : UserControl
 					}
 				} else
 				{
-					if (allEnemies.Count == 1)
+					if (allEnemies.Count == 0)
+					{
+						ShowSimpleMessage("Error", "Must pick at least one enemy type.", ButtonEnum.Ok, Icon.Error);
+						return 1;
+					}
+					else if (allEnemies.Count == 1)
 					{
 						// make sure there is at least one other enemy if GUN Soldiers are only picked
 						if (allEnemies[0] == typeof(Object0064_GUNSoldier))
