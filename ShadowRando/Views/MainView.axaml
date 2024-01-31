@@ -247,6 +247,12 @@
 					<CheckBox x:Name="Music_CheckBox_SkipChaosPowerUseJingles">Skip Chaos Power Use Jingles</CheckBox>
 				</StackPanel>
 			</TabItem>
+      <TabItem Header="Models">
+        <StackPanel>
+          <CheckBox x:Name="Models_CheckBox_RandomizeModel">Randomize Player Model</CheckBox>
+          <CheckBox x:Name="Models_CheckBox_ModelP2">Randomize Player 2's Model</CheckBox>
+        </StackPanel>
+      </TabItem>
 			<TabItem Header="Spoilers">
 				<Grid ColumnDefinitions="Auto,*">
 					<ListBox x:Name="Spoilers_ListBox_LevelList" Margin="0,0,0,70" Grid.Column="0" SelectionChanged="Spoilers_ListBox_LevelList_SelectionChanged"></ListBox>

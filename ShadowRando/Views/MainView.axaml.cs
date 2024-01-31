@@ -369,6 +369,10 @@ public partial class MainView : UserControl
 			Music_CheckBox_SkipChaosPowerUseJingles.IsChecked = settings.MusicSkipChaosPowers;
 			Music_CheckBox_SkipRankTheme.IsChecked = settings.MusicSkipRankTheme;
 
+			// Models
+			Models_CheckBox_RandomizeModel.IsChecked = settings.RandomizeModel;
+			Models_CheckBox_ModelP2.IsChecked = settings.RandomizeP2Model;
+
 			LoadGameData();
 		}
 	}
@@ -497,6 +501,10 @@ public partial class MainView : UserControl
 		settings.MusicSkipChaosPowers = Music_CheckBox_SkipChaosPowerUseJingles.IsChecked.Value;
 		settings.MusicSkipRankTheme = Music_CheckBox_SkipRankTheme.IsChecked.Value;
 
+		// Models
+		settings.RandomizeModel = Models_CheckBox_RandomizeModel.IsChecked.Value;
+		settings.RandomizeP2Model = Models_CheckBox_ModelP2.IsChecked.Value;
+
 		settings.Save();
 	}
 
@@ -544,6 +552,8 @@ public partial class MainView : UserControl
 				foreach (var fil in Directory.EnumerateFiles(Path.Combine(settings.GamePath, "files"), "*.adx"))
 					File.Copy(fil, Path.Combine("backup", "music", Path.GetFileName(fil)));
 			}
+			if (!Directory.Exists(Path.Combine("backup", "character")))
+				CopyDirectory(Path.Combine(settings.GamePath, "files", "character"), Path.Combine("backup", "character"));
 			if (!Directory.Exists(Path.Combine("backup", "sets")))
 			{
 				Directory.CreateDirectory(Path.Combine("backup", "sets"));
@@ -1212,6 +1222,9 @@ public partial class MainView : UserControl
 			RandomizeSubtitles(r);
 
 		ProgressBar_RandomizationProgress.Value = 75;
+
+		if (Models_CheckBox_RandomizeModel.IsChecked.Value)
+			RandomizeModels(r);
 
 		Spoilers_ListBox_LevelList.Items.Clear();
 		for (int i = 0; i < stagecount; i++)
@@ -2359,6 +2372,11 @@ public partial class MainView : UserControl
 		}
 	}
 
+	void RandomizeModels(Random r)
+	{
+
+	}
+
 	private static void Shuffle<T>(Random r, T[] array, int count)
 	{
 		int[] order = new int[count];
@@ -3311,6 +3329,10 @@ public partial class MainView : UserControl
 			sw.WriteLine($"Randomize Music: {Music_CheckBox_RandomizeMusic.IsChecked.Value}");
 			sw.WriteLine($"Skip Chaos Power Use Jingles: {Music_CheckBox_SkipChaosPowerUseJingles.IsChecked.Value}");
 			sw.WriteLine($"Skip Rank Theme: {Music_CheckBox_SkipRankTheme.IsChecked.Value}");
+			sw.WriteLine();
+			sw.WriteLine("---- Models ----");
+			sw.WriteLine($"Randomize Player Model: {Models_CheckBox_RandomizeModel.IsChecked.Value}");
+			sw.WriteLine($"Randomize Player 2's Model: {Models_CheckBox_ModelP2.IsChecked.Value}");
 			sw.WriteLine();
 			sw.WriteLine("---- Stage Reorder Result ----");
 			for (int i = 0; i < stagecount; i++)

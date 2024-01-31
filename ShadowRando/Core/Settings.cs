@@ -250,6 +250,12 @@ namespace ShadowRando
 		[IniAlwaysInclude]
 		public bool MusicSkipChaosPowers;
 
+		// Models
+		[IniAlwaysInclude]
+		public bool RandomizeModel;
+		[IniAlwaysInclude]
+		public bool RandomizeP2Model;
+
 		public static Settings Load()
 		{
 			if (File.Exists("RandoSettings.ini"))
