@@ -1,5 +1,8 @@
-﻿namespace ShadowRando.ViewModels;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-public partial class MainViewModel : ViewModelBase
+namespace ShadowRando.ViewModels;
+
+public partial class MainViewModel : ObservableObject
 {
+	[ObservableProperty] private string levelOrder_allowBossToBossSequences = ;
 }
