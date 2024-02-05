@@ -17,6 +17,7 @@ using Avalonia;
 using ShadowRando.Core;
 using ShadowRando.Core.SETMutations;
 using SkiaSharp;
+using HeroesONE_R.Structures.SonicHeroes.ONE_Substructures;
 
 namespace ShadowRando.Views;
 
@@ -1243,16 +1244,16 @@ public partial class MainView : UserControl
 		}
 	}
 
-	private void CopyDirectory(DirectoryInfo srcDir, string dstDir)
+	private void CopyDirectory(DirectoryInfo srcDir, string dstDir, bool overwrite = false)
 	{
 		Directory.CreateDirectory(dstDir);
 		foreach (var dir in srcDir.EnumerateDirectories())
-			CopyDirectory(dir, Path.Combine(dstDir, dir.Name));
+			CopyDirectory(dir, Path.Combine(dstDir, dir.Name), overwrite);
 		foreach (var fil in srcDir.EnumerateFiles())
-			fil.CopyTo(Path.Combine(dstDir, fil.Name));
+			fil.CopyTo(Path.Combine(dstDir, fil.Name), overwrite);
 	}
 
-	private void CopyDirectory(string srcDir, string dstDir) => CopyDirectory(new DirectoryInfo(srcDir), dstDir);
+	private void CopyDirectory(string srcDir, string dstDir, bool overwrite = false) => CopyDirectory(new DirectoryInfo(srcDir), dstDir, overwrite);
 
 	private void RandomizeSubtitles(Random r)
 	{
@@ -2374,7 +2375,55 @@ public partial class MainView : UserControl
 
 	void RandomizeModels(Random r)
 	{
-
+		CopyDirectory(Path.Combine("backup", "character"), Path.Combine(settings.GamePath, "files", "character"), true); // restore all default models
+		var mdls = Directory.GetFiles("RandoModels", "shadow.one", SearchOption.AllDirectories);
+		var p1mdl = mdls[r.Next(mdls.Length)]; // pick a random p1 model
+		if (p1mdl.Contains("ModelPack")) // if the model belongs to a pack, copy all files from the pack and do nothing else
+			CopyDirectory(Path.GetDirectoryName(p1mdl), Path.Combine(settings.GamePath, "files", "character"), true);
+		else
+		{
+			File.Copy(p1mdl, Path.Combine(settings.GamePath, "files", "character", "shadow.one"));
+			if (Models_CheckBox_ModelP2.IsChecked.Value) // do we care about p2?
+			{
+				mdls = Directory.EnumerateFiles("RandoModels", "shadow2py.one", SearchOption.AllDirectories).Where(a => !a.Contains("ModelPack")).ToArray();
+				var p2mdl = mdls[r.Next(mdls.Length)]; // pick a random p2 model
+				File.Copy(p2mdl, Path.Combine(settings.GamePath, "files", "character", "shadow2py.one"));
+				if (p2mdl.Contains("CustomBON")) // does the model use custom bones?
+				{
+					if (!Path.GetDirectoryName(p2mdl).Equals(Path.GetDirectoryName(p1mdl))) // is it from a different folder than the p1 model?
+					{
+						var datOneData = File.ReadAllBytes(p2mdl);
+						ONEArchiveType archiveType = ONEArchiveTester.GetArchiveType(ref datOneData);
+						var datOneDataContent = Archive.FromONEFile(ref datOneData);
+						if (datOneDataContent.Files.Find(a => a.Name.Equals("HS.BON")) == null) // does the model already come with bones?
+						{
+							var p1data = File.ReadAllBytes(Path.Combine(Path.GetDirectoryName(p2mdl), "shadow.one")); // get the corresponding p1 model
+							var p1content = Archive.FromONEFile(ref p1data);
+							var bonfile = p1content.Files.Find(a => a.Name.Equals("SH.BON")); // grab p1's bon file
+							bonfile.Name = "HS.BON"; // rename it
+							datOneDataContent.Files.Add(bonfile); // put it into p2's file
+							datOneDataContent.Files.Add(p1content.Files.Find(a => a.Name.EndsWith(".MTP"))); // and the mtp file too
+							var updatedDatOneData = datOneDataContent.BuildShadowONEArchive(archiveType == ONEArchiveType.Shadow060);
+							File.WriteAllBytes(Path.Combine(settings.GamePath, "files", "character", "shadow2py.one"), updatedDatOneData.ToArray());
+						}
+					}
+				}
+				else if (p1mdl.Contains("CustomBON")) // does p1 use custom bones?
+				{
+					var datOneData = File.ReadAllBytes(p2mdl);
+					ONEArchiveType archiveType = ONEArchiveTester.GetArchiveType(ref datOneData);
+					var datOneDataContent = Archive.FromONEFile(ref datOneData);
+					var p1data = File.ReadAllBytes(Path.Combine("backup", "character", "shadow.one")); // grab the default shadow model
+					var p1content = Archive.FromONEFile(ref p1data);
+					var bonfile = p1content.Files.Find(a => a.Name.Equals("SH.BON")); // grab p1's bon file
+					bonfile.Name = "HS.BON"; // rename it
+					datOneDataContent.Files.Add(bonfile); // put it into p2's file
+					datOneDataContent.Files.Add(p1content.Files.Find(a => a.Name.EndsWith(".MTP"))); // and the mtp file too
+					var updatedDatOneData = datOneDataContent.BuildShadowONEArchive(archiveType == ONEArchiveType.Shadow060);
+					File.WriteAllBytes(Path.Combine(settings.GamePath, "files", "character", "shadow2py.one"), updatedDatOneData.ToArray());
+				}
+			}
+		}
 	}
 
 	private static void Shuffle<T>(Random r, T[] array, int count)
