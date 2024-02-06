@@ -85,6 +85,14 @@ Warning: in-game stage music expects louder source files. The rank/stage clear j
 2. Create `Stage.txt`, `Jingle.txt`, `Menu.txt`, and `Credits.txt` - each containing the filename(s) of the songs you want to be included in the randomization category. Note if you only want to add custom Stage music, you don't need to add the other `.txt` files besides `Stage.txt`. If you have subfolders, you must also create these files in those folders to include files from subfolders.
 3. Place any `*.adx` music files that you reference in this folder, or subfolders. You cannot use `*.mp3 / *.wav`! You must convert to `*.adx`.
 
+### Custom Models
+The randomizer can select randomized models for Shadow and optionally the 2P Yellow Shadow. To use this feature, create a `RandoModels` folder in the same directory as the ShadowRando program using the following directory structure:
+* `RandoModels` - You can place models here if they use the default bones, but for organization it's probably better to use another folder.
+ * `DefaultBON` - Suggested name for a folder containing models using the default bones.
+ * `CustomBON` - Models in this folder use custom bones. If a P2 model uses the same bones as a P1 model, they must be together in the same subfolder.
+ * `ModelPack` - Models in this folder are treated as a pack; any other files in the same folder will be copied to the ROM. Use this when a model requires edits to partners to avoid crashes. P2 randomization is ignored if one of these is picked for P1.
+Each model must be placed in its own folder, keeping the original file names (P1 models are `shadow.one`, P2 models are `shadow2py.one`). P1 and P2 models made as a set should be placed in the same folder, but can be selected independently of each other.
+
 ### Extraction of Original Game / FST Format
 1. Get the latest release or dev Dolphin - [5.0-20347 or newer recommended](https://dolphin-emu.org/download/)
 2. (Optional: only do this step if you want to keep config separate) Before launching dolphin, create an empty file
