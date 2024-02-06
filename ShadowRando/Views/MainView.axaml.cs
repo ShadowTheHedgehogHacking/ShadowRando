@@ -2376,7 +2376,7 @@ public partial class MainView : UserControl
 	void RandomizeModels(Random r)
 	{
 		CopyDirectory(Path.Combine("backup", "character"), Path.Combine(settings.GamePath, "files", "character"), true); // restore all default models
-		var mdls = Directory.GetFiles("RandoModels", "shadow.one", SearchOption.AllDirectories);
+		var mdls = Directory.GetFiles("RandoModels", "shadow.one", SearchOption.AllDirectories).Prepend(Path.Combine("backup", "character", "shadow.one")).ToArray();
 		var p1mdl = mdls[r.Next(mdls.Length)]; // pick a random p1 model
 		if (p1mdl.Contains("ModelPack")) // if the model belongs to a pack, copy all files from the pack and do nothing else
 			CopyDirectory(Path.GetDirectoryName(p1mdl), Path.Combine(settings.GamePath, "files", "character"), true);
@@ -2385,7 +2385,7 @@ public partial class MainView : UserControl
 			File.Copy(p1mdl, Path.Combine(settings.GamePath, "files", "character", "shadow.one"));
 			if (Models_CheckBox_ModelP2.IsChecked.Value) // do we care about p2?
 			{
-				mdls = Directory.EnumerateFiles("RandoModels", "shadow2py.one", SearchOption.AllDirectories).Where(a => !a.Contains("ModelPack")).ToArray();
+				mdls = Directory.EnumerateFiles("RandoModels", "shadow2py.one", SearchOption.AllDirectories).Where(a => !a.Contains("ModelPack")).Prepend(Path.Combine("backup", "character", "shadow2py.one")).ToArray();
 				var p2mdl = mdls[r.Next(mdls.Length)]; // pick a random p2 model
 				File.Copy(p2mdl, Path.Combine(settings.GamePath, "files", "character", "shadow2py.one"));
 				if (p2mdl.Contains("CustomBON")) // does the model use custom bones?
