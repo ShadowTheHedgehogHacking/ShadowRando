@@ -1,14 +1,14 @@
-﻿using ShadowSET.Utilities;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Numerics;
-using System;
 using System.Linq;
+using System.Numerics;
 using HeroesONE_R.Structures.Substructures;
+using ShadowSET.Utilities;
 
 // Hacky file for lazy spline editing; Uses the inaccurate save version from HPP; Only good for editing core attributes!
 
-namespace ShadowRando
+namespace ShadowRando.Core
 {
 	public class ShadowSplineSec5Bytes
 	{

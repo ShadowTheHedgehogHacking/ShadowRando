@@ -1,7 +1,6 @@
 ﻿using System.IO;
-using ShadowRando.Core;
 
-namespace ShadowRando
+namespace ShadowRando.Core
 {
 	public class Settings
 	{

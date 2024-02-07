@@ -1,7 +1,6 @@
 ﻿using System.Linq;
-using ShadowRando.Core;
 
-namespace ShadowRando
+namespace ShadowRando.Core
 {
 	class Stage
 	{

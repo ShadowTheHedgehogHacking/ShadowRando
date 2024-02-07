@@ -1,5 +1,4 @@
-﻿using Avalonia.Controls;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System;
@@ -14,19 +13,20 @@ using Avalonia.Platform.Storage;
 using MsBox.Avalonia.Enums;
 using MsBox.Avalonia;
 using Avalonia;
+using Avalonia.Controls;
 using ShadowRando.Core;
 using ShadowRando.Core.SETMutations;
 using SkiaSharp;
-using HeroesONE_R.Structures.SonicHeroes.ONE_Substructures;
 
 namespace ShadowRando.Views;
 
 public partial class MainView : UserControl
 {
 	const int stagefirst = 5;
-	static readonly string[] LevelNames =
-	{
-			"Westopolis",
+
+	private static readonly string[] LevelNames =
+	[
+		"Westopolis",
 			"Digital Circuit",
 			"Glyphic Canyon",
 			"Lethal Highway",
@@ -66,7 +66,7 @@ public partial class MainView : UserControl
 			"Black Doom (FH)",
 			"Sonic & Diablon (FH)",
 			"Devil Doom"
-	};
+	];
 	const int routeMenu6xxStagePreviewBlockerOffset = 0xB48B8;
 	const int routeMenu6xxStagePreviewPatchValue = 0x48000110;
 	const int storyModeStartAddress = 0x2CB9F0;
@@ -78,7 +78,7 @@ public partial class MainView : UserControl
 	const int stageOffset = 0x50;
 	const int shadowBoxPatchOffset = 0x3382E0;
 	const int shadowBoxPatchValue = 0x480001B0;
-	static readonly Dictionary<int, int> stageAssociationIDMap = new Dictionary<int, int>
+	static readonly Dictionary<int, int> stageAssociationIDMap = new()
 	{
 			{ 5, 100 }, // first stage
 			{ 6, 200 },
@@ -122,12 +122,12 @@ public partial class MainView : UserControl
 			{ 44, 710 } // last boss
 	};
 
-	const int totalstagecount = 40;
-	static int stagecount = 40;
-	int[] stageids;
-	readonly Stage[] stages = new Stage[totalstagecount];
+	private const int totalstagecount = 40;
+	private static int stagecount = 40;
+	private int[] stageids;
+	private readonly Stage[] stages = new Stage[totalstagecount];
 
-	static readonly Dictionary<int, Tuple<String, int>> nukkoro2EnemyCountStagesMap = new Dictionary<int, Tuple<String, int>>
+	private static readonly Dictionary<int, Tuple<string, int>> Nukkoro2EnemyCountStages = new()
 	{
 			{ 100, Tuple.Create("City1",         2) }, // both
 			{ 201, Tuple.Create("Canyon1",       1) }, // hero
@@ -141,7 +141,7 @@ public partial class MainView : UserControl
 			{ 601, Tuple.Create("DoomsBase1",    0) }, // dark
 	};
 
-	static readonly Type[] enemyTypeMap = [
+	private static readonly Type[] EnemyTypes = [
 		typeof(Object0064_GUNSoldier),
 		typeof(Object0065_GUNBeetle),
 		typeof(Object0066_GUNBigfoot),
@@ -159,7 +159,7 @@ public partial class MainView : UserControl
 		typeof(Object0093_BkNinja),
 	];
 
-	static readonly Type[] groundEnemyTypeMap = [
+	private static readonly Type[] GroundEnemyTypes = [
 		typeof(Object0064_GUNSoldier),
 		typeof(Object0066_GUNBigfoot),
 		typeof(Object0068_GUNRobot),
@@ -173,7 +173,7 @@ public partial class MainView : UserControl
 		typeof(Object0093_BkNinja),
 	];
 
-	static readonly Type[] flyingEnemyTypeMap = [
+	private static readonly Type[] FlyingEnemyTypes = [
 		typeof(Object0065_GUNBeetle),
 		typeof(Object008E_BkWingLarge),
 		typeof(Object008F_BkWingSmall),
@@ -182,7 +182,7 @@ public partial class MainView : UserControl
 		typeof(Object0093_BkNinja), // only if AppearType is ON_AIR_SAUCER_WARP
 	];
 
-	public static readonly EWeapon[] weapons = [
+	private static readonly EWeapon[] Weapons = [
 		EWeapon.None,
 		EWeapon.Pistol,
 		EWeapon.SubmachineGun,
@@ -238,150 +238,148 @@ public partial class MainView : UserControl
 	private void UserControl_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
 	{
 		var topLevel = TopLevel.GetTopLevel(this);
-		if (!OperatingSystem.IsBrowser()) // TODO: rowser context only is allowed to read/write file dialogs if a user triggers the context, need to add buttons for browser to target
-		{
+		if (OperatingSystem.IsBrowser()) return; // TODO: Browser context only is allowed to read/write file dialogs if a user triggers the context, need to add buttons for browser to target
+		if (topLevel is null) return;
+		topLevel.IsVisible = false;
+		settings = Settings.Load();
 
-			topLevel.IsVisible = false;
-			settings = Settings.Load();
+		// Program Configuration
+		LevelOrder_Label_ProgramTitle.Content += " " + programVersion;
 
-			// Program Configuration
-			LevelOrder_Label_ProgramTitle.Content += " " + programVersion;
+		// Level Order
+		LevelOrder_TextBox_Seed.Text = settings.Seed;
+		LevelOrder_CheckBox_Random_Seed.IsChecked = settings.RandomSeed;
+		LevelOrder_ComboBox_Mode.SelectedIndex = (int)settings.LevelOrderMode;
+		LevelOrder_ComboBox_MainPath.SelectedIndex = (int)settings.LevelOrderMainPath;
+		LevelOrder_NumericUpDown_MaxForwardsJump.Value = settings.LevelOrderMaxForwardsJump;
+		LevelOrder_NumericUpDown_MaxBackwardsJump.Value = settings.LevelOrderMaxBackwardsJump;
+		LevelOrder_NumericUpDown_BackwardsJumpProbability.Value = settings.LevelOrderBackwardsJumpProbability;
+		LevelOrder_CheckBox_AllowJumpsToSameLevel.IsChecked = settings.LevelOrderAllowJumpsToSameLevel;
+		LevelOrder_CheckBox_IncludeLastStory.IsChecked = settings.LevelOrderIncludeLastStory;
+		LevelOrder_CheckBox_IncludeBosses.IsChecked = settings.LevelOrderIncludeBosses;
+		LevelOrder_CheckBox_AllowBossToBoss.IsChecked = settings.LevelOrderAllowBossToBoss;
 
-			// Level Order
-			LevelOrder_TextBox_Seed.Text = settings.Seed;
-			LevelOrder_CheckBox_Random_Seed.IsChecked = settings.RandomSeed;
-			LevelOrder_ComboBox_Mode.SelectedIndex = (int)settings.LevelOrderMode;
-			LevelOrder_ComboBox_MainPath.SelectedIndex = (int)settings.LevelOrderMainPath;
-			LevelOrder_NumericUpDown_MaxForwardsJump.Value = settings.LevelOrderMaxForwardsJump;
-			LevelOrder_NumericUpDown_MaxBackwardsJump.Value = settings.LevelOrderMaxBackwardsJump;
-			LevelOrder_NumericUpDown_BackwardsJumpProbability.Value = settings.LevelOrderBackwardsJumpProbability;
-			LevelOrder_CheckBox_AllowJumpsToSameLevel.IsChecked = settings.LevelOrderAllowJumpsToSameLevel;
-			LevelOrder_CheckBox_IncludeLastStory.IsChecked = settings.LevelOrderIncludeLastStory;
-			LevelOrder_CheckBox_IncludeBosses.IsChecked = settings.LevelOrderIncludeBosses;
-			LevelOrder_CheckBox_AllowBossToBoss.IsChecked = settings.LevelOrderAllowBossToBoss;
+		// Layout
+		Layout_CheckBox_RandomizeLayouts.IsChecked = settings.RandomizeLayouts;
+		Layout_CheckBox_MakeCCSplinesVehicleCompatible.IsChecked = settings.LayoutMakeCCSplinesVehicleCompatible;
+		// Enemy
+		Layout_Enemy_CheckBox_AdjustMissionCounts.IsChecked = settings.LayoutAdjustMissionCounts;
+		Layout_Enemy_NumericUpDown_AdjustMissionsReductionPercent.Value = settings.LayoutAdjustMissionCountsReductionPercent;
+		Layout_Enemy_ComboBox_Mode.SelectedIndex = (int)settings.LayoutEnemyMode;
+		Layout_Enemy_CheckBox_KeepType.IsChecked = settings.LayoutEnemyKeepType;
+		Layout_Enemy_CheckBox_OnlySelectedEnemyTypes.IsChecked = settings.LayoutEnemyOnlySelectedTypes;
+		// Selected Enemies
+		Layout_Enemy_CheckBox_SelectedEnemy_GUNSoldier.IsChecked = settings.LayoutEnemySelectedEnemyGUNSoldier;
+		Layout_Enemy_CheckBox_SelectedEnemy_GUNBeetle.IsChecked = settings.LayoutEnemySelectedEnemyGUNBeetle;
+		Layout_Enemy_CheckBox_SelectedEnemy_GUNBigfoot.IsChecked = settings.LayoutEnemySelectedEnemyGUNBigfoot;
+		Layout_Enemy_CheckBox_SelectedEnemy_GUNRobot.IsChecked = settings.LayoutEnemySelectedEnemyGUNRobot;
+		Layout_Enemy_CheckBox_SelectedEnemy_EggPierrot.IsChecked = settings.LayoutEnemySelectedEnemyEggPierrot;
+		Layout_Enemy_CheckBox_SelectedEnemy_EggPawn.IsChecked = settings.LayoutEnemySelectedEnemyEggPawn;
+		Layout_Enemy_CheckBox_SelectedEnemy_ShadowAndroid.IsChecked = settings.LayoutEnemySelectedEnemyShadowAndroid;
+		Layout_Enemy_CheckBox_SelectedEnemy_BAGiant.IsChecked = settings.LayoutEnemySelectedEnemyBAGiant;
+		Layout_Enemy_CheckBox_SelectedEnemy_BASoldier.IsChecked = settings.LayoutEnemySelectedEnemyBASoldier;
+		Layout_Enemy_CheckBox_SelectedEnemy_BAHawkVolt.IsChecked = settings.LayoutEnemySelectedEnemyBAHawkVolt;
+		Layout_Enemy_CheckBox_SelectedEnemy_BAWing.IsChecked = settings.LayoutEnemySelectedEnemyBAWing;
+		Layout_Enemy_CheckBox_SelectedEnemy_BAWorm.IsChecked = settings.LayoutEnemySelectedEnemyBAWorm;
+		Layout_Enemy_CheckBox_SelectedEnemy_BALarva.IsChecked = settings.LayoutEnemySelectedEnemyBALarva;
+		Layout_Enemy_CheckBox_SelectedEnemy_ArtificialChaos.IsChecked = settings.LayoutEnemySelectedEnemyArtificialChaos;
+		Layout_Enemy_CheckBox_SelectedEnemy_BAAssassin.IsChecked = settings.LayoutEnemySelectedEnemyBAAssassin;
+		// Weapon
+		Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes.IsChecked = settings.LayoutWeaponRandomWeaponsInAllBoxes;
+		Layout_Weapon_CheckBox_RandomWeaponsInWeaponBoxes.IsChecked = settings.LayoutWeaponRandomWeaponsInWeaponBoxes;
+		Layout_Weapon_CheckBox_RandomExposedWeapons.IsChecked = settings.LayoutWeaponRandomExposedWeapons;
+		Layout_Weapon_CheckBox_RandomWeaponsFromEnvironment.IsChecked = settings.LayoutWeaponRandomWeaponsFromEnvironment;
+		Layout_Weapon_CheckBox_OnlySelectedWeapons.IsChecked = settings.LayoutWeaponOnlySelectedTypes;
+		// Selected Weapons
+		Layout_Weapon_CheckBox_SelectedWeapon_None.IsChecked = settings.LayoutWeaponSelectedWeaponNone;
+		Layout_Weapon_CheckBox_SelectedWeapon_Pistol.IsChecked = settings.LayoutWeaponSelectedWeaponPistol;
+		Layout_Weapon_CheckBox_SelectedWeapon_SubmachineGun.IsChecked = settings.LayoutWeaponSelectedWeaponSubmachineGun;
+		Layout_Weapon_CheckBox_SelectedWeapon_AssaultRifle.IsChecked = settings.LayoutWeaponSelectedWeaponAssaultRifle;
+		Layout_Weapon_CheckBox_SelectedWeapon_HeavyMachineGun.IsChecked = settings.LayoutWeaponSelectedWeaponHeavyMachineGun;
+		Layout_Weapon_CheckBox_SelectedWeapon_GatlingGun.IsChecked = settings.LayoutWeaponSelectedWeaponGatlingGun;
+		Layout_Weapon_CheckBox_SelectedWeapon_EggPistol.IsChecked = settings.LayoutWeaponSelectedWeaponEggPistol;
+		Layout_Weapon_CheckBox_SelectedWeapon_LightShot.IsChecked = settings.LayoutWeaponSelectedWeaponLightShot;
+		Layout_Weapon_CheckBox_SelectedWeapon_FlashShot.IsChecked = settings.LayoutWeaponSelectedWeaponFlashShot;
+		Layout_Weapon_CheckBox_SelectedWeapon_RingShot.IsChecked = settings.LayoutWeaponSelectedWeaponRingShot;
+		Layout_Weapon_CheckBox_SelectedWeapon_HeavyShot.IsChecked = settings.LayoutWeaponSelectedWeaponHeavyShot;
+		Layout_Weapon_CheckBox_SelectedWeapon_GrenadeLauncher.IsChecked = settings.LayoutWeaponSelectedWeaponGrenadeLauncher;
+		Layout_Weapon_CheckBox_SelectedWeapon_GUNBazooka.IsChecked = settings.LayoutWeaponSelectedWeaponGUNBazooka;
+		Layout_Weapon_CheckBox_SelectedWeapon_TankCannon.IsChecked = settings.LayoutWeaponSelectedWeaponTankCannon;
+		Layout_Weapon_CheckBox_SelectedWeapon_BlackBarrel.IsChecked = settings.LayoutWeaponSelectedWeaponBlackBarrel;
+		Layout_Weapon_CheckBox_SelectedWeapon_BigBarrel.IsChecked = settings.LayoutWeaponSelectedWeaponBigBarrel;
+		Layout_Weapon_CheckBox_SelectedWeapon_EggBazooka.IsChecked = settings.LayoutWeaponSelectedWeaponEggBazooka;
+		Layout_Weapon_CheckBox_SelectedWeapon_RPG.IsChecked = settings.LayoutWeaponSelectedWeaponRPG;
+		Layout_Weapon_CheckBox_SelectedWeapon_FourShot.IsChecked = settings.LayoutWeaponSelectedWeaponFourShot;
+		Layout_Weapon_CheckBox_SelectedWeapon_EightShot.IsChecked = settings.LayoutWeaponSelectedWeaponEightShot;
+		Layout_Weapon_CheckBox_SelectedWeapon_WormShooterBlack.IsChecked = settings.LayoutWeaponSelectedWeaponWormShooterBlack;
+		Layout_Weapon_CheckBox_SelectedWeapon_WormShooterRed.IsChecked = settings.LayoutWeaponSelectedWeaponWormShooterRed;
+		Layout_Weapon_CheckBox_SelectedWeapon_WormShooterGold.IsChecked = settings.LayoutWeaponSelectedWeaponWormShooterGold;
+		Layout_Weapon_CheckBox_SelectedWeapon_VacuumPod.IsChecked = settings.LayoutWeaponSelectedWeaponVacuumPod;
+		Layout_Weapon_CheckBox_SelectedWeapon_LaserRifle.IsChecked = settings.LayoutWeaponSelectedWeaponLaserRifle;
+		Layout_Weapon_CheckBox_SelectedWeapon_Splitter.IsChecked = settings.LayoutWeaponSelectedWeaponSplitter;
+		Layout_Weapon_CheckBox_SelectedWeapon_Refractor.IsChecked = settings.LayoutWeaponSelectedWeaponRefractor;
+		Layout_Weapon_CheckBox_SelectedWeapon_Knife.IsChecked = settings.LayoutWeaponSelectedWeaponKnife;
+		Layout_Weapon_CheckBox_SelectedWeapon_BlackSword.IsChecked = settings.LayoutWeaponSelectedWeaponBlackSword;
+		Layout_Weapon_CheckBox_SelectedWeapon_DarkHammer.IsChecked = settings.LayoutWeaponSelectedWeaponDarkHammer;
+		Layout_Weapon_CheckBox_SelectedWeapon_EggLance.IsChecked = settings.LayoutWeaponSelectedWeaponEggLance;
+		Layout_Weapon_CheckBox_SelectedWeapon_SamuraiSwordLv1.IsChecked = settings.LayoutWeaponSelectedWeaponSamuraiSwordLv1;
+		Layout_Weapon_CheckBox_SelectedWeapon_SamuraiSwordLv2.IsChecked = settings.LayoutWeaponSelectedWeaponSamuraiSwordLv2;
+		Layout_Weapon_CheckBox_SelectedWeapon_SatelliteLaserLv1.IsChecked = settings.LayoutWeaponSelectedWeaponSatelliteLaserLv1;
+		Layout_Weapon_CheckBox_SelectedWeapon_SatelliteLaserLv2.IsChecked = settings.LayoutWeaponSelectedWeaponSatelliteLaserLv2;
+		Layout_Weapon_CheckBox_SelectedWeapon_EggVacuumLv1.IsChecked = settings.LayoutWeaponSelectedWeaponEggVacuumLv1;
+		Layout_Weapon_CheckBox_SelectedWeapon_EggVacuumLv2.IsChecked = settings.LayoutWeaponSelectedWeaponEggVacuumLv2;
+		Layout_Weapon_CheckBox_SelectedWeapon_OmochaoGunLv1.IsChecked = settings.LayoutWeaponSelectedWeaponOmochaoGunLv1;
+		Layout_Weapon_CheckBox_SelectedWeapon_OmochaoGunLv2.IsChecked = settings.LayoutWeaponSelectedWeaponOmochaoGunLv2;
+		Layout_Weapon_CheckBox_SelectedWeapon_HealCannonLv1.IsChecked = settings.LayoutWeaponSelectedWeaponHealCannonLv1;
+		Layout_Weapon_CheckBox_SelectedWeapon_HealCannonLv2.IsChecked = settings.LayoutWeaponSelectedWeaponHealCannonLv2;
+		Layout_Weapon_CheckBox_SelectedWeapon_ShadowRifle.IsChecked = settings.LayoutWeaponSelectedWeaponShadowRifle;
+		// Partner
+		Layout_Partner_ComboBox_Mode.SelectedIndex = (int)settings.LayoutPartnerMode;
+		Layout_Partner_CheckBox_KeepAffiliationOfOriginalObject.IsChecked = settings.LayoutPartnerKeepOriginalObjectAffiliation;
 
-			// Layout
-			Layout_CheckBox_RandomizeLayouts.IsChecked = settings.RandomizeLayouts;
-			Layout_CheckBox_MakeCCSplinesVehicleCompatible.IsChecked = settings.LayoutMakeCCSplinesVehicleCompatible;
-			// Enemy
-			Layout_Enemy_CheckBox_AdjustMissionCounts.IsChecked = settings.LayoutAdjustMissionCounts;
-			Layout_Enemy_NumericUpDown_AdjustMissionsReductionPercent.Value = settings.LayoutAdjustMissionCountsReductionPercent;
-			Layout_Enemy_ComboBox_Mode.SelectedIndex = (int)settings.LayoutEnemyMode;
-			Layout_Enemy_CheckBox_KeepType.IsChecked = settings.LayoutEnemyKeepType;
-			Layout_Enemy_CheckBox_OnlySelectedEnemyTypes.IsChecked = settings.LayoutEnemyOnlySelectedTypes;
-			// Selected Enemies
-			Layout_Enemy_CheckBox_SelectedEnemy_GUNSoldier.IsChecked = settings.LayoutEnemySelectedEnemyGUNSoldier;
-			Layout_Enemy_CheckBox_SelectedEnemy_GUNBeetle.IsChecked = settings.LayoutEnemySelectedEnemyGUNBeetle;
-			Layout_Enemy_CheckBox_SelectedEnemy_GUNBigfoot.IsChecked = settings.LayoutEnemySelectedEnemyGUNBigfoot;
-			Layout_Enemy_CheckBox_SelectedEnemy_GUNRobot.IsChecked = settings.LayoutEnemySelectedEnemyGUNRobot;
-			Layout_Enemy_CheckBox_SelectedEnemy_EggPierrot.IsChecked = settings.LayoutEnemySelectedEnemyEggPierrot;
-			Layout_Enemy_CheckBox_SelectedEnemy_EggPawn.IsChecked = settings.LayoutEnemySelectedEnemyEggPawn;
-			Layout_Enemy_CheckBox_SelectedEnemy_ShadowAndroid.IsChecked = settings.LayoutEnemySelectedEnemyShadowAndroid;
-			Layout_Enemy_CheckBox_SelectedEnemy_BAGiant.IsChecked = settings.LayoutEnemySelectedEnemyBAGiant;
-			Layout_Enemy_CheckBox_SelectedEnemy_BASoldier.IsChecked = settings.LayoutEnemySelectedEnemyBASoldier;
-			Layout_Enemy_CheckBox_SelectedEnemy_BAHawkVolt.IsChecked = settings.LayoutEnemySelectedEnemyBAHawkVolt;
-			Layout_Enemy_CheckBox_SelectedEnemy_BAWing.IsChecked = settings.LayoutEnemySelectedEnemyBAWing;
-			Layout_Enemy_CheckBox_SelectedEnemy_BAWorm.IsChecked = settings.LayoutEnemySelectedEnemyBAWorm;
-			Layout_Enemy_CheckBox_SelectedEnemy_BALarva.IsChecked = settings.LayoutEnemySelectedEnemyBALarva;
-			Layout_Enemy_CheckBox_SelectedEnemy_ArtificialChaos.IsChecked = settings.LayoutEnemySelectedEnemyArtificialChaos;
-			Layout_Enemy_CheckBox_SelectedEnemy_BAAssassin.IsChecked = settings.LayoutEnemySelectedEnemyBAAssassin;
-			// Weapon
-			Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes.IsChecked = settings.LayoutWeaponRandomWeaponsInAllBoxes;
-			Layout_Weapon_CheckBox_RandomWeaponsInWeaponBoxes.IsChecked = settings.LayoutWeaponRandomWeaponsInWeaponBoxes;
-			Layout_Weapon_CheckBox_RandomExposedWeapons.IsChecked = settings.LayoutWeaponRandomExposedWeapons;
-			Layout_Weapon_CheckBox_RandomWeaponsFromEnvironment.IsChecked = settings.LayoutWeaponRandomWeaponsFromEnvironment;
-			Layout_Weapon_CheckBox_OnlySelectedWeapons.IsChecked = settings.LayoutWeaponOnlySelectedTypes;
-			// Selected Weapons
-			Layout_Weapon_CheckBox_SelectedWeapon_None.IsChecked = settings.LayoutWeaponSelectedWeaponNone;
-			Layout_Weapon_CheckBox_SelectedWeapon_Pistol.IsChecked = settings.LayoutWeaponSelectedWeaponPistol;
-			Layout_Weapon_CheckBox_SelectedWeapon_SubmachineGun.IsChecked = settings.LayoutWeaponSelectedWeaponSubmachineGun;
-			Layout_Weapon_CheckBox_SelectedWeapon_AssaultRifle.IsChecked = settings.LayoutWeaponSelectedWeaponAssaultRifle;
-			Layout_Weapon_CheckBox_SelectedWeapon_HeavyMachineGun.IsChecked = settings.LayoutWeaponSelectedWeaponHeavyMachineGun;
-			Layout_Weapon_CheckBox_SelectedWeapon_GatlingGun.IsChecked = settings.LayoutWeaponSelectedWeaponGatlingGun;
-			Layout_Weapon_CheckBox_SelectedWeapon_EggPistol.IsChecked = settings.LayoutWeaponSelectedWeaponEggPistol;
-			Layout_Weapon_CheckBox_SelectedWeapon_LightShot.IsChecked = settings.LayoutWeaponSelectedWeaponLightShot;
-			Layout_Weapon_CheckBox_SelectedWeapon_FlashShot.IsChecked = settings.LayoutWeaponSelectedWeaponFlashShot;
-			Layout_Weapon_CheckBox_SelectedWeapon_RingShot.IsChecked = settings.LayoutWeaponSelectedWeaponRingShot;
-			Layout_Weapon_CheckBox_SelectedWeapon_HeavyShot.IsChecked = settings.LayoutWeaponSelectedWeaponHeavyShot;
-			Layout_Weapon_CheckBox_SelectedWeapon_GrenadeLauncher.IsChecked = settings.LayoutWeaponSelectedWeaponGrenadeLauncher;
-			Layout_Weapon_CheckBox_SelectedWeapon_GUNBazooka.IsChecked = settings.LayoutWeaponSelectedWeaponGUNBazooka;
-			Layout_Weapon_CheckBox_SelectedWeapon_TankCannon.IsChecked = settings.LayoutWeaponSelectedWeaponTankCannon;
-			Layout_Weapon_CheckBox_SelectedWeapon_BlackBarrel.IsChecked = settings.LayoutWeaponSelectedWeaponBlackBarrel;
-			Layout_Weapon_CheckBox_SelectedWeapon_BigBarrel.IsChecked = settings.LayoutWeaponSelectedWeaponBigBarrel;
-			Layout_Weapon_CheckBox_SelectedWeapon_EggBazooka.IsChecked = settings.LayoutWeaponSelectedWeaponEggBazooka;
-			Layout_Weapon_CheckBox_SelectedWeapon_RPG.IsChecked = settings.LayoutWeaponSelectedWeaponRPG;
-			Layout_Weapon_CheckBox_SelectedWeapon_FourShot.IsChecked = settings.LayoutWeaponSelectedWeaponFourShot;
-			Layout_Weapon_CheckBox_SelectedWeapon_EightShot.IsChecked = settings.LayoutWeaponSelectedWeaponEightShot;
-			Layout_Weapon_CheckBox_SelectedWeapon_WormShooterBlack.IsChecked = settings.LayoutWeaponSelectedWeaponWormShooterBlack;
-			Layout_Weapon_CheckBox_SelectedWeapon_WormShooterRed.IsChecked = settings.LayoutWeaponSelectedWeaponWormShooterRed;
-			Layout_Weapon_CheckBox_SelectedWeapon_WormShooterGold.IsChecked = settings.LayoutWeaponSelectedWeaponWormShooterGold;
-			Layout_Weapon_CheckBox_SelectedWeapon_VacuumPod.IsChecked = settings.LayoutWeaponSelectedWeaponVacuumPod;
-			Layout_Weapon_CheckBox_SelectedWeapon_LaserRifle.IsChecked = settings.LayoutWeaponSelectedWeaponLaserRifle;
-			Layout_Weapon_CheckBox_SelectedWeapon_Splitter.IsChecked = settings.LayoutWeaponSelectedWeaponSplitter;
-			Layout_Weapon_CheckBox_SelectedWeapon_Refractor.IsChecked = settings.LayoutWeaponSelectedWeaponRefractor;
-			Layout_Weapon_CheckBox_SelectedWeapon_Knife.IsChecked = settings.LayoutWeaponSelectedWeaponKnife;
-			Layout_Weapon_CheckBox_SelectedWeapon_BlackSword.IsChecked = settings.LayoutWeaponSelectedWeaponBlackSword;
-			Layout_Weapon_CheckBox_SelectedWeapon_DarkHammer.IsChecked = settings.LayoutWeaponSelectedWeaponDarkHammer;
-			Layout_Weapon_CheckBox_SelectedWeapon_EggLance.IsChecked = settings.LayoutWeaponSelectedWeaponEggLance;
-			Layout_Weapon_CheckBox_SelectedWeapon_SamuraiSwordLv1.IsChecked = settings.LayoutWeaponSelectedWeaponSamuraiSwordLv1;
-			Layout_Weapon_CheckBox_SelectedWeapon_SamuraiSwordLv2.IsChecked = settings.LayoutWeaponSelectedWeaponSamuraiSwordLv2;
-			Layout_Weapon_CheckBox_SelectedWeapon_SatelliteLaserLv1.IsChecked = settings.LayoutWeaponSelectedWeaponSatelliteLaserLv1;
-			Layout_Weapon_CheckBox_SelectedWeapon_SatelliteLaserLv2.IsChecked = settings.LayoutWeaponSelectedWeaponSatelliteLaserLv2;
-			Layout_Weapon_CheckBox_SelectedWeapon_EggVacuumLv1.IsChecked = settings.LayoutWeaponSelectedWeaponEggVacuumLv1;
-			Layout_Weapon_CheckBox_SelectedWeapon_EggVacuumLv2.IsChecked = settings.LayoutWeaponSelectedWeaponEggVacuumLv2;
-			Layout_Weapon_CheckBox_SelectedWeapon_OmochaoGunLv1.IsChecked = settings.LayoutWeaponSelectedWeaponOmochaoGunLv1;
-			Layout_Weapon_CheckBox_SelectedWeapon_OmochaoGunLv2.IsChecked = settings.LayoutWeaponSelectedWeaponOmochaoGunLv2;
-			Layout_Weapon_CheckBox_SelectedWeapon_HealCannonLv1.IsChecked = settings.LayoutWeaponSelectedWeaponHealCannonLv1;
-			Layout_Weapon_CheckBox_SelectedWeapon_HealCannonLv2.IsChecked = settings.LayoutWeaponSelectedWeaponHealCannonLv2;
-			Layout_Weapon_CheckBox_SelectedWeapon_ShadowRifle.IsChecked = settings.LayoutWeaponSelectedWeaponShadowRifle;
-			// Partner
-			Layout_Partner_ComboBox_Mode.SelectedIndex = (int)settings.LayoutPartnerMode;
-			Layout_Partner_CheckBox_KeepAffiliationOfOriginalObject.IsChecked = settings.LayoutPartnerKeepOriginalObjectAffiliation;
+		// Subtitles
+		Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked = settings.RandomizeSubtitlesVoicelines;
+		Subtitles_CheckBox_NoDuplicates.IsChecked = settings.SubtitlesNoDuplicates;
+		Subtitles_CheckBox_NoSystemMessages.IsChecked = settings.SubtitlesNoSystemMessages;
+		Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked = settings.SubtitlesOnlyLinkedAudio;
+		Subtitles_CheckBox_OnlySelectedCharacters.IsChecked = settings.SubtitlesOnlySelectedCharacters;
+		Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsChecked = settings.SubtitlesGiveAudioToNoLinkedAudio;
 
-			// Subtitles
-			Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked = settings.RandomizeSubtitlesVoicelines;
-			Subtitles_CheckBox_NoDuplicates.IsChecked = settings.SubtitlesNoDuplicates;
-			Subtitles_CheckBox_NoSystemMessages.IsChecked = settings.SubtitlesNoSystemMessages;
-			Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked = settings.SubtitlesOnlyLinkedAudio;
-			Subtitles_CheckBox_OnlySelectedCharacters.IsChecked = settings.SubtitlesOnlySelectedCharacters;
-			Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsChecked = settings.SubtitlesGiveAudioToNoLinkedAudio;
+		// Selected Characters
+		Subtitles_CheckBox_SelectedCharacter_Shadow.IsChecked = settings.SubtitlesSelectedCharacterShadow;
+		Subtitles_CheckBox_SelectedCharacter_Sonic.IsChecked = settings.SubtitlesSelectedCharacterSonic;
+		Subtitles_CheckBox_SelectedCharacter_Tails.IsChecked = settings.SubtitlesSelectedCharacterTails;
+		Subtitles_CheckBox_SelectedCharacter_Knuckles.IsChecked = settings.SubtitlesSelectedCharacterKnuckles;
+		Subtitles_CheckBox_SelectedCharacter_Amy.IsChecked = settings.SubtitlesSelectedCharacterAmy;
+		Subtitles_CheckBox_SelectedCharacter_Rouge.IsChecked = settings.SubtitlesSelectedCharacterRouge;
+		Subtitles_CheckBox_SelectedCharacter_Omega.IsChecked = settings.SubtitlesSelectedCharacterOmega;
+		Subtitles_CheckBox_SelectedCharacter_Vector.IsChecked = settings.SubtitlesSelectedCharacterVector;
+		Subtitles_CheckBox_SelectedCharacter_Espio.IsChecked = settings.SubtitlesSelectedCharacterEspio;
+		Subtitles_CheckBox_SelectedCharacter_Maria.IsChecked = settings.SubtitlesSelectedCharacterMaria;
+		Subtitles_CheckBox_SelectedCharacter_Charmy.IsChecked = settings.SubtitlesSelectedCharacterCharmy;
+		Subtitles_CheckBox_SelectedCharacter_Eggman.IsChecked = settings.SubtitlesSelectedCharacterEggman;
+		Subtitles_CheckBox_SelectedCharacter_BlackDoom.IsChecked = settings.SubtitlesSelectedCharacterBlackDoom;
+		Subtitles_CheckBox_SelectedCharacter_Cream.IsChecked = settings.SubtitlesSelectedCharacterCream;
+		Subtitles_CheckBox_SelectedCharacter_Cheese.IsChecked = settings.SubtitlesSelectedCharacterCheese;
+		Subtitles_CheckBox_SelectedCharacter_GUNCommander.IsChecked = settings.SubtitlesSelectedCharacterGUNCommander;
+		Subtitles_CheckBox_SelectedCharacter_GUNSoldier.IsChecked = settings.SubtitlesSelectedCharacterGUNSoldier;
 
-			// Selected Characters
-			Subtitles_CheckBox_SelectedCharacter_Shadow.IsChecked = settings.SubtitlesSelectedCharacterShadow;
-			Subtitles_CheckBox_SelectedCharacter_Sonic.IsChecked = settings.SubtitlesSelectedCharacterSonic;
-			Subtitles_CheckBox_SelectedCharacter_Tails.IsChecked = settings.SubtitlesSelectedCharacterTails;
-			Subtitles_CheckBox_SelectedCharacter_Knuckles.IsChecked = settings.SubtitlesSelectedCharacterKnuckles;
-			Subtitles_CheckBox_SelectedCharacter_Amy.IsChecked = settings.SubtitlesSelectedCharacterAmy;
-			Subtitles_CheckBox_SelectedCharacter_Rouge.IsChecked = settings.SubtitlesSelectedCharacterRouge;
-			Subtitles_CheckBox_SelectedCharacter_Omega.IsChecked = settings.SubtitlesSelectedCharacterOmega;
-			Subtitles_CheckBox_SelectedCharacter_Vector.IsChecked = settings.SubtitlesSelectedCharacterVector;
-			Subtitles_CheckBox_SelectedCharacter_Espio.IsChecked = settings.SubtitlesSelectedCharacterEspio;
-			Subtitles_CheckBox_SelectedCharacter_Maria.IsChecked = settings.SubtitlesSelectedCharacterMaria;
-			Subtitles_CheckBox_SelectedCharacter_Charmy.IsChecked = settings.SubtitlesSelectedCharacterCharmy;
-			Subtitles_CheckBox_SelectedCharacter_Eggman.IsChecked = settings.SubtitlesSelectedCharacterEggman;
-			Subtitles_CheckBox_SelectedCharacter_BlackDoom.IsChecked = settings.SubtitlesSelectedCharacterBlackDoom;
-			Subtitles_CheckBox_SelectedCharacter_Cream.IsChecked = settings.SubtitlesSelectedCharacterCream;
-			Subtitles_CheckBox_SelectedCharacter_Cheese.IsChecked = settings.SubtitlesSelectedCharacterCheese;
-			Subtitles_CheckBox_SelectedCharacter_GUNCommander.IsChecked = settings.SubtitlesSelectedCharacterGUNCommander;
-			Subtitles_CheckBox_SelectedCharacter_GUNSoldier.IsChecked = settings.SubtitlesSelectedCharacterGUNSoldier;
+		// Music
+		Music_CheckBox_RandomizeMusic.IsChecked = settings.RandomizeMusic;
+		Music_CheckBox_SkipChaosPowerUseJingles.IsChecked = settings.MusicSkipChaosPowers;
+		Music_CheckBox_SkipRankTheme.IsChecked = settings.MusicSkipRankTheme;
 
-			// Music
-			Music_CheckBox_RandomizeMusic.IsChecked = settings.RandomizeMusic;
-			Music_CheckBox_SkipChaosPowerUseJingles.IsChecked = settings.MusicSkipChaosPowers;
-			Music_CheckBox_SkipRankTheme.IsChecked = settings.MusicSkipRankTheme;
+		// Models
+		Models_CheckBox_RandomizeModel.IsChecked = settings.RandomizeModel;
+		Models_CheckBox_ModelP2.IsChecked = settings.RandomizeP2Model;
 
-			// Models
-			Models_CheckBox_RandomizeModel.IsChecked = settings.RandomizeModel;
-			Models_CheckBox_ModelP2.IsChecked = settings.RandomizeP2Model;
-
-			LoadGameData();
-		}
+		LoadGameData();
 	}
 
 	private void UserControl_Unloaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
 	{
 		// Level Order
-		settings.Seed = LevelOrder_TextBox_Seed.Text;
+		settings.Seed = LevelOrder_TextBox_Seed.Text ?? string.Empty;
 		settings.RandomSeed = LevelOrder_CheckBox_Random_Seed.IsChecked.Value;
 		settings.LevelOrderMode = (LevelOrderMode)LevelOrder_ComboBox_Mode.SelectedIndex;
 		settings.LevelOrderMainPath = (LevelOrderMainPath)LevelOrder_ComboBox_MainPath.SelectedIndex;
@@ -512,93 +510,90 @@ public partial class MainView : UserControl
 	private async void LoadGameData()
 	{
 		var topLevel = TopLevel.GetTopLevel(this);
+		if (topLevel == null) return;
 		var folderPath = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
 		{
 			Title = "Select the root folder of an extracted Shadow the Hedgehog disc image.",
 		});
 
-		if (folderPath is not null && folderPath.Count > 0)
-		{
-			if (settings.GamePath != folderPath.First().Path.LocalPath && Directory.Exists("backup"))
-			{
-				var msgbox = MessageBoxManager.GetMessageBoxStandard("Shadow Randomizer", "New game directory selected!\n\nDo you wish to erase the previous backup data and use the new data as a base?", ButtonEnum.YesNo, Icon.Question);
-				var result = await msgbox.ShowAsync();
-				switch (result)
-				{
-					case ButtonResult.Yes:
-						Directory.Delete("backup", true);
-						break;
-					case ButtonResult.No:
-						break;
-					default:
-						break;
-				}
-			}
-			settings.GamePath = folderPath.First().Path.LocalPath;
-			if (!Directory.Exists("backup"))
-				Directory.CreateDirectory("backup");
-			if (!File.Exists(Path.Combine("backup", "main.dol")))
-				File.Copy(Path.Combine(settings.GamePath, "sys", "main.dol"), Path.Combine("backup", "main.dol"));
-			if (!File.Exists(Path.Combine("backup", "bi2.bin")))
-				File.Copy(Path.Combine(settings.GamePath, "sys", "bi2.bin"), Path.Combine("backup", "bi2.bin"));
-			if (!File.Exists(Path.Combine("backup", "setid.bin")))
-				File.Copy(Path.Combine(settings.GamePath, "files", "setid.bin"), Path.Combine("backup", "setid.bin"));
-			if (!File.Exists(Path.Combine("backup", "nukkoro2.inf")))
-				File.Copy(Path.Combine(settings.GamePath, "files", "nukkoro2.inf"), Path.Combine("backup", "nukkoro2.inf"));
-			if (!Directory.Exists(Path.Combine("backup", "fonts")))
-				CopyDirectory(Path.Combine(settings.GamePath, "files", "fonts"), Path.Combine("backup", "fonts"));
-			if (!Directory.Exists(Path.Combine("backup", "music")))
-			{
-				Directory.CreateDirectory(Path.Combine("backup", "music"));
-				foreach (var fil in Directory.EnumerateFiles(Path.Combine(settings.GamePath, "files"), "*.adx"))
-					File.Copy(fil, Path.Combine("backup", "music", Path.GetFileName(fil)));
-			}
-			if (!Directory.Exists(Path.Combine("backup", "character")))
-				CopyDirectory(Path.Combine(settings.GamePath, "files", "character"), Path.Combine("backup", "character"));
-			if (!Directory.Exists(Path.Combine("backup", "sets")))
-			{
-				Directory.CreateDirectory(Path.Combine("backup", "sets"));
-				for (int stageIdToModify = 5; stageIdToModify < 45; stageIdToModify++)
-				{
-					stageAssociationIDMap.TryGetValue(stageIdToModify, out var stageId);
-					var stageDataIdentifier = "stg0" + stageId.ToString();
-					var datOne = stageDataIdentifier + "_dat.one";
-					var cmnLayout = stageDataIdentifier + "_cmn.dat";
-					var nrmLayout = stageDataIdentifier + "_nrm.dat";
-					var hrdLayout = stageDataIdentifier + "_hrd.dat";
-					var ds1Layout = stageDataIdentifier + "_ds1.dat";
-					var datOnePath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, datOne);
-					var cmnLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, cmnLayout);
-					var nrmLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, nrmLayout);
-					var hrdLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, hrdLayout);
-					var ds1LayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, ds1Layout);
-
-					if (!Directory.Exists(Path.Combine("backup", "sets", stageDataIdentifier)))
-						Directory.CreateDirectory(Path.Combine("backup", "sets", stageDataIdentifier));
-					File.Copy(datOnePath, Path.Combine("backup", "sets", stageDataIdentifier, datOne));
-					File.Copy(cmnLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, cmnLayout));
-					try { File.Copy(nrmLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, nrmLayout)); } catch (FileNotFoundException) { } // some stages don't have nrm
-					try { File.Copy(hrdLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, hrdLayout)); } catch (FileNotFoundException) { } // some stages don't have hrd
-					try { File.Copy(ds1LayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, ds1Layout)); } catch (FileNotFoundException) { } // some stages don't have ds1
-				}
-			}
-			topLevel.IsVisible = true;
-		}
-		else
+		if (folderPath.Count <= 0)
 		{
 			if (Application.Current?.ApplicationLifetime is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktopApp)
 			{
 				desktopApp.Shutdown();
 			}
+			return;
 		}
+		
+		if (settings.GamePath != folderPath[0].Path.LocalPath && Directory.Exists("backup"))
+		{
+			var msgbox = MessageBoxManager.GetMessageBoxStandard("Shadow Randomizer", "New game directory selected!\n\nDo you wish to erase the previous backup data and use the new data as a base?", ButtonEnum.YesNo, Icon.Question);
+			var result = await msgbox.ShowAsync();
+			switch (result)
+			{
+				case ButtonResult.Yes:
+					Directory.Delete("backup", true);
+					break;
+				case ButtonResult.No:
+					break;
+				default:
+					break;
+			}
+		}
+		settings.GamePath = folderPath[0].Path.LocalPath;
+		if (!Directory.Exists("backup"))
+			Directory.CreateDirectory("backup");
+		if (!File.Exists(Path.Combine("backup", "main.dol")))
+			File.Copy(Path.Combine(settings.GamePath, "sys", "main.dol"), Path.Combine("backup", "main.dol"));
+		if (!File.Exists(Path.Combine("backup", "bi2.bin")))
+			File.Copy(Path.Combine(settings.GamePath, "sys", "bi2.bin"), Path.Combine("backup", "bi2.bin"));
+		if (!File.Exists(Path.Combine("backup", "setid.bin")))
+			File.Copy(Path.Combine(settings.GamePath, "files", "setid.bin"), Path.Combine("backup", "setid.bin"));
+		if (!File.Exists(Path.Combine("backup", "nukkoro2.inf")))
+			File.Copy(Path.Combine(settings.GamePath, "files", "nukkoro2.inf"), Path.Combine("backup", "nukkoro2.inf"));
+		if (!Directory.Exists(Path.Combine("backup", "fonts")))
+			CopyDirectory(Path.Combine(settings.GamePath, "files", "fonts"), Path.Combine("backup", "fonts"));
+		if (!Directory.Exists(Path.Combine("backup", "music")))
+		{
+			Directory.CreateDirectory(Path.Combine("backup", "music"));
+			foreach (var fil in Directory.EnumerateFiles(Path.Combine(settings.GamePath, "files"), "*.adx"))
+				File.Copy(fil, Path.Combine("backup", "music", Path.GetFileName(fil)));
+		}
+		if (!Directory.Exists(Path.Combine("backup", "character")))
+			CopyDirectory(Path.Combine(settings.GamePath, "files", "character"), Path.Combine("backup", "character"));
+		if (!Directory.Exists(Path.Combine("backup", "sets")))
+		{
+			Directory.CreateDirectory(Path.Combine("backup", "sets"));
+			for (var stageIdToModify = 5; stageIdToModify < 45; stageIdToModify++)
+			{
+				stageAssociationIDMap.TryGetValue(stageIdToModify, out var stageId);
+				var stageDataIdentifier = "stg0" + stageId;
+				var datOne = stageDataIdentifier + "_dat.one";
+				var cmnLayout = stageDataIdentifier + "_cmn.dat";
+				var nrmLayout = stageDataIdentifier + "_nrm.dat";
+				var hrdLayout = stageDataIdentifier + "_hrd.dat";
+				var ds1Layout = stageDataIdentifier + "_ds1.dat";
+				var datOnePath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, datOne);
+				var cmnLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, cmnLayout);
+				var nrmLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, nrmLayout);
+				var hrdLayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, hrdLayout);
+				var ds1LayoutPath = Path.Combine(settings.GamePath, "files", stageDataIdentifier, ds1Layout);
+
+				if (!Directory.Exists(Path.Combine("backup", "sets", stageDataIdentifier)))
+					Directory.CreateDirectory(Path.Combine("backup", "sets", stageDataIdentifier));
+				File.Copy(datOnePath, Path.Combine("backup", "sets", stageDataIdentifier, datOne));
+				File.Copy(cmnLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, cmnLayout));
+				try { File.Copy(nrmLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, nrmLayout)); } catch (FileNotFoundException) { } // some stages don't have nrm
+				try { File.Copy(hrdLayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, hrdLayout)); } catch (FileNotFoundException) { } // some stages don't have hrd
+				try { File.Copy(ds1LayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, ds1Layout)); } catch (FileNotFoundException) { } // some stages don't have ds1
+			}
+		}
+		topLevel.IsVisible = true;
 	}
 
 	private static int CalculateSeed(string seedString)
 	{
-		using (SHA256 sha256 = SHA256.Create())
-		{
-			return BitConverter.ToInt32(sha256.ComputeHash(System.Text.Encoding.UTF8.GetBytes(seedString)), 0);
-		}
+		return BitConverter.ToInt32(SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(seedString)), 0);
 	}
 
 	private void Button_Randomize_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -611,7 +606,6 @@ public partial class MainView : UserControl
 	private async void RandomizationProcess()
 	{
 		byte[] dolfile = File.ReadAllBytes(Path.Combine("backup", "main.dol"));
-		int seed;
 		if (LevelOrder_CheckBox_Random_Seed.IsChecked.Value)
 		{
 			var randomBytes = new byte[10];
@@ -621,14 +615,14 @@ public partial class MainView : UserControl
 			}
 			LevelOrder_TextBox_Seed.Text = Convert.ToBase64String(randomBytes);
 		}
-		if (LevelOrder_TextBox_Seed.Text == null || LevelOrder_TextBox_Seed.Text == "")
+		if (string.IsNullOrEmpty(LevelOrder_TextBox_Seed.Text))
 		{
 			ShowSimpleMessage("Error", "Invalid Seed", ButtonEnum.Ok, Icon.Error);
 			ProgressBar_RandomizationProgress.Value = 0;
 			return;
 		}
 
-		seed = CalculateSeed(LevelOrder_TextBox_Seed.Text);
+		var seed = CalculateSeed(LevelOrder_TextBox_Seed.Text);
 		settings.LevelOrderMode = (LevelOrderMode)LevelOrder_ComboBox_Mode.SelectedIndex;
 		Random r = new Random(seed);
 		byte[] buf;
@@ -1244,7 +1238,7 @@ public partial class MainView : UserControl
 		}
 	}
 
-	private void CopyDirectory(DirectoryInfo srcDir, string dstDir, bool overwrite = false)
+	private static void CopyDirectory(DirectoryInfo srcDir, string dstDir, bool overwrite = false)
 	{
 		Directory.CreateDirectory(dstDir);
 		foreach (var dir in srcDir.EnumerateDirectories())
@@ -1253,7 +1247,7 @@ public partial class MainView : UserControl
 			fil.CopyTo(Path.Combine(dstDir, fil.Name), overwrite);
 	}
 
-	private void CopyDirectory(string srcDir, string dstDir, bool overwrite = false) => CopyDirectory(new DirectoryInfo(srcDir), dstDir, overwrite);
+	private static void CopyDirectory(string srcDir, string dstDir, bool overwrite = false) => CopyDirectory(new DirectoryInfo(srcDir), dstDir, overwrite);
 
 	private void RandomizeSubtitles(Random r)
 	{
@@ -1309,18 +1303,18 @@ public partial class MainView : UserControl
 				for (int j = 0; j < fontAndAudioData.mutatedFnt[i].GetEntryTableCount(); j++)
 				{
 					// Chained entries not accounted for, so may produce wacky results
-					int donotFNTEntryIndex = r.Next(0, fntRandomPool.Count - 1);
-					if (Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsChecked.Value && fntRandomPool[donotFNTEntryIndex].audioId == -1)
+					int donorFNTEntryIndex = r.Next(0, fntRandomPool.Count - 1);
+					if (Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsChecked.Value && fntRandomPool[donorFNTEntryIndex].audioId == -1)
 					{
 						int audio = r.Next(0, fontAndAudioData.afs.Files.Count - 1);
 						fontAndAudioData.mutatedFnt[i].SetEntryAudioId(j, audio);
 					}
 					else
 					{
-						fontAndAudioData.mutatedFnt[i].SetEntryAudioId(j, fntRandomPool[donotFNTEntryIndex].audioId);
+						fontAndAudioData.mutatedFnt[i].SetEntryAudioId(j, fntRandomPool[donorFNTEntryIndex].audioId);
 					}
-					fontAndAudioData.mutatedFnt[i].SetEntrySubtitle(j, fntRandomPool[donotFNTEntryIndex].subtitle);
-					fontAndAudioData.mutatedFnt[i].SetEntrySubtitleActiveTime(j, fntRandomPool[donotFNTEntryIndex].subtitleActiveTime);
+					fontAndAudioData.mutatedFnt[i].SetEntrySubtitle(j, fntRandomPool[donorFNTEntryIndex].subtitle);
+					fontAndAudioData.mutatedFnt[i].SetEntrySubtitleActiveTime(j, fntRandomPool[donorFNTEntryIndex].subtitleActiveTime);
 				}
 			}
 		}
@@ -1332,19 +1326,19 @@ public partial class MainView : UserControl
 				{
 					// Chained entries not accounted for, so may produce wacky results
 					int donorFNTIndex = r.Next(0, fontAndAudioData.mutatedFnt.Count - 1);
-					int donotFNTEntryIndex = r.Next(0, fontAndAudioData.initialFntState[donorFNTIndex].GetEntryTableCount() - 1);
-					if (Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsChecked.Value && fontAndAudioData.initialFntState[donorFNTIndex].GetEntryAudioId(donotFNTEntryIndex) == -1)
+					int donorFNTEntryIndex = r.Next(0, fontAndAudioData.initialFntState[donorFNTIndex].GetEntryTableCount() - 1);
+					if (Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsChecked.Value && fontAndAudioData.initialFntState[donorFNTIndex].GetEntryAudioId(donorFNTEntryIndex) == -1)
 					{
 						int audio = r.Next(0, fontAndAudioData.afs.Files.Count - 1);
 						fontAndAudioData.mutatedFnt[i].SetEntryAudioId(j, audio);
 					}
 					else
 					{
-						fontAndAudioData.mutatedFnt[i].SetEntryAudioId(j, fontAndAudioData.initialFntState[donorFNTIndex].GetEntryAudioId(donotFNTEntryIndex));
+						fontAndAudioData.mutatedFnt[i].SetEntryAudioId(j, fontAndAudioData.initialFntState[donorFNTIndex].GetEntryAudioId(donorFNTEntryIndex));
 					}
 
-					fontAndAudioData.mutatedFnt[i].SetEntrySubtitle(j, fontAndAudioData.initialFntState[donorFNTIndex].GetEntrySubtitle(donotFNTEntryIndex));
-					fontAndAudioData.mutatedFnt[i].SetEntrySubtitleActiveTime(j, fontAndAudioData.initialFntState[donorFNTIndex].GetEntrySubtitleActiveTime(donotFNTEntryIndex));
+					fontAndAudioData.mutatedFnt[i].SetEntrySubtitle(j, fontAndAudioData.initialFntState[donorFNTIndex].GetEntrySubtitle(donorFNTEntryIndex));
+					fontAndAudioData.mutatedFnt[i].SetEntrySubtitleActiveTime(j, fontAndAudioData.initialFntState[donorFNTIndex].GetEntrySubtitleActiveTime(donorFNTEntryIndex));
 				}
 			}
 		}
@@ -1379,7 +1373,7 @@ public partial class MainView : UserControl
 		{
 			currentAfs = afsArchive;
 			data = null; // for GC purpose
-		};
+		}
 		return (mutatedFnt: initialFntsOpenedState, initialFntState: openedFnts, afs: currentAfs);
 	}
 
@@ -1585,7 +1579,7 @@ public partial class MainView : UserControl
 			}
 			else
 			{
-				weaponsPool.AddRange(weapons);
+				weaponsPool.AddRange(Weapons);
 			}
 
 			if (Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes.IsChecked.Value)
@@ -1753,10 +1747,10 @@ public partial class MainView : UserControl
 			}
 			else
 			{
-				groundEnemies.AddRange(groundEnemyTypeMap);
-				flyingEnemies.AddRange(flyingEnemyTypeMap);
+				groundEnemies.AddRange(GroundEnemyTypes);
+				flyingEnemies.AddRange(FlyingEnemyTypes);
 				pathTypeFlyingEnemies.AddRange([typeof(Object0065_GUNBeetle), typeof(Object008E_BkWingLarge), typeof(Object008F_BkWingSmall)]);
-				allEnemies.AddRange(enemyTypeMap);
+				allEnemies.AddRange(EnemyTypes);
 			}
 
 			switch (enemyMode)
@@ -1789,7 +1783,7 @@ public partial class MainView : UserControl
 			if (ds1LayoutData != null)
 				LayoutEditorFunctions.SaveShadowLayout(ds1LayoutData, Path.Combine(settings.GamePath, "files", stageDataIdentifier, ds1Layout), false);
 
-			if (Layout_Enemy_CheckBox_AdjustMissionCounts.IsChecked.Value && nukkoro2EnemyCountStagesMap.TryGetValue(stageId, out var nukkoro2StageString))
+			if (Layout_Enemy_CheckBox_AdjustMissionCounts.IsChecked.Value && Nukkoro2EnemyCountStages.TryGetValue(stageId, out var nukkoro2StageString))
 			{
 				nukkoro2.TryGetValue(nukkoro2StageString.Item1, out var nukkoro2Stage);
 				switch (nukkoro2StageString.Item2)
@@ -1847,11 +1841,11 @@ public partial class MainView : UserControl
 		{
 			if (entry.objectEntry.List == 0x00 &&
 				(
-					(entry.objectEntry.Type >= 0x00 && entry.objectEntry.Type <= 0x0C) || // is a box/spring
-					(entry.objectEntry.Type == 0x3A) || // special weapons box
-					(entry.objectEntry.Type >= 0x64 && entry.objectEntry.Type <= 0x93) ||  // is an enemy
-					(entry.objectEntry.Type >= 0xC8 && entry.objectEntry.Type <= 0xFD) || // is a weapon
-					(entry.objectEntry.Type >= 0x46 && entry.objectEntry.Type <= 0x4E) // is a vehicle
+					entry.objectEntry.Type <= 0x0C || // is a box/spring
+					entry.objectEntry.Type == 0x3A || // special weapons box
+					entry.objectEntry.Type is >= 0x64 and <= 0x93 ||  // is an enemy
+					entry.objectEntry.Type is >= 0xC8 and <= 0xFD || // is a weapon
+					entry.objectEntry.Type is >= 0x46 and <= 0x4E // is a vehicle
 				)
 			)
 			{
@@ -1881,47 +1875,31 @@ public partial class MainView : UserControl
 		return 0;
 	}
 
-	private async void ShowSimpleMessage(string title, string message, ButtonEnum messageType, Icon messageIcon) {
+	private static async void ShowSimpleMessage(string title, string message, ButtonEnum messageType, Icon messageIcon) {
 		var error = MessageBoxManager.GetMessageBoxStandard(title, message, messageType, messageIcon);
 		await error.ShowAsync();
 	}
 
-	private int GetTotalGUNEnemies(List<SetObjectShadow> cmn, List<SetObjectShadow> nrm = null)
+	private static int GetTotalGUNEnemies(IReadOnlyList<SetObjectShadow> cmn, IReadOnlyList<SetObjectShadow>? nrm = null)
 	{
-		int total = 0;
-
-		for (int i = 0; i < cmn.Count(); i++)
-		{
-			if (cmn[i].List == 0x00 && (cmn[i].Type >= 0x64 && cmn[i].Type <= 0x68))
-			{
-				total++;
-			}
-		}
-
-		if (nrm != null)
-		{
-			for (int i = 0; i < nrm.Count(); i++)
-			{
-				if (nrm[i].List == 0x00 && (nrm[i].Type >= 0x64 && nrm[i].Type <= 0x68))
-				{
-					total++;
-				}
-			}
-		}
+		int total = cmn.Count(setObject => setObject is { List: 0x00, Type: >= 0x64 and <= 0x68 });
+		if (nrm == null) return total;
+		
+		total += nrm.Count(setObject => setObject is { List: 0x00, Type: >= 0x64 and <= 0x68 });
 		return total;
 	}
 
-	private int GetTotalBlackArmsEnemies(List<SetObjectShadow> cmn, List<SetObjectShadow> nrm = null)
+	private static int GetTotalBlackArmsEnemies(IReadOnlyList<SetObjectShadow> cmn, IReadOnlyList<SetObjectShadow>? nrm = null)
 	{
 		int total = 0;
 
-		for (int i = 0; i < cmn.Count(); i++)
+		foreach (var setObject in cmn)
 		{
-			if (cmn[i].List == 0x00 && (cmn[i].Type >= 0x8C && cmn[i].Type <= 0x93))
+			if (setObject is { List: 0x00, Type: >= 0x8C and <= 0x93 })
 			{
-				if (cmn[i].Type == 0x91) // BkLarva
+				if (setObject.Type == 0x91) // BkLarva
 				{
-					total += ((Object0091_BkLarva)cmn[i]).NumberOfLarva;
+					total += ((Object0091_BkLarva)setObject).NumberOfLarva;
 				}
 				else
 				{
@@ -1930,27 +1908,25 @@ public partial class MainView : UserControl
 			}
 		}
 
-		if (nrm != null)
+		if (nrm == null) return total;
+		foreach (var setObject in nrm)
 		{
-			for (int i = 0; i < nrm.Count(); i++)
+			if (setObject is { List: 0x00, Type: >= 0x8C and <= 0x93 })
 			{
-				if (nrm[i].List == 0x00 && (nrm[i].Type >= 0x8C && nrm[i].Type <= 0x93))
+				if (setObject.Type == 0x91) // BkLarva
 				{
-					if (nrm[i].Type == 0x91) // BkLarva
-					{
-						total += ((Object0091_BkLarva)nrm[i]).NumberOfLarva;
-					}
-					else
-					{
-						total++;
-					}
+					total += ((Object0091_BkLarva)setObject).NumberOfLarva;
+				}
+				else
+				{
+					total++;
 				}
 			}
 		}
 		return total;
 	}
 
-	private void MakeAllPartnersRandom(ref List<SetObjectShadow> setData, bool keepOriginalObjectAffiliation, Random r)
+	private static void MakeAllPartnersRandom(ref List<SetObjectShadow> setData, bool keepOriginalObjectAffiliation, Random r)
 	{
 		List<(Object0190_Partner item, int index)> partnerItems = setData
 			.Select((item, index) => new { Item = item, Index = index })
@@ -1975,7 +1951,7 @@ public partial class MainView : UserControl
 		}
 	}
 
-	private void MakeAllWeaponBoxesHaveRandomWeapons(ref List<SetObjectShadow> setData, List<EWeapon> weaponsPool, Random r)
+	private static void MakeAllWeaponBoxesHaveRandomWeapons(ref List<SetObjectShadow> setData, IReadOnlyList<EWeapon> weaponsPool, Random r)
 	{
 		List<(Object000C_WeaponBox item, int index)> weaponBoxItems = setData
 			.Select((item, index) => new { Item = item, Index = index })
@@ -1989,18 +1965,18 @@ public partial class MainView : UserControl
 			.Select(pair => (Item: (Object003A_SpecialWeaponBox)pair.Item, Index: pair.Index))
 			.ToList();
 
-		foreach (var weaponbox in weaponBoxItems)
+		foreach (var weaponBox in weaponBoxItems)
 		{
-			weaponbox.item.Weapon = weaponsPool[r.Next(weaponsPool.Count)];
-			var boxType = WeaponContainers.GetWeaponAffiliationBoxType(weaponbox.item.Weapon);
+			weaponBox.item.Weapon = weaponsPool[r.Next(weaponsPool.Count)];
+			var boxType = WeaponContainers.GetWeaponAffiliationBoxType(weaponBox.item.Weapon);
 			if (boxType.HasValue)
 			{
-				weaponbox.item.BoxType = boxType.Value;
-				setData[weaponbox.index] = weaponbox.item;
+				weaponBox.item.BoxType = boxType.Value;
+				setData[weaponBox.index] = weaponBox.item;
 			}
 			else
 			{
-				switch (weaponbox.item.Weapon)
+				switch (weaponBox.item.Weapon)
 				{
 					case EWeapon.SamuraiSwordLv1:
 					case EWeapon.SamuraiSwordLv2:
@@ -2013,10 +1989,10 @@ public partial class MainView : UserControl
 					case EWeapon.HealCannonLv1:
 					case EWeapon.HealCannonLv2:
 					case EWeapon.ShadowRifle:
-						WeaponContainers.ToSpecialWeaponBox(weaponbox.index, ref setData);
+						WeaponContainers.ToSpecialWeaponBox(weaponBox.index, ref setData);
 						break;
 					default:
-						setData[weaponbox.index] = weaponbox.item;
+						setData[weaponBox.index] = weaponBox.item;
 						break;
 				}
 			}
@@ -2049,7 +2025,7 @@ public partial class MainView : UserControl
 		}
 	}
 
-	private void MakeAllBoxesHaveRandomWeapons(ref List<SetObjectShadow> setData, List<EWeapon> weaponsPool, Random r)
+	private static void MakeAllBoxesHaveRandomWeapons(ref List<SetObjectShadow> setData, IReadOnlyList<EWeapon> weaponsPool, Random r)
 	{
 		List<(Object0009_WoodBox item, int index)> woodBoxItems = setData
 			.Select((item, index) => new { Item = item, Index = index })
@@ -2075,19 +2051,19 @@ public partial class MainView : UserControl
 			.Select(pair => (Item: (Object003A_SpecialWeaponBox)pair.Item, Index: pair.Index))
 			.ToList();
 
-		foreach (var woodbox in woodBoxItems)
+		foreach (var woodBox in woodBoxItems)
 		{
-			woodbox.item.BoxItem = EBoxItem.Weapon;
-			woodbox.item.ModifierWeapon = weaponsPool[r.Next(weaponsPool.Count)];
-			var boxType = WeaponContainers.GetWeaponAffiliationBoxType(woodbox.item.ModifierWeapon);
+			woodBox.item.BoxItem = EBoxItem.Weapon;
+			woodBox.item.ModifierWeapon = weaponsPool[r.Next(weaponsPool.Count)];
+			var boxType = WeaponContainers.GetWeaponAffiliationBoxType(woodBox.item.ModifierWeapon);
 			if (boxType.HasValue)
 			{
-				woodbox.item.BoxType = boxType.Value;
-				setData[woodbox.index] = woodbox.item;
+				woodBox.item.BoxType = boxType.Value;
+				setData[woodBox.index] = woodBox.item;
 			}
 			else
 			{
-				switch (woodbox.item.ModifierWeapon)
+				switch (woodBox.item.ModifierWeapon)
 				{
 					case EWeapon.SamuraiSwordLv1:
 					case EWeapon.SamuraiSwordLv2:
@@ -2100,27 +2076,27 @@ public partial class MainView : UserControl
 					case EWeapon.HealCannonLv1:
 					case EWeapon.HealCannonLv2:
 					case EWeapon.ShadowRifle:
-						WeaponContainers.ToSpecialWeaponBox(woodbox.index, ref setData);
+						WeaponContainers.ToSpecialWeaponBox(woodBox.index, ref setData);
 						break;
 					default:
-						setData[woodbox.index] = woodbox.item;
+						setData[woodBox.index] = woodBox.item;
 						break;
 				}
 			}
 		}
 
-		foreach (var weaponbox in weaponBoxItems)
+		foreach (var weaponBox in weaponBoxItems)
 		{
-			weaponbox.item.Weapon = weaponsPool[r.Next(weaponsPool.Count)];
-			var boxType = WeaponContainers.GetWeaponAffiliationBoxType(weaponbox.item.Weapon);
+			weaponBox.item.Weapon = weaponsPool[r.Next(weaponsPool.Count)];
+			var boxType = WeaponContainers.GetWeaponAffiliationBoxType(weaponBox.item.Weapon);
 			if (boxType.HasValue)
 			{
-				weaponbox.item.BoxType = boxType.Value;
-				setData[weaponbox.index] = weaponbox.item;
+				weaponBox.item.BoxType = boxType.Value;
+				setData[weaponBox.index] = weaponBox.item;
 			}
 			else
 			{
-				switch (weaponbox.item.Weapon)
+				switch (weaponBox.item.Weapon)
 				{
 					case EWeapon.SamuraiSwordLv1:
 					case EWeapon.SamuraiSwordLv2:
@@ -2133,28 +2109,28 @@ public partial class MainView : UserControl
 					case EWeapon.HealCannonLv1:
 					case EWeapon.HealCannonLv2:
 					case EWeapon.ShadowRifle:
-						WeaponContainers.ToSpecialWeaponBox(weaponbox.index, ref setData);
+						WeaponContainers.ToSpecialWeaponBox(weaponBox.index, ref setData);
 						break;
 					default:
-						setData[weaponbox.index] = weaponbox.item;
+						setData[weaponBox.index] = weaponBox.item;
 						break;
 				}
 			}
 		}
 
-		foreach (var metalbox in metalBoxItems)
+		foreach (var metalBox in metalBoxItems)
 		{
-			metalbox.item.BoxItem = EBoxItem.Weapon;
-			metalbox.item.ModifierWeapon = weaponsPool[r.Next(weaponsPool.Count)];
-			var boxType = WeaponContainers.GetWeaponAffiliationBoxType(metalbox.item.ModifierWeapon);
+			metalBox.item.BoxItem = EBoxItem.Weapon;
+			metalBox.item.ModifierWeapon = weaponsPool[r.Next(weaponsPool.Count)];
+			var boxType = WeaponContainers.GetWeaponAffiliationBoxType(metalBox.item.ModifierWeapon);
 			if (boxType.HasValue)
 			{
-				metalbox.item.BoxType = boxType.Value;
-				setData[metalbox.index] = metalbox.item;
+				metalBox.item.BoxType = boxType.Value;
+				setData[metalBox.index] = metalBox.item;
 			}
 			else
 			{
-				switch (metalbox.item.ModifierWeapon)
+				switch (metalBox.item.ModifierWeapon)
 				{
 					case EWeapon.SamuraiSwordLv1:
 					case EWeapon.SamuraiSwordLv2:
@@ -2167,10 +2143,10 @@ public partial class MainView : UserControl
 					case EWeapon.HealCannonLv1:
 					case EWeapon.HealCannonLv2:
 					case EWeapon.ShadowRifle:
-						WeaponContainers.ToSpecialWeaponBox(metalbox.index, ref setData);
+						WeaponContainers.ToSpecialWeaponBox(metalBox.index, ref setData);
 						break;
 					default:
-						setData[metalbox.index] = metalbox.item;
+						setData[metalBox.index] = metalBox.item;
 						break;
 				}
 			}
@@ -2203,7 +2179,7 @@ public partial class MainView : UserControl
 		}
 	}
 
-	private void RandomizeWeaponsOnGround(ref List<SetObjectShadow> setData, List<EWeapon> weaponsPool, Random r)
+	private static void RandomizeWeaponsOnGround(ref List<SetObjectShadow> setData, IReadOnlyList<EWeapon> weaponsPool, Random r)
 	{
 		List<(Object0020_Weapon item, int index)> weaponsOnGroundItems = setData
 			.Select((item, index) => new { Item = item, Index = index })
@@ -2218,7 +2194,7 @@ public partial class MainView : UserControl
 		}
 	}
 
-	private void RandomizeEnvironmentWeaponDrops(ref List<SetObjectShadow> setData, List<EWeapon> weaponsPool, Random r)
+	private static void RandomizeEnvironmentWeaponDrops(ref List<SetObjectShadow> setData, List<EWeapon> weaponsPool, Random r)
 	{
 		List<(Object012C_EnvironmentalWeapon item, int index)> environmentWeaponItems = setData
 			.Select((item, index) => new { Item = item, Index = index })
@@ -2235,7 +2211,7 @@ public partial class MainView : UserControl
 		}
 	}
 
-	private void DelinkVehicleObjects(ref List<SetObjectShadow> setData)
+	private static void DelinkVehicleObjects(ref List<SetObjectShadow> setData)
 	{
 		List<(Object004F_Vehicle item, int index)> vehicleItems = setData
 			.Select((item, index) => new { Item = item, Index = index })
@@ -2250,130 +2226,129 @@ public partial class MainView : UserControl
 		}
 	}
 
-	private void WildRandomizeAllEnemiesWithTranslations(ref List<SetObjectShadow> setData, List<Type> allEnemies, List<Type> groundEnemies, List<Type> flyingEnemies, List<Type> pathTypeFlyingEnemies, Random r)
+	private void WildRandomizeAllEnemiesWithTranslations(ref List<SetObjectShadow> setData, IReadOnlyList<Type> allEnemies, IReadOnlyList<Type> groundEnemies, IReadOnlyList<Type> flyingEnemies, IReadOnlyList<Type> pathTypeFlyingEnemies, Random r)
 	{
 		// Wild Randomize of all Enemies
-		for (int i = 0; i < setData.Count(); i++)
+		for (int i = 0; i < setData.Count; i++)
 		{
-			if (setData[i].List == 0x00 && (setData[i].Type >= 0x64 && setData[i].Type <= 0x93))
+			if (setData[i].List != 0x00 || setData[i].Type < 0x64 || setData[i].Type > 0x93) continue;
+			Type randomEnemyType;
+			if (Layout_Enemy_CheckBox_KeepType.IsChecked.Value)
 			{
-				Type randomEnemyType = typeof(Nullable);
-				if (Layout_Enemy_CheckBox_KeepType.IsChecked.Value)
+				if (EnemyHelpers.IsFlyingEnemy(setData[i]))
 				{
-					if (EnemyHelpers.IsFlyingEnemy(setData[i]))
+					if (setData[i].List == 0x00 && setData[i].Type == 0x90)
 					{
-						if (setData[i].List == 0x00 && setData[i].Type == 0x90)
+						// if BkWorm, mutate original posY +50
+						setData[i].PosY = setData[i].PosY + 50;
+					}
+					// if path type enemy
+					if (EnemyHelpers.IsPathTypeFlyingEnemy(setData[i]))
+					{
+						if (pathTypeFlyingEnemies.Count == 0)
 						{
-							// if BkWorm, mutate original posY +50
-							setData[i].PosY = setData[i].PosY + 50;
+							// delete the object? for now just skip it
+							continue;
 						}
-						// if path type enemy
-						if (EnemyHelpers.IsPathTypeFlyingEnemy(setData[i]))
-						{
-							if (pathTypeFlyingEnemies.Count == 0)
-							{
-								// delete the object? for now just skip it
-								continue;
-							}
-							randomEnemyType = pathTypeFlyingEnemies[r.Next(pathTypeFlyingEnemies.Count)];
-						}
-						else
-						{
-							randomEnemyType = flyingEnemies[r.Next(flyingEnemies.Count)];
-							if (randomEnemyType == typeof(Object0066_GUNBigfoot)) // special case for BkNinja and Bigfoot, since we need to force a specific 
-							{
-								var donor = new Object0066_GUNBigfoot
-								{
-									List = 0x00,
-									Type = 0x66,
-									MoveRange = 200, // EnemyBase
-									SearchRange = 200,
-									SearchAngle = 0,
-									SearchWidth = 600,
-									SearchHeight = 400,
-									SearchHeightOffset = 0,
-									MoveSpeedRatio = 1, // end EnemyBase
-									AppearType = Object0066_GUNBigfoot.EAppear.ZUTTO_HOVERING,
-									WeaponType = (Object0066_GUNBigfoot.EWeapon)r.Next(2),
-									OffsetPos_Y = 50
-								};
-								SETMutations.MutateObjectAtIndex(i, donor, ref setData, true, r);
-								continue; // skip the MutateObject below since we handled it ourselves
-							}
-							else if (randomEnemyType == typeof(Object0093_BkNinja))
-							{
-								var donor = new Object0093_BkNinja
-								{
-									List = 0x00,
-									Type = 0x93,
-									MoveRange = 300,
-									SearchRange = 0,
-									SearchAngle = 0,
-									SearchWidth = 500,
-									SearchHeight = 300,
-									SearchHeightOffset = 0,
-									MoveSpeedRatio = 1,
-									AppearType = Object0093_BkNinja.EAppear.ON_AIR_SAUCER_WARP,
-									ShootCount = r.Next(1, 5),
-									AttackInterval = 1,
-									WaitInterval = 1,
-									Pos0_X = 0,
-									Pos0_Y = 0,
-									Pos0_Z = 0,
-									UNUSED_Pos0_IntWaitType = 0,
-									UNUSED_Pos0_DisappearTime = 0,
-									UNUSED_Pos1_X = 0,
-									UNUSED_Pos1_Y = 0,
-									UNUSED_Pos1_Z = 0,
-									UNUSED_Pos1_WaitType = 0,
-									UNUSED_Pos1_DisappearTime = 0,
-									UNUSED_Float21 = 0,
-									UNUSED_Float22 = 0
-								};
-								SETMutations.MutateObjectAtIndex(i, donor, ref setData, true, r);
-								continue; // skip the MutateObject below since we handled it ourselves
-							}
-						}
+						randomEnemyType = pathTypeFlyingEnemies[r.Next(pathTypeFlyingEnemies.Count)];
 					}
 					else
-					{ // ground enemies
-						int randomEnemy = -1;
-						if (setData[i].Link == 0 || setData[i].Link == 50)
+					{
+						randomEnemyType = flyingEnemies[r.Next(flyingEnemies.Count)];
+						if (randomEnemyType == typeof(Object0066_GUNBigfoot)) // special case for BkNinja and Bigfoot, since we need to force a specific 
 						{
-							randomEnemy = r.Next(groundEnemies.Count); // All enemies if LinkID = 0 or 50
+							var donor = new Object0066_GUNBigfoot
+							{
+								List = 0x00,
+								Type = 0x66,
+								MoveRange = 200, // EnemyBase
+								SearchRange = 200,
+								SearchAngle = 0,
+								SearchWidth = 600,
+								SearchHeight = 400,
+								SearchHeightOffset = 0,
+								MoveSpeedRatio = 1, // end EnemyBase
+								AppearType = Object0066_GUNBigfoot.EAppear.ZUTTO_HOVERING,
+								WeaponType = (Object0066_GUNBigfoot.EWeapon)r.Next(2),
+								OffsetPos_Y = 50
+							};
+							SETMutations.MutateObjectAtIndex(i, donor, ref setData, true, r);
+							continue; // skip the MutateObject below since we handled it ourselves
 						}
-						else
+
+						if (randomEnemyType == typeof(Object0093_BkNinja))
 						{
-							if (groundEnemies[0] == typeof(Object0064_GUNSoldier))
-								randomEnemy = r.Next(1, groundEnemies.Count); // skip GUN Soldiers otherwise
-							else
-								randomEnemy = r.Next(groundEnemies.Count);
+							var donor = new Object0093_BkNinja
+							{
+								List = 0x00,
+								Type = 0x93,
+								MoveRange = 300,
+								SearchRange = 0,
+								SearchAngle = 0,
+								SearchWidth = 500,
+								SearchHeight = 300,
+								SearchHeightOffset = 0,
+								MoveSpeedRatio = 1,
+								AppearType = Object0093_BkNinja.EAppear.ON_AIR_SAUCER_WARP,
+								ShootCount = r.Next(1, 5),
+								AttackInterval = 1,
+								WaitInterval = 1,
+								Pos0_X = 0,
+								Pos0_Y = 0,
+								Pos0_Z = 0,
+								UNUSED_Pos0_IntWaitType = 0,
+								UNUSED_Pos0_DisappearTime = 0,
+								UNUSED_Pos1_X = 0,
+								UNUSED_Pos1_Y = 0,
+								UNUSED_Pos1_Z = 0,
+								UNUSED_Pos1_WaitType = 0,
+								UNUSED_Pos1_DisappearTime = 0,
+								UNUSED_Float21 = 0,
+								UNUSED_Float22 = 0
+							};
+							SETMutations.MutateObjectAtIndex(i, donor, ref setData, true, r);
+							continue; // skip the MutateObject below since we handled it ourselves
 						}
-						randomEnemyType = groundEnemies[randomEnemy];
 					}
 				}
 				else
-				{
-					int randomEnemy = -1;
+				{ // ground enemies
+					int randomEnemy;
 					if (setData[i].Link == 0 || setData[i].Link == 50)
 					{
-						randomEnemy = r.Next(allEnemies.Count); // All enemies if LinkID = 0 or 50
+						randomEnemy = r.Next(groundEnemies.Count); // All enemies if LinkID = 0 or 50
 					}
 					else
 					{
 						if (groundEnemies[0] == typeof(Object0064_GUNSoldier))
-							randomEnemy = r.Next(1, allEnemies.Count); // skip GUN Soldiers otherwise
+							randomEnemy = r.Next(1, groundEnemies.Count); // skip GUN Soldiers otherwise
 						else
-							randomEnemy = r.Next(allEnemies.Count);
+							randomEnemy = r.Next(groundEnemies.Count);
 					}
-					randomEnemyType = allEnemies[randomEnemy];
+					randomEnemyType = groundEnemies[randomEnemy];
 				}
-				SETMutations.MutateObjectAtIndex(i, randomEnemyType, ref setData, true, r);
 			}
+			else
+			{
+				int randomEnemy;
+				if (setData[i].Link == 0 || setData[i].Link == 50)
+				{
+					randomEnemy = r.Next(allEnemies.Count); // All enemies if LinkID = 0 or 50
+				}
+				else
+				{
+					if (groundEnemies[0] == typeof(Object0064_GUNSoldier))
+						randomEnemy = r.Next(1, allEnemies.Count); // skip GUN Soldiers otherwise
+					else
+						randomEnemy = r.Next(allEnemies.Count);
+				}
+				randomEnemyType = allEnemies[randomEnemy];
+			}
+			SETMutations.MutateObjectAtIndex(i, randomEnemyType, ref setData, true, r);
 		}
 	}
 
-	void RandomizeModels(Random r)
+	private void RandomizeModels(Random r)
 	{
 		CopyDirectory(Path.Combine("backup", "character"), Path.Combine(settings.GamePath, "files", "character"), true); // restore all default models
 		var mdls = Directory.GetFiles("RandoModels", "shadow.one", SearchOption.AllDirectories).Prepend(Path.Combine("backup", "character", "shadow.one")).ToArray();
@@ -2457,14 +2432,14 @@ public partial class MainView : UserControl
 		return LevelNames[id];
 	}
 
-	int[] FindShortestPath(int start)
+	private int[] FindShortestPath(int start)
 	{
 		Stack<int> stack = new Stack<int>(stagecount);
 		stack.Push(start);
 		return FindShortestPath(stages[start], stack, null);
 	}
 
-	int[] FindShortestPath(Stage stage, Stack<int> path, int[] shortestPath)
+	private int[] FindShortestPath(Stage stage, Stack<int> path, int[] shortestPath)
 	{
 		if (shortestPath != null && path.Count >= shortestPath.Length)
 			return shortestPath;
@@ -3234,6 +3209,7 @@ public partial class MainView : UserControl
     private async void Spoilers_Button_SaveLog_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
 		var topLevel = TopLevel.GetTopLevel(this);
+		if (topLevel is null) return;
 		var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
 		{
 			Title = "Save log",
@@ -3241,236 +3217,231 @@ public partial class MainView : UserControl
 			FileTypeChoices = [FilePickerFileTypes.TextPlain]
 		});
 
-		if (file is not null)
+		if (file is null) return;
+		await using var stream = await file.OpenWriteAsync();
+		await using var sw = new StreamWriter(stream);
+		await sw.WriteLineAsync($"ShadowRando Version: {programVersion}");
+		await sw.WriteLineAsync($"Seed: {LevelOrder_TextBox_Seed.Text}");
+		await sw.WriteLineAsync("---- Level Order ----");
+		await sw.WriteLineAsync($"Level Order Mode: {settings.LevelOrderMode}");
+		if (settings.LevelOrderMode == LevelOrderMode.AllStagesWarps)
 		{
-			await using var stream = await file.OpenWriteAsync();
-			using var sw = new StreamWriter(stream);
-			sw.WriteLine($"ShadowRando Version: {programVersion}");
-			sw.WriteLine($"Seed: {LevelOrder_TextBox_Seed.Text}");
-			sw.WriteLine("---- Level Order ----");
-			sw.WriteLine($"Level Order Mode: {settings.LevelOrderMode}");
-			if (settings.LevelOrderMode == LevelOrderMode.AllStagesWarps)
-			{
-				sw.WriteLine($"Main Path: {settings.LevelOrderMainPath}");
-				sw.WriteLine($"Max Forwards Jump: {LevelOrder_NumericUpDown_MaxForwardsJump.Value}");
-				sw.WriteLine($"Max Backwards Jump: {LevelOrder_NumericUpDown_MaxBackwardsJump.Value}");
-				sw.WriteLine($"Backwards Jump Probability: {LevelOrder_NumericUpDown_BackwardsJumpProbability.Value}");
-				sw.WriteLine($"Allow Jumps To Same Level: {LevelOrder_CheckBox_AllowJumpsToSameLevel.IsChecked.Value}");
-			}
-			sw.WriteLine($"Include Last Story: {LevelOrder_CheckBox_IncludeLastStory.IsChecked.Value}");
-			sw.WriteLine($"Include Bosses: {LevelOrder_CheckBox_IncludeBosses.IsChecked.Value}");
-			sw.WriteLine($"Allow Boss -> Boss: {LevelOrder_CheckBox_AllowBossToBoss.IsChecked.Value}");
+			await sw.WriteLineAsync($"Main Path: {settings.LevelOrderMainPath}");
+			await sw.WriteLineAsync($"Max Forwards Jump: {LevelOrder_NumericUpDown_MaxForwardsJump.Value}");
+			await sw.WriteLineAsync($"Max Backwards Jump: {LevelOrder_NumericUpDown_MaxBackwardsJump.Value}");
+			await sw.WriteLineAsync($"Backwards Jump Probability: {LevelOrder_NumericUpDown_BackwardsJumpProbability.Value}");
+			await sw.WriteLineAsync($"Allow Jumps To Same Level: {LevelOrder_CheckBox_AllowJumpsToSameLevel.IsChecked.Value}");
+		}
+		await sw.WriteLineAsync($"Include Last Story: {LevelOrder_CheckBox_IncludeLastStory.IsChecked.Value}");
+		await sw.WriteLineAsync($"Include Bosses: {LevelOrder_CheckBox_IncludeBosses.IsChecked.Value}");
+		await sw.WriteLineAsync($"Allow Boss -> Boss: {LevelOrder_CheckBox_AllowBossToBoss.IsChecked.Value}");
 
-			sw.WriteLine("---- Layout ----");
-			sw.WriteLine($"Randomize Layouts: {Layout_CheckBox_RandomizeLayouts.IsChecked.Value}");
-			if (settings.RandomizeLayouts == true)
+		await sw.WriteLineAsync("---- Layout ----");
+		await sw.WriteLineAsync($"Randomize Layouts: {Layout_CheckBox_RandomizeLayouts.IsChecked.Value}");
+		if (settings.RandomizeLayouts == true)
+		{
+			await sw.WriteLineAsync($"Make CC Splines Vehicle Compatible: {Layout_CheckBox_MakeCCSplinesVehicleCompatible.IsChecked.Value}");
+			await sw.WriteLineAsync("--- Enemy ---");
+			await sw.WriteLineAsync($"Enemy Mode: {settings.LayoutEnemyMode}");
+			await sw.WriteLineAsync($"Adjust Mission Counts: {Layout_Enemy_CheckBox_AdjustMissionCounts.IsChecked.Value}");
+			await sw.WriteLineAsync($"Adjust Mission Counts Reduction %: {Layout_Enemy_NumericUpDown_AdjustMissionsReductionPercent.Value}");
+			await sw.WriteLineAsync($"Keep Type: {Layout_Enemy_CheckBox_KeepType.IsChecked.Value}");
+			await sw.WriteLineAsync($"Only Selected Enemy Types: {Layout_Enemy_CheckBox_OnlySelectedEnemyTypes.IsChecked.Value}");
+			if (Layout_Enemy_CheckBox_OnlySelectedEnemyTypes.IsChecked.Value)
 			{
-				sw.WriteLine($"Make CC Splines Vehicle Compatible: {Layout_CheckBox_MakeCCSplinesVehicleCompatible.IsChecked.Value}");
-				sw.WriteLine("--- Enemy ---");
-				sw.WriteLine($"Enemy Mode: {settings.LayoutEnemyMode}");
-				sw.WriteLine($"Adjust Mission Counts: {Layout_Enemy_CheckBox_AdjustMissionCounts.IsChecked.Value}");
-				sw.WriteLine($"Adjust Mission Counts Reduction %: {Layout_Enemy_NumericUpDown_AdjustMissionsReductionPercent.Value}");
-				sw.WriteLine($"Keep Type: {Layout_Enemy_CheckBox_KeepType.IsChecked.Value}");
-				sw.WriteLine($"Only Selected Enemy Types: {Layout_Enemy_CheckBox_OnlySelectedEnemyTypes.IsChecked.Value}");
-				if (Layout_Enemy_CheckBox_OnlySelectedEnemyTypes.IsChecked.Value)
-				{
-					sw.WriteLine($"GUN Soldier: {Layout_Enemy_CheckBox_SelectedEnemy_GUNSoldier.IsChecked.Value}");
-					sw.WriteLine($"GUN Beetle: {Layout_Enemy_CheckBox_SelectedEnemy_GUNBeetle.IsChecked.Value}");
-					sw.WriteLine($"GUN Bigfoot: {Layout_Enemy_CheckBox_SelectedEnemy_GUNBigfoot.IsChecked.Value}");
-					sw.WriteLine($"GUN Robot: {Layout_Enemy_CheckBox_SelectedEnemy_GUNRobot.IsChecked.Value}");
-					sw.WriteLine($"Egg Pierrot: {Layout_Enemy_CheckBox_SelectedEnemy_EggPierrot.IsChecked.Value}");
-					sw.WriteLine($"Egg Pawn: {Layout_Enemy_CheckBox_SelectedEnemy_EggPawn.IsChecked.Value}");
-					sw.WriteLine($"Shadow Android: {Layout_Enemy_CheckBox_SelectedEnemy_ShadowAndroid.IsChecked.Value}");
-					sw.WriteLine($"BA Giant: {Layout_Enemy_CheckBox_SelectedEnemy_BAGiant.IsChecked.Value}");
-					sw.WriteLine($"BA Soldier: {Layout_Enemy_CheckBox_SelectedEnemy_BASoldier.IsChecked.Value}");
-					sw.WriteLine($"BA Hawk/Volt: {Layout_Enemy_CheckBox_SelectedEnemy_BAHawkVolt.IsChecked.Value}");
-					sw.WriteLine($"BA Wing: {Layout_Enemy_CheckBox_SelectedEnemy_BAWing.IsChecked.Value}");
-					sw.WriteLine($"BA Worm: {Layout_Enemy_CheckBox_SelectedEnemy_BAWorm.IsChecked.Value}");
-					sw.WriteLine($"BA Larva: {Layout_Enemy_CheckBox_SelectedEnemy_BALarva.IsChecked.Value}");
-					sw.WriteLine($"Artificial Chaos: {Layout_Enemy_CheckBox_SelectedEnemy_ArtificialChaos.IsChecked.Value}");
-					sw.WriteLine($"BA Assassin: {Layout_Enemy_CheckBox_SelectedEnemy_BAAssassin.IsChecked.Value}");
-				}
-				sw.WriteLine("--- Weapon ---");
-				sw.WriteLine($"Random Weapons In Weapon Boxes: {Layout_Weapon_CheckBox_RandomWeaponsInWeaponBoxes.IsChecked.Value}");
-				sw.WriteLine($"Random Weapons In All Boxes: {Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes.IsChecked.Value}");
-				sw.WriteLine($"Random Exposed Weapons: {Layout_Weapon_CheckBox_RandomExposedWeapons.IsChecked.Value}");
-				sw.WriteLine($"Environment Drops Random Weapons: {Layout_Weapon_CheckBox_RandomWeaponsFromEnvironment.IsChecked.Value}");
-				sw.WriteLine($"Only Selected Weapons: {Layout_Weapon_CheckBox_OnlySelectedWeapons.IsChecked.Value}");
-				if (Layout_Weapon_CheckBox_OnlySelectedWeapons.IsChecked.Value)
-				{
-					sw.WriteLine($"None: {Layout_Weapon_CheckBox_SelectedWeapon_None.IsChecked.Value}");
-					sw.WriteLine($"Pistol: {Layout_Weapon_CheckBox_SelectedWeapon_Pistol.IsChecked.Value}");
-					sw.WriteLine($"Submachine Gun: {Layout_Weapon_CheckBox_SelectedWeapon_SubmachineGun.IsChecked.Value}");
-					sw.WriteLine($"Assault Rifle: {Layout_Weapon_CheckBox_SelectedWeapon_AssaultRifle.IsChecked.Value}");
-					sw.WriteLine($"Heavy Machine Gun: {Layout_Weapon_CheckBox_SelectedWeapon_HeavyMachineGun.IsChecked.Value}");
-					sw.WriteLine($"Gatling Gun: {Layout_Weapon_CheckBox_SelectedWeapon_GatlingGun.IsChecked.Value}");
-					sw.WriteLine($"Egg Pistol: {Layout_Weapon_CheckBox_SelectedWeapon_EggPistol.IsChecked.Value}");
-					sw.WriteLine($"Light Shot: {Layout_Weapon_CheckBox_SelectedWeapon_LightShot.IsChecked.Value}");
-					sw.WriteLine($"Flash Shot: {Layout_Weapon_CheckBox_SelectedWeapon_FlashShot.IsChecked.Value}");
-					sw.WriteLine($"Ring Shot: {Layout_Weapon_CheckBox_SelectedWeapon_RingShot.IsChecked.Value}");
-					sw.WriteLine($"Heavy Shot: {Layout_Weapon_CheckBox_SelectedWeapon_HeavyShot.IsChecked.Value}");
-					sw.WriteLine($"Grenade Launcher: {Layout_Weapon_CheckBox_SelectedWeapon_GrenadeLauncher.IsChecked.Value}");
-					sw.WriteLine($"GUN Bazooka: {Layout_Weapon_CheckBox_SelectedWeapon_GUNBazooka.IsChecked.Value}");
-					sw.WriteLine($"Tank Cannon: {Layout_Weapon_CheckBox_SelectedWeapon_TankCannon.IsChecked.Value}");
-					sw.WriteLine($"Black Barrel: {Layout_Weapon_CheckBox_SelectedWeapon_BlackBarrel.IsChecked.Value}");
-					sw.WriteLine($"Big Barrel: {Layout_Weapon_CheckBox_SelectedWeapon_BigBarrel.IsChecked.Value}");
-					sw.WriteLine($"Egg Bazooka: {Layout_Weapon_CheckBox_SelectedWeapon_EggBazooka.IsChecked.Value}");
-					sw.WriteLine($"RPG: {Layout_Weapon_CheckBox_SelectedWeapon_RPG.IsChecked.Value}");
-					sw.WriteLine($"Four Shot: {Layout_Weapon_CheckBox_SelectedWeapon_FourShot.IsChecked.Value}");
-					sw.WriteLine($"Eight Shot: {Layout_Weapon_CheckBox_SelectedWeapon_EightShot.IsChecked.Value}");
-					sw.WriteLine($"Worm Shooter Black: {Layout_Weapon_CheckBox_SelectedWeapon_WormShooterBlack.IsChecked.Value}");
-					sw.WriteLine($"Worm Shooter Red: {Layout_Weapon_CheckBox_SelectedWeapon_WormShooterRed.IsChecked.Value}");
-					sw.WriteLine($"Worm Shooter Gold: {Layout_Weapon_CheckBox_SelectedWeapon_WormShooterGold.IsChecked.Value}");
-					sw.WriteLine($"Vacuum Pod: {Layout_Weapon_CheckBox_SelectedWeapon_VacuumPod.IsChecked.Value}");
-					sw.WriteLine($"Laser Rifle: {Layout_Weapon_CheckBox_SelectedWeapon_LaserRifle.IsChecked.Value}");
-					sw.WriteLine($"Splitter: {Layout_Weapon_CheckBox_SelectedWeapon_Splitter.IsChecked.Value}");
-					sw.WriteLine($"Refractor: {Layout_Weapon_CheckBox_SelectedWeapon_Refractor.IsChecked.Value}");
-					sw.WriteLine($"Knife: {Layout_Weapon_CheckBox_SelectedWeapon_Knife.IsChecked.Value}");
-					sw.WriteLine($"Black Sword: {Layout_Weapon_CheckBox_SelectedWeapon_BlackSword.IsChecked.Value}");
-					sw.WriteLine($"Dark Hammer: {Layout_Weapon_CheckBox_SelectedWeapon_DarkHammer.IsChecked.Value}");
-					sw.WriteLine($"Egg Lance: {Layout_Weapon_CheckBox_SelectedWeapon_EggLance.IsChecked.Value}");
-					sw.WriteLine($"Samurai Sword Lv1: {Layout_Weapon_CheckBox_SelectedWeapon_SamuraiSwordLv1.IsChecked.Value}");
-					sw.WriteLine($"Samurai Sword Lv2: {Layout_Weapon_CheckBox_SelectedWeapon_SamuraiSwordLv2.IsChecked.Value}");
-					sw.WriteLine($"Satellite Laser Lv1: {Layout_Weapon_CheckBox_SelectedWeapon_SatelliteLaserLv1.IsChecked.Value}");
-					sw.WriteLine($"Satellite Laser Lv2: {Layout_Weapon_CheckBox_SelectedWeapon_SatelliteLaserLv2.IsChecked.Value}");
-					sw.WriteLine($"Egg Vacuum Lv1: {Layout_Weapon_CheckBox_SelectedWeapon_EggVacuumLv1.IsChecked.Value}");
-					sw.WriteLine($"Egg Vacuum Lv2: {Layout_Weapon_CheckBox_SelectedWeapon_EggVacuumLv2.IsChecked.Value}");
-					sw.WriteLine($"Omochao Gun Lv1: {Layout_Weapon_CheckBox_SelectedWeapon_OmochaoGunLv1.IsChecked.Value}");
-					sw.WriteLine($"Omochao Gun Lv2: {Layout_Weapon_CheckBox_SelectedWeapon_OmochaoGunLv2.IsChecked.Value}");
-					sw.WriteLine($"Heal Cannon Lv1: {Layout_Weapon_CheckBox_SelectedWeapon_HealCannonLv1.IsChecked.Value}");
-					sw.WriteLine($"Heal Cannon Lv2: {Layout_Weapon_CheckBox_SelectedWeapon_HealCannonLv2.IsChecked.Value}");
-					sw.WriteLine($"Shadow Rifle: {Layout_Weapon_CheckBox_SelectedWeapon_ShadowRifle.IsChecked.Value}");
-				}
-				sw.WriteLine("--- Partner ---");
-				sw.WriteLine($"Partner Mode: {settings.LayoutPartnerMode}");
-				sw.WriteLine($"Keep Affiliation of Original Object: {Layout_Partner_CheckBox_KeepAffiliationOfOriginalObject.IsChecked.Value}");
+				await sw.WriteLineAsync($"GUN Soldier: {Layout_Enemy_CheckBox_SelectedEnemy_GUNSoldier.IsChecked.Value}");
+				await sw.WriteLineAsync($"GUN Beetle: {Layout_Enemy_CheckBox_SelectedEnemy_GUNBeetle.IsChecked.Value}");
+				await sw.WriteLineAsync($"GUN Bigfoot: {Layout_Enemy_CheckBox_SelectedEnemy_GUNBigfoot.IsChecked.Value}");
+				await sw.WriteLineAsync($"GUN Robot: {Layout_Enemy_CheckBox_SelectedEnemy_GUNRobot.IsChecked.Value}");
+				await sw.WriteLineAsync($"Egg Pierrot: {Layout_Enemy_CheckBox_SelectedEnemy_EggPierrot.IsChecked.Value}");
+				await sw.WriteLineAsync($"Egg Pawn: {Layout_Enemy_CheckBox_SelectedEnemy_EggPawn.IsChecked.Value}");
+				await sw.WriteLineAsync($"Shadow Android: {Layout_Enemy_CheckBox_SelectedEnemy_ShadowAndroid.IsChecked.Value}");
+				await sw.WriteLineAsync($"BA Giant: {Layout_Enemy_CheckBox_SelectedEnemy_BAGiant.IsChecked.Value}");
+				await sw.WriteLineAsync($"BA Soldier: {Layout_Enemy_CheckBox_SelectedEnemy_BASoldier.IsChecked.Value}");
+				await sw.WriteLineAsync($"BA Hawk/Volt: {Layout_Enemy_CheckBox_SelectedEnemy_BAHawkVolt.IsChecked.Value}");
+				await sw.WriteLineAsync($"BA Wing: {Layout_Enemy_CheckBox_SelectedEnemy_BAWing.IsChecked.Value}");
+				await sw.WriteLineAsync($"BA Worm: {Layout_Enemy_CheckBox_SelectedEnemy_BAWorm.IsChecked.Value}");
+				await sw.WriteLineAsync($"BA Larva: {Layout_Enemy_CheckBox_SelectedEnemy_BALarva.IsChecked.Value}");
+				await sw.WriteLineAsync($"Artificial Chaos: {Layout_Enemy_CheckBox_SelectedEnemy_ArtificialChaos.IsChecked.Value}");
+				await sw.WriteLineAsync($"BA Assassin: {Layout_Enemy_CheckBox_SelectedEnemy_BAAssassin.IsChecked.Value}");
 			}
+			await sw.WriteLineAsync("--- Weapon ---");
+			await sw.WriteLineAsync($"Random Weapons In Weapon Boxes: {Layout_Weapon_CheckBox_RandomWeaponsInWeaponBoxes.IsChecked.Value}");
+			await sw.WriteLineAsync($"Random Weapons In All Boxes: {Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes.IsChecked.Value}");
+			await sw.WriteLineAsync($"Random Exposed Weapons: {Layout_Weapon_CheckBox_RandomExposedWeapons.IsChecked.Value}");
+			await sw.WriteLineAsync($"Environment Drops Random Weapons: {Layout_Weapon_CheckBox_RandomWeaponsFromEnvironment.IsChecked.Value}");
+			await sw.WriteLineAsync($"Only Selected Weapons: {Layout_Weapon_CheckBox_OnlySelectedWeapons.IsChecked.Value}");
+			if (Layout_Weapon_CheckBox_OnlySelectedWeapons.IsChecked.Value)
+			{
+				await sw.WriteLineAsync($"None: {Layout_Weapon_CheckBox_SelectedWeapon_None.IsChecked.Value}");
+				await sw.WriteLineAsync($"Pistol: {Layout_Weapon_CheckBox_SelectedWeapon_Pistol.IsChecked.Value}");
+				await sw.WriteLineAsync($"Submachine Gun: {Layout_Weapon_CheckBox_SelectedWeapon_SubmachineGun.IsChecked.Value}");
+				await sw.WriteLineAsync($"Assault Rifle: {Layout_Weapon_CheckBox_SelectedWeapon_AssaultRifle.IsChecked.Value}");
+				await sw.WriteLineAsync($"Heavy Machine Gun: {Layout_Weapon_CheckBox_SelectedWeapon_HeavyMachineGun.IsChecked.Value}");
+				await sw.WriteLineAsync($"Gatling Gun: {Layout_Weapon_CheckBox_SelectedWeapon_GatlingGun.IsChecked.Value}");
+				await sw.WriteLineAsync($"Egg Pistol: {Layout_Weapon_CheckBox_SelectedWeapon_EggPistol.IsChecked.Value}");
+				await sw.WriteLineAsync($"Light Shot: {Layout_Weapon_CheckBox_SelectedWeapon_LightShot.IsChecked.Value}");
+				await sw.WriteLineAsync($"Flash Shot: {Layout_Weapon_CheckBox_SelectedWeapon_FlashShot.IsChecked.Value}");
+				await sw.WriteLineAsync($"Ring Shot: {Layout_Weapon_CheckBox_SelectedWeapon_RingShot.IsChecked.Value}");
+				await sw.WriteLineAsync($"Heavy Shot: {Layout_Weapon_CheckBox_SelectedWeapon_HeavyShot.IsChecked.Value}");
+				await sw.WriteLineAsync($"Grenade Launcher: {Layout_Weapon_CheckBox_SelectedWeapon_GrenadeLauncher.IsChecked.Value}");
+				await sw.WriteLineAsync($"GUN Bazooka: {Layout_Weapon_CheckBox_SelectedWeapon_GUNBazooka.IsChecked.Value}");
+				await sw.WriteLineAsync($"Tank Cannon: {Layout_Weapon_CheckBox_SelectedWeapon_TankCannon.IsChecked.Value}");
+				await sw.WriteLineAsync($"Black Barrel: {Layout_Weapon_CheckBox_SelectedWeapon_BlackBarrel.IsChecked.Value}");
+				await sw.WriteLineAsync($"Big Barrel: {Layout_Weapon_CheckBox_SelectedWeapon_BigBarrel.IsChecked.Value}");
+				await sw.WriteLineAsync($"Egg Bazooka: {Layout_Weapon_CheckBox_SelectedWeapon_EggBazooka.IsChecked.Value}");
+				await sw.WriteLineAsync($"RPG: {Layout_Weapon_CheckBox_SelectedWeapon_RPG.IsChecked.Value}");
+				await sw.WriteLineAsync($"Four Shot: {Layout_Weapon_CheckBox_SelectedWeapon_FourShot.IsChecked.Value}");
+				await sw.WriteLineAsync($"Eight Shot: {Layout_Weapon_CheckBox_SelectedWeapon_EightShot.IsChecked.Value}");
+				await sw.WriteLineAsync($"Worm Shooter Black: {Layout_Weapon_CheckBox_SelectedWeapon_WormShooterBlack.IsChecked.Value}");
+				await sw.WriteLineAsync($"Worm Shooter Red: {Layout_Weapon_CheckBox_SelectedWeapon_WormShooterRed.IsChecked.Value}");
+				await sw.WriteLineAsync($"Worm Shooter Gold: {Layout_Weapon_CheckBox_SelectedWeapon_WormShooterGold.IsChecked.Value}");
+				await sw.WriteLineAsync($"Vacuum Pod: {Layout_Weapon_CheckBox_SelectedWeapon_VacuumPod.IsChecked.Value}");
+				await sw.WriteLineAsync($"Laser Rifle: {Layout_Weapon_CheckBox_SelectedWeapon_LaserRifle.IsChecked.Value}");
+				await sw.WriteLineAsync($"Splitter: {Layout_Weapon_CheckBox_SelectedWeapon_Splitter.IsChecked.Value}");
+				await sw.WriteLineAsync($"Refractor: {Layout_Weapon_CheckBox_SelectedWeapon_Refractor.IsChecked.Value}");
+				await sw.WriteLineAsync($"Knife: {Layout_Weapon_CheckBox_SelectedWeapon_Knife.IsChecked.Value}");
+				await sw.WriteLineAsync($"Black Sword: {Layout_Weapon_CheckBox_SelectedWeapon_BlackSword.IsChecked.Value}");
+				await sw.WriteLineAsync($"Dark Hammer: {Layout_Weapon_CheckBox_SelectedWeapon_DarkHammer.IsChecked.Value}");
+				await sw.WriteLineAsync($"Egg Lance: {Layout_Weapon_CheckBox_SelectedWeapon_EggLance.IsChecked.Value}");
+				await sw.WriteLineAsync($"Samurai Sword Lv1: {Layout_Weapon_CheckBox_SelectedWeapon_SamuraiSwordLv1.IsChecked.Value}");
+				await sw.WriteLineAsync($"Samurai Sword Lv2: {Layout_Weapon_CheckBox_SelectedWeapon_SamuraiSwordLv2.IsChecked.Value}");
+				await sw.WriteLineAsync($"Satellite Laser Lv1: {Layout_Weapon_CheckBox_SelectedWeapon_SatelliteLaserLv1.IsChecked.Value}");
+				await sw.WriteLineAsync($"Satellite Laser Lv2: {Layout_Weapon_CheckBox_SelectedWeapon_SatelliteLaserLv2.IsChecked.Value}");
+				await sw.WriteLineAsync($"Egg Vacuum Lv1: {Layout_Weapon_CheckBox_SelectedWeapon_EggVacuumLv1.IsChecked.Value}");
+				await sw.WriteLineAsync($"Egg Vacuum Lv2: {Layout_Weapon_CheckBox_SelectedWeapon_EggVacuumLv2.IsChecked.Value}");
+				await sw.WriteLineAsync($"Omochao Gun Lv1: {Layout_Weapon_CheckBox_SelectedWeapon_OmochaoGunLv1.IsChecked.Value}");
+				await sw.WriteLineAsync($"Omochao Gun Lv2: {Layout_Weapon_CheckBox_SelectedWeapon_OmochaoGunLv2.IsChecked.Value}");
+				await sw.WriteLineAsync($"Heal Cannon Lv1: {Layout_Weapon_CheckBox_SelectedWeapon_HealCannonLv1.IsChecked.Value}");
+				await sw.WriteLineAsync($"Heal Cannon Lv2: {Layout_Weapon_CheckBox_SelectedWeapon_HealCannonLv2.IsChecked.Value}");
+				await sw.WriteLineAsync($"Shadow Rifle: {Layout_Weapon_CheckBox_SelectedWeapon_ShadowRifle.IsChecked.Value}");
+			}
+			await sw.WriteLineAsync("--- Partner ---");
+			await sw.WriteLineAsync($"Partner Mode: {settings.LayoutPartnerMode}");
+			await sw.WriteLineAsync($"Keep Affiliation of Original Object: {Layout_Partner_CheckBox_KeepAffiliationOfOriginalObject.IsChecked.Value}");
+		}
 			
-			sw.WriteLine("---- Subtitles ----");
-			sw.WriteLine($"Randomize Subtitles / Voicelines: {Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value}");
-			sw.WriteLine($"Only With Linked Audio: {Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked.Value}");
-			sw.WriteLine($"Give Audio to No Linked Audio Subtitles: {Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsChecked.Value}");
-			sw.WriteLine($"No System Messages: {Subtitles_CheckBox_NoSystemMessages.IsChecked.Value}");
-			sw.WriteLine($"No Duplicates: {Subtitles_CheckBox_NoDuplicates.IsChecked.Value}");
-			sw.WriteLine($"Only Selected Characters: {Subtitles_CheckBox_OnlySelectedCharacters.IsChecked.Value}");
-			if (Subtitles_CheckBox_OnlySelectedCharacters.IsChecked.Value)
-			{
-				sw.WriteLine($"Shadow: {Subtitles_CheckBox_SelectedCharacter_Shadow.IsChecked.Value}");
-				sw.WriteLine($"Sonic: {Subtitles_CheckBox_SelectedCharacter_Sonic.IsChecked.Value}");
-				sw.WriteLine($"Tails: {Subtitles_CheckBox_SelectedCharacter_Tails.IsChecked.Value}");
-				sw.WriteLine($"Knuckles: {Subtitles_CheckBox_SelectedCharacter_Knuckles.IsChecked.Value}");
-				sw.WriteLine($"Amy: {Subtitles_CheckBox_SelectedCharacter_Amy.IsChecked.Value}");
-				sw.WriteLine($"Rouge: {Subtitles_CheckBox_SelectedCharacter_Rouge.IsChecked.Value}");
-				sw.WriteLine($"Omega: {Subtitles_CheckBox_SelectedCharacter_Omega.IsChecked.Value}");
-				sw.WriteLine($"Vector: {Subtitles_CheckBox_SelectedCharacter_Vector.IsChecked.Value}");
-				sw.WriteLine($"Espio: {Subtitles_CheckBox_SelectedCharacter_Espio.IsChecked.Value}");
-				sw.WriteLine($"Maria: {Subtitles_CheckBox_SelectedCharacter_Maria.IsChecked.Value}");
-				sw.WriteLine($"Charmy: {Subtitles_CheckBox_SelectedCharacter_Charmy.IsChecked.Value}");
-				sw.WriteLine($"Eggman: {Subtitles_CheckBox_SelectedCharacter_Eggman.IsChecked.Value}");
-				sw.WriteLine($"Black Doom: {Subtitles_CheckBox_SelectedCharacter_BlackDoom.IsChecked.Value}");
-				sw.WriteLine($"Cream: {Subtitles_CheckBox_SelectedCharacter_Cream.IsChecked.Value}");
-				sw.WriteLine($"Cheese: {Subtitles_CheckBox_SelectedCharacter_Cheese.IsChecked.Value}");
-				sw.WriteLine($"GUN Soldier: {Subtitles_CheckBox_SelectedCharacter_GUNSoldier.IsChecked.Value}");
-				sw.WriteLine($"GUN Commander: {Subtitles_CheckBox_SelectedCharacter_GUNCommander.IsChecked.Value}");
-			}
-
-			sw.WriteLine("---- Music ----");
-			sw.WriteLine($"Randomize Music: {Music_CheckBox_RandomizeMusic.IsChecked.Value}");
-			sw.WriteLine($"Skip Chaos Power Use Jingles: {Music_CheckBox_SkipChaosPowerUseJingles.IsChecked.Value}");
-			sw.WriteLine($"Skip Rank Theme: {Music_CheckBox_SkipRankTheme.IsChecked.Value}");
-			sw.WriteLine();
-			sw.WriteLine("---- Models ----");
-			sw.WriteLine($"Randomize Player Model: {Models_CheckBox_RandomizeModel.IsChecked.Value}");
-			sw.WriteLine($"Randomize Player 2's Model: {Models_CheckBox_ModelP2.IsChecked.Value}");
-			sw.WriteLine();
-			sw.WriteLine("---- Stage Reorder Result ----");
-			for (int i = 0; i < stagecount; i++)
-			{
-				Stage stg = stages[stageids[i]];
-				sw.WriteLine($"{GetStageName(stageids[i])}:");
-				if (stg.Neutral != -1)
-					sw.WriteLine($"Neutral -> {GetStageName(stg.Neutral)} ({Array.IndexOf(stageids, stg.Neutral) - i:+##;-##;0})");
-				if (stg.Hero != -1)
-					sw.WriteLine($"Hero -> {GetStageName(stg.Hero)} ({Array.IndexOf(stageids, stg.Hero) - i:+##;-##;0})");
-				if (stg.Dark != -1)
-					sw.WriteLine($"Dark -> {GetStageName(stg.Dark)} ({Array.IndexOf(stageids, stg.Dark) - i:+##;-##;0})");
-				sw.WriteLine();
-			}
-			sw.Close();
+		await sw.WriteLineAsync("---- Subtitles ----");
+		await sw.WriteLineAsync($"Randomize Subtitles / Voicelines: {Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value}");
+		await sw.WriteLineAsync($"Only With Linked Audio: {Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked.Value}");
+		await sw.WriteLineAsync($"Give Audio to No Linked Audio Subtitles: {Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsChecked.Value}");
+		await sw.WriteLineAsync($"No System Messages: {Subtitles_CheckBox_NoSystemMessages.IsChecked.Value}");
+		await sw.WriteLineAsync($"No Duplicates: {Subtitles_CheckBox_NoDuplicates.IsChecked.Value}");
+		await sw.WriteLineAsync($"Only Selected Characters: {Subtitles_CheckBox_OnlySelectedCharacters.IsChecked.Value}");
+		if (Subtitles_CheckBox_OnlySelectedCharacters.IsChecked.Value)
+		{
+			await sw.WriteLineAsync($"Shadow: {Subtitles_CheckBox_SelectedCharacter_Shadow.IsChecked.Value}");
+			await sw.WriteLineAsync($"Sonic: {Subtitles_CheckBox_SelectedCharacter_Sonic.IsChecked.Value}");
+			await sw.WriteLineAsync($"Tails: {Subtitles_CheckBox_SelectedCharacter_Tails.IsChecked.Value}");
+			await sw.WriteLineAsync($"Knuckles: {Subtitles_CheckBox_SelectedCharacter_Knuckles.IsChecked.Value}");
+			await sw.WriteLineAsync($"Amy: {Subtitles_CheckBox_SelectedCharacter_Amy.IsChecked.Value}");
+			await sw.WriteLineAsync($"Rouge: {Subtitles_CheckBox_SelectedCharacter_Rouge.IsChecked.Value}");
+			await sw.WriteLineAsync($"Omega: {Subtitles_CheckBox_SelectedCharacter_Omega.IsChecked.Value}");
+			await sw.WriteLineAsync($"Vector: {Subtitles_CheckBox_SelectedCharacter_Vector.IsChecked.Value}");
+			await sw.WriteLineAsync($"Espio: {Subtitles_CheckBox_SelectedCharacter_Espio.IsChecked.Value}");
+			await sw.WriteLineAsync($"Maria: {Subtitles_CheckBox_SelectedCharacter_Maria.IsChecked.Value}");
+			await sw.WriteLineAsync($"Charmy: {Subtitles_CheckBox_SelectedCharacter_Charmy.IsChecked.Value}");
+			await sw.WriteLineAsync($"Eggman: {Subtitles_CheckBox_SelectedCharacter_Eggman.IsChecked.Value}");
+			await sw.WriteLineAsync($"Black Doom: {Subtitles_CheckBox_SelectedCharacter_BlackDoom.IsChecked.Value}");
+			await sw.WriteLineAsync($"Cream: {Subtitles_CheckBox_SelectedCharacter_Cream.IsChecked.Value}");
+			await sw.WriteLineAsync($"Cheese: {Subtitles_CheckBox_SelectedCharacter_Cheese.IsChecked.Value}");
+			await sw.WriteLineAsync($"GUN Soldier: {Subtitles_CheckBox_SelectedCharacter_GUNSoldier.IsChecked.Value}");
+			await sw.WriteLineAsync($"GUN Commander: {Subtitles_CheckBox_SelectedCharacter_GUNCommander.IsChecked.Value}");
 		}
 
-	}
+		await sw.WriteLineAsync("---- Music ----");
+		await sw.WriteLineAsync($"Randomize Music: {Music_CheckBox_RandomizeMusic.IsChecked.Value}");
+		await sw.WriteLineAsync($"Skip Chaos Power Use Jingles: {Music_CheckBox_SkipChaosPowerUseJingles.IsChecked.Value}");
+		await sw.WriteLineAsync($"Skip Rank Theme: {Music_CheckBox_SkipRankTheme.IsChecked.Value}");
+		await sw.WriteLineAsync();
+		await sw.WriteLineAsync("---- Models ----");
+		await sw.WriteLineAsync($"Randomize Player Model: {Models_CheckBox_RandomizeModel.IsChecked.Value}");
+		await sw.WriteLineAsync($"Randomize Player 2's Model: {Models_CheckBox_ModelP2.IsChecked.Value}");
+		await sw.WriteLineAsync();
+		await sw.WriteLineAsync("---- Stage Reorder Result ----");
+		for (var i = 0; i < stagecount; i++)
+		{
+			Stage stg = stages[stageids[i]];
+			await sw.WriteLineAsync($"{GetStageName(stageids[i])}:");
+			if (stg.Neutral != -1)
+				await sw.WriteLineAsync($"Neutral -> {GetStageName(stg.Neutral)} ({Array.IndexOf(stageids, stg.Neutral) - i:+##;-##;0})");
+			if (stg.Hero != -1)
+				await sw.WriteLineAsync($"Hero -> {GetStageName(stg.Hero)} ({Array.IndexOf(stageids, stg.Hero) - i:+##;-##;0})");
+			if (stg.Dark != -1)
+				await sw.WriteLineAsync($"Dark -> {GetStageName(stg.Dark)} ({Array.IndexOf(stageids, stg.Dark) - i:+##;-##;0})");
+			await sw.WriteLineAsync();
+		}
+		sw.Close();
+    }
 
 	private void Spoilers_ListBox_LevelList_SelectionChanged(object? sender, Avalonia.Controls.SelectionChangedEventArgs e)
-    {
-		if (Spoilers_ListBox_LevelList.SelectedIndex != -1)
+	{
+		if (Spoilers_ListBox_LevelList.SelectedIndex == -1) return;
+		var sb = new System.Text.StringBuilder();
+		Stage stg = stages[stageids[Spoilers_ListBox_LevelList.SelectedIndex]];
+		switch (settings.LevelOrderMode)
 		{
-			System.Text.StringBuilder sb = new System.Text.StringBuilder();
-			Stage stg = stages[stageids[Spoilers_ListBox_LevelList.SelectedIndex]];
-			switch (settings.LevelOrderMode)
-			{
-				case LevelOrderMode.AllStagesWarps:
-					if (stg.Neutral != -1)
-						sb.AppendLine($"Neutral -> {GetStageName(stg.Neutral)} ({Array.IndexOf(stageids, stg.Neutral) - Spoilers_ListBox_LevelList.SelectedIndex:+##;-##;0})");
-					if (stg.Hero != -1)
-						sb.AppendLine($"Hero -> {GetStageName(stg.Hero)} ({Array.IndexOf(stageids, stg.Hero) - Spoilers_ListBox_LevelList.SelectedIndex:+##;-##;0})");
-					if (stg.Dark != -1)
-						sb.AppendLine($"Dark -> {GetStageName(stg.Dark)} ({Array.IndexOf(stageids, stg.Dark) - Spoilers_ListBox_LevelList.SelectedIndex:+##;-##;0})");
-					sb.AppendFormat("{0}Shortest Path: ", Environment.NewLine);
-					int[] shortestPath;
-					if (LevelOrder_NumericUpDown_MaxForwardsJump.Value < 2)
-					{
-						shortestPath = new int[stagecount - 1 - Spoilers_ListBox_LevelList.SelectedIndex];
-						Array.Copy(stageids, Spoilers_ListBox_LevelList.SelectedIndex, shortestPath, 0, shortestPath.Length);
-					}
-					else
-						shortestPath = FindShortestPath(stageids[Spoilers_ListBox_LevelList.SelectedIndex]);
-					for (int i = 0; i < shortestPath.Length - 1; i++)
-					{
-						string exit;
-						if (stages[shortestPath[i]].Neutral == shortestPath[i + 1])
-							exit = "Neutral";
-						else if (stages[shortestPath[i]].Hero == shortestPath[i + 1])
-							exit = "Hero";
-						else
-							exit = "Dark";
-						sb.AppendFormat("{2}{0} ({1}) -> ", GetStageName(shortestPath[i]), exit, Environment.NewLine);
-					}
-					sb.AppendFormat("{1}Ending ({0} levels)", shortestPath.Length, Environment.NewLine);
-					break;
-				case LevelOrderMode.ReverseBranching:
-					if (stg.Neutral != -1)
-						sb.AppendLine($"Neutral -> {GetStageName(stg.Neutral)}");
-					if (stg.Hero != -1)
-						sb.AppendLine($"Hero -> {GetStageName(stg.Hero)}");
-					if (stg.Dark != -1)
-						sb.AppendLine($"Dark -> {GetStageName(stg.Dark)}");
-					sb.AppendFormat("{0}Shortest Path: ", Environment.NewLine);
+			case LevelOrderMode.AllStagesWarps:
+				if (stg.Neutral != -1)
+					sb.AppendLine($"Neutral -> {GetStageName(stg.Neutral)} ({Array.IndexOf(stageids, stg.Neutral) - Spoilers_ListBox_LevelList.SelectedIndex:+##;-##;0})");
+				if (stg.Hero != -1)
+					sb.AppendLine($"Hero -> {GetStageName(stg.Hero)} ({Array.IndexOf(stageids, stg.Hero) - Spoilers_ListBox_LevelList.SelectedIndex:+##;-##;0})");
+				if (stg.Dark != -1)
+					sb.AppendLine($"Dark -> {GetStageName(stg.Dark)} ({Array.IndexOf(stageids, stg.Dark) - Spoilers_ListBox_LevelList.SelectedIndex:+##;-##;0})");
+				sb.Append($"{Environment.NewLine}Shortest Path: ");
+				int[] shortestPath;
+				if (LevelOrder_NumericUpDown_MaxForwardsJump.Value < 2)
+				{
+					shortestPath = new int[stagecount - 1 - Spoilers_ListBox_LevelList.SelectedIndex];
+					Array.Copy(stageids, Spoilers_ListBox_LevelList.SelectedIndex, shortestPath, 0, shortestPath.Length);
+				}
+				else
 					shortestPath = FindShortestPath(stageids[Spoilers_ListBox_LevelList.SelectedIndex]);
-					for (int i = 0; i < shortestPath.Length - 1; i++)
-					{
-						string exit;
-						if (stages[shortestPath[i]].Neutral == shortestPath[i + 1])
-							exit = "Neutral";
-						else if (stages[shortestPath[i]].Hero == shortestPath[i + 1])
-							exit = "Hero";
-						else
-							exit = "Dark";
-						sb.AppendFormat("{2}{0} ({1}) -> ", GetStageName(shortestPath[i]), exit, Environment.NewLine);
-					}
-					sb.AppendFormat("{1}Ending ({0} levels)", shortestPath.Length, Environment.NewLine);
-					break;
-				default:
-					if (stg.Neutral != -1)
-						sb.AppendLine($"Neutral -> {GetStageName(stg.Neutral)}");
-					if (stg.Hero != -1)
-						sb.AppendLine($"Hero -> {GetStageName(stg.Hero)}");
-					if (stg.Dark != -1)
-						sb.AppendLine($"Dark -> {GetStageName(stg.Dark)}");
-					break;
-			}
-			Spoilers_TextBox_LevelInfo.Text = sb.ToString();
+				for (int i = 0; i < shortestPath.Length - 1; i++)
+				{
+					string exit;
+					if (stages[shortestPath[i]].Neutral == shortestPath[i + 1])
+						exit = "Neutral";
+					else if (stages[shortestPath[i]].Hero == shortestPath[i + 1])
+						exit = "Hero";
+					else
+						exit = "Dark";
+					sb.AppendFormat("{2}{0} ({1}) -> ", GetStageName(shortestPath[i]), exit, Environment.NewLine);
+				}
+				sb.AppendFormat("{1}Ending ({0} levels)", shortestPath.Length, Environment.NewLine);
+				break;
+			case LevelOrderMode.ReverseBranching:
+				if (stg.Neutral != -1)
+					sb.AppendLine($"Neutral -> {GetStageName(stg.Neutral)}");
+				if (stg.Hero != -1)
+					sb.AppendLine($"Hero -> {GetStageName(stg.Hero)}");
+				if (stg.Dark != -1)
+					sb.AppendLine($"Dark -> {GetStageName(stg.Dark)}");
+				sb.AppendFormat("{0}Shortest Path: ", Environment.NewLine);
+				shortestPath = FindShortestPath(stageids[Spoilers_ListBox_LevelList.SelectedIndex]);
+				for (int i = 0; i < shortestPath.Length - 1; i++)
+				{
+					string exit;
+					if (stages[shortestPath[i]].Neutral == shortestPath[i + 1])
+						exit = "Neutral";
+					else if (stages[shortestPath[i]].Hero == shortestPath[i + 1])
+						exit = "Hero";
+					else
+						exit = "Dark";
+					sb.AppendFormat("{2}{0} ({1}) -> ", GetStageName(shortestPath[i]), exit, Environment.NewLine);
+				}
+				sb.AppendFormat("{1}Ending ({0} levels)", shortestPath.Length, Environment.NewLine);
+				break;
+			default:
+				if (stg.Neutral != -1)
+					sb.AppendLine($"Neutral -> {GetStageName(stg.Neutral)}");
+				if (stg.Hero != -1)
+					sb.AppendLine($"Hero -> {GetStageName(stg.Hero)}");
+				if (stg.Dark != -1)
+					sb.AppendLine($"Dark -> {GetStageName(stg.Dark)}");
+				break;
 		}
+		Spoilers_TextBox_LevelInfo.Text = sb.ToString();
 	}
 
 	private void LevelOrder_Button_Credits_OnClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
