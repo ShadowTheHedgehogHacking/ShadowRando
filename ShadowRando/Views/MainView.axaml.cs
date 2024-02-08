@@ -2357,12 +2357,12 @@ public partial class MainView : UserControl
 			CopyDirectory(Path.GetDirectoryName(p1mdl), Path.Combine(settings.GamePath, "files", "character"), true);
 		else
 		{
-			File.Copy(p1mdl, Path.Combine(settings.GamePath, "files", "character", "shadow.one"));
+			File.Copy(p1mdl, Path.Combine(settings.GamePath, "files", "character", "shadow.one"), true);
 			if (Models_CheckBox_ModelP2.IsChecked.Value) // do we care about p2?
 			{
 				mdls = Directory.EnumerateFiles("RandoModels", "shadow2py.one", SearchOption.AllDirectories).Where(a => !a.Contains("ModelPack")).Prepend(Path.Combine("backup", "character", "shadow2py.one")).ToArray();
 				var p2mdl = mdls[r.Next(mdls.Length)]; // pick a random p2 model
-				File.Copy(p2mdl, Path.Combine(settings.GamePath, "files", "character", "shadow2py.one"));
+				File.Copy(p2mdl, Path.Combine(settings.GamePath, "files", "character", "shadow2py.one"), true);
 				if (p2mdl.Contains("CustomBON")) // does the model use custom bones?
 				{
 					if (!Path.GetDirectoryName(p2mdl).Equals(Path.GetDirectoryName(p1mdl))) // is it from a different folder than the p1 model?
