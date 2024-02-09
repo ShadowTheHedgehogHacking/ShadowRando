@@ -21,10 +21,7 @@
 					<StackPanel Margin="0,20,0,0" VerticalAlignment="Center" HorizontalAlignment="Center">
 						<Label x:Name="LevelOrder_Label_ProgramTitle" FontWeight="Bold" FontSize="16" HorizontalAlignment="Center">ShadowRando</Label>
 						<Label FontWeight="Bold">Created by dreamsyntax &amp; MainMemory</Label>
-						<StackPanel Orientation="Horizontal">
-							<Button x:Name="LevelOrder_Button_ProjectPage" Click="LevelOrder_Button_ProjectPage_Click" HorizontalAlignment="Center">Project Page</Button>
-							<Button x:Name="LevelOrder_Button_Licenses" Margin="10, 0,0,0" Click="LevelOrder_Button_Credits_OnClick" HorizontalAlignment="Center">Credits / Software Used</Button>
-						</StackPanel>
+						<Button x:Name="LevelOrder_Button_ProjectPage" Margin="10,0,0,0" Click="LevelOrder_Button_ProjectPage_Click" HorizontalAlignment="Center">Project Page</Button>
 					</StackPanel>
 					<Label>Seed</Label>
 					<Grid ColumnDefinitions="*, Auto">
