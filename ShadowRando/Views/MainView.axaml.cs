@@ -2020,7 +2020,11 @@ public partial class MainView : UserControl
 					var splines = SplineReader.ReadShadowSplineFile(datOneDataContent.Files[0]);
 					foreach (var spline in splines)
 					{
-						if (spline.SplineType == 32 && spline.Name.Contains("_cc_") && !spline.Name.Contains("stg0300_cc_dr_jn_208") && !spline.Name.Contains("stg0300_cc_pr_jn_210"))
+						if (spline.SplineType == 32 && spline.Name.Contains("_cc_")
+							&& !spline.Name.Contains("stg0300_cc_dr_jn_207")
+							&& !spline.Name.Contains("stg0300_cc_dr_jn_208")
+							&& !spline.Name.Contains("stg0300_cc_pr_jn_210")
+							)
 							spline.Setting2 = 1;
 					}
 					var updatedPATHPTP = SplineReader.ShadowSplinesToByteArray(stageDataIdentifier, splines);
