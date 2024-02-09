@@ -27,46 +27,49 @@ public partial class MainView : UserControl
 	private static readonly string[] LevelNames =
 	[
 		"Westopolis",
-			"Digital Circuit",
-			"Glyphic Canyon",
-			"Lethal Highway",
-			"Cryptic Castle",
-			"Prison Island",
-			"Circus Park",
-			"Central City",
-			"The Doom",
-			"Sky Troops",
-			"Mad Matrix",
-			"Death Ruins",
-			"The ARK",
-			"Air Fleet",
-			"Iron Jungle",
-			"Space Gadget",
-			"Lost Impact",
-			"GUN Fortress",
-			"Black Comet",
-			"Lava Shelter",
-			"Cosmic Fall",
-			"Final Haunt",
-			"The Last Way",
-			"Black Bull (LH)",
-			"Egg Breaker (CC)",
-			"Heavy Dog",
-			"Egg Breaker (MM)",
-			"Black Bull (DR)",
-			"Blue Falcon",
-			"Egg Breaker (IJ)",
-			"Black Doom (GF)",
-			"Sonic & Diablon (GF)",
-			"Egg Dealer (BC)",
-			"Sonic & Diablon (BC)",
-			"Egg Dealer (LS)",
-			"Egg Dealer (CF)",
-			"Black Doom (CF)",
-			"Black Doom (FH)",
-			"Sonic & Diablon (FH)",
-			"Devil Doom"
+		"Digital Circuit",
+		"Glyphic Canyon",
+		"Lethal Highway",
+		"Cryptic Castle",
+		"Prison Island",
+		"Circus Park",
+		"Central City",
+		"The Doom",
+		"Sky Troops",
+		"Mad Matrix",
+		"Death Ruins",
+		"The ARK",
+		"Air Fleet",
+		"Iron Jungle",
+		"Space Gadget",
+		"Lost Impact",
+		"GUN Fortress",
+		"Black Comet",
+		"Lava Shelter",
+		"Cosmic Fall",
+		"Final Haunt",
+		"The Last Way",
+		"Black Bull (LH)",
+		"Egg Breaker (CC)",
+		"Heavy Dog",
+		"Egg Breaker (MM)",
+		"Black Bull (DR)",
+		"Blue Falcon",
+		"Egg Breaker (IJ)",
+		"Black Doom (GF)",
+		"Sonic & Diablon (GF)",
+		"Egg Dealer (BC)",
+		"Sonic & Diablon (BC)",
+		"Egg Dealer (LS)",
+		"Egg Dealer (CF)",
+		"Black Doom (CF)",
+		"Black Doom (FH)",
+		"Sonic & Diablon (FH)",
+		"Devil Doom"
 	];
+
+	private CheckBox[] LevelCheckBoxes;
+
 	const int routeMenu6xxStagePreviewBlockerOffset = 0xB48B8;
 	const int routeMenu6xxStagePreviewPatchValue = 0x48000110;
 	const int storyModeStartAddress = 0x2CB9F0;
@@ -240,6 +243,51 @@ public partial class MainView : UserControl
 		var topLevel = TopLevel.GetTopLevel(this);
 		if (OperatingSystem.IsBrowser()) return; // TODO: Browser context only is allowed to read/write file dialogs if a user triggers the context, need to add buttons for browser to target
 		if (topLevel is null) return;
+
+		LevelCheckBoxes = [
+			Levels_CheckBox_Westopolis,
+			Levels_CheckBox_DigitalCircuit,
+			Levels_CheckBox_GlyphicCanyon,
+			Levels_CheckBox_LethalHighway,
+			Levels_CheckBox_CrypticCastle,
+			Levels_CheckBox_PrisonIsland,
+			Levels_CheckBox_CircusPark,
+			Levels_CheckBox_CentralCity,
+			Levels_CheckBox_TheDoom,
+			Levels_CheckBox_SkyTroops,
+			Levels_CheckBox_MadMatrix,
+			Levels_CheckBox_DeathRuins,
+			Levels_CheckBox_TheARK,
+			Levels_CheckBox_AirFleet,
+			Levels_CheckBox_IronJungle,
+			Levels_CheckBox_SpaceGadget,
+			Levels_CheckBox_LostImpact,
+			Levels_CheckBox_GUNFortress,
+			Levels_CheckBox_BlackComet,
+			Levels_CheckBox_LavaShelter,
+			Levels_CheckBox_CosmicFall,
+			Levels_CheckBox_FinalHaunt,
+			Levels_CheckBox_TheLastWay,
+			Levels_CheckBox_BlackBullLH,
+			Levels_CheckBox_EggBreakerCC,
+			Levels_CheckBox_HeavyDog,
+			Levels_CheckBox_EggBreakerMM,
+			Levels_CheckBox_BlackBullDR,
+			Levels_CheckBox_BlueFalcon,
+			Levels_CheckBox_EggBreakerIJ,
+			Levels_CheckBox_BlackDoomGF,
+			Levels_CheckBox_SonicDiablonGF,
+			Levels_CheckBox_EggDealerBC,
+			Levels_CheckBox_SonicDiablonBC,
+			Levels_CheckBox_EggDealerLS,
+			Levels_CheckBox_EggDealerCF,
+			Levels_CheckBox_BlackDoomCF,
+			Levels_CheckBox_BlackDoomFH,
+			Levels_CheckBox_SonicDiablonFH,
+			Levels_CheckBox_DevilDoom
+		];
+
+
 		topLevel.IsVisible = false;
 		settings = Settings.Load();
 
@@ -255,9 +303,10 @@ public partial class MainView : UserControl
 		LevelOrder_NumericUpDown_MaxBackwardsJump.Value = settings.LevelOrderMaxBackwardsJump;
 		LevelOrder_NumericUpDown_BackwardsJumpProbability.Value = settings.LevelOrderBackwardsJumpProbability;
 		LevelOrder_CheckBox_AllowJumpsToSameLevel.IsChecked = settings.LevelOrderAllowJumpsToSameLevel;
-		LevelOrder_CheckBox_IncludeLastStory.IsChecked = settings.LevelOrderIncludeLastStory;
-		LevelOrder_CheckBox_IncludeBosses.IsChecked = settings.LevelOrderIncludeBosses;
 		LevelOrder_CheckBox_AllowBossToBoss.IsChecked = settings.LevelOrderAllowBossToBoss;
+
+		foreach (var lev in settings.ExcludeLevels)
+			LevelCheckBoxes[(int)lev].IsChecked = true;
 
 		// Layout
 		Layout_CheckBox_RandomizeLayouts.IsChecked = settings.RandomizeLayouts;
@@ -378,6 +427,11 @@ public partial class MainView : UserControl
 
 	private void UserControl_Unloaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
 	{
+		UpdateSettings();
+	}
+
+	private void UpdateSettings()
+	{
 		// Level Order
 		settings.Seed = LevelOrder_TextBox_Seed.Text ?? string.Empty;
 		settings.RandomSeed = LevelOrder_CheckBox_Random_Seed.IsChecked.Value;
@@ -387,9 +441,12 @@ public partial class MainView : UserControl
 		settings.LevelOrderMaxBackwardsJump = (int)LevelOrder_NumericUpDown_MaxBackwardsJump.Value;
 		settings.LevelOrderBackwardsJumpProbability = (int)LevelOrder_NumericUpDown_BackwardsJumpProbability.Value;
 		settings.LevelOrderAllowJumpsToSameLevel = LevelOrder_CheckBox_AllowJumpsToSameLevel.IsChecked.Value;
-		settings.LevelOrderIncludeLastStory = LevelOrder_CheckBox_IncludeLastStory.IsChecked.Value;
-		settings.LevelOrderIncludeBosses = LevelOrder_CheckBox_IncludeBosses.IsChecked.Value;
 		settings.LevelOrderAllowBossToBoss = LevelOrder_CheckBox_AllowBossToBoss.IsChecked.Value;
+
+		settings.ExcludeLevels = new List<Levels>();
+		for (int i = 0; i < LevelCheckBoxes.Length; i++)
+			if (LevelCheckBoxes[i].IsChecked == true)
+				settings.ExcludeLevels.Add((Levels)i);
 
 		// Layout
 		settings.RandomizeLayouts = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
@@ -623,7 +680,7 @@ public partial class MainView : UserControl
 		}
 
 		var seed = CalculateSeed(LevelOrder_TextBox_Seed.Text);
-		settings.LevelOrderMode = (LevelOrderMode)LevelOrder_ComboBox_Mode.SelectedIndex;
+		UpdateSettings();
 		Random r = new Random(seed);
 		byte[] buf;
 		List<int> tmpids = new List<int>(totalstagecount + 1);
@@ -650,14 +707,30 @@ public partial class MainView : UserControl
 			else
 				stages[i].IsBoss = true;
 			bool include = true;
-			if (!LevelOrder_CheckBox_IncludeLastStory.IsChecked.Value)
-				include = !stages[i].IsLast;
-			if (settings.LevelOrderMode == LevelOrderMode.BossRush)
-				include &= stages[i].IsBoss;
-			else if (!LevelOrder_CheckBox_IncludeBosses.IsChecked.Value)
-				include &= !stages[i].IsBoss;
+			switch (settings.LevelOrderMode)
+			{
+				case LevelOrderMode.Original:
+				case LevelOrderMode.VanillaStructure:
+					include = !stages[i].IsLast;
+					break;
+				case LevelOrderMode.VanillaStructureNoBosses:
+					include = !stages[i].IsLast && !stages[i].IsBoss;
+					break;
+				case LevelOrderMode.BossRush:
+					include = stages[i].IsBoss && settings.ExcludeLevels.Contains((Levels)i);
+					break;
+				default:
+					include = settings.ExcludeLevels.Contains((Levels)i);
+					break;
+			}
 			if (include)
 				tmpids.Add(i);
+		}
+		if (tmpids.Count == 0)
+		{
+			var errbox = MessageBoxManager.GetMessageBoxStandard("ShadowRando", "All valid stages for the selected randomization mode have been excluded! You must enable at least one stage.", ButtonEnum.Ok, Icon.Error);
+			_ = await errbox.ShowAsync();
+			return;
 		}
 		stagecount = tmpids.Count;
 		tmpids.Add(totalstagecount);
@@ -668,7 +741,7 @@ public partial class MainView : UserControl
 				break;
 			case LevelOrderMode.AllStagesWarps:
 				{
-					if (!LevelOrder_CheckBox_IncludeBosses.IsChecked.Value || LevelOrder_CheckBox_AllowBossToBoss.IsChecked.Value)
+					if (LevelOrder_CheckBox_AllowBossToBoss.IsChecked.Value || stageids.Count(a => stages[a].IsBoss) < 2)
 						Shuffle(r, stageids, stagecount);
 					else
 					{
@@ -787,30 +860,28 @@ public partial class MainView : UserControl
 									neword.Add(twoq.Dequeue());
 									break;
 							}
-						if (LevelOrder_CheckBox_IncludeBosses.IsChecked.Value)
-							for (int i = 0; i < set.bossCount; i++)
-								neword.Add(bossq.Dequeue());
+						for (int i = 0; i < set.bossCount; i++)
+							neword.Add(bossq.Dequeue());
 					}
 					neword.AddRange(last);
 					int ind = 0;
 					foreach (var set in ShadowStageSet.StageList)
 					{
 						int bossind = ind + set.stages.Count;
-						int next = set.stages.Count + (LevelOrder_CheckBox_IncludeBosses.IsChecked.Value ? set.bossCount : 0);
+						int next = set.stages.Count + set.bossCount;
 						if (set.stages[0].stageType == StageType.Neutral)
 							++next;
 						foreach (var item in set.stages)
 						{
 							Stage stg = stages[neword[ind]];
-							int bosscnt = LevelOrder_CheckBox_IncludeBosses.IsChecked.Value ? item.bossCount : 0;
-							if (bosscnt == 2)
+							if (item.bossCount == 2)
 							{
 								stg.SetExit(0, neword[bossind]);
 								stages[neword[bossind++]].Neutral = totalstagecount;
 								stg.SetExit(1, neword[bossind]);
 								stages[neword[bossind++]].Neutral = totalstagecount;
 							}
-							else if (bosscnt == 1)
+							else if (item.bossCount == 1)
 							{
 								Stage bossstg = stages[neword[bossind]];
 								switch (item.stageType)
@@ -909,8 +980,103 @@ public partial class MainView : UserControl
 							}
 							++ind;
 						}
-						if (LevelOrder_CheckBox_IncludeBosses.IsChecked.Value)
-							ind += set.bossCount;
+						ind += set.bossCount;
+					}
+					neword.CopyTo(stageids);
+				}
+				break;
+			case LevelOrderMode.VanillaStructureNoBosses:
+				{
+					List<int> twoexitlst = new List<int>();
+					List<int> threeexitlst = new List<int>();
+					List<int> last = new List<int>();
+					for (int i = 0; i < stagecount; i++)
+					{
+						var stg = stages[stageids[i]];
+						if (stg.IsLast)
+							last.Add(stageids[i]);
+						else if (stg.CountExits() == 3)
+							threeexitlst.Add(stageids[i]);
+						else
+							twoexitlst.Add(stageids[i]);
+					}
+					int[] twoexit = twoexitlst.ToArray();
+					int[] threeexit = threeexitlst.ToArray();
+					Shuffle(r, twoexit);
+					Shuffle(r, threeexit);
+					Queue<int> twoq = new Queue<int>(twoexit);
+					Queue<int> threeq = new Queue<int>(threeexit);
+					List<int> neword = new List<int>(stagecount);
+					foreach (var set in ShadowStageSet.StageList)
+					{
+						foreach (var stg in set.stages)
+							switch (stg.stageType)
+							{
+								case StageType.Neutral:
+									neword.Add(threeq.Dequeue());
+									break;
+								case StageType.Hero:
+								case StageType.Dark:
+								case StageType.End:
+									neword.Add(twoq.Dequeue());
+									break;
+							}
+					}
+					neword.AddRange(last);
+					int ind = 0;
+					foreach (var set in ShadowStageSet.StageList)
+					{
+						int bossind = ind + set.stages.Count;
+						int next = set.stages.Count;
+						if (set.stages[0].stageType == StageType.Neutral)
+							++next;
+						foreach (var item in set.stages)
+						{
+							Stage stg = stages[neword[ind]];
+							switch (item.stageType)
+							{
+								case StageType.Neutral:
+									stg.Dark = neword[ind + next - 1];
+									stg.Neutral = neword[ind + next];
+									stg.Hero = neword[ind + next + 1];
+									break;
+								case StageType.Dark:
+									if (stg.HasDark)
+									{
+										stg.Dark = neword[ind + next];
+										if (stg.HasNeutral)
+											stg.Neutral = neword[ind + next + 1];
+										else
+											stg.Hero = neword[ind + next + 1];
+									}
+									else
+									{
+										stg.Neutral = neword[ind + next];
+										stg.Hero = neword[ind + next + 1];
+									}
+									break;
+								case StageType.Hero:
+									if (stg.HasHero)
+									{
+										stg.Hero = neword[ind + next];
+										if (stg.HasNeutral)
+											stg.Neutral = neword[ind + next - 1];
+										else
+											stg.Dark = neword[ind + next - 1];
+									}
+									else
+									{
+										stg.Neutral = neword[ind + next];
+										stg.Dark = neword[ind + next - 1];
+									}
+									break;
+								case StageType.End:
+									stg.Hero = totalstagecount;
+									stg.Dark = totalstagecount;
+									break;
+							}
+							++ind;
+						}
 					}
 					neword.CopyTo(stageids);
 				}
@@ -1048,7 +1214,7 @@ public partial class MainView : UserControl
 					}
 					foreach (Stage stg in stages)
 					{
-						if (!LevelOrder_CheckBox_IncludeLastStory.IsChecked.Value && stg.IsLast)
+						if (settings.ExcludeLevels.Contains((Levels)stg.ID))
 							continue;
 						if ((stg.IsBoss || stg.HasNeutral) && stg.Neutral == -1)
 						{
@@ -2610,8 +2776,8 @@ public partial class MainView : UserControl
 					}
 				}
 				break;
-			default: // normal game structure
-				if (LevelOrder_CheckBox_IncludeBosses.IsChecked ?? false)
+			case LevelOrderMode.Original:
+			case LevelOrderMode.VanillaStructure:
 				{
 					gridmaxh = 1;
 					gridmaxv = 11;
@@ -2631,7 +2797,8 @@ public partial class MainView : UserControl
 					levels[totalstagecount] = new ChartNode(gridmaxh++, 5);
 					levels[totalstagecount + 1] = new ChartNode(0, 5);
 				}
-				else
+				break;
+			case LevelOrderMode.VanillaStructureNoBosses:
 				{
 					gridmaxh = 1;
 					gridmaxv = 5;
@@ -3232,9 +3399,8 @@ public partial class MainView : UserControl
 			await sw.WriteLineAsync($"Backwards Jump Probability: {LevelOrder_NumericUpDown_BackwardsJumpProbability.Value}");
 			await sw.WriteLineAsync($"Allow Jumps To Same Level: {LevelOrder_CheckBox_AllowJumpsToSameLevel.IsChecked.Value}");
 		}
-		await sw.WriteLineAsync($"Include Last Story: {LevelOrder_CheckBox_IncludeLastStory.IsChecked.Value}");
-		await sw.WriteLineAsync($"Include Bosses: {LevelOrder_CheckBox_IncludeBosses.IsChecked.Value}");
 		await sw.WriteLineAsync($"Allow Boss -> Boss: {LevelOrder_CheckBox_AllowBossToBoss.IsChecked.Value}");
+		await sw.WriteLineAsync($"Excluded Levels: {string.Join(", ", settings.ExcludeLevels.Select(a => LevelNames[(int)a]))}");
 
 		await sw.WriteLineAsync("---- Layout ----");
 		await sw.WriteLineAsync($"Randomize Layouts: {Layout_CheckBox_RandomizeLayouts.IsChecked.Value}");

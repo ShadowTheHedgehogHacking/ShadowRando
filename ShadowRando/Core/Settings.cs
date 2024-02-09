@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 
 namespace ShadowRando.Core
 {
@@ -29,13 +30,9 @@ namespace ShadowRando.Core
 		public bool LevelOrderAllowJumpsToSameLevel;
 		[System.ComponentModel.DefaultValue(true)]
 		[IniAlwaysInclude]
-		public bool LevelOrderIncludeLastStory;
-		[System.ComponentModel.DefaultValue(true)]
-		[IniAlwaysInclude]
-		public bool LevelOrderIncludeBosses = true;
-		[System.ComponentModel.DefaultValue(true)]
-		[IniAlwaysInclude]
 		public bool LevelOrderAllowBossToBoss = true;
+		[IniCollection(IniCollectionMode.SingleLine, Format = ", ")]
+		public List<Levels> ExcludeLevels = new List<Levels>();
 
 		// Layout
 		[IniAlwaysInclude]

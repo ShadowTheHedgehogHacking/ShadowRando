@@ -14,8 +14,8 @@
 		<vm:MainViewModel />
 	</Design.DataContext>
 
-	<Grid RowDefinitions="*, Auto">
-		<TabControl Grid.Row="0">
+  <Grid RowDefinitions="*, Auto">
+    <TabControl Grid.Row="0">
 			<TabItem Header="Level Order">
 				<StackPanel>
 					<StackPanel Margin="0,20,0,0" VerticalAlignment="Center" HorizontalAlignment="Center">
@@ -36,6 +36,7 @@
 						<ComboBoxItem>Default Order</ComboBoxItem>
 						<ComboBoxItem>Shuffle All Stages w/Warps</ComboBoxItem>
 						<ComboBoxItem>Vanilla Structure</ComboBoxItem>
+						<ComboBoxItem>Vanilla Structure No Bosses</ComboBoxItem>
 						<ComboBoxItem>Branching Paths</ComboBoxItem>
 						<ComboBoxItem>Reverse Branching</ComboBoxItem>
 						<ComboBoxItem>Boss Rush</ComboBoxItem>
@@ -55,11 +56,7 @@
 						<NumericUpDown x:Name="LevelOrder_NumericUpDown_BackwardsJumpProbability" Grid.Column="0" Grid.Row="5" Increment="1" Value="10" Maximum="100" Minimum="0"></NumericUpDown>
 						<CheckBox x:Name="LevelOrder_CheckBox_AllowJumpsToSameLevel" Click="LevelOrder_CheckBox_AllowJumpsToSameLevel_Click" Grid.Column="1" Grid.Row="5" Margin="10,0,10,0">Allow Jumps to Same Level</CheckBox>
 					</Grid>
-          <StackPanel Orientation="Horizontal">
-            <CheckBox x:Name="LevelOrder_CheckBox_IncludeLastStory" Margin="0,10,5,0">Include Last Story</CheckBox>
-            <CheckBox x:Name="LevelOrder_CheckBox_IncludeBosses" Margin="0,10,5,0">Include Bosses</CheckBox>
-            <CheckBox x:Name="LevelOrder_CheckBox_AllowBossToBoss" Margin="0,10,5,0">Allow Boss -> Boss Sequences</CheckBox>
-          </StackPanel>
+          <CheckBox x:Name="LevelOrder_CheckBox_AllowBossToBoss" Margin="0,10,5,0">Allow Boss -> Boss Sequences</CheckBox>
           <Label Margin="0,15,0,0">Program Theme</Label>
 					<StackPanel Orientation="Horizontal">
 						<ComboBox x:Name="LevelOrder_ComboBox_ProgramTheme" IsEnabled="False" SelectedIndex="2">
@@ -70,6 +67,56 @@
 					</StackPanel>
 				</StackPanel>
 			</TabItem>
+      <TabItem Header="Exclude Levels">
+        <StackPanel>
+          <ScrollViewer HorizontalScrollBarVisibility="Auto" AllowAutoHide="False">
+            <Border BorderBrush="White" BorderThickness="1" Margin="0,0,0,20">
+              <Grid ShowGridLines="True" ColumnDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto" RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto">
+                <CheckBox Grid.Column="0" Grid.Row="4" Margin="5,0,5,0" x:Name="Levels_CheckBox_Westopolis">Westopolis</CheckBox>
+                <CheckBox Grid.Column="1" Grid.Row="2" Margin="5,0,5,0" x:Name="Levels_CheckBox_DigitalCircuit">Digital Circuit</CheckBox>
+                <CheckBox Grid.Column="1" Grid.Row="4" Margin="5,0,5,0" x:Name="Levels_CheckBox_GlyphicCanyon">Glyphic Canyon</CheckBox>
+                <CheckBox Grid.Column="1" Grid.Row="6" Margin="5,0,5,0" x:Name="Levels_CheckBox_LethalHighway">Lethal Highway</CheckBox>
+                <CheckBox Grid.Column="1" Grid.Row="7" Margin="5,0,5,0" x:Name="Levels_CheckBox_BlackBullLH">Black Bull (LH)</CheckBox>
+                <CheckBox Grid.Column="2" Grid.Row="2" Margin="5,0,5,0" x:Name="Levels_CheckBox_CrypticCastle">Cryptic Castle</CheckBox>
+                <CheckBox Grid.Column="2" Grid.Row="3" Margin="5,0,5,0" x:Name="Levels_CheckBox_EggBreakerCC">Egg Breaker (CC)</CheckBox>
+                <CheckBox Grid.Column="2" Grid.Row="4" Margin="5,0,5,0" x:Name="Levels_CheckBox_PrisonIsland">Prison Island</CheckBox>
+                <CheckBox Grid.Column="2" Grid.Row="6" Margin="5,0,5,0" x:Name="Levels_CheckBox_CircusPark">Circus Park</CheckBox>
+                <CheckBox Grid.Column="3" Grid.Row="0" Margin="5,0,5,0" x:Name="Levels_CheckBox_CentralCity">Central City</CheckBox>
+                <CheckBox Grid.Column="3" Grid.Row="2" Margin="5,0,5,0" x:Name="Levels_CheckBox_TheDoom">The Doom</CheckBox>
+                <CheckBox Grid.Column="3" Grid.Row="3" Margin="5,0,5,0" x:Name="Levels_CheckBox_HeavyDog">Heavy Dog</CheckBox>
+                <CheckBox Grid.Column="3" Grid.Row="4" Margin="5,0,5,0" x:Name="Levels_CheckBox_SkyTroops">Sky Troops</CheckBox>
+                <CheckBox Grid.Column="3" Grid.Row="6" Margin="5,0,5,0" x:Name="Levels_CheckBox_MadMatrix">Mad Matrix</CheckBox>
+                <CheckBox Grid.Column="3" Grid.Row="7" Margin="5,0,5,0" x:Name="Levels_CheckBox_EggBreakerMM">Egg Breaker (MM)</CheckBox>
+                <CheckBox Grid.Column="3" Grid.Row="8" Margin="5,0,5,0" x:Name="Levels_CheckBox_DeathRuins">Death Ruins</CheckBox>
+                <CheckBox Grid.Column="3" Grid.Row="9" Margin="5,0,5,0" x:Name="Levels_CheckBox_BlackBullDR">Black Bull (DR)</CheckBox>
+                <CheckBox Grid.Column="4" Grid.Row="0" Margin="5,0,5,0" x:Name="Levels_CheckBox_TheARK">The ARK</CheckBox>
+                <CheckBox Grid.Column="4" Grid.Row="1" Margin="5,0,5,0" x:Name="Levels_CheckBox_BlueFalcon">Blue Falcon</CheckBox>
+                <CheckBox Grid.Column="4" Grid.Row="2" Margin="5,0,5,0" x:Name="Levels_CheckBox_AirFleet">Air Fleet</CheckBox>
+                <CheckBox Grid.Column="4" Grid.Row="4" Margin="5,0,5,0" x:Name="Levels_CheckBox_IronJungle">Iron Jungle</CheckBox>
+                <CheckBox Grid.Column="4" Grid.Row="5" Margin="5,0,5,0" x:Name="Levels_CheckBox_EggBreakerIJ">Egg Breaker (IJ)</CheckBox>
+                <CheckBox Grid.Column="4" Grid.Row="6" Margin="5,0,5,0" x:Name="Levels_CheckBox_SpaceGadget">Space Gadget</CheckBox>
+                <CheckBox Grid.Column="4" Grid.Row="8" Margin="5,0,5,0" x:Name="Levels_CheckBox_LostImpact">Lost Impact</CheckBox>
+                <CheckBox Grid.Column="5" Grid.Row="0" Margin="5,0,5,0" x:Name="Levels_CheckBox_GUNFortress">GUN Fortress</CheckBox>
+                <CheckBox Grid.Column="5" Grid.Row="2" Margin="5,0,5,0" x:Name="Levels_CheckBox_BlackComet">Black Comet</CheckBox>
+                <CheckBox Grid.Column="5" Grid.Row="4" Margin="5,0,5,0" x:Name="Levels_CheckBox_LavaShelter">Lava Shelter</CheckBox>
+                <CheckBox Grid.Column="5" Grid.Row="6" Margin="5,0,5,0" x:Name="Levels_CheckBox_CosmicFall">Cosmic Fall</CheckBox>
+                <CheckBox Grid.Column="5" Grid.Row="8" Margin="5,0,5,0" x:Name="Levels_CheckBox_FinalHaunt">Final Haunt</CheckBox>
+                <CheckBox Grid.Column="6" Grid.Row="0" Margin="5,0,5,0" x:Name="Levels_CheckBox_SonicDiablonGF">Sonic &amp; Diablon (GF)</CheckBox>
+                <CheckBox Grid.Column="6" Grid.Row="1" Margin="5,0,5,0" x:Name="Levels_CheckBox_BlackDoomGF">Black Doom (GF)</CheckBox>
+                <CheckBox Grid.Column="6" Grid.Row="2" Margin="5,0,5,0" x:Name="Levels_CheckBox_SonicDiablonBC">Sonic &amp; Diablon (BC)</CheckBox>
+                <CheckBox Grid.Column="6" Grid.Row="3" Margin="5,0,5,0" x:Name="Levels_CheckBox_EggDealerBC">Egg Dealer (BC)</CheckBox>
+                <CheckBox Grid.Column="6" Grid.Row="4" Margin="5,0,5,0" x:Name="Levels_CheckBox_EggDealerLS">Egg Dealer (LS)</CheckBox>
+                <CheckBox Grid.Column="6" Grid.Row="6" Margin="5,0,5,0" x:Name="Levels_CheckBox_EggDealerCF">Egg Dealer (CF)</CheckBox>
+                <CheckBox Grid.Column="6" Grid.Row="7" Margin="5,0,5,0" x:Name="Levels_CheckBox_BlackDoomCF">Black Doom (CF)</CheckBox>
+                <CheckBox Grid.Column="6" Grid.Row="8" Margin="5,0,5,0" x:Name="Levels_CheckBox_SonicDiablonFH">Sonic &amp; Diablon (FH)</CheckBox>
+                <CheckBox Grid.Column="6" Grid.Row="9" Margin="5,0,5,0" x:Name="Levels_CheckBox_BlackDoomFH">Black Doom (FH)</CheckBox>
+                <CheckBox Grid.Column="0" Grid.Row="9" Margin="5,0,5,0" x:Name="Levels_CheckBox_TheLastWay">The Last Way</CheckBox>
+                <CheckBox Grid.Column="1" Grid.Row="9" Margin="5,0,5,0" x:Name="Levels_CheckBox_DevilDoom">Devil Doom</CheckBox>
+              </Grid>
+            </Border>
+          </ScrollViewer>
+        </StackPanel>
+      </TabItem>
 			<TabItem Header="Layout">
 				<StackPanel>
 					<CheckBox x:Name="Layout_CheckBox_RandomizeLayouts" Margin="0,0,10,0">Randomize Layouts (64MB Patch / Dolphin Only)</CheckBox>
