@@ -1163,7 +1163,7 @@ public partial class MainView : UserControl
 						{
 							next = GetStageFromLists(r, orphans, usedstg, 2);
 						}
-						while (l++ < 10 && !LevelOrder_CheckBox_AllowBossToBoss.IsChecked.Value && stg.IsBoss && stages[next].IsBoss);
+						while (next == totalstagecount || l++ < 10 && !LevelOrder_CheckBox_AllowBossToBoss.IsChecked.Value && stg.IsBoss && stages[next].IsBoss);
 						int depth = stagedepths[next] + 1;
 						stagedepths[stgid] = depth;
 						while (depthstages.Count <= depth)
@@ -1187,7 +1187,7 @@ public partial class MainView : UserControl
 							{
 								next = orphans[r.Next(orphans.Count)];
 							}
-							while (l++ < 10 && !LevelOrder_CheckBox_AllowBossToBoss.IsChecked.Value && stg.IsBoss && stages[next].IsBoss);
+							while (next == totalstagecount || l++ < 10 && !LevelOrder_CheckBox_AllowBossToBoss.IsChecked.Value && stg.IsBoss && stages[next].IsBoss);
 							stg.Neutral = next;
 							orphans.Remove(next);
 							depth = stagedepths[next] + 1;
@@ -1225,7 +1225,7 @@ public partial class MainView : UserControl
 							{
 								next = pool[r.Next(pool.Count)];
 							}
-							while (l++ < 10 && !LevelOrder_CheckBox_AllowBossToBoss.IsChecked.Value && stg.IsBoss && stages[next].IsBoss);
+							while (next == totalstagecount || l++ < 10 && !LevelOrder_CheckBox_AllowBossToBoss.IsChecked.Value && stg.IsBoss && stages[next].IsBoss);
 							stg.Neutral = next;
 						}
 						if (stg.HasHero && stg.Hero == -1)
