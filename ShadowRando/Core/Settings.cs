@@ -261,7 +261,11 @@ namespace ShadowRando.Core
 
 		public void Save()
 		{
+			if (ExcludeLevels.Count == 0)
+				ExcludeLevels = null;
 			IniSerializer.Serialize(this, "RandoSettings.ini");
+			if (ExcludeLevels == null)
+				ExcludeLevels = new List<Levels>();
 		}
 	}
 }
