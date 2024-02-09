@@ -81,8 +81,12 @@ public partial class MainView : UserControl
 	private const int stageOffset = 0x50;
 	private const int shadowBoxPatchOffset = 0x3382E0;
 	private const int shadowBoxPatchValue = 0x480001B0;
-	private const int expertModeExtendedLevelSlotsPatchOffset = 0x34E968;
+	private const int expertModeExtendedLevelSlotsPatchOffset1 = 0x34E968;
+	private const int expertModeExtendedLevelSlotsPatchOffset2 = 0x34E528;
 	private const int expertModeExtendedLevelSlotsPatchValue = 0x38631934;
+	private const int expertModeExtendedLevelSlotsEndCheckPatchOffset1 = 0x34E91C;
+	private const int expertModeExtendedLevelSlotsEndCheckPatchOffset2 = 0x34E4E8;
+	private const int expertModeExtendedLevelSlotsEndCheckPatchValue = 0x28000000; // add stage total before patching
 	private const int expertModeLevelsOffset = 0x55E934;
 	static readonly Dictionary<int, int> stageAssociationIDMap = new()
 	{
@@ -1344,7 +1348,14 @@ public partial class MainView : UserControl
 			// patch expert mode list memory region, to allow more than 27 stages
 			buf = BitConverter.GetBytes(expertModeExtendedLevelSlotsPatchValue);
 			Array.Reverse(buf);
-			buf.CopyTo(dolfile, expertModeExtendedLevelSlotsPatchOffset);
+			buf.CopyTo(dolfile, expertModeExtendedLevelSlotsPatchOffset1);
+			buf.CopyTo(dolfile, expertModeExtendedLevelSlotsPatchOffset2);
+			
+			buf = BitConverter.GetBytes(expertModeExtendedLevelSlotsEndCheckPatchValue + exids.Length);
+			Array.Reverse(buf);
+			buf.CopyTo(dolfile, expertModeExtendedLevelSlotsEndCheckPatchOffset1);
+			buf.CopyTo(dolfile, expertModeExtendedLevelSlotsEndCheckPatchOffset2);
+			
 			// end patch
 		}
 
