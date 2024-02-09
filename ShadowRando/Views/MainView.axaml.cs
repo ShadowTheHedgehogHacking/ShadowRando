@@ -70,17 +70,19 @@ public partial class MainView : UserControl
 
 	private CheckBox[] LevelCheckBoxes;
 
-	const int routeMenu6xxStagePreviewBlockerOffset = 0xB48B8;
-	const int routeMenu6xxStagePreviewPatchValue = 0x48000110;
-	const int storyModeStartAddress = 0x2CB9F0;
-	const int firstStageOffset = 0x4C1BA8;
-	const int modeOffset = 8;
-	const int darkOffset = 0x1C;
-	const int neutOffset = 0x28;
-	const int heroOffset = 0x34;
-	const int stageOffset = 0x50;
-	const int shadowBoxPatchOffset = 0x3382E0;
-	const int shadowBoxPatchValue = 0x480001B0;
+	private const int routeMenu6xxStagePreviewBlockerOffset = 0xB48B8;
+	private const int routeMenu6xxStagePreviewPatchValue = 0x48000110;
+	private const int storyModeStartAddress = 0x2CB9F0;
+	private const int firstStageOffset = 0x4C1BA8;
+	private const int modeOffset = 8;
+	private const int darkOffset = 0x1C;
+	private const int neutOffset = 0x28;
+	private const int heroOffset = 0x34;
+	private const int stageOffset = 0x50;
+	private const int shadowBoxPatchOffset = 0x3382E0;
+	private const int shadowBoxPatchValue = 0x480001B0;
+	private const int expertModeExtendedLevelSlotsPatchOffset = 0x34E968;
+	private const int expertModeExtendedLevelSlotsPatchValue = 0x38631934;
 	static readonly Dictionary<int, int> stageAssociationIDMap = new()
 	{
 			{ 5, 100 }, // first stage
@@ -1323,6 +1325,12 @@ public partial class MainView : UserControl
 		buf = BitConverter.GetBytes(routeMenu6xxStagePreviewPatchValue);
 		Array.Reverse(buf);
 		buf.CopyTo(dolfile, routeMenu6xxStagePreviewBlockerOffset);
+		// end patch
+
+		// TODO: Only patch when Expert randomization is enabled! patch expert mode list memory region, to allow more than 27 stages
+		buf = BitConverter.GetBytes(expertModeExtendedLevelSlotsPatchValue);
+		Array.Reverse(buf);
+		buf.CopyTo(dolfile, expertModeExtendedLevelSlotsPatchOffset);
 		// end patch
 
 		if (Layout_CheckBox_RandomizeLayouts.IsChecked.Value && (Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes.IsChecked.Value || Layout_Weapon_CheckBox_RandomWeaponsInWeaponBoxes.IsChecked.Value))
