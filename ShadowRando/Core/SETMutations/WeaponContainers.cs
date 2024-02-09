@@ -12,25 +12,32 @@ internal static class WeaponContainers
 			setData[index].PosZ, setData[index].RotX, setData[index].RotY, setData[index].RotZ, setData[index].Link,
 			setData[index].Rend, setData[index].UnkBytes);
 
-		if (setData[index].List == 0x00)
+		if (setData[index].List != 0x00) return;
+		switch (setData[index].Type)
 		{
-			if (setData[index].Type == 0x09) // Wood Box
+			// Wood Box
+			case 0x09:
 			{
-				var woodbox = (Object0009_WoodBox)setData[index];
-				newEntry.Weapon = woodbox.ModifierWeapon;
+				var woodBox = (Object0009_WoodBox)setData[index];
+				newEntry.Weapon = woodBox.ModifierWeapon;
 				setData[index] = newEntry;
+				break;
 			}
-			else if (setData[index].Type == 0x0A) // Metal Box
+			// Metal Box
+			case 0x0A:
 			{
-				var metalbox = (Object000A_MetalBox)setData[index];
-				newEntry.Weapon = metalbox.ModifierWeapon;
+				var metalBox = (Object000A_MetalBox)setData[index];
+				newEntry.Weapon = metalBox.ModifierWeapon;
 				setData[index] = newEntry;
+				break;
 			}
-			else if (setData[index].Type == 0x0C) // Weapon Box
+			// Weapon Box
+			case 0x0C:
 			{
-				var weaponbox = (Object000C_WeaponBox)setData[index];
-				newEntry.Weapon = weaponbox.Weapon;
+				var weaponBox = (Object000C_WeaponBox)setData[index];
+				newEntry.Weapon = weaponBox.Weapon;
 				setData[index] = newEntry;
+				break;
 			}
 		}
 	}

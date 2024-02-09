@@ -4,7 +4,7 @@ using ShadowSET;
 
 namespace ShadowRando.Core.SETMutations;
 
-public class SETMutations
+public static class SETMutations
 {
 	/**
 	 *  Pass the index of the object to modify, and an instance of the target end object to inherit some values from

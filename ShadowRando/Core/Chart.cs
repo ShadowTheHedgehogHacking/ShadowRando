@@ -9,14 +9,11 @@ public class ChartNode
 	public int GridX { get; }
 	public int GridY { get; }
 
-	public Dictionary<Direction, List<ChartConnection>> OutgoingConnections { get; } =
-		new Dictionary<Direction, List<ChartConnection>>();
+	public Dictionary<Direction, List<ChartConnection>> OutgoingConnections { get; } = new();
 
-	public Dictionary<Direction, List<ChartConnection>> IncomingConnections { get; } =
-		new Dictionary<Direction, List<ChartConnection>>();
+	public Dictionary<Direction, List<ChartConnection>> IncomingConnections { get; } = new();
 
-	public Dictionary<Direction, ChartConnection[]> ConnectionOrder { get; } =
-		new Dictionary<Direction, ChartConnection[]>();
+	public Dictionary<Direction, ChartConnection[]> ConnectionOrder { get; } = new();
 
 	public ChartNode(int x, int y)
 	{
