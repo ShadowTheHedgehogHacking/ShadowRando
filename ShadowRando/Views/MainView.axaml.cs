@@ -83,6 +83,7 @@ public partial class MainView : UserControl
 	private const int shadowBoxPatchValue = 0x480001B0;
 	private const int expertModeExtendedLevelSlotsPatchOffset = 0x34E968;
 	private const int expertModeExtendedLevelSlotsPatchValue = 0x38631934;
+	private const int expertModeLevelsOffset = 0x55E934;
 	static readonly Dictionary<int, int> stageAssociationIDMap = new()
 	{
 			{ 5, 100 }, // first stage
@@ -1337,7 +1338,7 @@ public partial class MainView : UserControl
 			{
 				buf = BitConverter.GetBytes(exids[i] + stagefirst);
 				Array.Reverse(buf);
-				buf.CopyTo(dolfile, expertModeExtendedLevelSlotsPatchOffset + (i * sizeof(int)));
+				buf.CopyTo(dolfile, expertModeLevelsOffset + (i * sizeof(int)));
 			}
 
 			// patch expert mode list memory region, to allow more than 27 stages
