@@ -717,10 +717,10 @@ public partial class MainView : UserControl
 					include = !stages[i].IsLast && !stages[i].IsBoss;
 					break;
 				case LevelOrderMode.BossRush:
-					include = stages[i].IsBoss && settings.ExcludeLevels.Contains((Levels)i);
+					include = stages[i].IsBoss && !settings.ExcludeLevels.Contains((Levels)i);
 					break;
 				default:
-					include = settings.ExcludeLevels.Contains((Levels)i);
+					include = !settings.ExcludeLevels.Contains((Levels)i);
 					break;
 			}
 			if (include)
@@ -741,7 +741,7 @@ public partial class MainView : UserControl
 				break;
 			case LevelOrderMode.AllStagesWarps:
 				{
-					if (LevelOrder_CheckBox_AllowBossToBoss.IsChecked.Value || stageids.Count(a => stages[a].IsBoss) < 2)
+					if (LevelOrder_CheckBox_AllowBossToBoss.IsChecked.Value || stageids.Take(stagecount).Count(a => stages[a].IsBoss) < 2)
 						Shuffle(r, stageids, stagecount);
 					else
 					{
