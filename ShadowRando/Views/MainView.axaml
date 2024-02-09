@@ -56,7 +56,10 @@
 						<NumericUpDown x:Name="LevelOrder_NumericUpDown_BackwardsJumpProbability" Grid.Column="0" Grid.Row="5" Increment="1" Value="10" Maximum="100" Minimum="0"></NumericUpDown>
 						<CheckBox x:Name="LevelOrder_CheckBox_AllowJumpsToSameLevel" Click="LevelOrder_CheckBox_AllowJumpsToSameLevel_Click" Grid.Column="1" Grid.Row="5" Margin="10,0,10,0">Allow Jumps to Same Level</CheckBox>
 					</Grid>
-          <CheckBox x:Name="LevelOrder_CheckBox_AllowBossToBoss" Margin="0,10,5,0">Allow Boss -> Boss Sequences</CheckBox>
+          <StackPanel Orientation="Horizontal">
+            <CheckBox x:Name="LevelOrder_CheckBox_AllowBossToBoss" Margin="0,10,5,0">Allow Boss -> Boss Sequences</CheckBox>
+            <CheckBox x:Name="LevelOrder_CheckBox_ExpertRando" Margin="0,10,5,0">Randomize Expert Mode</CheckBox>
+          </StackPanel>
           <Label Margin="0,15,0,0">Program Theme</Label>
 					<StackPanel Orientation="Horizontal">
 						<ComboBox x:Name="LevelOrder_ComboBox_ProgramTheme" IsEnabled="False" SelectedIndex="2">

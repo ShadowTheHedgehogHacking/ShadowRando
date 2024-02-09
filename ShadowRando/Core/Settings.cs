@@ -31,6 +31,8 @@ namespace ShadowRando.Core
 		[System.ComponentModel.DefaultValue(true)]
 		[IniAlwaysInclude]
 		public bool LevelOrderAllowBossToBoss = true;
+		[IniAlwaysInclude]
+		public bool LevelOrderExpertMode;
 		[IniCollection(IniCollectionMode.SingleLine, Format = ", ")]
 		public List<Levels> ExcludeLevels = new List<Levels>();
 

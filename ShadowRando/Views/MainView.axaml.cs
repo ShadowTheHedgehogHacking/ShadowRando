@@ -306,6 +306,7 @@ public partial class MainView : UserControl
 		LevelOrder_NumericUpDown_BackwardsJumpProbability.Value = settings.LevelOrderBackwardsJumpProbability;
 		LevelOrder_CheckBox_AllowJumpsToSameLevel.IsChecked = settings.LevelOrderAllowJumpsToSameLevel;
 		LevelOrder_CheckBox_AllowBossToBoss.IsChecked = settings.LevelOrderAllowBossToBoss;
+		LevelOrder_CheckBox_ExpertRando.IsChecked = settings.LevelOrderExpertMode;
 
 		foreach (var lev in settings.ExcludeLevels)
 			LevelCheckBoxes[(int)lev].IsChecked = true;
@@ -444,6 +445,7 @@ public partial class MainView : UserControl
 		settings.LevelOrderBackwardsJumpProbability = (int)LevelOrder_NumericUpDown_BackwardsJumpProbability.Value;
 		settings.LevelOrderAllowJumpsToSameLevel = LevelOrder_CheckBox_AllowJumpsToSameLevel.IsChecked.Value;
 		settings.LevelOrderAllowBossToBoss = LevelOrder_CheckBox_AllowBossToBoss.IsChecked.Value;
+		settings.LevelOrderExpertMode = LevelOrder_CheckBox_ExpertRando.IsChecked.Value;
 
 		settings.ExcludeLevels = new List<Levels>();
 		for (int i = 0; i < LevelCheckBoxes.Length; i++)
@@ -1327,11 +1329,23 @@ public partial class MainView : UserControl
 		buf.CopyTo(dolfile, routeMenu6xxStagePreviewBlockerOffset);
 		// end patch
 
-		// TODO: Only patch when Expert randomization is enabled! patch expert mode list memory region, to allow more than 27 stages
-		buf = BitConverter.GetBytes(expertModeExtendedLevelSlotsPatchValue);
-		Array.Reverse(buf);
-		buf.CopyTo(dolfile, expertModeExtendedLevelSlotsPatchOffset);
-		// end patch
+		if (settings.LevelOrderExpertMode)
+		{
+			var exids = Enumerable.Range(0, totalstagecount).Except(settings.ExcludeLevels.Select(a => (int)a)).ToArray();
+			Shuffle(r, exids);
+			for (int i = 0; i < exids.Length; i++)
+			{
+				buf = BitConverter.GetBytes(exids[i] + stagefirst);
+				Array.Reverse(buf);
+				buf.CopyTo(dolfile, expertModeExtendedLevelSlotsPatchOffset + (i * sizeof(int)));
+			}
+
+			// patch expert mode list memory region, to allow more than 27 stages
+			buf = BitConverter.GetBytes(expertModeExtendedLevelSlotsPatchValue);
+			Array.Reverse(buf);
+			buf.CopyTo(dolfile, expertModeExtendedLevelSlotsPatchOffset);
+			// end patch
+		}
 
 		if (Layout_CheckBox_RandomizeLayouts.IsChecked.Value && (Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes.IsChecked.Value || Layout_Weapon_CheckBox_RandomWeaponsInWeaponBoxes.IsChecked.Value))
 		{
@@ -3408,6 +3422,7 @@ public partial class MainView : UserControl
 			await sw.WriteLineAsync($"Allow Jumps To Same Level: {LevelOrder_CheckBox_AllowJumpsToSameLevel.IsChecked.Value}");
 		}
 		await sw.WriteLineAsync($"Allow Boss -> Boss: {LevelOrder_CheckBox_AllowBossToBoss.IsChecked.Value}");
+		await sw.WriteLineAsync($"Expert Mode: {settings.LevelOrderExpertMode}");
 		await sw.WriteLineAsync($"Excluded Levels: {string.Join(", ", settings.ExcludeLevels.Select(a => LevelNames[(int)a]))}");
 
 		await sw.WriteLineAsync("---- Layout ----");
