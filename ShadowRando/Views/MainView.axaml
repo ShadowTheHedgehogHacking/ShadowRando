@@ -71,54 +71,174 @@
 				</StackPanel>
 			</TabItem>
       <TabItem Header="Exclude Levels">
-        <StackPanel>
-          <ScrollViewer HorizontalScrollBarVisibility="Auto" AllowAutoHide="False">
-            <Border BorderBrush="White" BorderThickness="1" Margin="0,0,0,20">
+        <Panel>
+          <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" AllowAutoHide="False">
+            <Border BorderBrush="White" BorderThickness="1" Margin="0,0,20,20">
               <Grid ShowGridLines="True" ColumnDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto" RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto">
-                <CheckBox Grid.Column="0" Grid.Row="4" Margin="5,0,5,0" x:Name="Levels_CheckBox_Westopolis">Westopolis</CheckBox>
-                <CheckBox Grid.Column="1" Grid.Row="2" Margin="5,0,5,0" x:Name="Levels_CheckBox_DigitalCircuit">Digital Circuit</CheckBox>
-                <CheckBox Grid.Column="1" Grid.Row="4" Margin="5,0,5,0" x:Name="Levels_CheckBox_GlyphicCanyon">Glyphic Canyon</CheckBox>
-                <CheckBox Grid.Column="1" Grid.Row="6" Margin="5,0,5,0" x:Name="Levels_CheckBox_LethalHighway">Lethal Highway</CheckBox>
-                <CheckBox Grid.Column="1" Grid.Row="7" Margin="5,0,5,0" x:Name="Levels_CheckBox_BlackBullLH">Black Bull (LH)</CheckBox>
-                <CheckBox Grid.Column="2" Grid.Row="2" Margin="5,0,5,0" x:Name="Levels_CheckBox_CrypticCastle">Cryptic Castle</CheckBox>
-                <CheckBox Grid.Column="2" Grid.Row="3" Margin="5,0,5,0" x:Name="Levels_CheckBox_EggBreakerCC">Egg Breaker (CC)</CheckBox>
-                <CheckBox Grid.Column="2" Grid.Row="4" Margin="5,0,5,0" x:Name="Levels_CheckBox_PrisonIsland">Prison Island</CheckBox>
-                <CheckBox Grid.Column="2" Grid.Row="6" Margin="5,0,5,0" x:Name="Levels_CheckBox_CircusPark">Circus Park</CheckBox>
-                <CheckBox Grid.Column="3" Grid.Row="0" Margin="5,0,5,0" x:Name="Levels_CheckBox_CentralCity">Central City</CheckBox>
-                <CheckBox Grid.Column="3" Grid.Row="2" Margin="5,0,5,0" x:Name="Levels_CheckBox_TheDoom">The Doom</CheckBox>
-                <CheckBox Grid.Column="3" Grid.Row="3" Margin="5,0,5,0" x:Name="Levels_CheckBox_HeavyDog">Heavy Dog</CheckBox>
-                <CheckBox Grid.Column="3" Grid.Row="4" Margin="5,0,5,0" x:Name="Levels_CheckBox_SkyTroops">Sky Troops</CheckBox>
-                <CheckBox Grid.Column="3" Grid.Row="6" Margin="5,0,5,0" x:Name="Levels_CheckBox_MadMatrix">Mad Matrix</CheckBox>
-                <CheckBox Grid.Column="3" Grid.Row="7" Margin="5,0,5,0" x:Name="Levels_CheckBox_EggBreakerMM">Egg Breaker (MM)</CheckBox>
-                <CheckBox Grid.Column="3" Grid.Row="8" Margin="5,0,5,0" x:Name="Levels_CheckBox_DeathRuins">Death Ruins</CheckBox>
-                <CheckBox Grid.Column="3" Grid.Row="9" Margin="5,0,5,0" x:Name="Levels_CheckBox_BlackBullDR">Black Bull (DR)</CheckBox>
-                <CheckBox Grid.Column="4" Grid.Row="0" Margin="5,0,5,0" x:Name="Levels_CheckBox_TheARK">The ARK</CheckBox>
-                <CheckBox Grid.Column="4" Grid.Row="1" Margin="5,0,5,0" x:Name="Levels_CheckBox_BlueFalcon">Blue Falcon</CheckBox>
-                <CheckBox Grid.Column="4" Grid.Row="2" Margin="5,0,5,0" x:Name="Levels_CheckBox_AirFleet">Air Fleet</CheckBox>
-                <CheckBox Grid.Column="4" Grid.Row="4" Margin="5,0,5,0" x:Name="Levels_CheckBox_IronJungle">Iron Jungle</CheckBox>
-                <CheckBox Grid.Column="4" Grid.Row="5" Margin="5,0,5,0" x:Name="Levels_CheckBox_EggBreakerIJ">Egg Breaker (IJ)</CheckBox>
-                <CheckBox Grid.Column="4" Grid.Row="6" Margin="5,0,5,0" x:Name="Levels_CheckBox_SpaceGadget">Space Gadget</CheckBox>
-                <CheckBox Grid.Column="4" Grid.Row="8" Margin="5,0,5,0" x:Name="Levels_CheckBox_LostImpact">Lost Impact</CheckBox>
-                <CheckBox Grid.Column="5" Grid.Row="0" Margin="5,0,5,0" x:Name="Levels_CheckBox_GUNFortress">GUN Fortress</CheckBox>
-                <CheckBox Grid.Column="5" Grid.Row="2" Margin="5,0,5,0" x:Name="Levels_CheckBox_BlackComet">Black Comet</CheckBox>
-                <CheckBox Grid.Column="5" Grid.Row="4" Margin="5,0,5,0" x:Name="Levels_CheckBox_LavaShelter">Lava Shelter</CheckBox>
-                <CheckBox Grid.Column="5" Grid.Row="6" Margin="5,0,5,0" x:Name="Levels_CheckBox_CosmicFall">Cosmic Fall</CheckBox>
-                <CheckBox Grid.Column="5" Grid.Row="8" Margin="5,0,5,0" x:Name="Levels_CheckBox_FinalHaunt">Final Haunt</CheckBox>
-                <CheckBox Grid.Column="6" Grid.Row="0" Margin="5,0,5,0" x:Name="Levels_CheckBox_SonicDiablonGF">Sonic &amp; Diablon (GF)</CheckBox>
-                <CheckBox Grid.Column="6" Grid.Row="1" Margin="5,0,5,0" x:Name="Levels_CheckBox_BlackDoomGF">Black Doom (GF)</CheckBox>
-                <CheckBox Grid.Column="6" Grid.Row="2" Margin="5,0,5,0" x:Name="Levels_CheckBox_SonicDiablonBC">Sonic &amp; Diablon (BC)</CheckBox>
-                <CheckBox Grid.Column="6" Grid.Row="3" Margin="5,0,5,0" x:Name="Levels_CheckBox_EggDealerBC">Egg Dealer (BC)</CheckBox>
-                <CheckBox Grid.Column="6" Grid.Row="4" Margin="5,0,5,0" x:Name="Levels_CheckBox_EggDealerLS">Egg Dealer (LS)</CheckBox>
-                <CheckBox Grid.Column="6" Grid.Row="6" Margin="5,0,5,0" x:Name="Levels_CheckBox_EggDealerCF">Egg Dealer (CF)</CheckBox>
-                <CheckBox Grid.Column="6" Grid.Row="7" Margin="5,0,5,0" x:Name="Levels_CheckBox_BlackDoomCF">Black Doom (CF)</CheckBox>
-                <CheckBox Grid.Column="6" Grid.Row="8" Margin="5,0,5,0" x:Name="Levels_CheckBox_SonicDiablonFH">Sonic &amp; Diablon (FH)</CheckBox>
-                <CheckBox Grid.Column="6" Grid.Row="9" Margin="5,0,5,0" x:Name="Levels_CheckBox_BlackDoomFH">Black Doom (FH)</CheckBox>
-                <CheckBox Grid.Column="0" Grid.Row="9" Margin="5,0,5,0" x:Name="Levels_CheckBox_TheLastWay">The Last Way</CheckBox>
-                <CheckBox Grid.Column="1" Grid.Row="9" Margin="5,0,5,0" x:Name="Levels_CheckBox_DevilDoom">Devil Doom</CheckBox>
+                <StackPanel Grid.Column="0" Grid.Row="4" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Westopolis.png" />
+                  <CheckBox Margin="5,0,5,0" x:Name="Levels_CheckBox_Westopolis">Westopolis</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Grid.Row="2" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Digital Circuit.png" />
+                  <CheckBox Margin="5,0,5,0" x:Name="Levels_CheckBox_DigitalCircuit">Digital Circuit</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Grid.Row="4" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Glyphic Canyon.png" />
+                  <CheckBox Margin="5,0,5,0" x:Name="Levels_CheckBox_GlyphicCanyon">Glyphic Canyon</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Grid.Row="6" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Lethal Highway.png" />
+                  <CheckBox Margin="5,0,5,0" x:Name="Levels_CheckBox_LethalHighway">Lethal Highway</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Grid.Row="7" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Black Bull LH.png" />
+                  <CheckBox Margin="5,0,5,0" x:Name="Levels_CheckBox_BlackBullLH">Black Bull (LH)</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="2" Grid.Row="2" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Cryptic Castle.png" />
+                  <CheckBox Margin="5,0,5,0" x:Name="Levels_CheckBox_CrypticCastle">Cryptic Castle</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="2" Grid.Row="3" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Egg Breaker CC.png" />
+                  <CheckBox Margin="5,0,5,0" x:Name="Levels_CheckBox_EggBreakerCC">Egg Breaker (CC)</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="2" Grid.Row="4" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Prison Island.png" />
+                  <CheckBox Margin="5,0,5,0" x:Name="Levels_CheckBox_PrisonIsland">Prison Island</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="2" Grid.Row="6" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Circus Park.png" />
+                  <CheckBox Margin="5,0,5,0" x:Name="Levels_CheckBox_CircusPark">Circus Park</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="3" Grid.Row="0" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Central City.png" />
+                  <CheckBox Margin="5,0,5,0" x:Name="Levels_CheckBox_CentralCity">Central City</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="3" Grid.Row="2" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/The Doom.png" />
+                  <CheckBox Margin="5,0,5,0" x:Name="Levels_CheckBox_TheDoom">The Doom</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="3" Grid.Row="3" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Heavy Dog.png" />
+                  <CheckBox Margin="5,0,5,0" x:Name="Levels_CheckBox_HeavyDog">Heavy Dog</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="3" Grid.Row="4" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Sky Troops.png" />
+                  <CheckBox Margin="5,0,5,0" x:Name="Levels_CheckBox_SkyTroops">Sky Troops</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="3" Grid.Row="6" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Mad Matrix.png" />
+                  <CheckBox Margin="5,0,5,0" x:Name="Levels_CheckBox_MadMatrix">Mad Matrix</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="3" Grid.Row="7" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Egg Breaker MM.png" />
+                  <CheckBox Margin="5,0,5,0" x:Name="Levels_CheckBox_EggBreakerMM">Egg Breaker (MM)</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="3" Grid.Row="8" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Death Ruins.png" />
+                  <CheckBox Margin="5,0,5,0" x:Name="Levels_CheckBox_DeathRuins">Death Ruins</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="3" Grid.Row="9" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Black Bull DR.png" />
+                  <CheckBox Margin="5,0,5,0" x:Name="Levels_CheckBox_BlackBullDR">Black Bull (DR)</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="4" Grid.Row="0" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/The ARK.png" />
+                  <CheckBox Margin="5,0,5,0" x:Name="Levels_CheckBox_TheARK">The ARK</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="4" Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Blue Falcon.png" />
+                  <CheckBox Margin="5,0,5,0" x:Name="Levels_CheckBox_BlueFalcon">Blue Falcon</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="4" Grid.Row="2" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Air Fleet.png" />
+                  <CheckBox Margin="5,0,5,0" x:Name="Levels_CheckBox_AirFleet">Air Fleet</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="4" Grid.Row="4" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Iron Jungle.png" />
+                  <CheckBox  Margin="5,0,5,0" x:Name="Levels_CheckBox_IronJungle">Iron Jungle</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="4" Grid.Row="5" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Egg Breaker IJ.png" />
+                  <CheckBox  Margin="5,0,5,0" x:Name="Levels_CheckBox_EggBreakerIJ">Egg Breaker (IJ)</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="4" Grid.Row="6" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Space Gadget.png" />
+                  <CheckBox  Margin="5,0,5,0" x:Name="Levels_CheckBox_SpaceGadget">Space Gadget</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="4" Grid.Row="8" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Lost Impact.png" />
+                  <CheckBox  Margin="5,0,5,0" x:Name="Levels_CheckBox_LostImpact">Lost Impact</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="5" Grid.Row="0" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/GUN Fortress.png" />
+                  <CheckBox  Margin="5,0,5,0" x:Name="Levels_CheckBox_GUNFortress">GUN Fortress</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="5" Grid.Row="2" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Black Comet.png" />
+                  <CheckBox  Margin="5,0,5,0" x:Name="Levels_CheckBox_BlackComet">Black Comet</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="5" Grid.Row="4" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Lava Shelter.png" />
+                  <CheckBox  Margin="5,0,5,0" x:Name="Levels_CheckBox_LavaShelter">Lava Shelter</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="5" Grid.Row="6" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Cosmic Fall.png" />
+                  <CheckBox  Margin="5,0,5,0" x:Name="Levels_CheckBox_CosmicFall">Cosmic Fall</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="5" Grid.Row="8" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Final Haunt.png" />
+                  <CheckBox  Margin="5,0,5,0" x:Name="Levels_CheckBox_FinalHaunt">Final Haunt</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="6" Grid.Row="0" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Sonic &amp; Diablon GF.png" />
+                  <CheckBox  Margin="5,0,5,0" x:Name="Levels_CheckBox_SonicDiablonGF">Sonic &amp; Diablon (GF)</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="6" Grid.Row="1" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Black Doom GF.png" />
+                  <CheckBox  Margin="5,0,5,0" x:Name="Levels_CheckBox_BlackDoomGF">Black Doom (GF)</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="6" Grid.Row="2" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Sonic &amp; Diablon BC.png" />
+                  <CheckBox  Margin="5,0,5,0" x:Name="Levels_CheckBox_SonicDiablonBC">Sonic &amp; Diablon (BC)</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="6" Grid.Row="3" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Egg Dealer BC.png" />
+                  <CheckBox  Margin="5,0,5,0" x:Name="Levels_CheckBox_EggDealerBC">Egg Dealer (BC)</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="6" Grid.Row="4" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Egg Dealer LS.png" />
+                  <CheckBox  Margin="5,0,5,0" x:Name="Levels_CheckBox_EggDealerLS">Egg Dealer (LS)</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="6" Grid.Row="6" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Egg Dealer CF.png" />
+                  <CheckBox  Margin="5,0,5,0" x:Name="Levels_CheckBox_EggDealerCF">Egg Dealer (CF)</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="6" Grid.Row="7" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Black Doom CF.png" />
+                  <CheckBox  Margin="5,0,5,0" x:Name="Levels_CheckBox_BlackDoomCF">Black Doom (CF)</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="6" Grid.Row="8" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Sonic &amp; Diablon FH.png" />
+                  <CheckBox  Margin="5,0,5,0" x:Name="Levels_CheckBox_SonicDiablonFH">Sonic &amp; Diablon (FH)</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="6" Grid.Row="9" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Black Doom FH.png" />
+                  <CheckBox  Margin="5,0,5,0" x:Name="Levels_CheckBox_BlackDoomFH">Black Doom (FH)</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="0" Grid.Row="9" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/The Last Way.png" />
+                  <CheckBox Margin="5,0,5,0" x:Name="Levels_CheckBox_TheLastWay">The Last Way</CheckBox>
+                </StackPanel>
+                <StackPanel Grid.Column="1" Grid.Row="9" Orientation="Vertical" HorizontalAlignment="Center">
+                  <Image Source="/Assets/Devil Doom.png" />
+                  <CheckBox Margin="5,0,5,0" x:Name="Levels_CheckBox_DevilDoom">Devil Doom</CheckBox>
+                </StackPanel>
               </Grid>
             </Border>
           </ScrollViewer>
-        </StackPanel>
+        </Panel>
       </TabItem>
 			<TabItem Header="Layout">
 				<StackPanel>
