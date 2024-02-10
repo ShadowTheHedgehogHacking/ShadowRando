@@ -2024,6 +2024,7 @@ public partial class MainView : UserControl
 							&& !spline.Name.Contains("stg0300_cc_dr_jn_207")
 							&& !spline.Name.Contains("stg0300_cc_dr_jn_208")
 							&& !spline.Name.Contains("stg0300_cc_pr_jn_210")
+							&& !((spline.Name.Contains("stg0100_jn_cc_010") || spline.Name.Contains("stg0100_jn_cc_011")) && stageDataIdentifier == "stg0202") // Ignore the leftover spline error in stg0202 from Sonic Team
 							)
 							spline.Setting2 = 1;
 					}
