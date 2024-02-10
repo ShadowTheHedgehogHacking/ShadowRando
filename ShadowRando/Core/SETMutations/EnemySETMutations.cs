@@ -362,7 +362,7 @@ namespace ShadowRando.Core.SETMutations
 					newEntry.MoveSpeedRatio = originalEnemy.MoveSpeedRatio;
 					// end EnemyBase
 
-					Object0064_GUNSoldier.EWeapon originalWeaponTypeMapping = 0;
+					Object0064_GUNSoldier.EWeapon originalWeaponTypeMapping = Object0064_GUNSoldier.EWeapon.NONE;
 					switch (originalEnemy.WeaponType)
 					{
 						case Object008D_BkSoldier.EWeapon.NONE:
@@ -389,10 +389,29 @@ namespace ShadowRando.Core.SETMutations
 							originalWeaponTypeMapping = Object0064_GUNSoldier.EWeapon.RIFLE;
 							break;
 					}
+					
+					Object0064_GUNSoldier.EAppear originalAppearMapping = Object0064_GUNSoldier.EAppear.STAND;
+					switch (originalEnemy.AppearType)
+					{
+						case Object008D_BkSoldier.EAppear.STAND:
+							originalAppearMapping = Object0064_GUNSoldier.EAppear.STAND;
+							break;
+						case Object008D_BkSoldier.EAppear.LINEAR_MOVE:
+							originalAppearMapping = Object0064_GUNSoldier.EAppear.LINEAR_MOVE;
+							break;
+						case Object008D_BkSoldier.EAppear.TRIANGLE_MOVE:
+							originalAppearMapping = Object0064_GUNSoldier.EAppear.TRIANGLE_MOVE;
+							break;
+						case Object008D_BkSoldier.EAppear.RANDOM_MOVE:
+							originalAppearMapping = Object0064_GUNSoldier.EAppear.RANDOM_MOVE;
+							break;
+						case Object008D_BkSoldier.EAppear.OFFSETPOS:
+						case Object008D_BkSoldier.EAppear.WARP: // explicit mapping of WARP -> OFFSETPOS as HINSHI will mess up mission counts
+							originalAppearMapping = Object0064_GUNSoldier.EAppear.OFFSETPOS;
+							break;
+					}
 
-					newEntry.AppearType =
-						(Object0064_GUNSoldier.EAppear)originalEnemy
-							.AppearType; // TODO: Future - if gun soldiers being dead are breaking things, then this is the cause; exclude WARP appearType in that case
+					newEntry.AppearType = originalAppearMapping;
 					newEntry.WeaponType = ignoreDonorProperties ? originalWeaponTypeMapping : donor.WeaponType;
 					newEntry.HaveShield = ignoreDonorProperties ? originalEnemy.HaveShield : donor.HaveShield;
 
