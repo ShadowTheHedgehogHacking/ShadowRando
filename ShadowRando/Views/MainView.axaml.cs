@@ -1818,9 +1818,83 @@ public partial class MainView : UserControl
 
 			if ((LayoutPartnerMode)Layout_Partner_ComboBox_Mode.SelectedIndex == LayoutPartnerMode.Wild)
 			{
-				MakeAllPartnersRandom(ref cmnLayoutData, Layout_Partner_CheckBox_KeepAffiliationOfOriginalObject.IsChecked.Value, r);
+				List<Object0190_Partner.EPartner> darkPartners = [
+					Object0190_Partner.EPartner.Eggman,
+					Object0190_Partner.EPartner.DoomsEye
+				];
+				List<Object0190_Partner.EPartner> heroPartners = [
+					Object0190_Partner.EPartner.Sonic,
+					Object0190_Partner.EPartner.Tails,
+					Object0190_Partner.EPartner.Knuckles,
+					Object0190_Partner.EPartner.Amy,
+					Object0190_Partner.EPartner.Rouge,
+					Object0190_Partner.EPartner.Omega,
+					Object0190_Partner.EPartner.Vector,
+					Object0190_Partner.EPartner.Espio,
+					Object0190_Partner.EPartner.Maria,
+					Object0190_Partner.EPartner.Charmy
+				];
+				
+				if (Layout_Partner_CheckBox_OnlySelectedPartners.IsChecked.Value)
+				{
+					heroPartners.Clear();
+					darkPartners.Clear();
+					if (Layout_Partner_CheckBox_SelectedPartner_Sonic.IsChecked.Value)
+						heroPartners.Add(Object0190_Partner.EPartner.Sonic);
+					if (Layout_Partner_CheckBox_SelectedPartner_Tails.IsChecked.Value)
+						heroPartners.Add(Object0190_Partner.EPartner.Tails);
+					if (Layout_Partner_CheckBox_SelectedPartner_Knuckles.IsChecked.Value)
+						heroPartners.Add(Object0190_Partner.EPartner.Knuckles);
+					if (Layout_Partner_CheckBox_SelectedPartner_Amy.IsChecked.Value)
+						heroPartners.Add(Object0190_Partner.EPartner.Amy);
+					if (Layout_Partner_CheckBox_SelectedPartner_Rouge.IsChecked.Value)
+						heroPartners.Add(Object0190_Partner.EPartner.Rouge);
+					if (Layout_Partner_CheckBox_SelectedPartner_Omega.IsChecked.Value)
+						heroPartners.Add(Object0190_Partner.EPartner.Omega);
+					if (Layout_Partner_CheckBox_SelectedPartner_Vector.IsChecked.Value)
+						heroPartners.Add(Object0190_Partner.EPartner.Vector);
+					if (Layout_Partner_CheckBox_SelectedPartner_Espio.IsChecked.Value)
+						heroPartners.Add(Object0190_Partner.EPartner.Espio);
+					if (Layout_Partner_CheckBox_SelectedPartner_Maria.IsChecked.Value)
+						heroPartners.Add(Object0190_Partner.EPartner.Maria);
+					if (Layout_Partner_CheckBox_SelectedPartner_Charmy.IsChecked.Value)
+						heroPartners.Add(Object0190_Partner.EPartner.Charmy);
+					if (Layout_Partner_CheckBox_SelectedPartner_EggMonitor.IsChecked.Value)
+						darkPartners.Add(Object0190_Partner.EPartner.Eggman);
+					if (Layout_Partner_CheckBox_SelectedPartner_EggMonitor.IsChecked.Value)
+						darkPartners.Add(Object0190_Partner.EPartner.DoomsEye);
+				}
+
+				if (Layout_Partner_CheckBox_ReclassifyAffiliation.IsChecked.Value)
+				{
+					List<Object0190_Partner.EPartner> partners = [];
+					partners.AddRange(darkPartners);
+					partners.AddRange(heroPartners);
+					for (int i = partners.Count; i > partners.Count / 2; i--)
+					{
+						if (r.Next(2) == 1)
+						{
+							darkPartners.Add(partners[i]);
+							partners.RemoveAt(i);
+						}
+
+						if (darkPartners.Count != partners.Count / 2)
+							continue;
+
+						heroPartners.AddRange(partners);
+						break;
+					}
+					
+					// TODO: Insufficient selection checking
+
+					// patch partner affiliations
+					// TODO: add here ? Need current dol and will base off above lists
+					// end patching partner affiliations
+				}
+
+				MakeAllPartnersRandom(ref cmnLayoutData, Layout_Partner_CheckBox_KeepAffiliationOfOriginalObject.IsChecked.Value, darkPartners, heroPartners, r);
 				if (nrmLayoutData != null)
-					MakeAllPartnersRandom(ref nrmLayoutData, Layout_Partner_CheckBox_KeepAffiliationOfOriginalObject.IsChecked.Value, r);
+					MakeAllPartnersRandom(ref nrmLayoutData, Layout_Partner_CheckBox_KeepAffiliationOfOriginalObject.IsChecked.Value, darkPartners, heroPartners, r);
 			}
 
 			List<Type> allEnemies = new List<Type>();
@@ -2131,26 +2205,32 @@ public partial class MainView : UserControl
 		return total;
 	}
 
-	private static void MakeAllPartnersRandom(ref List<SetObjectShadow> setData, bool keepOriginalObjectAffiliation, Random r)
+	private static void MakeAllPartnersRandom(ref List<SetObjectShadow> setData, bool keepOriginalObjectAffiliation, List<Object0190_Partner.EPartner> darkPartners, List<Object0190_Partner.EPartner> heroPartners, Random r)
 	{
 		List<(Object0190_Partner item, int index)> partnerItems = setData
 			.Select((item, index) => new { Item = item, Index = index })
 			.Where(pair => pair.Item is Object0190_Partner)
 			.Select(pair => (Item: (Object0190_Partner)pair.Item, Index: pair.Index))
 			.ToList();
+		
+		List<Object0190_Partner.EPartner> partners = [];
+		if (keepOriginalObjectAffiliation) {
+			partners.AddRange(darkPartners);
+			partners.AddRange(heroPartners);
+		}
 
 		foreach (var partner in partnerItems)
 		{
 			if (keepOriginalObjectAffiliation)
 			{
-				if (partner.item.Partner == Object0190_Partner.EPartner.Eggman || partner.item.Partner == Object0190_Partner.EPartner.DoomsEye) 
-					partner.item.Partner = (Object0190_Partner.EPartner)r.Next(0x0B, 0x0D);
+				if (partner.item.Partner is Object0190_Partner.EPartner.Eggman or Object0190_Partner.EPartner.DoomsEye) 
+					partner.item.Partner = darkPartners[r.Next(darkPartners.Count)];
 				else
-					partner.item.Partner = (Object0190_Partner.EPartner)r.Next(0x01, 0x0B);
+					partner.item.Partner = heroPartners[r.Next(heroPartners.Count)];
 			}
 			else
 			{
-				partner.item.Partner = (Object0190_Partner.EPartner)r.Next(0x01, 0x0D);
+				partner.item.Partner = partners[r.Next(partners.Count)];
 			}
 			setData[partner.index] = partner.item;
 		}

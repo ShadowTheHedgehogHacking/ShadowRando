@@ -354,11 +354,11 @@
 									<ComboBoxItem IsEnabled="False">1:1 Per Stage (Not Ready Yet)</ComboBoxItem>
 									<ComboBoxItem IsEnabled="False">1:1 Global (Not Ready Yet)</ComboBoxItem>
 								</ComboBox>
-								<CheckBox x:Name="Layout_Partner_CheckBox_ReclassifyAffiliation" IsEnabled="False">Reclassify Affiliation of Dark/Hero Partners</CheckBox>
+								<CheckBox x:Name="Layout_Partner_CheckBox_ReclassifyAffiliation">Reclassify Affiliation of Dark/Hero Partners</CheckBox>
 								<CheckBox x:Name="Layout_Partner_CheckBox_KeepAffiliationOfOriginalObject">Keep Affiliation of Original Object (Dark -> Dark)</CheckBox>
-								<CheckBox x:Name="Layout_Partner_CheckBox_OnlySelectedPartners" IsEnabled="False">Only Selected Partners</CheckBox>
+								<CheckBox x:Name="Layout_Partner_CheckBox_OnlySelectedPartners">Only Selected Partners</CheckBox>
 								<Label Margin="0,10,0,0">Selected Partners</Label>
-								<Grid IsEnabled="False" ColumnDefinitions="*, *, *" RowDefinitions="*, *, *, *">
+								<Grid ColumnDefinitions="*, *, *" RowDefinitions="*, *, *, *">
 									<CheckBox Grid.Column="0" Grid.Row="0" Margin="0,0,5,0" x:Name="Layout_Partner_CheckBox_SelectedPartner_Sonic">Sonic</CheckBox>
 									<CheckBox Grid.Column="1" Grid.Row="0" Margin="0,0,5,0" x:Name="Layout_Partner_CheckBox_SelectedPartner_Tails">Tails</CheckBox>
 									<CheckBox Grid.Column="2" Grid.Row="0" Margin="0,0,5,0" x:Name="Layout_Partner_CheckBox_SelectedPartner_Knuckles">Knuckles</CheckBox>
