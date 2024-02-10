@@ -1643,6 +1643,354 @@ public partial class MainView : UserControl
 		var nukkoro2 = Nukkoro2.ReadFile(Path.Combine("backup", "nukkoro2.inf"));
 
 		ShadowSET.LayoutEditorSystem.SetupLayoutEditorSystem(); // Critical to load relevent data
+
+		List<Object0190_Partner.EPartner> darkPartners =
+		[
+			Object0190_Partner.EPartner.Eggman,
+			Object0190_Partner.EPartner.DoomsEye
+		];
+		List<Object0190_Partner.EPartner> heroPartners =
+		[
+			Object0190_Partner.EPartner.Sonic,
+			Object0190_Partner.EPartner.Tails,
+			Object0190_Partner.EPartner.Knuckles,
+			Object0190_Partner.EPartner.Amy,
+			Object0190_Partner.EPartner.Rouge,
+			Object0190_Partner.EPartner.Omega,
+			Object0190_Partner.EPartner.Vector,
+			Object0190_Partner.EPartner.Espio,
+			Object0190_Partner.EPartner.Maria,
+			Object0190_Partner.EPartner.Charmy
+		];
+
+		// Perform our error checking and filtering before we enter the per-stage loop
+
+		// Enemy Filtering & Error Cases
+		List<Type> allEnemies = new List<Type>();
+		List<Type> groundEnemies = new List<Type>();
+		List<Type> flyingEnemies = new List<Type>();
+		List<Type> pathTypeFlyingEnemies = new List<Type>();
+
+		if (Layout_Enemy_CheckBox_OnlySelectedEnemyTypes.IsChecked.Value && enemyMode != LayoutEnemyMode.Original)
+		{
+			if (Layout_Enemy_CheckBox_SelectedEnemy_GUNSoldier.IsChecked.Value)
+			{
+				groundEnemies.Add(typeof(Object0064_GUNSoldier));
+				allEnemies.Add(typeof(Object0064_GUNSoldier));
+			}
+
+			if (Layout_Enemy_CheckBox_SelectedEnemy_GUNBeetle.IsChecked.Value)
+			{
+				flyingEnemies.Add(typeof(Object0065_GUNBeetle));
+				pathTypeFlyingEnemies.Add(typeof(Object0065_GUNBeetle));
+				allEnemies.Add(typeof(Object0065_GUNBeetle));
+			}
+
+			if (Layout_Enemy_CheckBox_SelectedEnemy_GUNBigfoot.IsChecked.Value)
+			{
+				groundEnemies.Add(typeof(Object0066_GUNBigfoot));
+				flyingEnemies.Add(typeof(Object0066_GUNBigfoot));
+				allEnemies.Add(typeof(Object0066_GUNBigfoot));
+			}
+
+			if (Layout_Enemy_CheckBox_SelectedEnemy_GUNRobot.IsChecked.Value)
+			{
+				groundEnemies.Add(typeof(Object0068_GUNRobot));
+				allEnemies.Add(typeof(Object0068_GUNRobot));
+			}
+
+			if (Layout_Enemy_CheckBox_SelectedEnemy_EggPierrot.IsChecked.Value)
+			{
+				groundEnemies.Add(typeof(Object0078_EggPierrot));
+				allEnemies.Add(typeof(Object0078_EggPierrot));
+			}
+
+			if (Layout_Enemy_CheckBox_SelectedEnemy_EggPawn.IsChecked.Value)
+			{
+				groundEnemies.Add(typeof(Object0079_EggPawn));
+				allEnemies.Add(typeof(Object0079_EggPawn));
+			}
+
+			if (Layout_Enemy_CheckBox_SelectedEnemy_ShadowAndroid.IsChecked.Value)
+			{
+				groundEnemies.Add(typeof(Object007A_EggShadowAndroid));
+				allEnemies.Add(typeof(Object007A_EggShadowAndroid));
+			}
+
+			if (Layout_Enemy_CheckBox_SelectedEnemy_BAGiant.IsChecked.Value)
+			{
+				groundEnemies.Add(typeof(Object008C_BkGiant));
+				allEnemies.Add(typeof(Object008C_BkGiant));
+			}
+
+			if (Layout_Enemy_CheckBox_SelectedEnemy_BASoldier.IsChecked.Value)
+			{
+				groundEnemies.Add(typeof(Object008D_BkSoldier));
+				allEnemies.Add(typeof(Object008D_BkSoldier));
+			}
+
+			if (Layout_Enemy_CheckBox_SelectedEnemy_BAHawkVolt.IsChecked.Value)
+			{
+				flyingEnemies.Add(typeof(Object008E_BkWingLarge));
+				pathTypeFlyingEnemies.Add(typeof(Object008E_BkWingLarge));
+				allEnemies.Add(typeof(Object008E_BkWingLarge));
+			}
+
+			if (Layout_Enemy_CheckBox_SelectedEnemy_BAWing.IsChecked.Value)
+			{
+				flyingEnemies.Add(typeof(Object008F_BkWingSmall));
+				pathTypeFlyingEnemies.Add(typeof(Object008F_BkWingSmall));
+				allEnemies.Add(typeof(Object008F_BkWingSmall));
+			}
+
+			if (Layout_Enemy_CheckBox_SelectedEnemy_BAWorm.IsChecked.Value)
+			{
+				groundEnemies.Add(typeof(Object0090_BkWorm));
+				allEnemies.Add(typeof(Object0090_BkWorm));
+			}
+
+			if (Layout_Enemy_CheckBox_SelectedEnemy_BALarva.IsChecked.Value)
+			{
+				groundEnemies.Add(typeof(Object0091_BkLarva));
+				allEnemies.Add(typeof(Object0091_BkLarva));
+			}
+
+			if (Layout_Enemy_CheckBox_SelectedEnemy_ArtificialChaos.IsChecked.Value)
+			{
+				flyingEnemies.Add(typeof(Object0092_BkChaos));
+				allEnemies.Add(typeof(Object0092_BkChaos));
+			}
+
+			if (Layout_Enemy_CheckBox_SelectedEnemy_BAAssassin.IsChecked.Value)
+			{
+				groundEnemies.Add(typeof(Object0093_BkNinja));
+				flyingEnemies.Add(typeof(Object0093_BkNinja));
+				allEnemies.Add(typeof(Object0093_BkNinja));
+			}
+
+			// error checking
+			if (Layout_Enemy_CheckBox_KeepType.IsChecked.Value)
+			{
+				if (groundEnemies.Count == 0 || flyingEnemies.Count == 0)
+				{
+					ShowSimpleMessage("Error", "Must have at least one ground and one flying enemy.", ButtonEnum.Ok,
+						Icon.Error);
+					return 1; // TODO do we want to throw errors?
+				}
+
+				if (groundEnemies.Count == 1)
+				{
+					// make sure there is at least one other enemy if GUN Soldiers are only picked
+					if (groundEnemies[0] == typeof(Object0064_GUNSoldier))
+					{
+						ShowSimpleMessage("Error",
+							"GUN Soldiers have an issue with some Link IDs, add an extra ground enemy type.",
+							ButtonEnum.Ok, Icon.Error);
+						return 1;
+					}
+				}
+			}
+			else
+			{
+				if (allEnemies.Count == 0)
+				{
+					ShowSimpleMessage("Error", "Must pick at least one enemy type.", ButtonEnum.Ok, Icon.Error);
+					return 1;
+				}
+
+				if (allEnemies.Count == 1)
+				{
+					// make sure there is at least one other enemy if GUN Soldiers are only picked
+					if (allEnemies[0] == typeof(Object0064_GUNSoldier))
+					{
+						ShowSimpleMessage("Error",
+							"GUN Soldiers have an issue with some Link IDs, add an extra enemy type.", ButtonEnum.Ok,
+							Icon.Error);
+						return 1;
+					}
+				}
+			}
+		}
+		else
+		{
+			groundEnemies.AddRange(GroundEnemyTypes);
+			flyingEnemies.AddRange(FlyingEnemyTypes);
+			pathTypeFlyingEnemies.AddRange([
+				typeof(Object0065_GUNBeetle), typeof(Object008E_BkWingLarge), typeof(Object008F_BkWingSmall)
+			]);
+			allEnemies.AddRange(EnemyTypes);
+		}
+
+
+		// Weapon Filtering
+		List<EWeapon> weaponsPool = [];
+
+		if (Layout_Weapon_CheckBox_OnlySelectedWeapons.IsChecked.Value)
+		{
+			if (Layout_Weapon_CheckBox_SelectedWeapon_None.IsChecked.Value)
+				weaponsPool.Add(EWeapon.None);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_Pistol.IsChecked.Value)
+				weaponsPool.Add(EWeapon.Pistol);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_SubmachineGun.IsChecked.Value)
+				weaponsPool.Add(EWeapon.SubmachineGun);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_AssaultRifle.IsChecked.Value)
+				weaponsPool.Add(EWeapon.MachineGun);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_HeavyMachineGun.IsChecked.Value)
+				weaponsPool.Add(EWeapon.HeavyMachineGun);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_GatlingGun.IsChecked.Value)
+				weaponsPool.Add(EWeapon.GatlingGun);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_EggPistol.IsChecked.Value)
+				weaponsPool.Add(EWeapon.EggGun);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_LightShot.IsChecked.Value)
+				weaponsPool.Add(EWeapon.LightShot);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_FlashShot.IsChecked.Value)
+				weaponsPool.Add(EWeapon.FlashShot);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_RingShot.IsChecked.Value)
+				weaponsPool.Add(EWeapon.RingShot);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_HeavyShot.IsChecked.Value)
+				weaponsPool.Add(EWeapon.HeavyShot);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_GrenadeLauncher.IsChecked.Value)
+				weaponsPool.Add(EWeapon.GrenadeLauncher);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_GUNBazooka.IsChecked.Value)
+				weaponsPool.Add(EWeapon.GUNBazooka);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_TankCannon.IsChecked.Value)
+				weaponsPool.Add(EWeapon.TankCannon);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_BlackBarrel.IsChecked.Value)
+				weaponsPool.Add(EWeapon.BlackBarrel);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_BigBarrel.IsChecked.Value)
+				weaponsPool.Add(EWeapon.BigBarrel);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_EggBazooka.IsChecked.Value)
+				weaponsPool.Add(EWeapon.EggBazooka);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_RPG.IsChecked.Value)
+				weaponsPool.Add(EWeapon.RPG);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_FourShot.IsChecked.Value)
+				weaponsPool.Add(EWeapon.FourShot);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_EightShot.IsChecked.Value)
+				weaponsPool.Add(EWeapon.EightShot);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_WormShooterBlack.IsChecked.Value)
+				weaponsPool.Add(EWeapon.WormShooterBlack);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_WormShooterRed.IsChecked.Value)
+				weaponsPool.Add(EWeapon.WideWormShooterRed);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_WormShooterGold.IsChecked.Value)
+				weaponsPool.Add(EWeapon.BigWormShooterGold);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_VacuumPod.IsChecked.Value)
+				weaponsPool.Add(EWeapon.VacuumPod);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_LaserRifle.IsChecked.Value)
+				weaponsPool.Add(EWeapon.LaserRifle);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_Splitter.IsChecked.Value)
+				weaponsPool.Add(EWeapon.Splitter);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_Refractor.IsChecked.Value)
+				weaponsPool.Add(EWeapon.Refractor);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_Knife.IsChecked.Value)
+				weaponsPool.Add(EWeapon.Knife);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_BlackSword.IsChecked.Value)
+				weaponsPool.Add(EWeapon.BlackSword);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_DarkHammer.IsChecked.Value)
+				weaponsPool.Add(EWeapon.DarkHammer);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_EggLance.IsChecked.Value)
+				weaponsPool.Add(EWeapon.EggLance);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_SamuraiSwordLv1.IsChecked.Value)
+				weaponsPool.Add(EWeapon.SamuraiSwordLv1);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_SamuraiSwordLv2.IsChecked.Value)
+				weaponsPool.Add(EWeapon.SamuraiSwordLv2);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_SatelliteLaserLv1.IsChecked.Value)
+				weaponsPool.Add(EWeapon.SatelliteLaserLv1);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_SatelliteLaserLv2.IsChecked.Value)
+				weaponsPool.Add(EWeapon.SatelliteLaserLv2);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_EggVacuumLv1.IsChecked.Value)
+				weaponsPool.Add(EWeapon.EggVacLv1);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_EggVacuumLv2.IsChecked.Value)
+				weaponsPool.Add(EWeapon.EggVacLv2);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_OmochaoGunLv1.IsChecked.Value)
+				weaponsPool.Add(EWeapon.OmochaoLv1);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_OmochaoGunLv2.IsChecked.Value)
+				weaponsPool.Add(EWeapon.OmochaoLv2);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_HealCannonLv1.IsChecked.Value)
+				weaponsPool.Add(EWeapon.HealCannonLv1);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_HealCannonLv2.IsChecked.Value)
+				weaponsPool.Add(EWeapon.HealCannonLv2);
+			if (Layout_Weapon_CheckBox_SelectedWeapon_ShadowRifle.IsChecked.Value)
+				weaponsPool.Add(EWeapon.ShadowRifle);
+			if (weaponsPool.Count == 0)
+			{
+				ShowSimpleMessage("Error", "Must select at least one weapon.", ButtonEnum.Ok, Icon.Error);
+				return 1;
+			}
+		}
+		else
+		{
+			weaponsPool.AddRange(Weapons);
+		}
+		
+		// Partner Filtering & Error Cases
+		if ((LayoutPartnerMode)Layout_Partner_ComboBox_Mode.SelectedIndex == LayoutPartnerMode.Wild)
+		{
+			if (Layout_Partner_CheckBox_OnlySelectedPartners.IsChecked.Value)
+			{
+				heroPartners.Clear();
+				darkPartners.Clear();
+				if (Layout_Partner_CheckBox_SelectedPartner_Sonic.IsChecked.Value)
+					heroPartners.Add(Object0190_Partner.EPartner.Sonic);
+				if (Layout_Partner_CheckBox_SelectedPartner_Tails.IsChecked.Value)
+					heroPartners.Add(Object0190_Partner.EPartner.Tails);
+				if (Layout_Partner_CheckBox_SelectedPartner_Knuckles.IsChecked.Value)
+					heroPartners.Add(Object0190_Partner.EPartner.Knuckles);
+				if (Layout_Partner_CheckBox_SelectedPartner_Amy.IsChecked.Value)
+					heroPartners.Add(Object0190_Partner.EPartner.Amy);
+				if (Layout_Partner_CheckBox_SelectedPartner_Rouge.IsChecked.Value)
+					heroPartners.Add(Object0190_Partner.EPartner.Rouge);
+				if (Layout_Partner_CheckBox_SelectedPartner_Omega.IsChecked.Value)
+					heroPartners.Add(Object0190_Partner.EPartner.Omega);
+				if (Layout_Partner_CheckBox_SelectedPartner_Vector.IsChecked.Value)
+					heroPartners.Add(Object0190_Partner.EPartner.Vector);
+				if (Layout_Partner_CheckBox_SelectedPartner_Espio.IsChecked.Value)
+					heroPartners.Add(Object0190_Partner.EPartner.Espio);
+				if (Layout_Partner_CheckBox_SelectedPartner_Maria.IsChecked.Value)
+					heroPartners.Add(Object0190_Partner.EPartner.Maria);
+				if (Layout_Partner_CheckBox_SelectedPartner_Charmy.IsChecked.Value)
+					heroPartners.Add(Object0190_Partner.EPartner.Charmy);
+				if (Layout_Partner_CheckBox_SelectedPartner_EggMonitor.IsChecked.Value)
+					darkPartners.Add(Object0190_Partner.EPartner.Eggman);
+				if (Layout_Partner_CheckBox_SelectedPartner_EggMonitor.IsChecked.Value)
+					darkPartners.Add(Object0190_Partner.EPartner.DoomsEye);
+			}
+
+			if (Layout_Partner_CheckBox_ReclassifyAffiliation.IsChecked.Value)
+			{
+				List<Object0190_Partner.EPartner> partners = [];
+				partners.AddRange(darkPartners);
+				partners.AddRange(heroPartners);
+				darkPartners.Clear();
+				heroPartners.Clear();
+				int initialPartnerTotal = partners.Count;
+				for (int i = initialPartnerTotal; i > initialPartnerTotal / 2; i--)
+				{
+					if (r.Next(2) == 1)
+					{
+						darkPartners.Add(partners[i]);
+						partners.RemoveAt(i);
+					}
+
+					if (darkPartners.Count != initialPartnerTotal / 2)
+						continue;
+
+					heroPartners.AddRange(partners);
+					break;
+				}
+
+				// patch partner affiliations
+				// TODO: add here ? Need current dol and will base off above lists
+				// end patching partner affiliations
+			}
+			
+			if (heroPartners.Count == 0 || darkPartners.Count == 0)
+			{
+				ShowSimpleMessage("Error", "Must have at least one dark and one hero partner.", ButtonEnum.Ok, Icon.Error);
+				return 1;
+			}
+		}
+		
+		// Begin the per-stage layout modifications
 		for (int stageIdToModify = 5; stageIdToModify < 45; stageIdToModify++)
 		{
 			stageAssociationIDMap.TryGetValue(stageIdToModify, out var stageId);
@@ -1683,105 +2031,6 @@ public partial class MainView : UserControl
 				// some stages don't have ds1
 			}
 
-			List<EWeapon> weaponsPool = [];
-
-			if (Layout_Weapon_CheckBox_OnlySelectedWeapons.IsChecked.Value)
-			{
-				if (Layout_Weapon_CheckBox_SelectedWeapon_None.IsChecked.Value)
-					weaponsPool.Add(EWeapon.None);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_Pistol.IsChecked.Value)
-					weaponsPool.Add(EWeapon.Pistol);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_SubmachineGun.IsChecked.Value)
-					weaponsPool.Add(EWeapon.SubmachineGun);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_AssaultRifle.IsChecked.Value)
-					weaponsPool.Add(EWeapon.MachineGun);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_HeavyMachineGun.IsChecked.Value)
-					weaponsPool.Add(EWeapon.HeavyMachineGun);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_GatlingGun.IsChecked.Value)
-					weaponsPool.Add(EWeapon.GatlingGun);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_EggPistol.IsChecked.Value)
-					weaponsPool.Add(EWeapon.EggGun);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_LightShot.IsChecked.Value)
-					weaponsPool.Add(EWeapon.LightShot);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_FlashShot.IsChecked.Value)
-					weaponsPool.Add(EWeapon.FlashShot);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_RingShot.IsChecked.Value)
-					weaponsPool.Add(EWeapon.RingShot);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_HeavyShot.IsChecked.Value)
-					weaponsPool.Add(EWeapon.HeavyShot);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_GrenadeLauncher.IsChecked.Value)
-					weaponsPool.Add(EWeapon.GrenadeLauncher);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_GUNBazooka.IsChecked.Value)
-					weaponsPool.Add(EWeapon.GUNBazooka);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_TankCannon.IsChecked.Value)
-					weaponsPool.Add(EWeapon.TankCannon);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_BlackBarrel.IsChecked.Value)
-					weaponsPool.Add(EWeapon.BlackBarrel);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_BigBarrel.IsChecked.Value)
-					weaponsPool.Add(EWeapon.BigBarrel);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_EggBazooka.IsChecked.Value)
-					weaponsPool.Add(EWeapon.EggBazooka);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_RPG.IsChecked.Value)
-					weaponsPool.Add(EWeapon.RPG);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_FourShot.IsChecked.Value)
-					weaponsPool.Add(EWeapon.FourShot);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_EightShot.IsChecked.Value)
-					weaponsPool.Add(EWeapon.EightShot);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_WormShooterBlack.IsChecked.Value)
-					weaponsPool.Add(EWeapon.WormShooterBlack);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_WormShooterRed.IsChecked.Value)
-					weaponsPool.Add(EWeapon.WideWormShooterRed);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_WormShooterGold.IsChecked.Value)
-					weaponsPool.Add(EWeapon.BigWormShooterGold);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_VacuumPod.IsChecked.Value)
-					weaponsPool.Add(EWeapon.VacuumPod);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_LaserRifle.IsChecked.Value)
-					weaponsPool.Add(EWeapon.LaserRifle);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_Splitter.IsChecked.Value)
-					weaponsPool.Add(EWeapon.Splitter);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_Refractor.IsChecked.Value)
-					weaponsPool.Add(EWeapon.Refractor);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_Knife.IsChecked.Value)
-					weaponsPool.Add(EWeapon.Knife);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_BlackSword.IsChecked.Value)
-					weaponsPool.Add(EWeapon.BlackSword);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_DarkHammer.IsChecked.Value)
-					weaponsPool.Add(EWeapon.DarkHammer);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_EggLance.IsChecked.Value)
-					weaponsPool.Add(EWeapon.EggLance);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_SamuraiSwordLv1.IsChecked.Value)
-					weaponsPool.Add(EWeapon.SamuraiSwordLv1);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_SamuraiSwordLv2.IsChecked.Value)
-					weaponsPool.Add(EWeapon.SamuraiSwordLv2);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_SatelliteLaserLv1.IsChecked.Value)
-					weaponsPool.Add(EWeapon.SatelliteLaserLv1);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_SatelliteLaserLv2.IsChecked.Value)
-					weaponsPool.Add(EWeapon.SatelliteLaserLv2);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_EggVacuumLv1.IsChecked.Value)
-					weaponsPool.Add(EWeapon.EggVacLv1);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_EggVacuumLv2.IsChecked.Value)
-					weaponsPool.Add(EWeapon.EggVacLv2);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_OmochaoGunLv1.IsChecked.Value)
-					weaponsPool.Add(EWeapon.OmochaoLv1);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_OmochaoGunLv2.IsChecked.Value)
-					weaponsPool.Add(EWeapon.OmochaoLv2);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_HealCannonLv1.IsChecked.Value)
-					weaponsPool.Add(EWeapon.HealCannonLv1);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_HealCannonLv2.IsChecked.Value)
-					weaponsPool.Add(EWeapon.HealCannonLv2);
-				if (Layout_Weapon_CheckBox_SelectedWeapon_ShadowRifle.IsChecked.Value)
-					weaponsPool.Add(EWeapon.ShadowRifle);
-				if (weaponsPool.Count == 0)
-				{
-					ShowSimpleMessage("Error", "Must select at least one weapon.", ButtonEnum.Ok, Icon.Error);
-					return 1;
-				}
-			}
-			else
-			{
-				weaponsPool.AddRange(Weapons);
-			}
-
 			if (Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes.IsChecked.Value)
 			{
 				MakeAllBoxesHaveRandomWeapons(ref cmnLayoutData, weaponsPool, r);
@@ -1818,213 +2067,9 @@ public partial class MainView : UserControl
 
 			if ((LayoutPartnerMode)Layout_Partner_ComboBox_Mode.SelectedIndex == LayoutPartnerMode.Wild)
 			{
-				List<Object0190_Partner.EPartner> darkPartners = [
-					Object0190_Partner.EPartner.Eggman,
-					Object0190_Partner.EPartner.DoomsEye
-				];
-				List<Object0190_Partner.EPartner> heroPartners = [
-					Object0190_Partner.EPartner.Sonic,
-					Object0190_Partner.EPartner.Tails,
-					Object0190_Partner.EPartner.Knuckles,
-					Object0190_Partner.EPartner.Amy,
-					Object0190_Partner.EPartner.Rouge,
-					Object0190_Partner.EPartner.Omega,
-					Object0190_Partner.EPartner.Vector,
-					Object0190_Partner.EPartner.Espio,
-					Object0190_Partner.EPartner.Maria,
-					Object0190_Partner.EPartner.Charmy
-				];
-				
-				if (Layout_Partner_CheckBox_OnlySelectedPartners.IsChecked.Value)
-				{
-					heroPartners.Clear();
-					darkPartners.Clear();
-					if (Layout_Partner_CheckBox_SelectedPartner_Sonic.IsChecked.Value)
-						heroPartners.Add(Object0190_Partner.EPartner.Sonic);
-					if (Layout_Partner_CheckBox_SelectedPartner_Tails.IsChecked.Value)
-						heroPartners.Add(Object0190_Partner.EPartner.Tails);
-					if (Layout_Partner_CheckBox_SelectedPartner_Knuckles.IsChecked.Value)
-						heroPartners.Add(Object0190_Partner.EPartner.Knuckles);
-					if (Layout_Partner_CheckBox_SelectedPartner_Amy.IsChecked.Value)
-						heroPartners.Add(Object0190_Partner.EPartner.Amy);
-					if (Layout_Partner_CheckBox_SelectedPartner_Rouge.IsChecked.Value)
-						heroPartners.Add(Object0190_Partner.EPartner.Rouge);
-					if (Layout_Partner_CheckBox_SelectedPartner_Omega.IsChecked.Value)
-						heroPartners.Add(Object0190_Partner.EPartner.Omega);
-					if (Layout_Partner_CheckBox_SelectedPartner_Vector.IsChecked.Value)
-						heroPartners.Add(Object0190_Partner.EPartner.Vector);
-					if (Layout_Partner_CheckBox_SelectedPartner_Espio.IsChecked.Value)
-						heroPartners.Add(Object0190_Partner.EPartner.Espio);
-					if (Layout_Partner_CheckBox_SelectedPartner_Maria.IsChecked.Value)
-						heroPartners.Add(Object0190_Partner.EPartner.Maria);
-					if (Layout_Partner_CheckBox_SelectedPartner_Charmy.IsChecked.Value)
-						heroPartners.Add(Object0190_Partner.EPartner.Charmy);
-					if (Layout_Partner_CheckBox_SelectedPartner_EggMonitor.IsChecked.Value)
-						darkPartners.Add(Object0190_Partner.EPartner.Eggman);
-					if (Layout_Partner_CheckBox_SelectedPartner_EggMonitor.IsChecked.Value)
-						darkPartners.Add(Object0190_Partner.EPartner.DoomsEye);
-				}
-
-				if (Layout_Partner_CheckBox_ReclassifyAffiliation.IsChecked.Value)
-				{
-					List<Object0190_Partner.EPartner> partners = [];
-					partners.AddRange(darkPartners);
-					partners.AddRange(heroPartners);
-					for (int i = partners.Count; i > partners.Count / 2; i--)
-					{
-						if (r.Next(2) == 1)
-						{
-							darkPartners.Add(partners[i]);
-							partners.RemoveAt(i);
-						}
-
-						if (darkPartners.Count != partners.Count / 2)
-							continue;
-
-						heroPartners.AddRange(partners);
-						break;
-					}
-					
-					// TODO: Insufficient selection checking
-
-					// patch partner affiliations
-					// TODO: add here ? Need current dol and will base off above lists
-					// end patching partner affiliations
-				}
-
 				MakeAllPartnersRandom(ref cmnLayoutData, Layout_Partner_CheckBox_KeepAffiliationOfOriginalObject.IsChecked.Value, darkPartners, heroPartners, r);
 				if (nrmLayoutData != null)
 					MakeAllPartnersRandom(ref nrmLayoutData, Layout_Partner_CheckBox_KeepAffiliationOfOriginalObject.IsChecked.Value, darkPartners, heroPartners, r);
-			}
-
-			List<Type> allEnemies = new List<Type>();
-			List<Type> groundEnemies = new List<Type>();
-			List<Type> flyingEnemies = new List<Type>();
-			List<Type> pathTypeFlyingEnemies = new List<Type>();
-
-			if (Layout_Enemy_CheckBox_OnlySelectedEnemyTypes.IsChecked.Value && enemyMode != LayoutEnemyMode.Original)
-			{
-				if (Layout_Enemy_CheckBox_SelectedEnemy_GUNSoldier.IsChecked.Value)
-				{
-					groundEnemies.Add(typeof(Object0064_GUNSoldier));
-					allEnemies.Add(typeof(Object0064_GUNSoldier));
-				}
-				if (Layout_Enemy_CheckBox_SelectedEnemy_GUNBeetle.IsChecked.Value)
-				{
-					flyingEnemies.Add(typeof(Object0065_GUNBeetle));
-					pathTypeFlyingEnemies.Add(typeof(Object0065_GUNBeetle));
-					allEnemies.Add(typeof(Object0065_GUNBeetle));
-				}
-				if (Layout_Enemy_CheckBox_SelectedEnemy_GUNBigfoot.IsChecked.Value)
-				{
-					groundEnemies.Add(typeof(Object0066_GUNBigfoot));
-					flyingEnemies.Add(typeof(Object0066_GUNBigfoot));
-					allEnemies.Add(typeof(Object0066_GUNBigfoot));
-				}
-				if (Layout_Enemy_CheckBox_SelectedEnemy_GUNRobot.IsChecked.Value)
-				{
-					groundEnemies.Add(typeof(Object0068_GUNRobot));
-					allEnemies.Add(typeof(Object0068_GUNRobot));
-				}
-				if (Layout_Enemy_CheckBox_SelectedEnemy_EggPierrot.IsChecked.Value)
-				{
-					groundEnemies.Add(typeof(Object0078_EggPierrot));
-					allEnemies.Add(typeof(Object0078_EggPierrot));
-				}
-				if (Layout_Enemy_CheckBox_SelectedEnemy_EggPawn.IsChecked.Value)
-				{
-					groundEnemies.Add(typeof(Object0079_EggPawn));
-					allEnemies.Add(typeof(Object0079_EggPawn));
-				}
-				if (Layout_Enemy_CheckBox_SelectedEnemy_ShadowAndroid.IsChecked.Value)
-				{
-					groundEnemies.Add(typeof(Object007A_EggShadowAndroid));
-					allEnemies.Add(typeof(Object007A_EggShadowAndroid));
-				}
-				if (Layout_Enemy_CheckBox_SelectedEnemy_BAGiant.IsChecked.Value)
-				{
-					groundEnemies.Add(typeof(Object008C_BkGiant));
-					allEnemies.Add(typeof(Object008C_BkGiant));
-				}
-				if (Layout_Enemy_CheckBox_SelectedEnemy_BASoldier.IsChecked.Value)
-				{
-					groundEnemies.Add(typeof(Object008D_BkSoldier));
-					allEnemies.Add(typeof(Object008D_BkSoldier));
-				}
-				if (Layout_Enemy_CheckBox_SelectedEnemy_BAHawkVolt.IsChecked.Value)
-				{
-					flyingEnemies.Add(typeof(Object008E_BkWingLarge));
-					pathTypeFlyingEnemies.Add(typeof(Object008E_BkWingLarge));
-					allEnemies.Add(typeof(Object008E_BkWingLarge));
-				}
-				if (Layout_Enemy_CheckBox_SelectedEnemy_BAWing.IsChecked.Value)
-				{
-					flyingEnemies.Add(typeof(Object008F_BkWingSmall));
-					pathTypeFlyingEnemies.Add(typeof(Object008F_BkWingSmall));
-					allEnemies.Add(typeof(Object008F_BkWingSmall));
-				}
-				if (Layout_Enemy_CheckBox_SelectedEnemy_BAWorm.IsChecked.Value)
-				{
-					groundEnemies.Add(typeof(Object0090_BkWorm));
-					allEnemies.Add(typeof(Object0090_BkWorm));
-				}
-				if (Layout_Enemy_CheckBox_SelectedEnemy_BALarva.IsChecked.Value)
-				{
-					groundEnemies.Add(typeof(Object0091_BkLarva));
-					allEnemies.Add(typeof(Object0091_BkLarva));
-				}
-				if (Layout_Enemy_CheckBox_SelectedEnemy_ArtificialChaos.IsChecked.Value)
-				{
-					flyingEnemies.Add(typeof(Object0092_BkChaos));
-					allEnemies.Add(typeof(Object0092_BkChaos));
-				}
-				if (Layout_Enemy_CheckBox_SelectedEnemy_BAAssassin.IsChecked.Value)
-				{
-					groundEnemies.Add(typeof(Object0093_BkNinja));
-					flyingEnemies.Add(typeof(Object0093_BkNinja));
-					allEnemies.Add(typeof(Object0093_BkNinja));
-				}
-				// error checking
-				if (Layout_Enemy_CheckBox_KeepType.IsChecked.Value)
-				{
-					if (groundEnemies.Count == 0 || flyingEnemies.Count == 0)
-					{
-						ShowSimpleMessage("Error", "Must have at least one ground and one flying enemy.", ButtonEnum.Ok, Icon.Error);
-						return 1; // TODO do we want to throw errors?
-					}
-					if (groundEnemies.Count == 1)
-					{
-						// make sure there is at least one other enemy if GUN Soldiers are only picked
-						if (groundEnemies[0] == typeof(Object0064_GUNSoldier))
-						{
-							ShowSimpleMessage("Error", "GUN Soldiers have an issue with some Link IDs, add an extra ground enemy type.", ButtonEnum.Ok, Icon.Error);
-							return 1;
-						}
-					}
-				} else
-				{
-					if (allEnemies.Count == 0)
-					{
-						ShowSimpleMessage("Error", "Must pick at least one enemy type.", ButtonEnum.Ok, Icon.Error);
-						return 1;
-					}
-					else if (allEnemies.Count == 1)
-					{
-						// make sure there is at least one other enemy if GUN Soldiers are only picked
-						if (allEnemies[0] == typeof(Object0064_GUNSoldier))
-						{
-							ShowSimpleMessage("Error", "GUN Soldiers have an issue with some Link IDs, add an extra enemy type.", ButtonEnum.Ok, Icon.Error);
-							return 1;
-						}
-					}
-				}
-			}
-			else
-			{
-				groundEnemies.AddRange(GroundEnemyTypes);
-				flyingEnemies.AddRange(FlyingEnemyTypes);
-				pathTypeFlyingEnemies.AddRange([typeof(Object0065_GUNBeetle), typeof(Object008E_BkWingLarge), typeof(Object008F_BkWingSmall)]);
-				allEnemies.AddRange(EnemyTypes);
 			}
 
 			switch (enemyMode)
