@@ -2222,7 +2222,7 @@ public partial class MainView : UserControl
 							spline.Setting2 = 1;
 					}
 					var updatedPATHPTP = SplineReader.ShadowSplinesToByteArray(stageDataIdentifier, splines);
-					datOneDataContent.Files[0].CompressedData = FraGag.Compression.Prs.Compress(updatedPATHPTP);
+					datOneDataContent.Files[0].CompressedData = HeroesONE_R.Utilities.Prs.CompressData(updatedPATHPTP).ToArray();
 					var updatedDatOneData = datOneDataContent.BuildShadowONEArchive(archiveType == ONEArchiveType.Shadow060);
 					File.WriteAllBytes(Path.Combine(settings.GamePath, "files", stageDataIdentifier, datOneFile), updatedDatOneData.ToArray());
 				}
@@ -3915,22 +3915,5 @@ public partial class MainView : UserControl
 				break;
 		}
 		Spoilers_TextBox_LevelInfo.Text = sb.ToString();
-	}
-
-	private void LevelOrder_Button_Credits_OnClick(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-	{
-		ShowSimpleMessage("Credits", 
-			"Additional Contributors:\n" +
-			 "BlazinZzetti\n" +
-	         "\nSoftware Used:\n" +
-	         "AFSLib\n" +
-	         "Avalonia UI\n" +
-	         "HeroesONE-Reloaded\n" +
-	         "MessageBox.Avalonia\n" +
-	         "prs.net - temporary; to be replaced with prs-rs\n" +
-	         "ShadowFNT\n" +
-	         "ShadowSET\n" +
-	         "SkiaSharp",
-			ButtonEnum.Ok, Icon.None);
 	}
 }

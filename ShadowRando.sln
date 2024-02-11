@@ -16,8 +16,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShadowSET", "Submodules\Sha
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HeroesONE_R", "Submodules\HeroesONE++\HeroesONE++\HeroesONE_R.csproj", "{87E33648-55A8-4BB2-ABE3-680527213851}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FraGag.Compression.Prs", "Submodules\HeroesONE++\prs.net\FraGag.Compression.Prs\FraGag.Compression.Prs.csproj", "{0A2F1288-BAE1-4A3E-8E24-E505CE06B5B5}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -88,18 +86,6 @@ Global
 		{87E33648-55A8-4BB2-ABE3-680527213851}.Release|x64.Build.0 = Release|x64
 		{87E33648-55A8-4BB2-ABE3-680527213851}.Release|x86.ActiveCfg = Release|x86
 		{87E33648-55A8-4BB2-ABE3-680527213851}.Release|x86.Build.0 = Release|x86
-		{0A2F1288-BAE1-4A3E-8E24-E505CE06B5B5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0A2F1288-BAE1-4A3E-8E24-E505CE06B5B5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0A2F1288-BAE1-4A3E-8E24-E505CE06B5B5}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{0A2F1288-BAE1-4A3E-8E24-E505CE06B5B5}.Debug|x64.Build.0 = Debug|Any CPU
-		{0A2F1288-BAE1-4A3E-8E24-E505CE06B5B5}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{0A2F1288-BAE1-4A3E-8E24-E505CE06B5B5}.Debug|x86.Build.0 = Debug|Any CPU
-		{0A2F1288-BAE1-4A3E-8E24-E505CE06B5B5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0A2F1288-BAE1-4A3E-8E24-E505CE06B5B5}.Release|Any CPU.Build.0 = Release|Any CPU
-		{0A2F1288-BAE1-4A3E-8E24-E505CE06B5B5}.Release|x64.ActiveCfg = Release|Any CPU
-		{0A2F1288-BAE1-4A3E-8E24-E505CE06B5B5}.Release|x64.Build.0 = Release|Any CPU
-		{0A2F1288-BAE1-4A3E-8E24-E505CE06B5B5}.Release|x86.ActiveCfg = Release|Any CPU
-		{0A2F1288-BAE1-4A3E-8E24-E505CE06B5B5}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

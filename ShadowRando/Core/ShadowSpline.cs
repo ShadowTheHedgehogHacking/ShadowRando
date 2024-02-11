@@ -158,7 +158,7 @@ namespace ShadowRando.Core
 		}
 		public static List<ShadowSpline> ReadShadowSplineFile(ArchiveFile pathPTP)
 		{
-			var splineReader = new EndianBinaryReader(new MemoryStream(pathPTP.DecompressThis()), Endianness.Big);
+			var splineReader = new EndianBinaryReader(new MemoryStream(pathPTP.DecompressThis().ToArray()), Endianness.Big);
 
 			List<ShadowSpline> splineList = new List<ShadowSpline>();
 
