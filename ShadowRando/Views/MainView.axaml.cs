@@ -409,9 +409,26 @@ public partial class MainView : UserControl
 		Layout_Weapon_CheckBox_SelectedWeapon_HealCannonLv1.IsChecked = settings.LayoutWeaponSelectedWeaponHealCannonLv1;
 		Layout_Weapon_CheckBox_SelectedWeapon_HealCannonLv2.IsChecked = settings.LayoutWeaponSelectedWeaponHealCannonLv2;
 		Layout_Weapon_CheckBox_SelectedWeapon_ShadowRifle.IsChecked = settings.LayoutWeaponSelectedWeaponShadowRifle;
+		
 		// Partner
 		Layout_Partner_ComboBox_Mode.SelectedIndex = (int)settings.LayoutPartnerMode;
-		Layout_Partner_CheckBox_KeepAffiliationOfOriginalObject.IsChecked = settings.LayoutPartnerKeepOriginalObjectAffiliation;
+		Layout_Partner_CheckBox_RandomizeAffiliations.IsChecked = settings.LayoutPartnerRandomizeAffiliations;
+		Layout_Partner_CheckBox_KeepAffiliationsAtSameLocation.IsChecked = settings.LayoutPartnerKeepAffiliationsAtSameLocation;
+		Layout_Partner_CheckBox_OnlySelectedPartners.IsChecked = settings.LayoutPartnerOnlySelectedPartners;
+		
+		// Selected Partners
+		Layout_Partner_CheckBox_SelectedPartner_Sonic.IsChecked = settings.LayoutPartnerSelectedSonic;
+		Layout_Partner_CheckBox_SelectedPartner_Tails.IsChecked = settings.LayoutPartnerSelectedTails;
+		Layout_Partner_CheckBox_SelectedPartner_Knuckles.IsChecked = settings.LayoutPartnerSelectedKnuckles;
+		Layout_Partner_CheckBox_SelectedPartner_Amy.IsChecked = settings.LayoutPartnerSelectedAmy;
+		Layout_Partner_CheckBox_SelectedPartner_Rouge.IsChecked = settings.LayoutPartnerSelectedRouge;
+		Layout_Partner_CheckBox_SelectedPartner_Omega.IsChecked = settings.LayoutPartnerSelectedOmega;
+		Layout_Partner_CheckBox_SelectedPartner_Vector.IsChecked = settings.LayoutPartnerSelectedVector;
+		Layout_Partner_CheckBox_SelectedPartner_Espio.IsChecked = settings.LayoutPartnerSelectedEspio;
+		Layout_Partner_CheckBox_SelectedPartner_Maria.IsChecked = settings.LayoutPartnerSelectedMaria;
+		Layout_Partner_CheckBox_SelectedPartner_Charmy.IsChecked = settings.LayoutPartnerSelectedCharmy;
+		Layout_Partner_CheckBox_SelectedPartner_EggMonitor.IsChecked = settings.LayoutPartnerSelectedEggMonitor;
+		Layout_Partner_CheckBox_SelectedPartner_DoomsEye.IsChecked = settings.LayoutPartnerSelectedDoomsEye;
 
 		// Subtitles
 		Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked = settings.RandomizeSubtitlesVoicelines;
@@ -552,7 +569,22 @@ public partial class MainView : UserControl
 		settings.LayoutWeaponSelectedWeaponShadowRifle = Layout_Weapon_CheckBox_SelectedWeapon_ShadowRifle.IsChecked.Value;
 		// Partner
 		settings.LayoutPartnerMode = (LayoutPartnerMode)Layout_Partner_ComboBox_Mode.SelectedIndex;
-		settings.LayoutPartnerKeepOriginalObjectAffiliation = Layout_Partner_CheckBox_KeepAffiliationOfOriginalObject.IsChecked.Value;
+		settings.LayoutPartnerRandomizeAffiliations = Layout_Partner_CheckBox_RandomizeAffiliations.IsChecked.Value;
+		settings.LayoutPartnerKeepAffiliationsAtSameLocation = Layout_Partner_CheckBox_KeepAffiliationsAtSameLocation.IsChecked.Value;
+		settings.LayoutPartnerOnlySelectedPartners = Layout_Partner_CheckBox_OnlySelectedPartners.IsChecked.Value;
+		// Selected Partners
+		settings.LayoutPartnerSelectedSonic = Layout_Partner_CheckBox_SelectedPartner_Sonic.IsChecked.Value;
+		settings.LayoutPartnerSelectedTails = Layout_Partner_CheckBox_SelectedPartner_Tails.IsChecked.Value;
+		settings.LayoutPartnerSelectedKnuckles = Layout_Partner_CheckBox_SelectedPartner_Knuckles.IsChecked.Value;
+		settings.LayoutPartnerSelectedAmy = Layout_Partner_CheckBox_SelectedPartner_Amy.IsChecked.Value;
+		settings.LayoutPartnerSelectedRouge = Layout_Partner_CheckBox_SelectedPartner_Rouge.IsChecked.Value;
+		settings.LayoutPartnerSelectedOmega = Layout_Partner_CheckBox_SelectedPartner_Omega.IsChecked.Value;
+		settings.LayoutPartnerSelectedVector = Layout_Partner_CheckBox_SelectedPartner_Vector.IsChecked.Value;
+		settings.LayoutPartnerSelectedEspio = Layout_Partner_CheckBox_SelectedPartner_Espio.IsChecked.Value;
+		settings.LayoutPartnerSelectedMaria = Layout_Partner_CheckBox_SelectedPartner_Maria.IsChecked.Value;
+		settings.LayoutPartnerSelectedCharmy = Layout_Partner_CheckBox_SelectedPartner_Charmy.IsChecked.Value;
+		settings.LayoutPartnerSelectedEggMonitor = Layout_Partner_CheckBox_SelectedPartner_EggMonitor.IsChecked.Value;
+		settings.LayoutPartnerSelectedDoomsEye = Layout_Partner_CheckBox_SelectedPartner_DoomsEye.IsChecked.Value;
 
 		// Subtitles
 		settings.RandomizeSubtitlesVoicelines = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
@@ -1976,7 +2008,7 @@ public partial class MainView : UserControl
 					darkPartners.Add(Object0190_Partner.EPartner.DoomsEye);
 			}
 
-			if (Layout_Partner_CheckBox_ReclassifyAffiliation.IsChecked.Value)
+			if (Layout_Partner_CheckBox_RandomizeAffiliations.IsChecked.Value)
 			{
 				var partners = darkPartners.Concat(heroPartners).ToArray();
 				Shuffle(r, partners);
@@ -2077,9 +2109,9 @@ public partial class MainView : UserControl
 
 			if ((LayoutPartnerMode)Layout_Partner_ComboBox_Mode.SelectedIndex == LayoutPartnerMode.Wild)
 			{
-				MakeAllPartnersRandom(ref cmnLayoutData, Layout_Partner_CheckBox_KeepAffiliationOfOriginalObject.IsChecked.Value, darkPartners, heroPartners, r);
+				MakeAllPartnersRandom(ref cmnLayoutData, Layout_Partner_CheckBox_KeepAffiliationsAtSameLocation.IsChecked.Value, darkPartners, heroPartners, r);
 				if (nrmLayoutData != null)
-					MakeAllPartnersRandom(ref nrmLayoutData, Layout_Partner_CheckBox_KeepAffiliationOfOriginalObject.IsChecked.Value, darkPartners, heroPartners, r);
+					MakeAllPartnersRandom(ref nrmLayoutData, Layout_Partner_CheckBox_KeepAffiliationsAtSameLocation.IsChecked.Value, darkPartners, heroPartners, r);
 			}
 
 			switch (enemyMode)
@@ -3630,7 +3662,7 @@ public partial class MainView : UserControl
 
 		await sw.WriteLineAsync("---- Layout ----");
 		await sw.WriteLineAsync($"Randomize Layouts: {Layout_CheckBox_RandomizeLayouts.IsChecked.Value}");
-		if (settings.RandomizeLayouts == true)
+		if (Layout_CheckBox_RandomizeLayouts.IsChecked.Value)
 		{
 			await sw.WriteLineAsync($"Make CC Splines Vehicle Compatible: {Layout_CheckBox_MakeCCSplinesVehicleCompatible.IsChecked.Value}");
 			await sw.WriteLineAsync("--- Enemy ---");
@@ -3710,7 +3742,24 @@ public partial class MainView : UserControl
 			}
 			await sw.WriteLineAsync("--- Partner ---");
 			await sw.WriteLineAsync($"Partner Mode: {settings.LayoutPartnerMode}");
-			await sw.WriteLineAsync($"Keep Affiliation of Original Object: {Layout_Partner_CheckBox_KeepAffiliationOfOriginalObject.IsChecked.Value}");
+			await sw.WriteLineAsync($"Randomize Dark/Hero Affiliations: {Layout_Partner_CheckBox_RandomizeAffiliations.IsChecked.Value}");
+			await sw.WriteLineAsync($"Keep Affiliations At Same Locations: {Layout_Partner_CheckBox_KeepAffiliationsAtSameLocation.IsChecked.Value}");
+			await sw.WriteLineAsync($"Only Selected Partners: {Layout_Partner_CheckBox_OnlySelectedPartners.IsChecked.Value}");
+			if (Layout_Partner_CheckBox_OnlySelectedPartners.IsChecked.Value)
+			{
+				await sw.WriteLineAsync($"Sonic: {Layout_Partner_CheckBox_SelectedPartner_Sonic.IsChecked.Value}");
+				await sw.WriteLineAsync($"Tails: {Layout_Partner_CheckBox_SelectedPartner_Tails.IsChecked.Value}");
+				await sw.WriteLineAsync($"Knuckles: {Layout_Partner_CheckBox_SelectedPartner_Knuckles.IsChecked.Value}");
+				await sw.WriteLineAsync($"Amy: {Layout_Partner_CheckBox_SelectedPartner_Amy.IsChecked.Value}");
+				await sw.WriteLineAsync($"Rouge: {Layout_Partner_CheckBox_SelectedPartner_Rouge.IsChecked.Value}");
+				await sw.WriteLineAsync($"Omega: {Layout_Partner_CheckBox_SelectedPartner_Omega.IsChecked.Value}");
+				await sw.WriteLineAsync($"Vector: {Layout_Partner_CheckBox_SelectedPartner_Vector.IsChecked.Value}");
+				await sw.WriteLineAsync($"Espio: {Layout_Partner_CheckBox_SelectedPartner_Espio.IsChecked.Value}");
+				await sw.WriteLineAsync($"Maria: {Layout_Partner_CheckBox_SelectedPartner_Maria.IsChecked.Value}");
+				await sw.WriteLineAsync($"Charmy: {Layout_Partner_CheckBox_SelectedPartner_Charmy.IsChecked.Value}");
+				await sw.WriteLineAsync($"Egg Monitor: {Layout_Partner_CheckBox_SelectedPartner_EggMonitor.IsChecked.Value}");
+				await sw.WriteLineAsync($"Doom's Eye: {Layout_Partner_CheckBox_SelectedPartner_DoomsEye.IsChecked.Value}");
+			}
 		}
 			
 		await sw.WriteLineAsync("---- Subtitles ----");

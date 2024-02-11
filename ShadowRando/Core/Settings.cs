@@ -189,8 +189,38 @@ namespace ShadowRando.Core
 		[IniAlwaysInclude]
 		public LayoutPartnerMode LayoutPartnerMode;
 		[IniAlwaysInclude]
-		public bool LayoutPartnerKeepOriginalObjectAffiliation;
-
+		public bool LayoutPartnerRandomizeAffiliations;
+		[IniAlwaysInclude]
+		public bool LayoutPartnerKeepAffiliationsAtSameLocation;
+		[IniAlwaysInclude]
+		public bool LayoutPartnerOnlySelectedPartners;
+		
+		// Selected Partners
+		[IniAlwaysInclude]
+		public bool LayoutPartnerSelectedSonic;
+		[IniAlwaysInclude]
+		public bool LayoutPartnerSelectedTails;
+		[IniAlwaysInclude]
+		public bool LayoutPartnerSelectedKnuckles;
+		[IniAlwaysInclude]
+		public bool LayoutPartnerSelectedAmy;
+		[IniAlwaysInclude]
+		public bool LayoutPartnerSelectedRouge;
+		[IniAlwaysInclude]
+		public bool LayoutPartnerSelectedOmega;
+		[IniAlwaysInclude]
+		public bool LayoutPartnerSelectedVector;
+		[IniAlwaysInclude]
+		public bool LayoutPartnerSelectedEspio;
+		[IniAlwaysInclude]
+		public bool LayoutPartnerSelectedMaria;
+		[IniAlwaysInclude]
+		public bool LayoutPartnerSelectedCharmy;
+		[IniAlwaysInclude]
+		public bool LayoutPartnerSelectedEggMonitor;
+		[IniAlwaysInclude]
+		public bool LayoutPartnerSelectedDoomsEye;
+			
 		// Subtitles
 		[IniAlwaysInclude]
 		public bool RandomizeSubtitlesVoicelines;
