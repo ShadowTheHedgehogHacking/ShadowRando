@@ -24,6 +24,8 @@ public partial class MainView : UserControl
 {
 	const int stagefirst = 5;
 
+	private byte[] dolfile;
+
 	private static readonly string[] LevelNames =
 	[
 		"Westopolis",
@@ -81,6 +83,23 @@ public partial class MainView : UserControl
 	private const int stageOffset = 0x50;
 	private const int shadowBoxPatchOffset = 0x3382E0;
 	private const int shadowBoxPatchValue = 0x480001B0;
+	private const int partnerAffiliationDarkPatchValue = 0x38E00000;
+	private const int partnerAffiliationHeroPatchValue = 0x38E00002;
+	private const int partnerAffiliationEggmanStaticAssociationPatchOffset = 0x20A048;
+	private const int partnerAffiliationEggmanStaticAssociationPatchValue = 0x48000010;
+	private const int partnerAffiliationSonicPatchOffset = 0x209820;
+	private const int partnerAffiliationTailsPatchOffset = 0x20C368;
+	private const int partnerAffiliationKnucklesPatchOffset = 0x209040;
+	private const int partnerAffiliationAmyPatchOffset = 0x2136E0;
+	private const int partnerAffiliationRougePatchOffset = 0x211228;
+	private const int partnerAffiliationOmegaPatchOffset = 0x20D800;
+	private const int partnerAffiliationVectorPatchOffset = 0x20FE90;
+	private const int partnerAffiliationEspioPatchOffset = 0x20EAF8;
+	private const int partnerAffiliationMariaPatchOffset = 0x20B000;
+	private const int partnerAffiliationCharmyPatchOffset = 0x212520;
+	private const int partnerAffiliationEggmanPatchOffset = 0x20A008;
+	private const int partnerAffiliationDoomsEyePatchOffset = 0x20A81C;
+
 	private const int expertModeExtendedLevelSlotsPatchOffset1 = 0x34E968;
 	private const int expertModeExtendedLevelSlotsPatchOffset2 = 0x34E528;
 	private const int expertModeExtendedLevelSlotsPatchValue = 0x38631934;
@@ -671,7 +690,7 @@ public partial class MainView : UserControl
 
 	private async void RandomizationProcess()
 	{
-		byte[] dolfile = File.ReadAllBytes(Path.Combine("backup", "main.dol"));
+		dolfile = File.ReadAllBytes(Path.Combine("backup", "main.dol"));
 		if (LevelOrder_CheckBox_Random_Seed.IsChecked.Value)
 		{
 			var randomBytes = new byte[10];
@@ -1368,7 +1387,6 @@ public partial class MainView : UserControl
 			// end special weapons box patch
 		}
 
-		File.WriteAllBytes(Path.Combine(settings.GamePath, "sys", "main.dol"), dolfile);
 		if (Music_CheckBox_RandomizeMusic.IsChecked.Value)
 		{
 			Dictionary<MusicCategory, List<string>> musicFiles = new Dictionary<MusicCategory, List<string>>()
@@ -1430,6 +1448,7 @@ public partial class MainView : UserControl
 		Spoilers_Button_MakeChart.IsEnabled = true;
 		ProgressBar_RandomizationProgress.Value = 100;
 		settings.Save();
+		File.WriteAllBytes(Path.Combine(settings.GamePath, "sys", "main.dol"), dolfile);
 		var msgbox = MessageBoxManager.GetMessageBoxStandard("ShadowRando", "Randomization Complete", ButtonEnum.Ok, Icon.Info);
 		var result = await msgbox.ShowAsync();
 		if (result == ButtonResult.Ok)
@@ -1643,25 +1662,6 @@ public partial class MainView : UserControl
 		var nukkoro2 = Nukkoro2.ReadFile(Path.Combine("backup", "nukkoro2.inf"));
 
 		ShadowSET.LayoutEditorSystem.SetupLayoutEditorSystem(); // Critical to load relevent data
-
-		List<Object0190_Partner.EPartner> darkPartners =
-		[
-			Object0190_Partner.EPartner.Eggman,
-			Object0190_Partner.EPartner.DoomsEye
-		];
-		List<Object0190_Partner.EPartner> heroPartners =
-		[
-			Object0190_Partner.EPartner.Sonic,
-			Object0190_Partner.EPartner.Tails,
-			Object0190_Partner.EPartner.Knuckles,
-			Object0190_Partner.EPartner.Amy,
-			Object0190_Partner.EPartner.Rouge,
-			Object0190_Partner.EPartner.Omega,
-			Object0190_Partner.EPartner.Vector,
-			Object0190_Partner.EPartner.Espio,
-			Object0190_Partner.EPartner.Maria,
-			Object0190_Partner.EPartner.Charmy
-		];
 
 		// Perform our error checking and filtering before we enter the per-stage loop
 
@@ -1923,12 +1923,32 @@ public partial class MainView : UserControl
 		}
 		
 		// Partner Filtering & Error Cases
+		List<Object0190_Partner.EPartner> darkPartners =
+		[
+			Object0190_Partner.EPartner.Eggman,
+			Object0190_Partner.EPartner.DoomsEye
+		];
+		List<Object0190_Partner.EPartner> heroPartners =
+		[
+			Object0190_Partner.EPartner.Sonic,
+			Object0190_Partner.EPartner.Tails,
+			Object0190_Partner.EPartner.Knuckles,
+			Object0190_Partner.EPartner.Amy,
+			Object0190_Partner.EPartner.Rouge,
+			Object0190_Partner.EPartner.Omega,
+			Object0190_Partner.EPartner.Vector,
+			Object0190_Partner.EPartner.Espio,
+			Object0190_Partner.EPartner.Maria,
+			Object0190_Partner.EPartner.Charmy
+		];
+		
 		if ((LayoutPartnerMode)Layout_Partner_ComboBox_Mode.SelectedIndex == LayoutPartnerMode.Wild)
 		{
 			if (Layout_Partner_CheckBox_OnlySelectedPartners.IsChecked.Value)
 			{
 				heroPartners.Clear();
 				darkPartners.Clear();
+				// hero
 				if (Layout_Partner_CheckBox_SelectedPartner_Sonic.IsChecked.Value)
 					heroPartners.Add(Object0190_Partner.EPartner.Sonic);
 				if (Layout_Partner_CheckBox_SelectedPartner_Tails.IsChecked.Value)
@@ -1949,9 +1969,10 @@ public partial class MainView : UserControl
 					heroPartners.Add(Object0190_Partner.EPartner.Maria);
 				if (Layout_Partner_CheckBox_SelectedPartner_Charmy.IsChecked.Value)
 					heroPartners.Add(Object0190_Partner.EPartner.Charmy);
+				// dark
 				if (Layout_Partner_CheckBox_SelectedPartner_EggMonitor.IsChecked.Value)
 					darkPartners.Add(Object0190_Partner.EPartner.Eggman);
-				if (Layout_Partner_CheckBox_SelectedPartner_EggMonitor.IsChecked.Value)
+				if (Layout_Partner_CheckBox_SelectedPartner_DoomsEye.IsChecked.Value)
 					darkPartners.Add(Object0190_Partner.EPartner.DoomsEye);
 			}
 
@@ -1979,7 +2000,12 @@ public partial class MainView : UserControl
 				}
 
 				// patch partner affiliations
-				// TODO: add here ? Need current dol and will base off above lists
+				var darkAffiliation = BitConverter.GetBytes(partnerAffiliationDarkPatchValue);
+				Array.Reverse(darkAffiliation);
+				PatchPartnerAffiliations(darkAffiliation, darkPartners);
+				var heroAffiliation = BitConverter.GetBytes(partnerAffiliationHeroPatchValue);
+				Array.Reverse(heroAffiliation);
+				PatchPartnerAffiliations(heroAffiliation, heroPartners);
 				// end patching partner affiliations
 			}
 			
@@ -2248,6 +2274,57 @@ public partial class MainView : UserControl
 			}
 		}
 		return total;
+	}
+
+	private void PatchPartnerAffiliations(byte[] affiliationBytes, List<Object0190_Partner.EPartner> partners)
+	{
+		foreach (var partner in partners)
+		{
+			switch (partner)
+			{
+				case Object0190_Partner.EPartner.Sonic:
+					affiliationBytes.CopyTo(dolfile, partnerAffiliationSonicPatchOffset);
+					break;
+				case Object0190_Partner.EPartner.Tails:
+					affiliationBytes.CopyTo(dolfile, partnerAffiliationTailsPatchOffset);
+					break;
+				case Object0190_Partner.EPartner.Knuckles:
+					affiliationBytes.CopyTo(dolfile, partnerAffiliationKnucklesPatchOffset);
+					break;
+				case Object0190_Partner.EPartner.Amy:
+					affiliationBytes.CopyTo(dolfile, partnerAffiliationAmyPatchOffset);
+					break;
+				case Object0190_Partner.EPartner.Rouge:
+					affiliationBytes.CopyTo(dolfile, partnerAffiliationRougePatchOffset);
+					break;
+				case Object0190_Partner.EPartner.Omega:
+					affiliationBytes.CopyTo(dolfile, partnerAffiliationOmegaPatchOffset);
+					break;
+				case Object0190_Partner.EPartner.Vector:
+					affiliationBytes.CopyTo(dolfile, partnerAffiliationVectorPatchOffset);
+					break;
+				case Object0190_Partner.EPartner.Espio:
+					affiliationBytes.CopyTo(dolfile, partnerAffiliationEspioPatchOffset);
+					break;
+				case Object0190_Partner.EPartner.Maria:
+					affiliationBytes.CopyTo(dolfile, partnerAffiliationMariaPatchOffset);
+					break;
+				case Object0190_Partner.EPartner.Charmy:
+					affiliationBytes.CopyTo(dolfile, partnerAffiliationCharmyPatchOffset);
+					break;
+				case Object0190_Partner.EPartner.Eggman:
+					affiliationBytes.CopyTo(dolfile, partnerAffiliationEggmanPatchOffset);
+					break;
+				case Object0190_Partner.EPartner.DoomsEye:
+					affiliationBytes.CopyTo(dolfile, partnerAffiliationDoomsEyePatchOffset);
+					break;
+				default:
+					break;
+			}
+		}
+		var eggmanStaticAssociation = BitConverter.GetBytes(partnerAffiliationEggmanStaticAssociationPatchValue);
+		Array.Reverse(eggmanStaticAssociation);
+		eggmanStaticAssociation.CopyTo(dolfile, partnerAffiliationEggmanStaticAssociationPatchOffset);
 	}
 
 	private static void MakeAllPartnersRandom(ref List<SetObjectShadow> setData, bool keepOriginalObjectAffiliation, List<Object0190_Partner.EPartner> darkPartners, List<Object0190_Partner.EPartner> heroPartners, Random r)
