@@ -1984,7 +1984,11 @@ public partial class MainView : UserControl
 				darkPartners.Clear();
 				heroPartners.Clear();
 				int initialPartnerTotal = partners.Count;
-				for (int i = initialPartnerTotal; i > initialPartnerTotal / 2; i--)
+				
+				// TODO: rewrite this, so it doesn't suck. Right now its possible to keep rolling all hero, and it'll then throw the no dark partners error
+				// We want it to be possible to choose 2 partners - sonic and tails, and one will assign to dark randomly, the other to hero. The balance should always be half,
+				// giving hero any excess partner that is not a 0 remainder /2 
+				for (int i = initialPartnerTotal - 1; i > initialPartnerTotal / 2; i--)
 				{
 					if (r.Next(2) == 1)
 					{
@@ -1992,7 +1996,7 @@ public partial class MainView : UserControl
 						partners.RemoveAt(i);
 					}
 
-					if (darkPartners.Count != initialPartnerTotal / 2)
+					if (darkPartners.Count < initialPartnerTotal / 2)
 						continue;
 
 					heroPartners.AddRange(partners);
