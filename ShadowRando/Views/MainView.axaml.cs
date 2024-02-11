@@ -2135,6 +2135,38 @@ public partial class MainView : UserControl
 				default:
 					break;
 			}
+			
+			if (stageId == 400)
+			{
+				// add guaranteed vacuums for central city
+				var centralCityVacuum1 = (Object0020_Weapon)LayoutEditorFunctions.CreateShadowObject(0x00,
+					0x20, -110f, -9f, 96f, 0f, 0f, 0f, 0, 6, new byte[] {0x01, 0x10, 0x00, 0x80, 0x01, 0x10, 0x00, 0x00});
+				centralCityVacuum1.Weapon = EWeapon.VacuumPod;
+				cmnLayoutData.Add(centralCityVacuum1);
+				var centralCityVacuum2 = (Object0020_Weapon)LayoutEditorFunctions.CreateShadowObject(0x00,
+					0x20, -81f, -9f, 120f, 0f, 0f, 0f, 0, 6, new byte[] {0x01, 0x10, 0x00, 0x80, 0x01, 0x10, 0x00, 0x00});
+				centralCityVacuum2.Weapon = EWeapon.VacuumPod;
+				cmnLayoutData.Add(centralCityVacuum2);
+			} else if (stageId == 604)
+			{
+				// add guaranteed vacuums for final haunt
+				var finalHauntVacuum1 = (Object0020_Weapon)LayoutEditorFunctions.CreateShadowObject(0x00,
+					0x20, 283f, -1080f, -11974f, 0f, 0f, 0f, 0, 6, new byte[] {0x01, 0x10, 0x00, 0x80, 0x01, 0x10, 0x00, 0x00});
+				finalHauntVacuum1.Weapon = EWeapon.VacuumPod;
+				cmnLayoutData.Add(finalHauntVacuum1);
+				var finalHauntVacuum2 = (Object0020_Weapon)LayoutEditorFunctions.CreateShadowObject(0x00,
+					0x20, 1365f, -1583f, -15446f, 0f, 0f, 0f, 0, 6, new byte[] {0x01, 0x10, 0x00, 0x80, 0x01, 0x10, 0x00, 0x00});
+				finalHauntVacuum2.Weapon = EWeapon.VacuumPod;
+				cmnLayoutData.Add(finalHauntVacuum2);
+				var finalHauntVacuum3 = (Object0020_Weapon)LayoutEditorFunctions.CreateShadowObject(0x00,
+					0x20, 517f, -4220f, -27053f, 0f, 0f, 0f, 0, 6, new byte[] {0x01, 0x10, 0x00, 0x80, 0x01, 0x10, 0x00, 0x00});
+				finalHauntVacuum3.Weapon = EWeapon.VacuumPod;
+				cmnLayoutData.Add(finalHauntVacuum3);
+				var finalHauntVacuum4 = (Object0020_Weapon)LayoutEditorFunctions.CreateShadowObject(0x00,
+					0x20, -110f, -4300f, -31851f, 0f, 0f, 0f, 0, 6, new byte[] {0x01, 0x10, 0x00, 0x80, 0x01, 0x10, 0x00, 0x00});
+				finalHauntVacuum4.Weapon = EWeapon.VacuumPod;
+				cmnLayoutData.Add(finalHauntVacuum4);
+			}
 
 			LayoutEditorFunctions.SaveShadowLayout(cmnLayoutData, Path.Combine(settings.GamePath, "files", stageDataIdentifier, cmnLayout), false);
 			if (nrmLayoutData != null)
@@ -2352,7 +2384,7 @@ public partial class MainView : UserControl
 			.ToList();
 		
 		List<Object0190_Partner.EPartner> partners = [];
-		if (keepOriginalObjectAffiliation) {
+		if (!keepOriginalObjectAffiliation) {
 			partners.AddRange(darkPartners);
 			partners.AddRange(heroPartners);
 		}
