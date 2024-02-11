@@ -2792,7 +2792,7 @@ public partial class MainView : UserControl
 				}
 				else
 				{
-					if (groundEnemies[0] == typeof(Object0064_GUNSoldier))
+					if (groundEnemies.Count > 0 && groundEnemies[0] == typeof(Object0064_GUNSoldier))
 						randomEnemy = r.Next(1, allEnemies.Count); // skip GUN Soldiers otherwise
 					else
 						randomEnemy = r.Next(allEnemies.Count);
