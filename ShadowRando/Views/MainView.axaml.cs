@@ -1978,30 +1978,10 @@ public partial class MainView : UserControl
 
 			if (Layout_Partner_CheckBox_ReclassifyAffiliation.IsChecked.Value)
 			{
-				List<Object0190_Partner.EPartner> partners = [];
-				partners.AddRange(darkPartners);
-				partners.AddRange(heroPartners);
-				darkPartners.Clear();
-				heroPartners.Clear();
-				int initialPartnerTotal = partners.Count;
-				
-				// TODO: rewrite this, so it doesn't suck. Right now its possible to keep rolling all hero, and it'll then throw the no dark partners error
-				// We want it to be possible to choose 2 partners - sonic and tails, and one will assign to dark randomly, the other to hero. The balance should always be half,
-				// giving hero any excess partner that is not a 0 remainder /2 
-				for (int i = initialPartnerTotal - 1; i > initialPartnerTotal / 2; i--)
-				{
-					if (r.Next(2) == 1)
-					{
-						darkPartners.Add(partners[i]);
-						partners.RemoveAt(i);
-					}
-
-					if (darkPartners.Count < initialPartnerTotal / 2)
-						continue;
-
-					heroPartners.AddRange(partners);
-					break;
-				}
+				var partners = darkPartners.Concat(heroPartners).ToArray();
+				Shuffle(r, partners);
+				darkPartners = partners.Take(partners.Length / 2).ToList();
+				heroPartners = partners.Skip(partners.Length / 2).ToList();
 
 				// patch partner affiliations
 				var darkAffiliation = BitConverter.GetBytes(partnerAffiliationDarkPatchValue);
