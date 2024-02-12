@@ -17,6 +17,7 @@ using Avalonia.Controls;
 using ShadowRando.Core;
 using ShadowRando.Core.SETMutations;
 using SkiaSharp;
+using Avalonia.Platform;
 
 namespace ShadowRando.Views;
 
@@ -3120,20 +3121,23 @@ public partial class MainView : UserControl
 				node.Connect(ConnectionType.Dark, levels[stage.Dark]);
 		}
 		SKSizeI textsz = SKSizeI.Empty;
-		using (var g = new SKPaint())
-		{
-			foreach (string item in LevelNames)
+		if (Spoilers_CheckBox_UseIcons.IsChecked.Value)
+			textsz = new SKSizeI(88, 69);
+		else
+			using (var g = new SKPaint())
 			{
-				SKRect bounds = default;
-				g.MeasureText(item, ref bounds);
-				if (bounds.Width > textsz.Width)
-					textsz.Width = (int)bounds.Width;
-				if (bounds.Height > textsz.Height)
-					textsz.Height = (int)bounds.Height;
+				foreach (string item in LevelNames)
+				{
+					SKRect bounds = default;
+					g.MeasureText(item, ref bounds);
+					if (bounds.Width > textsz.Width)
+						textsz.Width = (int)bounds.Width;
+					if (bounds.Height > textsz.Height)
+						textsz.Height = (int)bounds.Height;
+				}
+				textsz.Width += 6;
+				textsz.Height += 6;
 			}
-			textsz.Width += 6;
-			textsz.Height += 6;
-		}
 		List<(ChartNode src, ChartConnection con)> shortcons = new List<(ChartNode src, ChartConnection con)>();
 		List<ChartConnection>[] vcons = new List<ChartConnection>[gridmaxh * 2];
 		for (int i = 0; i < gridmaxh * 2; i++)
@@ -3490,7 +3494,12 @@ public partial class MainView : UserControl
 					int x = colwidth * node.GridX + hmargin;
 					int y = rowheight * node.GridY + vmargin;
 					gfx.DrawRect(x, y, textsz.Width, textsz.Height, rectPaint);
-					gfx.DrawText(GetStageName(id), x + textsz.Width / 2, y + textsz.Height / 2 + textPaint.FontMetrics.XHeight / 2, textPaint);
+					if (Spoilers_CheckBox_UseIcons.IsChecked.Value && id < totalstagecount)
+						using (var asset = AssetLoader.Open(new Uri($"avares://ShadowRando/Assets/{GetStageName(id)}.png")))
+						using (var bmp = SKBitmap.Decode(asset))
+							gfx.DrawBitmap(bmp, new SKPoint(x, y));
+					else
+						gfx.DrawText(GetStageName(id), x + textsz.Width / 2, y + textsz.Height / 2 + textPaint.FontMetrics.XHeight / 2, textPaint);
 					foreach (var (dir, list) in node.OutgoingConnections)
 						foreach (var con in list)
 						{
