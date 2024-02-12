@@ -70,7 +70,13 @@
       <TabItem Header="Exclude Levels">
         <Panel>
           <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" AllowAutoHide="False">
-            <Border BorderBrush="White" BorderThickness="1" Margin="0,0,20,20">
+            <StackPanel>
+              <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
+                <Button x:Name="Levels_Button_ToggleAll" Click="Levels_Button_ToggleAll_Click">Toggle All</Button>
+                <Button x:Name="Levels_Button_ToggleBosses" Click="Levels_Button_ToggleBosses_Click">Toggle Bosses</Button>
+                <Button x:Name="Levels_Button_ToggleLastStory" Click="Levels_Button_ToggleLastStory_Click">Toggle Last Story</Button>
+              </StackPanel>
+              <Border BorderBrush="White" BorderThickness="1" Margin="0,0,20,20">
               <Grid ShowGridLines="True" ColumnDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto" RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto">
                 <StackPanel Grid.Column="0" Grid.Row="4" Orientation="Vertical" HorizontalAlignment="Center">
                   <Image Source="/Assets/Westopolis.png" />
@@ -234,6 +240,7 @@
                 </StackPanel>
               </Grid>
             </Border>
+            </StackPanel>
           </ScrollViewer>
         </Panel>
       </TabItem>

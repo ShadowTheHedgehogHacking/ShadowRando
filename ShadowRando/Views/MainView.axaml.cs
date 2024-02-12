@@ -2981,20 +2981,20 @@ public partial class MainView : UserControl
 	}
 
 	private void Subtitles_CheckBox_OnlyWithLinkedAudio_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
+	{
 		if (Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked.Value)
 			Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsChecked = false;
 	}
 
-    private void Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
+	private void Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+	{
 		if (Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsChecked.Value)
 			Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked = false;
 	}
 
-    const int linespace = 8;
-    private async void Spoilers_Button_MakeChart_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
+	const int linespace = 8;
+	private async void Spoilers_Button_MakeChart_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+	{
 	var topLevel = TopLevel.GetTopLevel(this);
 		var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
 		{
@@ -3671,8 +3671,8 @@ public partial class MainView : UserControl
 		return r;
 	}
 
-    private async void Spoilers_Button_SaveLog_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
+	private async void Spoilers_Button_SaveLog_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+	{
 		var topLevel = TopLevel.GetTopLevel(this);
 		if (topLevel is null) return;
 		var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
@@ -3854,7 +3854,7 @@ public partial class MainView : UserControl
 			await sw.WriteLineAsync();
 		}
 		sw.Close();
-    }
+	}
 
 	private void Spoilers_ListBox_LevelList_SelectionChanged(object? sender, Avalonia.Controls.SelectionChangedEventArgs e)
 	{
@@ -3924,5 +3924,49 @@ public partial class MainView : UserControl
 				break;
 		}
 		Spoilers_TextBox_LevelInfo.Text = sb.ToString();
+	}
+
+	private void Levels_Button_ToggleAll_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+	{
+		bool value = !LevelCheckBoxes.Any(a => a.IsChecked.Value);
+		foreach (var stg in LevelCheckBoxes)
+			stg.IsChecked = value;
+	}
+
+	Levels[] bossLevels = [
+		Levels.BlackBullDR,
+		Levels.BlackBullLH,
+		Levels.BlackDoomCF,
+		Levels.BlackDoomFH,
+		Levels.BlackDoomGF,
+		Levels.BlueFalcon,
+		Levels.DevilDoom,
+		Levels.EggBreakerCC,
+		Levels.EggBreakerIJ,
+		Levels.EggBreakerMM,
+		Levels.EggDealerBC,
+		Levels.EggDealerCF,
+		Levels.EggDealerLS,
+		Levels.HeavyDog,
+		Levels.SonicDiablonBC,
+		Levels.SonicDiablonFH,
+		Levels.SonicDiablonGF
+	];
+	private void Levels_Button_ToggleBosses_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+	{
+		bool value = !bossLevels.Any(b => LevelCheckBoxes[(int)b].IsChecked.Value);
+		foreach (var stg in bossLevels)
+			LevelCheckBoxes[(int)stg].IsChecked = value;
+	}
+
+	Levels[] lastLevels = [
+		Levels.TheLastWay,
+		Levels.DevilDoom
+	];
+	private void Levels_Button_ToggleLastStory_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+	{
+		bool value = !lastLevels.Any(b => LevelCheckBoxes[(int)b].IsChecked.Value);
+		foreach (var stg in lastLevels)
+			LevelCheckBoxes[(int)stg].IsChecked = value;
 	}
 }
