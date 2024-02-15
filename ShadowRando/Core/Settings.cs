@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 
 namespace ShadowRando.Core
@@ -234,6 +235,11 @@ namespace ShadowRando.Core
 		public bool SubtitlesOnlySelectedCharacters;
 		[IniAlwaysInclude]
 		public bool SubtitlesGiveAudioToNoLinkedAudio;
+		[IniAlwaysInclude]
+		public bool SubtitlesGenerateMessages;
+		[IniAlwaysInclude]
+		[DefaultValue(2)]
+		public int SubtitlesMarkovLevel = 2;
 		// Subtitle Selected Characters
 		[IniAlwaysInclude]
 		public bool SubtitlesSelectedCharacterShadow;

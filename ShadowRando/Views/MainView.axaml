@@ -389,6 +389,11 @@
 					<CheckBox x:Name="Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles" Click="Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles_Click">Give Audio to No Linked Audio Subtitles</CheckBox>
 					<CheckBox x:Name="Subtitles_CheckBox_NoSystemMessages" IsChecked="True">No System Messages</CheckBox>
 					<CheckBox x:Name="Subtitles_CheckBox_NoDuplicates" IsChecked="True">No Duplicates</CheckBox>
+          <StackPanel Orientation="Horizontal">
+            <CheckBox x:Name="Subtitles_CheckBox_GenerateMessages">Generate Randomized Messages</CheckBox>
+            <Label Margin="5,0,5,0">Markov Level:</Label>
+            <NumericUpDown x:Name="Subtitles_NumericUpDown_MarkovLevel" Minimum="1" Maximum="3" Value="2" />
+          </StackPanel>
 					<CheckBox x:Name="Subtitles_CheckBox_RandomizeAllAudio" IsEnabled="False">Randomize All Audio</CheckBox>
 					<CheckBox x:Name="Subtitles_CheckBox_IncludeSonicAdventureSubtitlesVoices" IsEnabled="False">Include Sonic Adventure Subtitles/Voices</CheckBox>
 					<CheckBox x:Name="Subtitles_CheckBox_OnlySelectedCharacters">Only Selected Characters</CheckBox>

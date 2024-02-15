@@ -438,6 +438,8 @@ public partial class MainView : UserControl
 		Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked = settings.SubtitlesOnlyLinkedAudio;
 		Subtitles_CheckBox_OnlySelectedCharacters.IsChecked = settings.SubtitlesOnlySelectedCharacters;
 		Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsChecked = settings.SubtitlesGiveAudioToNoLinkedAudio;
+		Subtitles_CheckBox_GenerateMessages.IsChecked = settings.SubtitlesGenerateMessages;
+		Subtitles_NumericUpDown_MarkovLevel.Value = settings.SubtitlesMarkovLevel;
 
 		// Selected Characters
 		Subtitles_CheckBox_SelectedCharacter_Shadow.IsChecked = settings.SubtitlesSelectedCharacterShadow;
@@ -594,6 +596,8 @@ public partial class MainView : UserControl
 		settings.SubtitlesOnlyLinkedAudio = Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked.Value;
 		settings.SubtitlesOnlySelectedCharacters = Subtitles_CheckBox_OnlySelectedCharacters.IsChecked.Value;
 		settings.SubtitlesGiveAudioToNoLinkedAudio = Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsChecked.Value;
+		settings.SubtitlesGenerateMessages = Subtitles_CheckBox_GenerateMessages.IsChecked.Value;
+		settings.SubtitlesMarkovLevel = (int)Subtitles_NumericUpDown_MarkovLevel.Value;
 		// Selected Characters
 		settings.SubtitlesSelectedCharacterShadow = Subtitles_CheckBox_SelectedCharacter_Shadow.IsChecked.Value;
 		settings.SubtitlesSelectedCharacterSonic = Subtitles_CheckBox_SelectedCharacter_Sonic.IsChecked.Value;
@@ -1507,6 +1511,7 @@ public partial class MainView : UserControl
 		var fntRandomPool = new List<ShadowFNT.Structures.TableEntry>();
 		var uniqueAudioIDs = new Dictionary<int, bool>();
 		var uniqueSubtitles = new Dictionary<string, bool>();
+		MarkovTextModel markov = new MarkovTextModel((int)Subtitles_NumericUpDown_MarkovLevel.Value);
 		if (Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked.Value || Subtitles_CheckBox_NoDuplicates.IsChecked.Value || Subtitles_CheckBox_NoSystemMessages.IsChecked.Value || Subtitles_CheckBox_OnlySelectedCharacters.IsChecked.Value)
 		{
 			for (int i = 0; i < fontAndAudioData.initialFntState.Count; i++)
@@ -1523,26 +1528,11 @@ public partial class MainView : UserControl
 
 					if (Subtitles_CheckBox_NoDuplicates.IsChecked.Value)
 					{
-						try
-						{
-							if (entry.audioId != -1 && uniqueAudioIDs[entry.audioId])
-								continue;
-						}
-						catch (KeyNotFoundException)
-						{
-							// not previously seen, we continue the flow
-						}
-
-						try
-						{
-							// this covers chained entries and any repeating messages with -1; Such as system dialogs if the user is not using that filter
-							if (entry.audioId == -1 && uniqueSubtitles[entry.subtitle])
-								continue;
-						}
-						catch (KeyNotFoundException)
-						{
-							// not previously seen, we reach the end and add to the list
-						}
+						if (entry.audioId != -1 && uniqueAudioIDs.ContainsKey(entry.audioId))
+							continue;
+						// this covers chained entries and any repeating messages with -1; Such as system dialogs if the user is not using that filter
+						if (entry.audioId == -1 && uniqueSubtitles.ContainsKey(entry.subtitle))
+							continue;
 					}
 					uniqueAudioIDs[entry.audioId] = true;
 					uniqueSubtitles[entry.subtitle] = true;
@@ -1550,6 +1540,9 @@ public partial class MainView : UserControl
 				}
 			}
 			// customized fnt pool built; begin applying
+			if (Subtitles_CheckBox_GenerateMessages.IsChecked.Value)
+				foreach (var a in fntRandomPool)
+					markov.AddString(a.subtitle);
 			for (int i = 0; i < fontAndAudioData.mutatedFnt.Count; i++)
 			{
 				for (int j = 0; j < fontAndAudioData.mutatedFnt[i].GetEntryTableCount(); j++)
@@ -1565,13 +1558,20 @@ public partial class MainView : UserControl
 					{
 						fontAndAudioData.mutatedFnt[i].SetEntryAudioId(j, fntRandomPool[donorFNTEntryIndex].audioId);
 					}
-					fontAndAudioData.mutatedFnt[i].SetEntrySubtitle(j, fntRandomPool[donorFNTEntryIndex].subtitle);
+					if (Subtitles_CheckBox_GenerateMessages.IsChecked.Value)
+						fontAndAudioData.mutatedFnt[i].SetEntrySubtitle(j, markov.Generate(r));
+					else
+						fontAndAudioData.mutatedFnt[i].SetEntrySubtitle(j, fntRandomPool[donorFNTEntryIndex].subtitle);
 					fontAndAudioData.mutatedFnt[i].SetEntrySubtitleActiveTime(j, fntRandomPool[donorFNTEntryIndex].subtitleActiveTime);
 				}
 			}
 		}
 		else
 		{
+			if (Subtitles_CheckBox_GenerateMessages.IsChecked.Value)
+				foreach (var a in fontAndAudioData.initialFntState)
+					foreach (var b in a.GetEntryTable())
+						markov.AddString(b.subtitle);
 			for (int i = 0; i < fontAndAudioData.mutatedFnt.Count; i++)
 			{
 				for (int j = 0; j < fontAndAudioData.mutatedFnt[i].GetEntryTableCount(); j++)
@@ -1589,7 +1589,10 @@ public partial class MainView : UserControl
 						fontAndAudioData.mutatedFnt[i].SetEntryAudioId(j, fontAndAudioData.initialFntState[donorFNTIndex].GetEntryAudioId(donorFNTEntryIndex));
 					}
 
-					fontAndAudioData.mutatedFnt[i].SetEntrySubtitle(j, fontAndAudioData.initialFntState[donorFNTIndex].GetEntrySubtitle(donorFNTEntryIndex));
+					if (Subtitles_CheckBox_GenerateMessages.IsChecked.Value)
+						fontAndAudioData.mutatedFnt[i].SetEntrySubtitle(j, markov.Generate(r));
+					else
+						fontAndAudioData.mutatedFnt[i].SetEntrySubtitle(j, fontAndAudioData.initialFntState[donorFNTIndex].GetEntrySubtitle(donorFNTEntryIndex));
 					fontAndAudioData.mutatedFnt[i].SetEntrySubtitleActiveTime(j, fontAndAudioData.initialFntState[donorFNTIndex].GetEntrySubtitleActiveTime(donorFNTEntryIndex));
 				}
 			}
