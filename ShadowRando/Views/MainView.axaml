@@ -6,8 +6,10 @@
 	 mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="750"
 	 x:Class="ShadowRando.Views.MainView"
 	 x:DataType="vm:MainViewModel"
-	 Loaded="UserControl_Loaded"
-     Unloaded="UserControl_Unloaded">
+	 
+	 >
+	<!-- Loaded="UserControl_Loaded" -->
+	<!-- Unloaded="UserControl_Unloaded"> -->
 	<Design.DataContext>
 		<!-- This only sets the DataContext for the previewer in an IDE,
          to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
@@ -391,7 +393,7 @@
 					<CheckBox x:Name="Subtitles_CheckBox_NoDuplicates" IsChecked="True">No Duplicates</CheckBox>
           <StackPanel Orientation="Horizontal">
             <CheckBox x:Name="Subtitles_CheckBox_GenerateMessages">Generate Randomized Messages</CheckBox>
-            <Label Margin="5,0,5,0">Markov Level:</Label>
+            <Label Margin="5,5,5,0">Markov Level:</Label>
             <NumericUpDown x:Name="Subtitles_NumericUpDown_MarkovLevel" Minimum="1" Maximum="3" Value="2" />
           </StackPanel>
 					<CheckBox x:Name="Subtitles_CheckBox_RandomizeAllAudio" IsEnabled="False">Randomize All Audio</CheckBox>
@@ -437,16 +439,18 @@
 					<ListBox x:Name="Spoilers_ListBox_LevelList" Margin="0,0,0,70" Grid.Column="0" SelectionChanged="Spoilers_ListBox_LevelList_SelectionChanged"></ListBox>
 					<Grid Grid.Column="1" RowDefinitions="*, Auto">
 						<TextBox x:Name="Spoilers_TextBox_LevelInfo" Grid.Row="0" IsReadOnly="True" AcceptsReturn="True" ScrollViewer.HorizontalScrollBarVisibility="Visible" ></TextBox>
-						<StackPanel Grid.Row="1" Orientation="Horizontal">
-              <StackPanel Margin="20,20,20,20">
-                <CheckBox HorizontalAlignment="Left" x:Name="Spoilers_CheckBox_UseIcons">Use Icons</CheckBox>
-                <Button x:Name="Spoilers_Button_MakeChart" Click="Spoilers_Button_MakeChart_Click">Make Chart...</Button>
-              </StackPanel>
-							<Button x:Name="Spoilers_Button_SaveLog" HorizontalAlignment="Right" Margin="20,20,20,20" Click="Spoilers_Button_SaveLog_Click">Save Log...</Button>
-							<StackPanel Margin="20">
-								<TextBlock Margin="0 5">Hue Shift:</TextBlock>
+						<StackPanel Grid.Row="1" Margin="0,0,0,10" Orientation="Horizontal">
+							<StackPanel Margin="20,10,20,0">
+								<CheckBox HorizontalAlignment="Left" x:Name="Spoilers_CheckBox_UseIcons">Use Icons</CheckBox>
+								<Button x:Name="Spoilers_Button_MakeChart" Click="Spoilers_Button_MakeChart_Click">Make Chart...</Button>
+							</StackPanel>
+							<Button x:Name="Spoilers_Button_SaveLog" HorizontalAlignment="Right" Margin="20,40, 20,0" Click="Spoilers_Button_SaveLog_Click">Save Log...</Button>
+							<StackPanel Margin="20,15,20,0">
+								<TextBlock Margin="0 5">Hue Shift</TextBlock>
 								<NumericUpDown x:Name="Spoilers_NumericUpDown_HueShift" Value="3" Increment="0.05" FormatString="0.00" Minimum="0" Maximum="100"/>
-								<TextBlock Margin="0 5">Darkness Shift:</TextBlock>
+							</StackPanel>
+							<StackPanel Margin="5,15,20,0">
+								<TextBlock Margin="0,5">Darkness Shift</TextBlock>
 								<NumericUpDown x:Name="Spoilers_NumericUpDown_DarknessShift" Value="4" Increment="0.05" FormatString="0.00" Minimum="0" Maximum="100"/>
 							</StackPanel>
 						</StackPanel>
