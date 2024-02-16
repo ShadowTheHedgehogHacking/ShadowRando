@@ -292,7 +292,7 @@
 							</StackPanel>
 						</TabItem>
 						<TabItem Header="Weapon">
-							<Border Height="475">
+							<Border x:Name="Layout_Weapon_Border" Height="475" MinHeight="475">
 								<ScrollViewer AllowAutoHide="False">
 									<StackPanel>
 										<CheckBox x:Name="Layout_Weapon_CheckBox_RandomWeaponsInWeaponBoxes" Click="Layout_Weapon_CheckBox_RandomWeaponsInWeaponBoxes_Click">Random Weapons in Weapon Boxes</CheckBox>
@@ -354,7 +354,7 @@
 								<Label>Mode</Label>
 								<ComboBox x:Name="Layout_Partner_ComboBox_Mode" SelectedIndex="0">
 									<ComboBoxItem>Default Partners</ComboBoxItem>
-									<ComboBoxItem>Wild</ComboBoxItem>
+									<ComboBoxItem>Wild</ComboBoxItem>	
 									<ComboBoxItem IsEnabled="False">1:1 Per Stage (Not Ready Yet)</ComboBoxItem>
 									<ComboBoxItem IsEnabled="False">1:1 Global (Not Ready Yet)</ComboBoxItem>
 								</ComboBox>

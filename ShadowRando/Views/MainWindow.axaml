@@ -8,12 +8,11 @@
 		Width="600"
 		Height="750"
         MinWidth="600"
-		MaxWidth="600"
 		MinHeight="750"
-		MaxHeight="750"
-		CanResize="False"
+		CanResize="True"
         x:Class="ShadowRando.Views.MainWindow"
         Icon="/Assets/logo.ico"
-        Title="ShadowRando: Shadow the Hedgehog Randomizer">
-        <views:MainView />
+        Title="ShadowRando: Shadow the Hedgehog Randomizer"
+        SizeChanged="Control_OnSizeChanged">
+        <views:MainView x:Name="MainView" />
 </Window>
