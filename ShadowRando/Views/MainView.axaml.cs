@@ -1,24 +1,28 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.Security.Cryptography;
-using System;
-using ShadowSET;
-using ShadowFNT;
-using AFSLib;
-using System.Linq;
-using HeroesONE_R.Structures.Common;
-using HeroesONE_R.Structures;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
-using Avalonia.Platform.Storage;
-using MsBox.Avalonia.Enums;
-using MsBox.Avalonia;
-using Avalonia;
+using System.IO;
+using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
+using AFSLib;
 using Avalonia.Controls;
+using Avalonia.Interactivity;
+using Avalonia.Platform;
+using Avalonia.Platform.Storage;
+using HeroesONE_R.Structures;
+using HeroesONE_R.Structures.Common;
+using HeroesONE_R.Utilities;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
+using ShadowFNT;
+using ShadowFNT.Structures;
 using ShadowRando.Core;
 using ShadowRando.Core.SETMutations;
+using ShadowSET;
+using ShadowSET.SETIDBIN;
 using SkiaSharp;
-using Avalonia.Platform;
-using Avalonia.Styling;
+using TableEntry = ShadowFNT.Structures.TableEntry;
 
 namespace ShadowRando.Views;
 
@@ -258,15 +262,17 @@ public partial class MainView : UserControl
 		EWeapon.ShadowRifle
 	];
 
+	private string selectedFolderPath;
 	const string programVersion = "0.5.0";
 	Settings settings;
 
-	public MainView()
+	public MainView(string folderPath)
 	{
+		selectedFolderPath = folderPath;
 		InitializeComponent();
 	}
 
-	private void UserControl_Loaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+	private void UserControl_Loaded(object? sender, RoutedEventArgs e)
 	{
 		var topLevel = TopLevel.GetTopLevel(this);
 		if (OperatingSystem.IsBrowser()) return; // TODO: Browser context only is allowed to read/write file dialogs if a user triggers the context, need to add buttons for browser to target
@@ -314,9 +320,7 @@ public partial class MainView : UserControl
 			Levels_CheckBox_SonicDiablonFH,
 			Levels_CheckBox_DevilDoom
 		];
-
-
-		topLevel.IsVisible = false;
+		
 		settings = Settings.Load();
 
 		// Program Configuration
@@ -473,7 +477,7 @@ public partial class MainView : UserControl
 		LoadGameData();
 	}
 
-	private void UserControl_Unloaded(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+	private void UserControl_Unloaded(object? sender, RoutedEventArgs e)
 	{
 		UpdateSettings();
 	}
@@ -632,24 +636,7 @@ public partial class MainView : UserControl
 
 	private async void LoadGameData()
 	{
-		var topLevel = TopLevel.GetTopLevel(this);
-		if (topLevel == null) return;
-		var folderPath = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
-		{
-			Title = "Select the root folder of an extracted Shadow the Hedgehog disc image.",
-			AllowMultiple = false
-		});
-
-		if (folderPath.Count <= 0)
-		{
-			if (Application.Current?.ApplicationLifetime is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktopApp)
-			{
-				desktopApp.Shutdown();
-			}
-			return;
-		}
-		
-		if (settings.GamePath != folderPath[0].Path.LocalPath && Directory.Exists("backup"))
+		if (settings.GamePath != selectedFolderPath && Directory.Exists("backup"))
 		{
 			var msgbox = MessageBoxManager.GetMessageBoxStandard("Shadow Randomizer", "New game directory selected!\n\nDo you wish to erase the previous backup data and use the new data as a base?", ButtonEnum.YesNo, Icon.Question);
 			var result = await msgbox.ShowAsync();
@@ -664,7 +651,7 @@ public partial class MainView : UserControl
 					break;
 			}
 		}
-		settings.GamePath = folderPath[0].Path.LocalPath;
+		settings.GamePath = selectedFolderPath;
 		if (!Directory.Exists("backup"))
 			Directory.CreateDirectory("backup");
 		if (!File.Exists(Path.Combine("backup", "main.dol")))
@@ -712,15 +699,14 @@ public partial class MainView : UserControl
 				try { File.Copy(ds1LayoutPath, Path.Combine("backup", "sets", stageDataIdentifier, ds1Layout)); } catch (FileNotFoundException) { } // some stages don't have ds1
 			}
 		}
-		topLevel.IsVisible = true;
 	}
 
 	private static int CalculateSeed(string seedString)
 	{
-		return BitConverter.ToInt32(SHA256.HashData(System.Text.Encoding.UTF8.GetBytes(seedString)), 0);
+		return BitConverter.ToInt32(SHA256.HashData(Encoding.UTF8.GetBytes(seedString)), 0);
 	}
 
-	private void Button_Randomize_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+	private void Button_Randomize_Click(object? sender, RoutedEventArgs e)
 	{
 		ProgressBar_RandomizationProgress.Value = 0;
 		RandomizationProcess();
@@ -1510,7 +1496,7 @@ public partial class MainView : UserControl
 	private void RandomizeSubtitles(Random r)
 	{
 		var fontAndAudioData = LoadFNTsAndAFS(true);
-		var fntRandomPool = new List<ShadowFNT.Structures.TableEntry>();
+		var fntRandomPool = new List<TableEntry>();
 		var uniqueAudioIDs = new Dictionary<int, bool>();
 		var uniqueSubtitles = new Dictionary<string, bool>();
 		MarkovTextModel markov = new MarkovTextModel((int)Subtitles_NumericUpDown_MarkovLevel.Value);
@@ -1523,7 +1509,7 @@ public partial class MainView : UserControl
 					var entry = fontAndAudioData.initialFntState[i].GetEntryTable()[j];
 					if (Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked.Value && entry.audioId == -1)
 						continue;
-					if (Subtitles_CheckBox_NoSystemMessages.IsChecked.Value && (entry.entryType == ShadowFNT.Structures.EntryType.MENU || entry.entryType == ShadowFNT.Structures.EntryType.FINAL_ENTRY || entry.messageIdBranchSequence == 9998100))
+					if (Subtitles_CheckBox_NoSystemMessages.IsChecked.Value && (entry.entryType == EntryType.MENU || entry.entryType == EntryType.FINAL_ENTRY || entry.messageIdBranchSequence == 9998100))
 						continue;
 					if (Subtitles_CheckBox_OnlySelectedCharacters.IsChecked.Value && entry.audioId != -1 && !SubtitleCharacterPicked(fontAndAudioData.afs.Files[entry.audioId].Name))
 						continue;
@@ -1699,7 +1685,7 @@ public partial class MainView : UserControl
 		var enemyMode = (LayoutEnemyMode)Layout_Enemy_ComboBox_Mode.SelectedIndex;
 		var nukkoro2 = Nukkoro2.ReadFile(Path.Combine("backup", "nukkoro2.inf"));
 
-		ShadowSET.LayoutEditorSystem.SetupLayoutEditorSystem(); // Critical to load relevent data
+		LayoutEditorSystem.SetupLayoutEditorSystem(); // Critical to load relevent data
 
 		// Perform our error checking and filtering before we enter the per-stage loop
 
@@ -2228,7 +2214,7 @@ public partial class MainView : UserControl
 							spline.Setting2 = 1;
 					}
 					var updatedPATHPTP = SplineReader.ShadowSplinesToByteArray(stageDataIdentifier, splines);
-					datOneDataContent.Files[0].CompressedData = HeroesONE_R.Utilities.Prs.CompressData(updatedPATHPTP).ToArray();
+					datOneDataContent.Files[0].CompressedData = Prs.CompressData(updatedPATHPTP).ToArray();
 					var updatedDatOneData = datOneDataContent.BuildShadowONEArchive(archiveType == ONEArchiveType.Shadow060);
 					File.WriteAllBytes(Path.Combine(settings.GamePath, "files", stageDataIdentifier, datOneFile), updatedDatOneData.ToArray());
 				}
@@ -2237,7 +2223,7 @@ public partial class MainView : UserControl
 
 		// setIdBin operations
 		var setIdBINPath = Path.Combine("backup", "setid.bin");
-		var setIdTable = ShadowSET.SETIDBIN.SetIdTableFunctions.LoadTable(setIdBINPath, true, LayoutEditorSystem.shadowObjectEntries);
+		var setIdTable = SetIdTableFunctions.LoadTable(setIdBINPath, true, LayoutEditorSystem.shadowObjectEntries);
 
 		// 00 - 0x0C
 		// 00, 0x64 = gun soldier | 0x93 = BkNinja (last enemy type)
@@ -2253,7 +2239,7 @@ public partial class MainView : UserControl
 				)
 			)
 			{
-				foreach (ShadowSET.SETIDBIN.StageEntry stage in LayoutEditorSystem.shadowStageEntries)
+				foreach (StageEntry stage in LayoutEditorSystem.shadowStageEntries)
 				{
 					entry.values0 |= stage.flag0;
 					entry.values1 |= stage.flag1;
@@ -2262,7 +2248,7 @@ public partial class MainView : UserControl
 			}
 		}
 
-		ShadowSET.SETIDBIN.SetIdTableFunctions.SaveTable(Path.Combine(settings.GamePath, "files", "setid.bin"), true, setIdTable);
+		SetIdTableFunctions.SaveTable(Path.Combine(settings.GamePath, "files", "setid.bin"), true, setIdTable);
 
 		// patch bi2.bin since we require 64MB Dolphin
 		var buf = BitConverter.GetBytes(0);
@@ -2958,49 +2944,51 @@ public partial class MainView : UserControl
 		return shortestPath;
 	}
 
-	private void LevelOrder_Button_ProjectPage_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+	private void LevelOrder_Button_ProjectPage_Click(object? sender, RoutedEventArgs e)
 	{
 		Process.Start(new ProcessStartInfo("https://github.com/ShadowTheHedgehogHacking/ShadowRando") { UseShellExecute = true });
 	}
 
-	private void LevelOrder_CheckBox_Random_Seed_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+	private void LevelOrder_CheckBox_Random_Seed_Click(object? sender, RoutedEventArgs e)
 	{
 		LevelOrder_TextBox_Seed.IsEnabled = !LevelOrder_CheckBox_Random_Seed.IsChecked.Value;
 	}
 
-	private void LevelOrder_CheckBox_AllowJumpsToSameLevel_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+	private void LevelOrder_CheckBox_AllowJumpsToSameLevel_Click(object? sender, RoutedEventArgs e)
 	{
 		LevelOrder_NumericUpDown_MaxBackwardsJump.Minimum = LevelOrder_NumericUpDown_MaxForwardsJump.Minimum = LevelOrder_CheckBox_AllowJumpsToSameLevel.IsChecked.Value ? 0 : 1;
 	}
 
-	private void Layout_Weapon_CheckBox_RandomWeaponsInWeaponBoxes_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+	private void Layout_Weapon_CheckBox_RandomWeaponsInWeaponBoxes_Click(object? sender, RoutedEventArgs e)
 	{
 		if (Layout_Weapon_CheckBox_RandomWeaponsInWeaponBoxes.IsChecked.Value)
 			Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes.IsChecked = false;
 	}
 
-	private void Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+	private void Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes_Click(object? sender, RoutedEventArgs e)
 	{
 		if (Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes.IsChecked.Value)
 			Layout_Weapon_CheckBox_RandomWeaponsInWeaponBoxes.IsChecked = false;
 	}
 
-	private void Subtitles_CheckBox_OnlyWithLinkedAudio_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+	private void Subtitles_CheckBox_OnlyWithLinkedAudio_Click(object? sender, RoutedEventArgs e)
 	{
 		if (Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked.Value)
 			Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsChecked = false;
 	}
 
-	private void Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+	private void Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles_Click(object? sender, RoutedEventArgs e)
 	{
 		if (Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsChecked.Value)
 			Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked = false;
 	}
 
 	const int linespace = 8;
-	private async void Spoilers_Button_MakeChart_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+	private async void Spoilers_Button_MakeChart_Click(object? sender, RoutedEventArgs e)
 	{
-	var topLevel = TopLevel.GetTopLevel(this);
+		var topLevel = TopLevel.GetTopLevel(this);
+		if (topLevel == null)
+			return;
 		var file = await topLevel.StorageProvider.SaveFilePickerAsync(new FilePickerSaveOptions
 		{
 			Title = "Save chart",
@@ -3676,7 +3664,7 @@ public partial class MainView : UserControl
 		return r;
 	}
 
-	private async void Spoilers_Button_SaveLog_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+	private async void Spoilers_Button_SaveLog_Click(object? sender, RoutedEventArgs e)
 	{
 		var topLevel = TopLevel.GetTopLevel(this);
 		if (topLevel is null) return;
@@ -3861,10 +3849,10 @@ public partial class MainView : UserControl
 		sw.Close();
 	}
 
-	private void Spoilers_ListBox_LevelList_SelectionChanged(object? sender, Avalonia.Controls.SelectionChangedEventArgs e)
+	private void Spoilers_ListBox_LevelList_SelectionChanged(object? sender, SelectionChangedEventArgs e)
 	{
 		if (Spoilers_ListBox_LevelList.SelectedIndex == -1) return;
-		var sb = new System.Text.StringBuilder();
+		var sb = new StringBuilder();
 		Stage stg = stages[stageids[Spoilers_ListBox_LevelList.SelectedIndex]];
 		switch (settings.LevelOrderMode)
 		{
@@ -3931,7 +3919,7 @@ public partial class MainView : UserControl
 		Spoilers_TextBox_LevelInfo.Text = sb.ToString();
 	}
 
-	private void Levels_Button_ToggleAll_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+	private void Levels_Button_ToggleAll_Click(object? sender, RoutedEventArgs e)
 	{
 		bool value = !LevelCheckBoxes.Any(a => a.IsChecked.Value);
 		foreach (var stg in LevelCheckBoxes)
@@ -3957,7 +3945,7 @@ public partial class MainView : UserControl
 		Levels.SonicDiablonFH,
 		Levels.SonicDiablonGF
 	];
-	private void Levels_Button_ToggleBosses_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+	private void Levels_Button_ToggleBosses_Click(object? sender, RoutedEventArgs e)
 	{
 		bool value = !bossLevels.Any(b => LevelCheckBoxes[(int)b].IsChecked.Value);
 		foreach (var stg in bossLevels)
@@ -3968,7 +3956,7 @@ public partial class MainView : UserControl
 		Levels.TheLastWay,
 		Levels.DevilDoom
 	];
-	private void Levels_Button_ToggleLastStory_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+	private void Levels_Button_ToggleLastStory_Click(object? sender, RoutedEventArgs e)
 	{
 		bool value = !lastLevels.Any(b => LevelCheckBoxes[(int)b].IsChecked.Value);
 		foreach (var stg in lastLevels)

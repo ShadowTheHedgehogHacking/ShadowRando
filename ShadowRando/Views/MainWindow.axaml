@@ -14,5 +14,4 @@
         Icon="/Assets/logo.ico"
         Title="ShadowRando: Shadow the Hedgehog Randomizer"
         SizeChanged="Control_OnSizeChanged">
-        <views:MainView x:Name="MainView" />
 </Window>

@@ -28,13 +28,13 @@ public partial class App : Application
                 DataContext = new MainViewModel()
             };
         }
-        else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
+        /*else if (ApplicationLifetime is ISingleViewApplicationLifetime singleViewPlatform)
         {
             singleViewPlatform.MainView = new MainView
             {
                 DataContext = new MainViewModel()
             };
-        }
+        }*/
 
         base.OnFrameworkInitializationCompleted();
     }

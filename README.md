@@ -3,12 +3,15 @@ This project is a work in progress
 
 ### Randomization Features
 * Level Order / Story Route Randomization with no deadlocking. You may warp back, but there is always a way forward! Keep trying! A detailed breakdown of Route Options is below.
+* Level Exclusion Option - Exclude levels and bosses you don't want to play.
+* Expert Mode Randomization - Builds a random order of Expert Mode based on all levels not excluded, including bosses.
 * Layout Randomization - 64 MB / Dolphin ONLY - This has configurations to randomize enemies, weapons, and partners. Only compatible with Dolphin due to the extra RAM usage from object usage in stage where they are not normally present.
-* Subtitles Randomization - This randomizes the in-game subtitles / audio hints. Has configurations.
+* Subtitles Randomization - This randomizes the in-game subtitles / audio hints. Has configurations, including a generator option.
 * Music Randomization - This randomizes the in-game music, split up by category. Also supports including Custom Music in the randomization.
+* Model Randomization - See further below in the README (Custom Models) for details. Requires pre-created packs.
 
 ### How to use / play
-ShadowRando **requires** an Extracted Shadow the Hedgehog USA game. Instructions on how to extract the game are below if you are not familiar with extracting games using Dolphin.
+ShadowRando **requires** an Extracted Shadow the Hedgehog NTSC-U game. Instructions on how to extract the game are below if you are not familiar with extracting games using Dolphin.
 
 1. Download the newest release from [the "releases" page](https://github.com/ShadowTheHedgehogHacking/ShadowRando/releases)
 2. When launching the program, you will be prompted to choose your Extracted Shadow the Hedgehog folder. Choose the folder that contains both the `sys` and `files` folder.
@@ -93,12 +96,12 @@ The randomizer can select randomized models for Shadow and optionally the 2P Yel
  * `ModelPack` - Models in this folder are treated as a pack; any other files in the same folder will be copied to the ROM. Use this when a model requires edits to partners to avoid crashes. P2 randomization is ignored if one of these is picked for P1.
 Each model must be placed in its own folder, keeping the original file names (P1 models are `shadow.one`, P2 models are `shadow2py.one`). P1 and P2 models made as a set should be placed in the same folder, but can be selected independently of each other.
 
-### Extraction of Original Game / FST Format
-1. Get the latest release or dev Dolphin - [5.0-20347 or newer recommended](https://dolphin-emu.org/download/)
+### Extraction of Game
+1. Get the latest release or dev Dolphin - [5.0-21088 or newer recommended](https://dolphin-emu.org/download/)
 2. (Optional: only do this step if you want to keep config separate) Before launching dolphin, create an empty file
    `portable.txt` in the same folder as Dolphin.exe
 3. Open Dolphin
-4. Set game path to your Shadow the Hedgehog USA ISO
+4. Set game path to your Shadow the Hedgehog NTSC-U ISO
 5. Right-click `Shadow The Hedgehog` in the game list
 6. Select `Properties`
 7. Select `Filesystem` Tab
