@@ -2028,7 +2028,7 @@ public partial class MainView : UserControl
 			if (ds1LayoutData != null)
 				LayoutEditorFunctions.SaveShadowLayout(ds1LayoutData, Path.Combine(settings.GamePath, "files", stageDataIdentifier, ds1Layout), false);
 
-			if (settings.Layout.Enemy.AdjustMissionCounts && Nukkoro2EnemyCountStages.TryGetValue(stageId, out var nukkoro2StageString))
+			if (settings.Layout.Enemy.AdjustMissionCounts && settings.Layout.Enemy.Mode == LayoutEnemyMode.Wild && Nukkoro2EnemyCountStages.TryGetValue(stageId, out var nukkoro2StageString))
 			{
 				nukkoro2.TryGetValue(nukkoro2StageString.Item1, out var nukkoro2Stage);
 				switch (nukkoro2StageString.Item2)
@@ -2117,7 +2117,7 @@ public partial class MainView : UserControl
 		File.WriteAllBytes(Path.Combine(settings.GamePath, "sys", "bi2.bin"), bi2);
 		// end patch
 
-		if (settings.Layout.Enemy.AdjustMissionCounts)
+		if (settings.Layout.Enemy.AdjustMissionCounts && settings.Layout.Enemy.Mode == LayoutEnemyMode.Wild)
 		{
 			Nukkoro2.WriteFile(Path.Combine(settings.GamePath, "files", "nukkoro2.inf"), nukkoro2);
 		}
@@ -3544,25 +3544,25 @@ public partial class MainView : UserControl
 		if (settings.LevelOrder.Mode == LevelOrderMode.AllStagesWarps)
 		{
 			await sw.WriteLineAsync($"Main Path: {settings.LevelOrder.MainPath}");
-			await sw.WriteLineAsync($"Max Forwards Jump: {LevelOrder_NumericUpDown_MaxForwardsJump.Value}");
-			await sw.WriteLineAsync($"Max Backwards Jump: {LevelOrder_NumericUpDown_MaxBackwardsJump.Value}");
-			await sw.WriteLineAsync($"Backwards Jump Probability: {LevelOrder_NumericUpDown_BackwardsJumpProbability.Value}");
-			await sw.WriteLineAsync($"Allow Jumps To Same Level: {LevelOrder_CheckBox_AllowJumpsToSameLevel.IsChecked.Value}");
+			await sw.WriteLineAsync($"Max Forwards Jump: {settings.LevelOrder.MaxForwardsJump}");
+			await sw.WriteLineAsync($"Max Backwards Jump: {settings.LevelOrder.MaxBackwardsJump}");
+			await sw.WriteLineAsync($"Backwards Jump Probability: {settings.LevelOrder.BackwardsJumpProbability}");
+			await sw.WriteLineAsync($"Allow Jumps To Same Level: {settings.LevelOrder.AllowJumpsToSameLevel}");
 		}
-		await sw.WriteLineAsync($"Allow Boss -> Boss: {LevelOrder_CheckBox_AllowBossToBoss.IsChecked.Value}");
+		await sw.WriteLineAsync($"Allow Boss -> Boss: {settings.LevelOrder.AllowBossToBoss}");
 		await sw.WriteLineAsync($"Expert Mode: {settings.LevelOrder.ExpertMode}");
 		await sw.WriteLineAsync($"Excluded Levels: {string.Join(", ", settings.LevelOrder.ExcludeLevels.Select(a => LevelNames[(int)a]))}");
 
 		await sw.WriteLineAsync("---- Layout ----");
-		await sw.WriteLineAsync($"Randomize Layouts: {Layout_CheckBox_RandomizeLayouts.IsChecked.Value}");
-		if (Layout_CheckBox_RandomizeLayouts.IsChecked.Value)
+		await sw.WriteLineAsync($"Randomize Layouts: {settings.Layout.Randomize}");
+		if (settings.Layout.Randomize)
 		{
-			await sw.WriteLineAsync($"Make CC Splines Vehicle Compatible: {Layout_CheckBox_MakeCCSplinesVehicleCompatible.IsChecked.Value}");
+			await sw.WriteLineAsync($"Make CC Splines Vehicle Compatible: {settings.Layout.MakeCCSplinesVehicleCompatible}");
 			await sw.WriteLineAsync("--- Enemy ---");
 			await sw.WriteLineAsync($"Enemy Mode: {settings.Layout.Enemy.Mode}");
-			await sw.WriteLineAsync($"Adjust Mission Counts: {Layout_Enemy_CheckBox_AdjustMissionCounts.IsChecked.Value}");
-			await sw.WriteLineAsync($"Adjust Mission Counts Reduction %: {Layout_Enemy_NumericUpDown_AdjustMissionsReductionPercent.Value}");
-			await sw.WriteLineAsync($"Keep Type: {Layout_Enemy_CheckBox_KeepType.IsChecked.Value}");
+			await sw.WriteLineAsync($"Adjust Mission Counts: {settings.Layout.Enemy.AdjustMissionCounts}");
+			await sw.WriteLineAsync($"Adjust Mission Counts Reduction %: {settings.Layout.Enemy.AdjustMissionCountsReductionPercent}");
+			await sw.WriteLineAsync($"Keep Type: {settings.Layout.Enemy.KeepType}");
 			await sw.WriteLineAsync($"Only Selected Enemy Types: {settings.Layout.Enemy.OnlySelectedTypes}");
 			if (settings.Layout.Enemy.OnlySelectedTypes)
 			{
@@ -3635,10 +3635,10 @@ public partial class MainView : UserControl
 			}
 			await sw.WriteLineAsync("--- Partner ---");
 			await sw.WriteLineAsync($"Partner Mode: {settings.Layout.Partner.Mode}");
-			await sw.WriteLineAsync($"Randomize Dark/Hero Affiliations: {Layout_Partner_CheckBox_RandomizeAffiliations.IsChecked.Value}");
-			await sw.WriteLineAsync($"Keep Affiliations At Same Locations: {Layout_Partner_CheckBox_KeepAffiliationsAtSameLocation.IsChecked.Value}");
-			await sw.WriteLineAsync($"Only Selected Partners: {Layout_Partner_CheckBox_OnlySelectedPartners.IsChecked.Value}");
-			if (Layout_Partner_CheckBox_OnlySelectedPartners.IsChecked.Value)
+			await sw.WriteLineAsync($"Randomize Dark/Hero Affiliations: {settings.Layout.Partner.RandomizeAffiliations}");
+			await sw.WriteLineAsync($"Keep Affiliations At Same Locations: {settings.Layout.Partner.KeepAffiliationsAtSameLocation}");
+			await sw.WriteLineAsync($"Only Selected Partners: {settings.Layout.Partner.OnlySelectedPartners}");
+			if (settings.Layout.Partner.OnlySelectedPartners)
 			{
 				await sw.WriteLineAsync($"Sonic: {Layout_Partner_CheckBox_SelectedPartner_Sonic.IsChecked.Value}");
 				await sw.WriteLineAsync($"Tails: {Layout_Partner_CheckBox_SelectedPartner_Tails.IsChecked.Value}");
@@ -3656,13 +3656,13 @@ public partial class MainView : UserControl
 		}
 			
 		await sw.WriteLineAsync("---- Subtitles ----");
-		await sw.WriteLineAsync($"Randomize Subtitles / Voicelines: {Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value}");
-		await sw.WriteLineAsync($"Only With Linked Audio: {Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked.Value}");
-		await sw.WriteLineAsync($"Give Audio to No Linked Audio Subtitles: {Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsChecked.Value}");
-		await sw.WriteLineAsync($"No System Messages: {Subtitles_CheckBox_NoSystemMessages.IsChecked.Value}");
-		await sw.WriteLineAsync($"No Duplicates: {Subtitles_CheckBox_NoDuplicates.IsChecked.Value}");
-		await sw.WriteLineAsync($"Only Selected Characters: {Subtitles_CheckBox_OnlySelectedCharacters.IsChecked.Value}");
-		if (Subtitles_CheckBox_OnlySelectedCharacters.IsChecked.Value)
+		await sw.WriteLineAsync($"Randomize Subtitles / Voicelines: {settings.Subtitles.Randomize}");
+		await sw.WriteLineAsync($"Only With Linked Audio: {settings.Subtitles.OnlyLinkedAudio}");
+		await sw.WriteLineAsync($"Give Audio to No Linked Audio Subtitles: {settings.Subtitles.GiveAudioToNoLinkedAudio}");
+		await sw.WriteLineAsync($"No System Messages: {settings.Subtitles.NoSystemMessages}");
+		await sw.WriteLineAsync($"No Duplicates: {settings.Subtitles.NoDuplicates}");
+		await sw.WriteLineAsync($"Only Selected Characters: {settings.Subtitles.OnlySelectedCharacters}");
+		if (settings.Subtitles.OnlySelectedCharacters)
 		{
 			await sw.WriteLineAsync($"Shadow: {Subtitles_CheckBox_SelectedCharacter_Shadow.IsChecked.Value}");
 			await sw.WriteLineAsync($"Sonic: {Subtitles_CheckBox_SelectedCharacter_Sonic.IsChecked.Value}");
@@ -3689,8 +3689,8 @@ public partial class MainView : UserControl
 		await sw.WriteLineAsync($"Skip Rank Theme: {settings.Music.SkipRankTheme}");
 		await sw.WriteLineAsync();
 		await sw.WriteLineAsync("---- Models ----");
-		await sw.WriteLineAsync($"Randomize Player Model: {Models_CheckBox_RandomizeModel.IsChecked.Value}");
-		await sw.WriteLineAsync($"Randomize Player 2's Model: {Models_CheckBox_ModelP2.IsChecked.Value}");
+		await sw.WriteLineAsync($"Randomize Player Model: {settings.Models.Randomize}");
+		await sw.WriteLineAsync($"Randomize Player 2's Model: {settings.Models.RandomizeP2}");
 		await sw.WriteLineAsync();
 		await sw.WriteLineAsync("---- Stage Reorder Result ----");
 		for (var i = 0; i < stagecount; i++)

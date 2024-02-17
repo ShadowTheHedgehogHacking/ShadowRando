@@ -134,7 +134,7 @@ namespace ShadowRando.Core
 		[IniAlwaysInclude]
 		public bool KeepType = true;
 		[IniAlwaysInclude]
-		public bool OnlySelectedTypes = true;
+		public bool OnlySelectedTypes;
 		[IniCollection(IniCollectionMode.SingleLine, Format = ", ")]
 		public List<EnemyTypes> SelectedEnemies = [];
 	}
