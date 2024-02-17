@@ -709,6 +709,8 @@ public partial class MainView : UserControl
 	private void Button_Randomize_Click(object? sender, RoutedEventArgs e)
 	{
 		ProgressBar_RandomizationProgress.Value = 0;
+		Spoilers_Button_MakeChart.IsEnabled = false;
+		Spoilers_Button_SaveLog.IsEnabled = false;
 		RandomizationProcess();
 		// Task.Run(() => RandomizationProcess()); // We can't do this (yet) until we properly MVVM-ify since the UI Thread is actively used to evaluate CheckBox state
 	}
@@ -1371,7 +1373,6 @@ public partial class MainView : UserControl
 		}
 
 		ProgressBar_RandomizationProgress.Value = 15;
-
 		// patch the route menu to allow stg06xx+ to display next stages
 		buf = BitConverter.GetBytes(routeMenu6xxStagePreviewPatchValue);
 		Array.Reverse(buf);

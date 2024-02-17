@@ -429,10 +429,10 @@
 						<TextBox x:Name="Spoilers_TextBox_LevelInfo" Grid.Row="0" IsReadOnly="True" AcceptsReturn="True" ScrollViewer.HorizontalScrollBarVisibility="Visible" ></TextBox>
 						<StackPanel Grid.Row="1" Margin="0,0,0,10" Orientation="Horizontal">
 							<StackPanel Margin="20,10,20,0">
-								<CheckBox HorizontalAlignment="Left" x:Name="Spoilers_CheckBox_UseIcons">Use Icons</CheckBox>
-								<Button x:Name="Spoilers_Button_MakeChart" Click="Spoilers_Button_MakeChart_Click">Make Chart...</Button>
+								<CheckBox x:Name="Spoilers_CheckBox_UseIcons" HorizontalAlignment="Left">Use Icons</CheckBox>
+								<Button x:Name="Spoilers_Button_MakeChart" IsEnabled="False" Click="Spoilers_Button_MakeChart_Click">Make Chart...</Button>
 							</StackPanel>
-							<Button x:Name="Spoilers_Button_SaveLog" HorizontalAlignment="Right" Margin="20,40, 20,0" Click="Spoilers_Button_SaveLog_Click">Save Log...</Button>
+							<Button x:Name="Spoilers_Button_SaveLog" IsEnabled="False" HorizontalAlignment="Right" Margin="20,40, 20,0" Click="Spoilers_Button_SaveLog_Click">Save Log...</Button>
 							<StackPanel Margin="20,15,20,0">
 								<TextBlock Margin="0 5">Hue Shift</TextBlock>
 								<NumericUpDown x:Name="Spoilers_NumericUpDown_HueShift" Value="3" Increment="0.05" FormatString="0.00" Minimum="0" Maximum="100"/>
