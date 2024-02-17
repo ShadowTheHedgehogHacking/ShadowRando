@@ -845,7 +845,7 @@ public partial class MainView : UserControl
 							if (r.Next(100) < settings.LevelOrderBackwardsJumpProbability && (i > 0 || settings.LevelOrderBackwardsJumpProbability == 100))
 							{
 								min = Math.Max(i - settings.LevelOrderMaxBackwardsJump, 0);
-								max = Math.Max(i - 1 + 1, 0);
+								max = Math.Max(i, 0);
 							}
 							else
 							{
@@ -859,7 +859,7 @@ public partial class MainView : UserControl
 							if (r.Next(100) < settings.LevelOrderBackwardsJumpProbability && (i > 0 || settings.LevelOrderBackwardsJumpProbability == 100))
 							{
 								min = Math.Max(i - settings.LevelOrderMaxBackwardsJump, 0);
-								max = Math.Max(i - 1 + 1, 0);
+								max = Math.Max(i, 0);
 							}
 							else
 							{
@@ -873,7 +873,7 @@ public partial class MainView : UserControl
 							if (r.Next(100) < settings.LevelOrderBackwardsJumpProbability && (i > 0 || settings.LevelOrderBackwardsJumpProbability == 100))
 							{
 								min = Math.Max(i - settings.LevelOrderMaxBackwardsJump, 0);
-								max = Math.Max(i - 1 + 1, 0);
+								max = Math.Max(i, 0);
 							}
 							else
 							{
