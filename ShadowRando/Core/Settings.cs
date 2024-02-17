@@ -7,8 +7,6 @@ namespace ShadowRando.Core
 	public class Settings
 	{
 		[IniAlwaysInclude]
-		public int ProgramTheme = 2;
-		[IniAlwaysInclude]
 		public string GamePath;
 		[IniAlwaysInclude]
 		public string Seed;

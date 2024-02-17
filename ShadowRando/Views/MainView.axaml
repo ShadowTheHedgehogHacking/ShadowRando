@@ -6,10 +6,8 @@
 	 mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="750"
 	 x:Class="ShadowRando.Views.MainView"
 	 x:DataType="vm:MainViewModel"
-	 
-	 >
-	<!-- Loaded="UserControl_Loaded" -->
-	<!-- Unloaded="UserControl_Unloaded"> -->
+	 Loaded="UserControl_Loaded"
+	 Unloaded="UserControl_Unloaded">
 	<Design.DataContext>
 		<!-- This only sets the DataContext for the previewer in an IDE,
          to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
@@ -46,7 +44,7 @@
 						<ComboBoxItem>Act Clear</ComboBoxItem>
 						<ComboBoxItem>Any Exits</ComboBoxItem>
 					</ComboBox>
-					<Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto">
+					<Grid ColumnDefinitions="*, Auto" RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto">
 						<Label Grid.Column="0" Grid.Row="0" Margin="0,10,0,0">Max Forwards Jump</Label>
 						<NumericUpDown x:Name="LevelOrder_NumericUpDown_MaxForwardsJump" Grid.Column="0" Grid.Row="1" Increment="1" Value="15" Maximum="22" Minimum="1"></NumericUpDown>
 						<Label Grid.Column="0" Grid.Row="2" Margin="0,5,0,0">Max Backwards Jump</Label>
@@ -54,19 +52,9 @@
 						<Label Grid.Column="0" Grid.Row="4" Margin="0,5,0,0">Backwards Jump Probability</Label>
 						<NumericUpDown x:Name="LevelOrder_NumericUpDown_BackwardsJumpProbability" Grid.Column="0" Grid.Row="5" Increment="1" Value="10" Maximum="100" Minimum="0"></NumericUpDown>
 						<CheckBox x:Name="LevelOrder_CheckBox_AllowJumpsToSameLevel" Click="LevelOrder_CheckBox_AllowJumpsToSameLevel_Click" Grid.Column="1" Grid.Row="5" Margin="10,0,10,0">Allow Jumps to Same Level</CheckBox>
+						<CheckBox x:Name="LevelOrder_CheckBox_AllowBossToBoss" Grid.Column="0" Grid.Row="6" Margin="0,5,0,0">Allow Boss -> Boss Sequences</CheckBox>
+						<CheckBox x:Name="LevelOrder_CheckBox_ExpertRando" Grid.Column="0" Grid.Row="7">Randomize Expert Mode</CheckBox>
 					</Grid>
-          <StackPanel Orientation="Horizontal">
-            <CheckBox x:Name="LevelOrder_CheckBox_AllowBossToBoss" Margin="0,10,5,0">Allow Boss -> Boss Sequences</CheckBox>
-            <CheckBox x:Name="LevelOrder_CheckBox_ExpertRando" Margin="0,10,5,0">Randomize Expert Mode</CheckBox>
-          </StackPanel>
-          <Label Margin="0,15,0,0">Program Theme</Label>
-					<StackPanel Orientation="Horizontal">
-						<ComboBox x:Name="LevelOrder_ComboBox_ProgramTheme" IsEnabled="False" SelectedIndex="2">
-							<ComboBoxItem>System</ComboBoxItem>
-							<ComboBoxItem>Light</ComboBoxItem>
-							<ComboBoxItem>Dark</ComboBoxItem>
-						</ComboBox>
-					</StackPanel>
 				</StackPanel>
 			</TabItem>
       <TabItem Header="Exclude Levels">
@@ -74,9 +62,9 @@
           <ScrollViewer HorizontalScrollBarVisibility="Visible" VerticalScrollBarVisibility="Visible" AllowAutoHide="False">
             <StackPanel>
               <StackPanel Orientation="Horizontal" Margin="0,0,0,5">
-                <Button x:Name="Levels_Button_ToggleAll" Click="Levels_Button_ToggleAll_Click">Toggle All</Button>
-                <Button x:Name="Levels_Button_ToggleBosses" Click="Levels_Button_ToggleBosses_Click">Toggle Bosses</Button>
-                <Button x:Name="Levels_Button_ToggleLastStory" Click="Levels_Button_ToggleLastStory_Click">Toggle Last Story</Button>
+                <Button x:Name="Levels_Button_ToggleAll" Margin="5,0,0,0" Click="Levels_Button_ToggleAll_Click">Toggle All</Button>
+                <Button x:Name="Levels_Button_ToggleBosses" Margin="5,0,0,0" Click="Levels_Button_ToggleBosses_Click">Toggle Bosses</Button>
+                <Button x:Name="Levels_Button_ToggleLastStory" Margin="5,0,0,0" Click="Levels_Button_ToggleLastStory_Click">Toggle Last Story</Button>
               </StackPanel>
               <Border BorderBrush="White" BorderThickness="1" Margin="0,0,20,20">
               <Grid ShowGridLines="True" ColumnDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto" RowDefinitions="Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto, Auto">

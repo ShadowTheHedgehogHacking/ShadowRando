@@ -5,6 +5,13 @@
              <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
 
     <Application.Styles>
-		<FluentTheme></FluentTheme>
+		<FluentTheme>
+			<FluentTheme.Palettes>
+				<!-- Palette for Light theme variant -->
+				<ColorPaletteResources x:Key="Light" Accent="DodgerBlue" RegionColor="WhiteSmoke" ErrorText="Red" />
+				<!-- Palette for Dark theme variant -->
+				<ColorPaletteResources x:Key="Dark" Accent="DarkRed" RegionColor="Black" ErrorText="Yellow" />
+			</FluentTheme.Palettes>
+		</FluentTheme>
     </Application.Styles>
 </Application>

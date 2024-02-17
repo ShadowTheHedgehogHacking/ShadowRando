@@ -18,6 +18,7 @@ using ShadowRando.Core;
 using ShadowRando.Core.SETMutations;
 using SkiaSharp;
 using Avalonia.Platform;
+using Avalonia.Styling;
 
 namespace ShadowRando.Views;
 
@@ -257,7 +258,7 @@ public partial class MainView : UserControl
 		EWeapon.ShadowRifle
 	];
 
-	const string programVersion = "0.5.0-dev";
+	const string programVersion = "0.5.0";
 	Settings settings;
 
 	public MainView()
@@ -636,6 +637,7 @@ public partial class MainView : UserControl
 		var folderPath = await topLevel.StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
 		{
 			Title = "Select the root folder of an extracted Shadow the Hedgehog disc image.",
+			AllowMultiple = false
 		});
 
 		if (folderPath.Count <= 0)
