@@ -1661,7 +1661,7 @@ namespace ShadowRando.Core.SETMutations
 				SearchHeight = 50,
 				SearchHeightOffset = 0,
 				MoveSpeedRatio = 0.6f,
-				NumberOfLarva = r.Next(1, 20),
+				NumberOfLarva = r.Next(1, 10),
 				AppearRange = r.Next(10, 60),
 				AppearType = appearType,
 				Offset_Y = appearType == Object0091_BkLarva.EAppear.NORMAL ? 0 : 50
@@ -1671,6 +1671,7 @@ namespace ShadowRando.Core.SETMutations
 
 		internal static void ToBkChaos(int index, ref List<SetObjectShadow> setData, Random r)
 		{
+			int numberOfChibi = r.Next(4, 20);
 			var donor = new Object0092_BkChaos
 			{
 				List = 0x00,
@@ -1681,9 +1682,9 @@ namespace ShadowRando.Core.SETMutations
 				SearchWidth = 150,
 				SearchHeight = 150,
 				SearchHeightOffset = 0,
-				Health = r.Next(101),
+				Health = numberOfChibi * 4,
 				StartingState = (Object0092_BkChaos.EState)r.Next(2),
-				NumberOfChibi = r.Next(4, 30),
+				NumberOfChibi = numberOfChibi,
 				BrokenPieceFlyDistance = r.Next(10, 51),
 				BrokenPieceFlyOffset = 0,
 				CombineStartTime = 1, //r.Next(2),  //  TODO: Inspect why it explodes the game? Probably if float = 0
