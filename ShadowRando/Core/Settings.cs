@@ -27,9 +27,9 @@ namespace ShadowRando.Core
 		public int LevelOrderBackwardsJumpProbability = 10;
 		[IniAlwaysInclude]
 		public bool LevelOrderAllowJumpsToSameLevel;
-		[System.ComponentModel.DefaultValue(true)]
+		[System.ComponentModel.DefaultValue(false)]
 		[IniAlwaysInclude]
-		public bool LevelOrderAllowBossToBoss = true;
+		public bool LevelOrderAllowBossToBoss = false;
 		[IniAlwaysInclude]
 		public bool LevelOrderExpertMode;
 		[IniCollection(IniCollectionMode.SingleLine, Format = ", ")]
@@ -43,56 +43,56 @@ namespace ShadowRando.Core
 
 		// Enemy
 		[IniAlwaysInclude]
-		public bool LayoutAdjustMissionCounts;
+		public bool LayoutAdjustMissionCounts = true;
 		[System.ComponentModel.DefaultValue(20)]
 		[IniAlwaysInclude]
 		public int LayoutAdjustMissionCountsReductionPercent = 20;
 		[IniAlwaysInclude]
 		public LayoutEnemyMode LayoutEnemyMode;
 		[IniAlwaysInclude]
-		public bool LayoutEnemyKeepType;
+		public bool LayoutEnemyKeepType = true;
 		[IniAlwaysInclude]
-		public bool LayoutEnemyOnlySelectedTypes;
+		public bool LayoutEnemyOnlySelectedTypes = true;
 
 		// Enemy Selected Types
 		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyGUNSoldier;
+		public bool LayoutEnemySelectedEnemyGUNSoldier = true;
 		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyGUNBeetle;
+		public bool LayoutEnemySelectedEnemyGUNBeetle = true;
 		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyGUNBigfoot;
+		public bool LayoutEnemySelectedEnemyGUNBigfoot = true;
 		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyGUNRobot;
+		public bool LayoutEnemySelectedEnemyGUNRobot = true;
 		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyEggPierrot;
+		public bool LayoutEnemySelectedEnemyEggPierrot = true;
 		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyEggPawn;
+		public bool LayoutEnemySelectedEnemyEggPawn = true;
 		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyShadowAndroid;
+		public bool LayoutEnemySelectedEnemyShadowAndroid = true;
 		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyBAGiant;
+		public bool LayoutEnemySelectedEnemyBAGiant = true;
 		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyBASoldier;
+		public bool LayoutEnemySelectedEnemyBASoldier = true;
 		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyBAHawkVolt;
+		public bool LayoutEnemySelectedEnemyBAHawkVolt = true;
 		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyBAWing;
+		public bool LayoutEnemySelectedEnemyBAWing = true;
 		[IniAlwaysInclude]
 		public bool LayoutEnemySelectedEnemyBAWorm;
 		[IniAlwaysInclude]
 		public bool LayoutEnemySelectedEnemyBALarva;
 		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyArtificialChaos;
+		public bool LayoutEnemySelectedEnemyArtificialChaos = true;
 		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyBAAssassin;
+		public bool LayoutEnemySelectedEnemyBAAssassin = true;
 
 		// Weapon
 		[IniAlwaysInclude]
 		public bool LayoutWeaponRandomWeaponsInAllBoxes;
 		[IniAlwaysInclude]
-		public bool LayoutWeaponRandomWeaponsInWeaponBoxes;
+		public bool LayoutWeaponRandomWeaponsInWeaponBoxes = true;
 		[IniAlwaysInclude]
-		public bool LayoutWeaponRandomExposedWeapons;
+		public bool LayoutWeaponRandomExposedWeapons = true;
 		[IniAlwaysInclude]
 		public bool LayoutWeaponRandomWeaponsFromEnvironment;
 		[IniAlwaysInclude]
@@ -164,33 +164,33 @@ namespace ShadowRando.Core
 		[IniAlwaysInclude]
 		public bool LayoutWeaponSelectedWeaponSamuraiSwordLv1;
 		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponSamuraiSwordLv2;
+		public bool LayoutWeaponSelectedWeaponSamuraiSwordLv2 = true;
 		[IniAlwaysInclude]
 		public bool LayoutWeaponSelectedWeaponSatelliteLaserLv1;
 		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponSatelliteLaserLv2;
+		public bool LayoutWeaponSelectedWeaponSatelliteLaserLv2 = true;
 		[IniAlwaysInclude]
 		public bool LayoutWeaponSelectedWeaponEggVacuumLv1;
 		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponEggVacuumLv2;
+		public bool LayoutWeaponSelectedWeaponEggVacuumLv2 = true;
 		[IniAlwaysInclude]
 		public bool LayoutWeaponSelectedWeaponOmochaoGunLv1;
 		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponOmochaoGunLv2;
+		public bool LayoutWeaponSelectedWeaponOmochaoGunLv2 = true;
 		[IniAlwaysInclude]
 		public bool LayoutWeaponSelectedWeaponHealCannonLv1;
 		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponHealCannonLv2;
+		public bool LayoutWeaponSelectedWeaponHealCannonLv2 = true;
 		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponShadowRifle;
+		public bool LayoutWeaponSelectedWeaponShadowRifle = true;
 
 		// Partner
 		[IniAlwaysInclude]
 		public LayoutPartnerMode LayoutPartnerMode;
 		[IniAlwaysInclude]
-		public bool LayoutPartnerRandomizeAffiliations;
+		public bool LayoutPartnerRandomizeAffiliations = true;
 		[IniAlwaysInclude]
-		public bool LayoutPartnerKeepAffiliationsAtSameLocation;
+		public bool LayoutPartnerKeepAffiliationsAtSameLocation = true;
 		[IniAlwaysInclude]
 		public bool LayoutPartnerOnlySelectedPartners;
 		
@@ -224,11 +224,11 @@ namespace ShadowRando.Core
 		[IniAlwaysInclude]
 		public bool RandomizeSubtitlesVoicelines;
 		[IniAlwaysInclude]
-		public bool SubtitlesNoDuplicates;
+		public bool SubtitlesNoDuplicates = true;
 		[IniAlwaysInclude]
-		public bool SubtitlesNoSystemMessages;
+		public bool SubtitlesNoSystemMessages = true;
 		[IniAlwaysInclude]
-		public bool SubtitlesOnlyLinkedAudio;
+		public bool SubtitlesOnlyLinkedAudio = true;
 		[IniAlwaysInclude]
 		public bool SubtitlesOnlySelectedCharacters;
 		[IniAlwaysInclude]
@@ -278,7 +278,7 @@ namespace ShadowRando.Core
 		[IniAlwaysInclude]
 		public bool RandomizeMusic;
 		[IniAlwaysInclude]
-		public bool MusicSkipRankTheme;
+		public bool MusicSkipRankTheme = true;
 		[IniAlwaysInclude]
 		public bool MusicSkipChaosPowers;
 
