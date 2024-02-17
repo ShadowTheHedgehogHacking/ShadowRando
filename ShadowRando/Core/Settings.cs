@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using ShadowSET;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 
@@ -13,295 +14,199 @@ namespace ShadowRando.Core
 		[IniAlwaysInclude]
 		public bool RandomSeed;
 		[IniAlwaysInclude]
-		public LevelOrderMode LevelOrderMode = LevelOrderMode.AllStagesWarps;
+		public SettingsLevelOrder LevelOrder = new();
 		[IniAlwaysInclude]
-		public LevelOrderMainPath LevelOrderMainPath;
-		[System.ComponentModel.DefaultValue(22)]
+		public SettingsLayout Layout = new();
 		[IniAlwaysInclude]
-		public int LevelOrderMaxForwardsJump = 22;
-		[System.ComponentModel.DefaultValue(4)]
+		public SettingsSubtitles Subtitles = new();
 		[IniAlwaysInclude]
-		public int LevelOrderMaxBackwardsJump = 4;
-		[System.ComponentModel.DefaultValue(10)]
+		public SettingsMusic Music = new();
 		[IniAlwaysInclude]
-		public int LevelOrderBackwardsJumpProbability = 10;
-		[IniAlwaysInclude]
-		public bool LevelOrderAllowJumpsToSameLevel;
-		[System.ComponentModel.DefaultValue(false)]
-		[IniAlwaysInclude]
-		public bool LevelOrderAllowBossToBoss = false;
-		[IniAlwaysInclude]
-		public bool LevelOrderExpertMode;
-		[IniCollection(IniCollectionMode.SingleLine, Format = ", ")]
-		public List<Levels> ExcludeLevels = new List<Levels>();
-
-		// Layout
-		[IniAlwaysInclude]
-		public bool RandomizeLayouts;
-		[IniAlwaysInclude]
-		public bool LayoutMakeCCSplinesVehicleCompatible;
-
-		// Enemy
-		[IniAlwaysInclude]
-		public bool LayoutAdjustMissionCounts = true;
-		[System.ComponentModel.DefaultValue(20)]
-		[IniAlwaysInclude]
-		public int LayoutAdjustMissionCountsReductionPercent = 20;
-		[IniAlwaysInclude]
-		public LayoutEnemyMode LayoutEnemyMode;
-		[IniAlwaysInclude]
-		public bool LayoutEnemyKeepType = true;
-		[IniAlwaysInclude]
-		public bool LayoutEnemyOnlySelectedTypes = true;
-
-		// Enemy Selected Types
-		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyGUNSoldier = true;
-		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyGUNBeetle = true;
-		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyGUNBigfoot = true;
-		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyGUNRobot = true;
-		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyEggPierrot = true;
-		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyEggPawn = true;
-		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyShadowAndroid = true;
-		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyBAGiant = true;
-		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyBASoldier = true;
-		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyBAHawkVolt = true;
-		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyBAWing = true;
-		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyBAWorm;
-		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyBALarva;
-		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyArtificialChaos = true;
-		[IniAlwaysInclude]
-		public bool LayoutEnemySelectedEnemyBAAssassin = true;
-
-		// Weapon
-		[IniAlwaysInclude]
-		public bool LayoutWeaponRandomWeaponsInAllBoxes;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponRandomWeaponsInWeaponBoxes = true;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponRandomExposedWeapons = true;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponRandomWeaponsFromEnvironment;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponOnlySelectedTypes;
-
-		// Weapon Selected Types
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponNone;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponPistol;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponSubmachineGun;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponAssaultRifle;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponHeavyMachineGun;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponGatlingGun;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponEggPistol;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponLightShot;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponFlashShot;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponRingShot;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponHeavyShot;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponGrenadeLauncher;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponGUNBazooka;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponTankCannon;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponBlackBarrel;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponBigBarrel;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponEggBazooka;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponRPG;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponFourShot;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponEightShot;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponWormShooterBlack;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponWormShooterRed;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponWormShooterGold;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponVacuumPod;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponLaserRifle;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponSplitter;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponRefractor;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponKnife;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponBlackSword;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponDarkHammer;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponEggLance;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponSamuraiSwordLv1;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponSamuraiSwordLv2 = true;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponSatelliteLaserLv1;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponSatelliteLaserLv2 = true;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponEggVacuumLv1;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponEggVacuumLv2 = true;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponOmochaoGunLv1;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponOmochaoGunLv2 = true;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponHealCannonLv1;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponHealCannonLv2 = true;
-		[IniAlwaysInclude]
-		public bool LayoutWeaponSelectedWeaponShadowRifle = true;
-
-		// Partner
-		[IniAlwaysInclude]
-		public LayoutPartnerMode LayoutPartnerMode;
-		[IniAlwaysInclude]
-		public bool LayoutPartnerRandomizeAffiliations = true;
-		[IniAlwaysInclude]
-		public bool LayoutPartnerKeepAffiliationsAtSameLocation = true;
-		[IniAlwaysInclude]
-		public bool LayoutPartnerOnlySelectedPartners;
-		
-		// Selected Partners
-		[IniAlwaysInclude]
-		public bool LayoutPartnerSelectedSonic;
-		[IniAlwaysInclude]
-		public bool LayoutPartnerSelectedTails;
-		[IniAlwaysInclude]
-		public bool LayoutPartnerSelectedKnuckles;
-		[IniAlwaysInclude]
-		public bool LayoutPartnerSelectedAmy;
-		[IniAlwaysInclude]
-		public bool LayoutPartnerSelectedRouge;
-		[IniAlwaysInclude]
-		public bool LayoutPartnerSelectedOmega;
-		[IniAlwaysInclude]
-		public bool LayoutPartnerSelectedVector;
-		[IniAlwaysInclude]
-		public bool LayoutPartnerSelectedEspio;
-		[IniAlwaysInclude]
-		public bool LayoutPartnerSelectedMaria;
-		[IniAlwaysInclude]
-		public bool LayoutPartnerSelectedCharmy;
-		[IniAlwaysInclude]
-		public bool LayoutPartnerSelectedEggMonitor;
-		[IniAlwaysInclude]
-		public bool LayoutPartnerSelectedDoomsEye;
-			
-		// Subtitles
-		[IniAlwaysInclude]
-		public bool RandomizeSubtitlesVoicelines;
-		[IniAlwaysInclude]
-		public bool SubtitlesNoDuplicates = true;
-		[IniAlwaysInclude]
-		public bool SubtitlesNoSystemMessages = true;
-		[IniAlwaysInclude]
-		public bool SubtitlesOnlyLinkedAudio = true;
-		[IniAlwaysInclude]
-		public bool SubtitlesOnlySelectedCharacters;
-		[IniAlwaysInclude]
-		public bool SubtitlesGiveAudioToNoLinkedAudio;
-		[IniAlwaysInclude]
-		public bool SubtitlesGenerateMessages;
-		[IniAlwaysInclude]
-		[DefaultValue(2)]
-		public int SubtitlesMarkovLevel = 2;
-		// Subtitle Selected Characters
-		[IniAlwaysInclude]
-		public bool SubtitlesSelectedCharacterShadow;
-		[IniAlwaysInclude]
-		public bool SubtitlesSelectedCharacterSonic;
-		[IniAlwaysInclude]
-		public bool SubtitlesSelectedCharacterTails;
-		[IniAlwaysInclude]
-		public bool SubtitlesSelectedCharacterKnuckles;
-		[IniAlwaysInclude]
-		public bool SubtitlesSelectedCharacterAmy;
-		[IniAlwaysInclude]
-		public bool SubtitlesSelectedCharacterRouge;
-		[IniAlwaysInclude]
-		public bool SubtitlesSelectedCharacterOmega;
-		[IniAlwaysInclude]
-		public bool SubtitlesSelectedCharacterVector;
-		[IniAlwaysInclude]
-		public bool SubtitlesSelectedCharacterEspio;
-		[IniAlwaysInclude]
-		public bool SubtitlesSelectedCharacterMaria;
-		[IniAlwaysInclude]
-		public bool SubtitlesSelectedCharacterCharmy;
-		[IniAlwaysInclude]
-		public bool SubtitlesSelectedCharacterEggman;
-		[IniAlwaysInclude]
-		public bool SubtitlesSelectedCharacterCream;
-		[IniAlwaysInclude]
-		public bool SubtitlesSelectedCharacterCheese;
-		[IniAlwaysInclude]
-		public bool SubtitlesSelectedCharacterBlackDoom;
-		[IniAlwaysInclude]
-		public bool SubtitlesSelectedCharacterGUNCommander;
-		[IniAlwaysInclude]
-		public bool SubtitlesSelectedCharacterGUNSoldier;
-
-		// Music
-		[IniAlwaysInclude]
-		public bool RandomizeMusic;
-		[IniAlwaysInclude]
-		public bool MusicSkipRankTheme = true;
-		[IniAlwaysInclude]
-		public bool MusicSkipChaosPowers;
-
-		// Models
-		[IniAlwaysInclude]
-		public bool RandomizeModel;
-		[IniAlwaysInclude]
-		public bool RandomizeP2Model;
+		public SettingsModels Models = new();
 
 		public static Settings Load()
 		{
 			if (File.Exists("RandoSettings.ini"))
-				return IniSerializer.Deserialize<Settings>("RandoSettings.ini");
+			{
+				var result = IniSerializer.Deserialize<Settings>("RandoSettings.ini");
+				if (result.LevelOrder == null)
+					result.LevelOrder = new();
+				else
+					result.LevelOrder.ExcludeLevels ??= [];
+				if (result.Layout == null)
+					result.Layout = new();
+				else
+				{
+					if (result.Layout.Enemy == null)
+						result.Layout.Enemy = new();
+					else
+						result.Layout.Enemy.SelectedEnemies ??= [];
+					if (result.Layout.Weapon == null)
+						result.Layout.Weapon = new();
+					else
+						result.Layout.Weapon.SelectedWeapons ??= [];
+					if (result.Layout.Partner == null)
+						result.Layout.Partner = new();
+					else
+						result.Layout.Partner.SelectedPartners ??= [];
+				}
+				if (result.Subtitles == null)
+					result.Subtitles = new();
+				else
+					result.Subtitles.SelectedCharacters ??= [];
+				result.Music ??= new();
+				result.Models ??= new();
+				return result;
+			}
 			return new Settings();
 		}
 
 		public void Save()
 		{
-			if (ExcludeLevels.Count == 0)
-				ExcludeLevels = null;
+			if (LevelOrder.ExcludeLevels.Count == 0)
+				LevelOrder.ExcludeLevels = null;
+			if (Layout.Enemy.SelectedEnemies.Count == 0)
+				Layout.Enemy.SelectedEnemies = null;
+			if (Layout.Weapon.SelectedWeapons.Count == 0)
+				Layout.Weapon.SelectedWeapons = null;
+			if (Layout.Partner.SelectedPartners.Count == 0)
+				Layout.Partner.SelectedPartners = null;
+			if (Subtitles.SelectedCharacters.Count == 0)
+				Subtitles.SelectedCharacters = null;
 			IniSerializer.Serialize(this, "RandoSettings.ini");
-			if (ExcludeLevels == null)
-				ExcludeLevels = new List<Levels>();
+			LevelOrder.ExcludeLevels ??= [];
+			Layout.Enemy.SelectedEnemies ??= [];
+			Layout.Weapon.SelectedWeapons ??= [];
+			Layout.Partner.SelectedPartners ??= [];
+			Subtitles.SelectedCharacters ??= [];
 		}
+	}
+
+	public class SettingsLevelOrder
+	{
+		[IniAlwaysInclude]
+		public LevelOrderMode Mode = LevelOrderMode.AllStagesWarps;
+		[IniAlwaysInclude]
+		public LevelOrderMainPath MainPath;
+		[DefaultValue(22)]
+		[IniAlwaysInclude]
+		public int MaxForwardsJump = 22;
+		[DefaultValue(4)]
+		[IniAlwaysInclude]
+		public int MaxBackwardsJump = 4;
+		[DefaultValue(10)]
+		[IniAlwaysInclude]
+		public int BackwardsJumpProbability = 10;
+		[IniAlwaysInclude]
+		public bool AllowJumpsToSameLevel;
+		[DefaultValue(false)]
+		[IniAlwaysInclude]
+		public bool AllowBossToBoss = false;
+		[IniAlwaysInclude]
+		public bool ExpertMode;
+		[IniCollection(IniCollectionMode.SingleLine, Format = ", ")]
+		public List<Levels> ExcludeLevels = [];
+	}
+
+	public class SettingsLayout
+	{
+		[IniAlwaysInclude]
+		public bool Randomize;
+		[IniAlwaysInclude]
+		public bool MakeCCSplinesVehicleCompatible;
+		[IniAlwaysInclude]
+		public SettingsLayoutEnemy Enemy = new SettingsLayoutEnemy();
+		[IniAlwaysInclude]
+		public SettingsLayoutWeapon Weapon = new SettingsLayoutWeapon();
+		[IniAlwaysInclude]
+		public SettingsLayoutPartner Partner = new SettingsLayoutPartner();
+	}
+
+	public class SettingsLayoutEnemy
+	{
+		[IniAlwaysInclude]
+		public bool AdjustMissionCounts = true;
+		[DefaultValue(20)]
+		[IniAlwaysInclude]
+		public int AdjustMissionCountsReductionPercent = 20;
+		[IniAlwaysInclude]
+		public LayoutEnemyMode Mode;
+		[IniAlwaysInclude]
+		public bool KeepType = true;
+		[IniAlwaysInclude]
+		public bool OnlySelectedTypes = true;
+		[IniCollection(IniCollectionMode.SingleLine, Format = ", ")]
+		public List<EnemyTypes> SelectedEnemies = [];
+	}
+
+	public class SettingsLayoutWeapon
+	{
+		[IniAlwaysInclude]
+		public bool RandomWeaponsInAllBoxes;
+		[IniAlwaysInclude]
+		public bool RandomWeaponsInWeaponBoxes = true;
+		[IniAlwaysInclude]
+		public bool RandomExposedWeapons = true;
+		[IniAlwaysInclude]
+		public bool RandomWeaponsFromEnvironment;
+		[IniAlwaysInclude]
+		public bool OnlySelectedTypes;
+		[IniCollection(IniCollectionMode.SingleLine, Format = ", ")]
+		public List<EWeapon> SelectedWeapons = [];
+	}
+
+	public class SettingsLayoutPartner
+	{
+		[IniAlwaysInclude]
+		public LayoutPartnerMode Mode;
+		[IniAlwaysInclude]
+		public bool RandomizeAffiliations = true;
+		[IniAlwaysInclude]
+		public bool KeepAffiliationsAtSameLocation = true;
+		[IniAlwaysInclude]
+		public bool OnlySelectedPartners;
+		[IniCollection(IniCollectionMode.SingleLine, Format = ", ")]
+		public List<Object0190_Partner.EPartner> SelectedPartners = [];
+	}
+
+	public class SettingsSubtitles
+	{
+		[IniAlwaysInclude]
+		public bool Randomize;
+		[IniAlwaysInclude]
+		public bool NoDuplicates = true;
+		[IniAlwaysInclude]
+		public bool NoSystemMessages = true;
+		[IniAlwaysInclude]
+		public bool OnlyLinkedAudio = true;
+		[IniAlwaysInclude]
+		public bool OnlySelectedCharacters;
+		[IniAlwaysInclude]
+		public bool GiveAudioToNoLinkedAudio;
+		[IniAlwaysInclude]
+		public bool GenerateMessages;
+		[IniAlwaysInclude]
+		[DefaultValue(2)]
+		public int MarkovLevel = 2;
+		[IniCollection(IniCollectionMode.SingleLine, Format = ", ")]
+		public List<SubtitleCharacters> SelectedCharacters = [];
+	}
+
+	public class SettingsMusic
+	{
+		[IniAlwaysInclude]
+		public bool Randomize;
+		[IniAlwaysInclude]
+		public bool SkipRankTheme = true;
+		[IniAlwaysInclude]
+		public bool SkipChaosPowers;
+	}
+
+	public class SettingsModels
+	{
+		[IniAlwaysInclude]
+		public bool Randomize;
+		[IniAlwaysInclude]
+		public bool RandomizeP2;
 	}
 }
