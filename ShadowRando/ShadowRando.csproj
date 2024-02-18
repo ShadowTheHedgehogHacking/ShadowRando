@@ -6,15 +6,8 @@
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
   </PropertyGroup>
 
-  
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
-  </ItemGroup>
-
-  
-  <ItemGroup>
-    <AvaloniaResource Remove="Assets\EN.txd" />
-    <AvaloniaResource Remove="Assets\EN00.met" />
   </ItemGroup>
 
   <ItemGroup>
@@ -23,25 +16,15 @@
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.9" />
     <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.9" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />
-
+    <PackageReference Include="ShadowFNT" Version="2.0.1" />
+    <PackageReference Include="SkiaSharp" Version="2.88.7" />
     <!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
     <PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.0.7" />
     <PackageReference Include="MessageBox.Avalonia" Version="3.1.5.1" />
-    <PackageReference Include="ShadowFNT" Version="2.0.1" />
-    <PackageReference Include="SkiaSharp" Version="2.88.7" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Submodules\HeroesONE++\HeroesONE++\HeroesONE_R.csproj" />
     <ProjectReference Include="..\Submodules\ShadowSET\ShadowSET\ShadowSET.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Assets\EN.txd">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Update="Assets\EN00.met">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
   </ItemGroup>
 </Project>

@@ -1609,14 +1609,23 @@ public partial class MainView : UserControl
 				filesToWrite.Add(mutatedFnt[i]);
 			}
 		}
+		using var enTXD = AssetLoader.Open(new Uri($"avares://ShadowRando/Assets/EN.txd"));
+		using var enMET = AssetLoader.Open(new Uri($"avares://ShadowRando/Assets/EN00.met"));
+		using MemoryStream txdStream = new MemoryStream();
+		enTXD.CopyTo(txdStream);
+		byte[] txdBytes = txdStream.ToArray();
+		using MemoryStream metStream = new MemoryStream();
+		enMET.CopyTo(metStream);
+		byte[] metBytes = metStream.ToArray();
+
 		foreach (FNT fnt in filesToWrite)
 		{
 			fnt.RecomputeAllSubtitleAddresses();
 			string outfn = Path.Combine(settings.GamePath, "files", fnt.fileName.Substring(fnt.fileName.IndexOf("fonts")));
 			File.WriteAllBytes(outfn, fnt.ToBytes());
 			string prec = outfn.Remove(outfn.Length - 4);
-			File.Copy(AppDomain.CurrentDomain.BaseDirectory + "Assets/EN.txd", prec + ".txd", true);
-			File.Copy(AppDomain.CurrentDomain.BaseDirectory + "Assets/EN00.met", prec + "00.met", true);
+			File.WriteAllBytes(prec + ".txd", txdBytes);
+			File.WriteAllBytes(prec + "00.met", metBytes);
 		}
 	}
 
