@@ -1860,7 +1860,9 @@ public partial class MainView : UserControl
 			Object0190_Partner.EPartner.Maria,
 			Object0190_Partner.EPartner.Charmy
 		];
-		
+
+		Dispatcher.UIThread.Post(() => UpdateProgressBar(30));
+
 		if (settings.Layout.Partner.Mode == LayoutPartnerMode.Wild)
 		{
 			if (settings.Layout.Partner.OnlySelectedPartners)
@@ -1896,6 +1898,7 @@ public partial class MainView : UserControl
 		// Begin the per-stage layout modifications
 		for (int stageIdToModify = 5; stageIdToModify < 45; stageIdToModify++)
 		{
+			Dispatcher.UIThread.Post(() => UpdateProgressBar(30 + stageIdToModify / 9));
 			stageAssociationIDMap.TryGetValue(stageIdToModify, out var stageId);
 			var stageDataIdentifier = "stg0" + stageId;
 			var cmnLayout = stageDataIdentifier + "_cmn.dat";
@@ -2116,6 +2119,8 @@ public partial class MainView : UserControl
 				}
 			}
 		}
+
+		Dispatcher.UIThread.Post(() => UpdateProgressBar(44));
 
 		SetIdTableFunctions.SaveTable(Path.Combine(settings.GamePath, "files", "setid.bin"), true, setIdTable);
 
