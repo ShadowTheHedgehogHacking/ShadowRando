@@ -236,13 +236,13 @@
       </TabItem>
 			<TabItem Header="Layout">
 				<StackPanel>
-					<CheckBox x:Name="Layout_CheckBox_RandomizeLayouts" Margin="0,0,10,0">Randomize Layouts (64MB Patch / Dolphin Only)</CheckBox>
+					<CheckBox x:Name="Layout_CheckBox_RandomizeLayouts" Click="Shared_CheckBox_UIUpdate_OnClick" Margin="0,0,10,0">Randomize Layouts (64MB Patch / Dolphin Only)</CheckBox>
 					<CheckBox x:Name="Layout_CheckBox_MakeCCSplinesVehicleCompatible" Margin="0,0,10,0">Make CC Splines Vehicle Compatible</CheckBox>
 					<TabControl>
 						<TabItem Header="Enemy">
 							<StackPanel>
 								<Label>Mode</Label>
-								<ComboBox x:Name="Layout_Enemy_ComboBox_Mode" SelectedIndex="1">
+								<ComboBox x:Name="Layout_Enemy_ComboBox_Mode" SelectionChanged="Shared_ComboBox_OnSelectionChanged" SelectedIndex="1">
 									<ComboBoxItem>Original Enemies</ComboBoxItem>
 									<ComboBoxItem>Wild</ComboBoxItem>
 									<ComboBoxItem IsEnabled="False">1:1 Per Stage (Not Ready Yet)</ComboBoxItem>
@@ -260,7 +260,7 @@
 									<CheckBox x:Name="Layout_Enemy_CheckBox_ShieldBlockProbability" Grid.Column="0">Shield/Block Probability</CheckBox>
 									<NumericUpDown x:Name="Layout_Enemy_NumericUpDown_ShieldBlockProbability" Grid.Column="1" Increment="1" Value="10" Margin="10,0,10,0" Maximum="100" Minimum="0"></NumericUpDown>
 								</Grid>
-								<CheckBox x:Name="Layout_Enemy_CheckBox_OnlySelectedEnemyTypes">Only Selected Enemy Types</CheckBox>
+								<CheckBox x:Name="Layout_Enemy_CheckBox_OnlySelectedEnemyTypes" Click="Shared_CheckBox_UIUpdate_OnClick">Only Selected Enemy Types</CheckBox>
 								<Label Margin="0,10,0,0">Selected Enemy Types</Label>
 								<Grid ColumnDefinitions="*, *, *" RowDefinitions="*, *, *, *, *">
 									<CheckBox Grid.Column="0" Grid.Row="0" Margin="0,0,5,0" x:Name="Layout_Enemy_CheckBox_SelectedEnemy_GUNSoldier">GUN Soldier</CheckBox>
@@ -289,7 +289,7 @@
 										<CheckBox x:Name="Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes" Click="Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes_Click" IsChecked="True">Random Weapons in All Boxes</CheckBox>
 										<CheckBox x:Name="Layout_Weapon_CheckBox_RandomExposedWeapons" IsChecked="True">Random Exposed Weapons</CheckBox>
 										<CheckBox x:Name="Layout_Weapon_CheckBox_RandomWeaponsFromEnvironment">Environment (ex: Tree / Speedlimit Sign) Drops Random Weapons</CheckBox>
-										<CheckBox x:Name="Layout_Weapon_CheckBox_OnlySelectedWeapons">Only Selected Weapons</CheckBox>
+										<CheckBox x:Name="Layout_Weapon_CheckBox_OnlySelectedWeapons" Click="Shared_CheckBox_UIUpdate_OnClick">Only Selected Weapons</CheckBox>
 										<Label Margin="0,10,0,0">Selected Weapons</Label>
 										<Grid ColumnDefinitions="*, *, *" RowDefinitions="*, *, *, *, *, *, *, *, *, *, *, *, *, *">
 											<CheckBox Grid.Column="0" Grid.Row="0" Margin="0,0,5,0" x:Name="Layout_Weapon_CheckBox_SelectedWeapon_None">None</CheckBox>
@@ -342,7 +342,7 @@
 						<TabItem Header="Partner">
 							<StackPanel>
 								<Label>Mode</Label>
-								<ComboBox x:Name="Layout_Partner_ComboBox_Mode" SelectedIndex="0">
+								<ComboBox x:Name="Layout_Partner_ComboBox_Mode" SelectionChanged="Shared_ComboBox_OnSelectionChanged" SelectedIndex="0">
 									<ComboBoxItem>Default Partners</ComboBoxItem>
 									<ComboBoxItem>Wild</ComboBoxItem>	
 									<ComboBoxItem IsEnabled="False">1:1 Per Stage (Not Ready Yet)</ComboBoxItem>
@@ -350,7 +350,7 @@
 								</ComboBox>
 								<CheckBox x:Name="Layout_Partner_CheckBox_RandomizeAffiliations">Randomize Dark/Hero Affiliations</CheckBox>
 								<CheckBox x:Name="Layout_Partner_CheckBox_KeepAffiliationsAtSameLocation">Keep Affiliations At Same Locations</CheckBox>
-								<CheckBox x:Name="Layout_Partner_CheckBox_OnlySelectedPartners">Only Selected Partners</CheckBox>
+								<CheckBox x:Name="Layout_Partner_CheckBox_OnlySelectedPartners" Click="Shared_CheckBox_UIUpdate_OnClick">Only Selected Partners</CheckBox>
 								<Label Margin="0,10,0,0">Selected Partners</Label>
 								<Grid ColumnDefinitions="*, *, *" RowDefinitions="*, *, *, *">
 									<CheckBox Grid.Column="0" Grid.Row="0" Margin="0,0,5,0" x:Name="Layout_Partner_CheckBox_SelectedPartner_Sonic">Sonic</CheckBox>
@@ -373,7 +373,7 @@
 			</TabItem>
 			<TabItem Header="Subtitles">
 				<StackPanel>
-					<CheckBox x:Name="Subtitles_CheckBox_RandomizeSubtitlesVoicelines">Randomize Subtitles/Voicelines</CheckBox>
+					<CheckBox x:Name="Subtitles_CheckBox_RandomizeSubtitlesVoicelines" Click="Shared_CheckBox_UIUpdate_OnClick">Randomize Subtitles/Voicelines</CheckBox>
 					<Label Margin="0,10,0,0">Subtitle Options</Label>
 					<CheckBox x:Name="Subtitles_CheckBox_OnlyWithLinkedAudio" IsChecked="True" Click="Subtitles_CheckBox_OnlyWithLinkedAudio_Click">Only with Linked Audio</CheckBox>
 					<CheckBox x:Name="Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles" Click="Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles_Click">Give Audio to No Linked Audio Subtitles</CheckBox>
@@ -386,7 +386,7 @@
           </StackPanel>
 					<CheckBox x:Name="Subtitles_CheckBox_RandomizeAllAudio" IsEnabled="False">Randomize All Audio</CheckBox>
 					<CheckBox x:Name="Subtitles_CheckBox_IncludeSonicAdventureSubtitlesVoices" IsEnabled="False">Include Sonic Adventure Subtitles/Voices</CheckBox>
-					<CheckBox x:Name="Subtitles_CheckBox_OnlySelectedCharacters">Only Selected Characters</CheckBox>
+					<CheckBox x:Name="Subtitles_CheckBox_OnlySelectedCharacters" Click="Shared_CheckBox_UIUpdate_OnClick">Only Selected Characters</CheckBox>
 					<Label Margin="0,10,0,0">Selected Characters</Label>
 					<Grid ColumnDefinitions="*, *, *, *" RowDefinitions="*, *, *, *, *">
 						<CheckBox Grid.Column="0" Grid.Row="0" Margin="0,0,5,0" x:Name="Subtitles_CheckBox_SelectedCharacter_Shadow">Shadow</CheckBox>
@@ -411,7 +411,7 @@
 			</TabItem>
 			<TabItem Header="Music">
 				<StackPanel>
-					<CheckBox x:Name="Music_CheckBox_RandomizeMusic">Randomize Music</CheckBox>
+					<CheckBox x:Name="Music_CheckBox_RandomizeMusic" Click="Shared_CheckBox_UIUpdate_OnClick">Randomize Music</CheckBox>
 					<CheckBox x:Name="Music_CheckBox_SkipRankTheme" IsChecked="True">Skip Rank Theme</CheckBox>
 					<CheckBox x:Name="Music_CheckBox_SkipChaosPowerUseJingles">Skip Chaos Power Use Jingles</CheckBox>
 				</StackPanel>

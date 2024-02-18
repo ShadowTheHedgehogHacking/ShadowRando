@@ -16,7 +16,6 @@ using HeroesONE_R.Structures;
 using HeroesONE_R.Structures.Common;
 using HeroesONE_R.Utilities;
 using MsBox.Avalonia;
-using MsBox.Avalonia.Base;
 using MsBox.Avalonia.Enums;
 using ShadowFNT;
 using ShadowFNT.Structures;
@@ -267,6 +266,8 @@ public partial class MainView : UserControl
 
 	private string selectedFolderPath;
 	const string programVersion = "0.5.0";
+	private bool programInitialized = false;
+
 	Settings settings;
 
 	public MainView(string folderPath)
@@ -500,6 +501,8 @@ public partial class MainView : UserControl
 		Models_CheckBox_ModelP2.IsChecked = settings.Models.RandomizeP2;
 
 		LoadGameData();
+		programInitialized = true;
+		UpdateUIEnabledState();
 	}
 
 	private void UserControl_Unloaded(object? sender, RoutedEventArgs e)
@@ -2810,7 +2813,7 @@ public partial class MainView : UserControl
 
 	private void LevelOrder_CheckBox_Random_Seed_Click(object? sender, RoutedEventArgs e)
 	{
-		LevelOrder_TextBox_Seed.IsEnabled = !LevelOrder_CheckBox_Random_Seed.IsChecked.Value;
+		UpdateUIEnabledState();
 	}
 
 	private void LevelOrder_CheckBox_AllowJumpsToSameLevel_Click(object? sender, RoutedEventArgs e)
@@ -3825,5 +3828,63 @@ public partial class MainView : UserControl
 	private void UpdateProgressBar(int value)
 	{
 		ProgressBar_RandomizationProgress.Value = value;
+	}
+
+	private void UpdateUIEnabledState()
+	{
+		if (!programInitialized)
+			return;
+		// Level Order
+		LevelOrder_TextBox_Seed.IsEnabled = !LevelOrder_CheckBox_Random_Seed.IsChecked.Value;
+		// --Layout--
+		// Enemy
+		Layout_CheckBox_MakeCCSplinesVehicleCompatible.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
+		Layout_Enemy_ComboBox_Mode.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
+		Layout_Enemy_CheckBox_AdjustMissionCounts.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value && (LayoutEnemyMode)Layout_Enemy_ComboBox_Mode.SelectedIndex == LayoutEnemyMode.Wild;
+		Layout_Enemy_CheckBox_KeepType.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value && (LayoutEnemyMode)Layout_Enemy_ComboBox_Mode.SelectedIndex == LayoutEnemyMode.Wild;
+		Layout_Enemy_CheckBox_OnlySelectedEnemyTypes.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value && (LayoutEnemyMode)Layout_Enemy_ComboBox_Mode.SelectedIndex == LayoutEnemyMode.Wild;
+		for (int i = 0; i < EnemyCheckBoxes.Length; i++)
+			EnemyCheckBoxes[i].IsEnabled = Layout_Enemy_CheckBox_OnlySelectedEnemyTypes.IsChecked.Value && Layout_CheckBox_RandomizeLayouts.IsChecked.Value && (LayoutEnemyMode)Layout_Enemy_ComboBox_Mode.SelectedIndex == LayoutEnemyMode.Wild;
+		// Weapon
+		Layout_Weapon_CheckBox_RandomWeaponsInWeaponBoxes.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
+		Layout_Weapon_CheckBox_RandomWeaponsInAllBoxes.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
+		Layout_Weapon_CheckBox_RandomExposedWeapons.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
+		Layout_Weapon_CheckBox_RandomWeaponsFromEnvironment.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
+		Layout_Weapon_CheckBox_OnlySelectedWeapons.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
+		for (int i = 0; i < WeaponCheckBoxes.Length; i++)
+			if (WeaponCheckBoxes[i] != null)
+				WeaponCheckBoxes[i].IsEnabled = Layout_Weapon_CheckBox_OnlySelectedWeapons.IsChecked.Value && Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
+		// Partner
+		Layout_Partner_ComboBox_Mode.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
+		Layout_Partner_CheckBox_RandomizeAffiliations.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value && (LayoutPartnerMode)Layout_Partner_ComboBox_Mode.SelectedIndex == LayoutPartnerMode.Wild;
+		Layout_Partner_CheckBox_KeepAffiliationsAtSameLocation.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value && (LayoutPartnerMode)Layout_Partner_ComboBox_Mode.SelectedIndex == LayoutPartnerMode.Wild;
+		Layout_Partner_CheckBox_OnlySelectedPartners.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value && (LayoutPartnerMode)Layout_Partner_ComboBox_Mode.SelectedIndex == LayoutPartnerMode.Wild;
+		for (int i = 0; i < PartnerCheckBoxes.Length; i++)
+			PartnerCheckBoxes[i].IsEnabled = Layout_Partner_CheckBox_OnlySelectedPartners.IsChecked.Value && Layout_CheckBox_RandomizeLayouts.IsChecked.Value && (LayoutPartnerMode)Layout_Partner_ComboBox_Mode.SelectedIndex == LayoutPartnerMode.Wild;
+		// --End Layout--
+		// Subtitles
+		Subtitles_CheckBox_OnlyWithLinkedAudio.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;	
+		Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
+		Subtitles_CheckBox_NoSystemMessages.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
+		Subtitles_CheckBox_NoDuplicates.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
+		Subtitles_CheckBox_GenerateMessages.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
+		Subtitles_CheckBox_OnlySelectedCharacters.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
+		for (int i = 0; i < SubtitleCheckBoxes.Length; i++)
+			SubtitleCheckBoxes[i].IsEnabled = Subtitles_CheckBox_OnlySelectedCharacters.IsChecked.Value && Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
+		// Music
+		Music_CheckBox_SkipRankTheme.IsEnabled = Music_CheckBox_RandomizeMusic.IsChecked.Value;
+		Music_CheckBox_SkipChaosPowerUseJingles.IsEnabled = Music_CheckBox_RandomizeMusic.IsChecked.Value;
+	}
+
+	private void Shared_CheckBox_UIUpdate_OnClick(object? sender, RoutedEventArgs e)
+	{
+		if (programInitialized)
+			UpdateUIEnabledState();
+	}
+
+	private void Shared_ComboBox_OnSelectionChanged(object? sender, SelectionChangedEventArgs e)
+	{
+		if (programInitialized)
+			UpdateUIEnabledState();
 	}
 }
