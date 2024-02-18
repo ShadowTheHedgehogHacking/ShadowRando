@@ -80,6 +80,8 @@ public partial class MainView : UserControl
 
 	private CheckBox[] LevelCheckBoxes, EnemyCheckBoxes, WeaponCheckBoxes, PartnerCheckBoxes, SubtitleCheckBoxes;
 
+	private const int cutsceneEventDisablerOffset = 0x256D20;
+	private const int cutsceneEventDisablerPatchValue = 0x60000000;
 	private const int routeMenu6xxStagePreviewBlockerOffset = 0xB48B8;
 	private const int routeMenu6xxStagePreviewPatchValue = 0x48000110;
 	private const int storyModeStartAddress = 0x2CB9F0;
@@ -1324,6 +1326,11 @@ public partial class MainView : UserControl
 		}
 		if (settings.LevelOrder.Mode != LevelOrderMode.Original)
 		{
+			// patch the events code to allow skip all events
+			buf = BitConverter.GetBytes(cutsceneEventDisablerPatchValue);
+			Array.Reverse(buf);
+			buf.CopyTo(dolfile, cutsceneEventDisablerOffset);
+			// end patch
 			for (int i = 0; i < totalstagecount; i++)
 			{
 				Stage stg = stages[i];
@@ -1355,7 +1362,6 @@ public partial class MainView : UserControl
 		}
 
 		Dispatcher.UIThread.Post(() => UpdateProgressBar(15));
-
 
 		// patch the route menu to allow stg06xx+ to display next stages
 		buf = BitConverter.GetBytes(routeMenu6xxStagePreviewPatchValue);
