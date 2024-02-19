@@ -1,4 +1,5 @@
 ﻿using Avalonia.Controls;
+using ShadowRando.Core;
 
 namespace ShadowRando.Views;
 
@@ -14,9 +15,9 @@ public partial class MainWindow : Window
 	private MainView? _mainView;
 	private readonly FirstScreen _firstScreen;
 
-	public void LoadMainView(string folderPath)
+	public void LoadMainView(string folderPath, Settings settings)
 	{
-		_mainView = new MainView(folderPath);
+		_mainView = new MainView(folderPath, settings);
 		_firstScreen.IsVisible = false;
 		Content = _mainView;
 	}

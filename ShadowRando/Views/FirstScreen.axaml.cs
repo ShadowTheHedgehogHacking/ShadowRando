@@ -1,6 +1,7 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
+using MsBox.Avalonia.Enums;
 using ShadowRando.Core;
 using System.IO;
 
@@ -11,11 +12,13 @@ public partial class FirstScreen : UserControl
 
 	private readonly MainWindow _mainWindow;
 	private bool buttonProcessing = false;
+	private Settings _settings;
 	
 	public FirstScreen(MainWindow mainWindow)
 	{
-		InitializeComponent();
 		_mainWindow = mainWindow;
+		_settings = Settings.Load();
+		InitializeComponent();
 	}
 
 	private async void Button_OnClick(object? sender, RoutedEventArgs e)
@@ -51,6 +54,25 @@ public partial class FirstScreen : UserControl
 			buttonProcessing = false;
 			return;
 		}
-		_mainWindow.LoadMainView(selectedFolderPath);
+
+		if (_settings.GamePath != selectedFolderPath && Directory.Exists("backup"))
+		{
+			var msgbox = await Utils.ShowSimpleMessage("Shadow Randomizer", "New game directory selected!\n\nDo you wish to erase the previous backup data and use the new data as a base?", ButtonEnum.YesNoCancel, Icon.Question);
+			switch (msgbox)
+			{
+				case ButtonResult.Yes:
+					Directory.Delete("backup", true);
+					break;
+				case ButtonResult.No:
+					break;
+				case ButtonResult.Cancel:
+					buttonProcessing = false;
+					return;
+				default:
+					break;
+			}
+		}
+
+		_mainWindow.LoadMainView(selectedFolderPath, _settings);
 	}
 }

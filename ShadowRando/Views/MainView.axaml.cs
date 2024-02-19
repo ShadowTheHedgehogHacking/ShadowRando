@@ -271,10 +271,14 @@ public partial class MainView : UserControl
 
 	Settings settings;
 
-	public MainView(string folderPath)
+	public MainView(string folderPath, Settings settings)
 	{
 		selectedFolderPath = folderPath;
+		this.settings = settings;
 		InitializeComponent();
+		MainTabParent.IsVisible = false;
+		BottomBarGrid.IsVisible = false;
+		LoadingDataIndicator.IsVisible = true;
 	}
 
 	private void UserControl_Loaded(object? sender, RoutedEventArgs e)
@@ -427,8 +431,6 @@ public partial class MainView : UserControl
 			Subtitles_CheckBox_SelectedCharacter_GUNSoldier
 		];
 
-		settings = Settings.Load();
-
 		// Program Configuration
 		LevelOrder_Label_ProgramTitle.Content += " " + programVersion;
 
@@ -504,6 +506,9 @@ public partial class MainView : UserControl
 		LoadGameData();
 		programInitialized = true;
 		UpdateUIEnabledState();
+		MainTabParent.IsVisible = true;
+		BottomBarGrid.IsVisible = true;
+		LoadingDataIndicator.IsVisible = false;
 	}
 
 	private void UserControl_Unloaded(object? sender, RoutedEventArgs e)
@@ -597,20 +602,6 @@ public partial class MainView : UserControl
 
 	private async void LoadGameData()
 	{
-		if (settings.GamePath != selectedFolderPath && Directory.Exists("backup"))
-		{
-			var msgbox = await Utils.ShowSimpleMessage("Shadow Randomizer", "New game directory selected!\n\nDo you wish to erase the previous backup data and use the new data as a base?", ButtonEnum.YesNo, Icon.Question);
-			switch (msgbox)
-			{
-				case ButtonResult.Yes:
-					Directory.Delete("backup", true);
-					break;
-				case ButtonResult.No:
-					break;
-				default:
-					break;
-			}
-		}
 		settings.GamePath = selectedFolderPath;
 		if (!Directory.Exists("backup"))
 			Directory.CreateDirectory("backup");
