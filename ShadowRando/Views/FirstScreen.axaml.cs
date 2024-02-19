@@ -21,7 +21,7 @@ public partial class FirstScreen : UserControl
 		InitializeComponent();
 	}
 
-	private async void Button_OnClick(object? sender, RoutedEventArgs e)
+	private async void LoadNewGameFolder_OnClick(object? sender, RoutedEventArgs e)
 	{
 		if (buttonProcessing)
 			return;
@@ -42,20 +42,40 @@ public partial class FirstScreen : UserControl
 
 		string selectedFolderPath = folderPath[0].Path.LocalPath;
 
-		if (selectedFolderPath.EndsWith("\\files") || selectedFolderPath.EndsWith("\\sys")) {
-			var parent = Directory.GetParent(selectedFolderPath);
+		ProcessGameFolder(selectedFolderPath);
+	}
+
+	private async void LoadPriorGameFolder_OnClick(object? sender, RoutedEventArgs e)
+	{
+		if (buttonProcessing)
+			return;
+		buttonProcessing = true;
+		ProcessGameFolder(_settings.GamePath);
+	}
+
+	private async void ProcessGameFolder(string gamePath)
+	{
+		if (!Directory.Exists(gamePath))
+		{
+			Utils.ShowSimpleMessage("Error", "Folder not found.", ButtonEnum.Ok, Icon.Error);
+			buttonProcessing = false;
+			return;
+		}
+		
+		if (gamePath.EndsWith("\\files") || gamePath.EndsWith("\\sys")) {
+			var parent = Directory.GetParent(gamePath);
 			if (parent != null)
-				selectedFolderPath = parent.FullName;
+				gamePath = parent.FullName;
 		}
 
-		if (!File.Exists(Path.Combine(selectedFolderPath, "sys", "main.dol")) || !File.Exists(Path.Combine(selectedFolderPath, "sys", "bi2.bin")))
+		if (!File.Exists(Path.Combine(gamePath, "sys", "main.dol")) || !File.Exists(Path.Combine(gamePath, "sys", "bi2.bin")))
 		{
-			Utils.ShowSimpleMessage("Error", "Not a valid Shadow the Hedgehog Extracted game.", MsBox.Avalonia.Enums.ButtonEnum.Ok, MsBox.Avalonia.Enums.Icon.Error);
+			Utils.ShowSimpleMessage("Error", "Not a valid Shadow the Hedgehog Extracted game.", ButtonEnum.Ok, Icon.Error);
 			buttonProcessing = false;
 			return;
 		}
 
-		if (_settings.GamePath != selectedFolderPath && Directory.Exists("backup"))
+		if (_settings.GamePath != gamePath && Directory.Exists("backup"))
 		{
 			var msgbox = await Utils.ShowSimpleMessage("Shadow Randomizer", "New game directory selected!\n\nDo you wish to erase the previous backup data and use the new data as a base?", ButtonEnum.YesNoCancel, Icon.Question);
 			switch (msgbox)
@@ -66,13 +86,12 @@ public partial class FirstScreen : UserControl
 				case ButtonResult.No:
 					break;
 				case ButtonResult.Cancel:
+				default:
 					buttonProcessing = false;
 					return;
-				default:
-					break;
 			}
 		}
 
-		_mainWindow.LoadMainView(selectedFolderPath, _settings);
+		_mainWindow.LoadMainView(gamePath, _settings);
 	}
 }
