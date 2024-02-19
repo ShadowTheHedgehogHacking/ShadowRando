@@ -274,7 +274,10 @@ public partial class MainView : UserControl
 
 	public MainView(string folderPath)
 	{
-		selectedFolderPath = folderPath;
+		if (folderPath.EndsWith("\\files") || folderPath.EndsWith("\\sys"))
+			selectedFolderPath = Directory.GetParent(folderPath).FullName;
+		else
+			selectedFolderPath = folderPath;
 		InitializeComponent();
 	}
 
