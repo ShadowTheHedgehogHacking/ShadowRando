@@ -15,7 +15,6 @@ using Avalonia.Threading;
 using HeroesONE_R.Structures;
 using HeroesONE_R.Structures.Common;
 using HeroesONE_R.Utilities;
-using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using ShadowFNT;
 using ShadowFNT.Structures;
@@ -274,10 +273,7 @@ public partial class MainView : UserControl
 
 	public MainView(string folderPath)
 	{
-		if (folderPath.EndsWith("\\files") || folderPath.EndsWith("\\sys"))
-			selectedFolderPath = Directory.GetParent(folderPath).FullName;
-		else
-			selectedFolderPath = folderPath;
+		selectedFolderPath = folderPath;
 		InitializeComponent();
 	}
 
@@ -603,7 +599,7 @@ public partial class MainView : UserControl
 	{
 		if (settings.GamePath != selectedFolderPath && Directory.Exists("backup"))
 		{
-			var msgbox = await ShowSimpleMessage("Shadow Randomizer", "New game directory selected!\n\nDo you wish to erase the previous backup data and use the new data as a base?", ButtonEnum.YesNo, Icon.Question);
+			var msgbox = await Utils.ShowSimpleMessage("Shadow Randomizer", "New game directory selected!\n\nDo you wish to erase the previous backup data and use the new data as a base?", ButtonEnum.YesNo, Icon.Question);
 			switch (msgbox)
 			{
 				case ButtonResult.Yes:
@@ -689,7 +685,7 @@ public partial class MainView : UserControl
 		}
 		if (string.IsNullOrEmpty(LevelOrder_TextBox_Seed.Text))
 		{
-			await ShowSimpleMessage("Error", "Invalid Seed", ButtonEnum.Ok, Icon.Error);
+			await Utils.ShowSimpleMessage("Error", "Invalid Seed", ButtonEnum.Ok, Icon.Error);
 			return;
 		}
 		UpdateSettings();
@@ -707,7 +703,7 @@ public partial class MainView : UserControl
 		Spoilers_Button_SaveLog.IsEnabled = true;
 		Spoilers_Button_MakeChart.IsEnabled = true;
 
-		var msgbox = await ShowSimpleMessage("ShadowRando", "Randomization Complete", ButtonEnum.Ok, Icon.Info);
+		var msgbox = await Utils.ShowSimpleMessage("ShadowRando", "Randomization Complete", ButtonEnum.Ok, Icon.Info);
 	}
 
 	private async Task<int> RandomizationProcess()
@@ -771,7 +767,7 @@ public partial class MainView : UserControl
 		}
 		if (tmpids.Count == 0)
 		{
-			Dispatcher.UIThread.Post(() => ShowSimpleMessage("ShadowRando", "All valid stages for the selected randomization mode have been excluded! You must enable at least one stage.", ButtonEnum.Ok, Icon.Error));
+			Dispatcher.UIThread.Post(() => Utils.ShowSimpleMessage("ShadowRando", "All valid stages for the selected randomization mode have been excluded! You must enable at least one stage.", ButtonEnum.Ok, Icon.Error));
 			return 1;
 		}
 		stagecount = tmpids.Count;
@@ -1788,7 +1784,7 @@ public partial class MainView : UserControl
 			{
 				if (groundEnemies.Count == 0 || flyingEnemies.Count == 0)
 				{
-					Dispatcher.UIThread.Post(() => ShowSimpleMessage("Error", "Must have at least one ground and one flying enemy.", ButtonEnum.Ok, Icon.Error));
+					Dispatcher.UIThread.Post(() => Utils.ShowSimpleMessage("Error", "Must have at least one ground and one flying enemy.", ButtonEnum.Ok, Icon.Error));
 					return 1; // TODO do we want to throw errors?
 				}
 
@@ -1797,7 +1793,7 @@ public partial class MainView : UserControl
 					// make sure there is at least one other enemy if GUN Soldiers are only picked
 					if (groundEnemies[0] == typeof(Object0064_GUNSoldier))
 					{
-						Dispatcher.UIThread.Post(() => ShowSimpleMessage("Error",
+						Dispatcher.UIThread.Post(() => Utils.ShowSimpleMessage("Error",
 							"GUN Soldiers have an issue with some Link IDs, add an extra ground enemy type.",
 							ButtonEnum.Ok, Icon.Error));
 						return 1;
@@ -1808,7 +1804,7 @@ public partial class MainView : UserControl
 			{
 				if (allEnemies.Count == 0)
 				{
-					Dispatcher.UIThread.Post(() => ShowSimpleMessage("Error", "Must pick at least one enemy type.", ButtonEnum.Ok, Icon.Error));
+					Dispatcher.UIThread.Post(() => Utils.ShowSimpleMessage("Error", "Must pick at least one enemy type.", ButtonEnum.Ok, Icon.Error));
 					return 1;
 				}
 
@@ -1817,7 +1813,7 @@ public partial class MainView : UserControl
 					// make sure there is at least one other enemy if GUN Soldiers are only picked
 					if (allEnemies[0] == typeof(Object0064_GUNSoldier))
 					{
-						Dispatcher.UIThread.Post(() => ShowSimpleMessage("Error",
+						Dispatcher.UIThread.Post(() => Utils.ShowSimpleMessage("Error",
 							"GUN Soldiers have an issue with some Link IDs, add an extra enemy type.", ButtonEnum.Ok,
 							Icon.Error));
 						return 1;
@@ -1844,7 +1840,7 @@ public partial class MainView : UserControl
 			weaponsPool.AddRange(settings.Layout.Weapon.SelectedWeapons);
 			if (weaponsPool.Count == 0)
 			{
-				Dispatcher.UIThread.Post(() => ShowSimpleMessage("Error", "Must select at least one weapon.", ButtonEnum.Ok, Icon.Error));
+				Dispatcher.UIThread.Post(() => Utils.ShowSimpleMessage("Error", "Must select at least one weapon.", ButtonEnum.Ok, Icon.Error));
 				return 1;
 			}
 		}
@@ -1902,7 +1898,7 @@ public partial class MainView : UserControl
 			
 			if (heroPartners.Count == 0 || darkPartners.Count == 0)
 			{
-				Dispatcher.UIThread.Post(() => ShowSimpleMessage("Error", "Must have at least one dark and one hero partner.", ButtonEnum.Ok, Icon.Error));
+				Dispatcher.UIThread.Post(() => Utils.ShowSimpleMessage("Error", "Must have at least one dark and one hero partner.", ButtonEnum.Ok, Icon.Error));
 				return 1;
 			}
 		}
@@ -2149,11 +2145,6 @@ public partial class MainView : UserControl
 		}
 
 		return 0;
-	}
-
-	private static async Task<ButtonResult> ShowSimpleMessage(string title, string message, ButtonEnum messageType, Icon messageIcon) {
-		var msgboxResult = MessageBoxManager.GetMessageBoxStandard(title, message, messageType, messageIcon);
-		return await msgboxResult.ShowAsync();
 	}
 
 	private static int GetTotalGUNEnemies(IReadOnlyList<SetObjectShadow> cmn, IReadOnlyList<SetObjectShadow>? nrm = null)

@@ -1,6 +1,8 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
+using ShadowRando.Core;
+using System.IO;
 
 namespace ShadowRando.Views;
 
@@ -34,6 +36,21 @@ public partial class FirstScreen : UserControl
 			buttonProcessing = false;
 			return;
 		}
-		_mainWindow.LoadMainView(folderPath[0].Path.LocalPath);
+
+		string selectedFolderPath = folderPath[0].Path.LocalPath;
+
+		if (selectedFolderPath.EndsWith("\\files") || selectedFolderPath.EndsWith("\\sys")) {
+			var parent = Directory.GetParent(selectedFolderPath);
+			if (parent != null)
+				selectedFolderPath = parent.FullName;
+		}
+
+		if (!File.Exists(Path.Combine(selectedFolderPath, "sys", "main.dol")) || !File.Exists(Path.Combine(selectedFolderPath, "sys", "bi2.bin")))
+		{
+			Utils.ShowSimpleMessage("Error", "Not a valid Shadow the Hedgehog Extracted game.", MsBox.Avalonia.Enums.ButtonEnum.Ok, MsBox.Avalonia.Enums.Icon.Error);
+			buttonProcessing = false;
+			return;
+		}
+		_mainWindow.LoadMainView(selectedFolderPath);
 	}
 }
