@@ -269,6 +269,7 @@ public partial class MainView : UserControl
 	private bool avaloniaPreviewUI;
 	const string programVersion = "0.5.0-RC3";
 	private bool programInitialized = false;
+	private bool randomizeProcessing = false;
 
 	Settings settings;
 	
@@ -391,6 +392,29 @@ public partial class MainView : UserControl
 			Layout_Weapon_CheckBox_SelectedWeapon_BlackSword,
 			Layout_Weapon_CheckBox_SelectedWeapon_DarkHammer,
 			Layout_Weapon_CheckBox_SelectedWeapon_EggLance,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
+			null,
 			Layout_Weapon_CheckBox_SelectedWeapon_SamuraiSwordLv1,
 			Layout_Weapon_CheckBox_SelectedWeapon_SamuraiSwordLv2,
 			Layout_Weapon_CheckBox_SelectedWeapon_SatelliteLaserLv1,
@@ -678,6 +702,9 @@ public partial class MainView : UserControl
 
 	private async void Button_Randomize_Click(object? sender, RoutedEventArgs e)
 	{
+		if (randomizeProcessing)
+			return;
+		randomizeProcessing = true;
 		ProgressBar_RandomizationProgress.Value = 0;
 		Spoilers_Button_MakeChart.IsEnabled = false;
 		Spoilers_Button_SaveLog.IsEnabled = false;
@@ -693,13 +720,17 @@ public partial class MainView : UserControl
 		if (string.IsNullOrEmpty(LevelOrder_TextBox_Seed.Text))
 		{
 			await Utils.ShowSimpleMessage("Error", "Invalid Seed", ButtonEnum.Ok, Icon.Error);
+			randomizeProcessing = false;
 			return;
 		}
+		ProgressBar_RandomizationProgress.Value = 5;
+
 		UpdateSettings();
 		int result = await Task.Run(RandomizationProcess);
 		if (result != 0)
 		{
 			ProgressBar_RandomizationProgress.Value = 0;
+			randomizeProcessing = false;
 			return;
 		}
 		Spoilers_ListBox_LevelList.Items.Clear();
@@ -710,6 +741,7 @@ public partial class MainView : UserControl
 		Spoilers_Button_SaveLog.IsEnabled = true;
 		Spoilers_Button_MakeChart.IsEnabled = true;
 
+		randomizeProcessing = false;
 		var msgbox = await Utils.ShowSimpleMessage("ShadowRando", "Randomization Complete", ButtonEnum.Ok, Icon.Info);
 	}
 
@@ -725,6 +757,8 @@ public partial class MainView : UserControl
 		CopyDirectory(Path.Combine("backup", "character"), Path.Combine(settings.GamePath, "files", "character"), true);
 		CopyDirectory(Path.Combine("backup", "sets"), Path.Combine(settings.GamePath, "files"), true);
 
+		Dispatcher.UIThread.Post(() => UpdateProgressBar(10));
+		
 		dolfile = File.ReadAllBytes(Path.Combine("backup", "main.dol"));
 		var seed = CalculateSeed(settings.Seed);
 		Random r = new Random(seed);
