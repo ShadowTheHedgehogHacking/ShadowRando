@@ -267,7 +267,7 @@ public partial class MainView : UserControl
 
 	private string selectedFolderPath;
 	private bool avaloniaPreviewUI;
-	const string programVersion = "0.5.0-RC3";
+	const string programVersion = "0.5.0-RC4";
 	private bool programInitialized = false;
 	private bool randomizeProcessing = false;
 
@@ -2627,7 +2627,7 @@ public partial class MainView : UserControl
 						setData[i].PosY = setData[i].PosY + 50;
 					}
 					// if path type enemy
-					if (EnemyHelpers.IsPathTypeFlyingEnemy(setData[i]))
+					if (EnemyHelpers.IsRequiredPathTypeFlyingEnemy(setData[i]))
 					{
 						if (pathTypeFlyingEnemies.Count == 0)
 						{

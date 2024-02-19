@@ -1,4 +1,6 @@
 using ShadowSET;
+using System;
+using System.Reflection;
 
 namespace ShadowRando.Core.SETMutations;
 
@@ -41,7 +43,7 @@ internal static class EnemyHelpers
 		return false;
 	}
 
-	public static bool IsPathTypeFlyingEnemy(SetObjectShadow enemy)
+	public static bool IsRequiredPathTypeFlyingEnemy(SetObjectShadow enemy)
 	{
 		switch (enemy)
 		{
@@ -61,6 +63,17 @@ internal static class EnemyHelpers
 				return false;
 		}
 
+		return false;
+	}
+
+	public static bool IsPathTypeFlyingEnemy(Type enemyType)
+	{
+		if (enemyType == typeof(Object0065_GUNBeetle)
+			|| enemyType == typeof(Object008E_BkWingLarge)
+			|| enemyType == typeof(Object008F_BkWingSmall))
+		{
+			return true;
+		}
 		return false;
 	}
 }
