@@ -266,10 +266,17 @@ public partial class MainView : UserControl
 	];
 
 	private string selectedFolderPath;
-	const string programVersion = "0.5.0";
+	private bool avaloniaPreviewUI;
+	const string programVersion = "0.5.0-RC3";
 	private bool programInitialized = false;
 
 	Settings settings;
+	
+	public MainView()
+	{
+		avaloniaPreviewUI = true;
+		InitializeComponent();
+	}
 
 	public MainView(string folderPath, Settings settings)
 	{
@@ -283,6 +290,7 @@ public partial class MainView : UserControl
 
 	private void UserControl_Loaded(object? sender, RoutedEventArgs e)
 	{
+		if (avaloniaPreviewUI) return;
 		var topLevel = TopLevel.GetTopLevel(this);
 		if (OperatingSystem.IsBrowser()) return; // TODO: Browser context only is allowed to read/write file dialogs if a user triggers the context, need to add buttons for browser to target
 		if (topLevel is null) return;

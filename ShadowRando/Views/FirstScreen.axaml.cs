@@ -5,6 +5,7 @@ using Avalonia.Platform.Storage;
 using MsBox.Avalonia.Enums;
 using ShadowRando.Core;
 using System.IO;
+using System.Runtime.ExceptionServices;
 
 namespace ShadowRando.Views;
 
@@ -14,6 +15,11 @@ public partial class FirstScreen : UserControl
 	private readonly MainWindow _mainWindow;
 	private bool buttonProcessing = false;
 	private Settings _settings;
+
+	public FirstScreen()
+	{
+		InitializeComponent();
+	}
 	
 	public FirstScreen(MainWindow mainWindow)
 	{

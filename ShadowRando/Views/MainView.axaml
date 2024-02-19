@@ -16,7 +16,7 @@
 	
 
 	<Grid RowDefinitions="*, Auto">
-		<Label x:Name="LoadingDataIndicator" FontSize="40" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="DarkRed" Margin="10,20,0,0">Loading...</Label>
+		<Label x:Name="LoadingDataIndicator" IsVisible="False" FontSize="40" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="DarkRed" Margin="10,20,0,0">Loading...</Label>
 		<TabControl x:Name="MainTabParent" Grid.Row="0">
 				<TabItem Header="Level Order">
 					<StackPanel>
