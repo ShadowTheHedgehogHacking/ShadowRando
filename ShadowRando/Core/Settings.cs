@@ -23,6 +23,8 @@ namespace ShadowRando.Core
 		public SettingsMusic Music = new();
 		[IniAlwaysInclude]
 		public SettingsModels Models = new();
+		[IniAlwaysInclude]
+		public SettingsSpoilers Spoilers = new();
 
 		public static Settings Load()
 		{
@@ -56,6 +58,7 @@ namespace ShadowRando.Core
 					result.Subtitles.SelectedCharacters ??= [];
 				result.Music ??= new();
 				result.Models ??= new();
+				result.Spoilers ??= new SettingsSpoilers();
 				return result;
 			}
 			return new Settings();
@@ -208,5 +211,13 @@ namespace ShadowRando.Core
 		public bool Randomize;
 		[IniAlwaysInclude]
 		public bool RandomizeP2;
+	}
+
+	public class SettingsSpoilers
+	{
+		[IniAlwaysInclude]
+		public bool GraphUseIcons;
+		[IniAlwaysInclude]
+		public bool AutosaveLog = true;
 	}
 }

@@ -511,6 +511,10 @@ public partial class MainView : UserControl
 		Models_CheckBox_RandomizeModel.IsChecked = settings.Models.Randomize;
 		Models_CheckBox_ModelP2.IsChecked = settings.Models.RandomizeP2;
 
+		// Spoilers
+		Spoilers_CheckBox_UseIcons.IsChecked = settings.Spoilers.GraphUseIcons;
+		Spoilers_CheckBox_AutosaveLog.IsChecked = settings.Spoilers.AutosaveLog;
+
 		LoadGameData();
 		programInitialized = true;
 		UpdateUIEnabledState();
@@ -604,6 +608,10 @@ public partial class MainView : UserControl
 		// Models
 		settings.Models.Randomize = Models_CheckBox_RandomizeModel.IsChecked.Value;
 		settings.Models.RandomizeP2 = Models_CheckBox_ModelP2.IsChecked.Value;
+
+		// Spoilers
+		settings.Spoilers.GraphUseIcons = Spoilers_CheckBox_UseIcons.IsChecked.Value;
+		settings.Spoilers.AutosaveLog = Spoilers_CheckBox_AutosaveLog.IsChecked.Value;
 
 		settings.Save();
 	}
@@ -1456,6 +1464,11 @@ public partial class MainView : UserControl
 		settings.Save();
 		File.WriteAllBytes(Path.Combine(settings.GamePath, "sys", "main.dol"), dolfile);
 		Dispatcher.UIThread.Post(() => UpdateProgressBar(100));
+		if (settings.Spoilers.AutosaveLog)
+		{
+			Directory.CreateDirectory("logs");
+			WriteLog(Path.Combine("logs", DateTime.Now.ToString("yyyy-MM-dd--HH-mm-ss") + ".txt"));
+		}
 		return 0;
 	}
 
@@ -3431,13 +3444,15 @@ public partial class MainView : UserControl
 							lineColor.ToHsv(out lineHSV[0], out lineHSV[1], out lineHSV[2]);
 							if (shiftAmount % 2 == 0)
 							{
-								//Darkness Shfit
-								triPaint.Color = linePaint.Color = SKColor.FromHsv(lineHSV[0], lineHSV[1], lineHSV[2] - ((float)Spoilers_NumericUpDown_DarknessShift.Value * (shiftAmount/2)));
+								//Darkness Shift
+								const float darknessShift = 4.00f;
+								triPaint.Color = linePaint.Color = SKColor.FromHsv(lineHSV[0], lineHSV[1], lineHSV[2] - (darknessShift * (shiftAmount/2)));
 							}
 							else
 							{
 								//Hue Shift
-								triPaint.Color = linePaint.Color = SKColor.FromHsv(lineHSV[0] + ((float)Spoilers_NumericUpDown_HueShift.Value * (shiftAmount/2)), lineHSV[1], lineHSV[2]);
+								const float hueShift = 3.00f;
+								triPaint.Color = linePaint.Color = SKColor.FromHsv(lineHSV[0] + (hueShift * (shiftAmount/2)), lineHSV[1], lineHSV[2]);
 							}
 
 							if (con.MaxX - con.MinX != 1 && con.MaxY - con.MinY != 1)
@@ -3544,12 +3559,18 @@ public partial class MainView : UserControl
 			DefaultExtension = ".txt",
 			FileTypeChoices = [FilePickerFileTypes.TextPlain]
 		});
-
 		if (file is null) return;
-		await using var stream = await file.OpenWriteAsync();
+		WriteLog(file.TryGetLocalPath());
+	}
+
+	private async void WriteLog(string? file)
+	{
+		if (file is null) return;
+		await using var stream = File.OpenWrite(file);
 		await using var sw = new StreamWriter(stream);
 		await sw.WriteLineAsync($"ShadowRando Version: {programVersion}");
-		await sw.WriteLineAsync($"Seed: {LevelOrder_TextBox_Seed.Text}");
+		await sw.WriteLineAsync($"Seed: {settings.Seed}");
+		await sw.WriteLineAsync($"Generated at: {DateTime.Now}");
 		await sw.WriteLineAsync("---- Level Order ----");
 		await sw.WriteLineAsync($"Level Order Mode: {settings.LevelOrder.Mode}");
 		if (settings.LevelOrder.Mode == LevelOrderMode.AllStagesWarps)
@@ -3569,6 +3590,7 @@ public partial class MainView : UserControl
 		if (settings.Layout.Randomize)
 		{
 			await sw.WriteLineAsync($"Make CC Splines Vehicle Compatible: {settings.Layout.MakeCCSplinesVehicleCompatible}");
+
 			await sw.WriteLineAsync("--- Enemy ---");
 			await sw.WriteLineAsync($"Enemy Mode: {settings.Layout.Enemy.Mode}");
 			await sw.WriteLineAsync($"Adjust Mission Counts: {settings.Layout.Enemy.AdjustMissionCounts}");
@@ -3577,22 +3599,11 @@ public partial class MainView : UserControl
 			await sw.WriteLineAsync($"Only Selected Enemy Types: {settings.Layout.Enemy.OnlySelectedTypes}");
 			if (settings.Layout.Enemy.OnlySelectedTypes)
 			{
-				await sw.WriteLineAsync($"GUN Soldier: {settings.Layout.Enemy.SelectedEnemies.Contains(Core.EnemyTypes.GUNSoldier)}");
-				await sw.WriteLineAsync($"GUN Beetle: {settings.Layout.Enemy.SelectedEnemies.Contains(Core.EnemyTypes.GUNBeetle)}");
-				await sw.WriteLineAsync($"GUN Bigfoot: {settings.Layout.Enemy.SelectedEnemies.Contains(Core.EnemyTypes.GUNBigfoot)}");
-				await sw.WriteLineAsync($"GUN Robot: {settings.Layout.Enemy.SelectedEnemies.Contains(Core.EnemyTypes.GUNRobot)}");
-				await sw.WriteLineAsync($"Egg Pierrot: {settings.Layout.Enemy.SelectedEnemies.Contains(Core.EnemyTypes.EggPierrot)}");
-				await sw.WriteLineAsync($"Egg Pawn: {settings.Layout.Enemy.SelectedEnemies.Contains(Core.EnemyTypes.EggPawn)}");
-				await sw.WriteLineAsync($"Shadow Android: {settings.Layout.Enemy.SelectedEnemies.Contains(Core.EnemyTypes.ShadowAndroid)}");
-				await sw.WriteLineAsync($"BA Giant: {settings.Layout.Enemy.SelectedEnemies.Contains(Core.EnemyTypes.BAGiant)}");
-				await sw.WriteLineAsync($"BA Soldier: {settings.Layout.Enemy.SelectedEnemies.Contains(Core.EnemyTypes.BASoldier)}");
-				await sw.WriteLineAsync($"BA Hawk/Volt: {settings.Layout.Enemy.SelectedEnemies.Contains(Core.EnemyTypes.BAHawkVolt)}");
-				await sw.WriteLineAsync($"BA Wing: {settings.Layout.Enemy.SelectedEnemies.Contains(Core.EnemyTypes.BAWing)}");
-				await sw.WriteLineAsync($"BA Worm: {settings.Layout.Enemy.SelectedEnemies.Contains(Core.EnemyTypes.BAWorm)}");
-				await sw.WriteLineAsync($"BA Larva: {settings.Layout.Enemy.SelectedEnemies.Contains(Core.EnemyTypes.BALarva)}");
-				await sw.WriteLineAsync($"Artificial Chaos: {settings.Layout.Enemy.SelectedEnemies.Contains(Core.EnemyTypes.ArtificialChaos)}");
-				await sw.WriteLineAsync($"BA Assassin: {settings.Layout.Enemy.SelectedEnemies.Contains(Core.EnemyTypes.BAAssassin)}");
+				await sw.WriteLineAsync("-Selected Enemies-");
+				foreach (var enemy in settings.Layout.Enemy.SelectedEnemies)
+					await sw.WriteLineAsync($"{enemy}");
 			}
+
 			await sw.WriteLineAsync("--- Weapon ---");
 			await sw.WriteLineAsync($"Random Weapons In Weapon Boxes: {settings.Layout.Weapon.RandomWeaponsInWeaponBoxes}");
 			await sw.WriteLineAsync($"Random Weapons In All Boxes: {settings.Layout.Weapon.RandomWeaponsInAllBoxes}");
@@ -3601,49 +3612,11 @@ public partial class MainView : UserControl
 			await sw.WriteLineAsync($"Only Selected Weapons: {settings.Layout.Weapon.OnlySelectedTypes}");
 			if (settings.Layout.Weapon.OnlySelectedTypes)
 			{
-				await sw.WriteLineAsync($"None: {Layout_Weapon_CheckBox_SelectedWeapon_None.IsChecked.Value}");
-				await sw.WriteLineAsync($"Pistol: {Layout_Weapon_CheckBox_SelectedWeapon_Pistol.IsChecked.Value}");
-				await sw.WriteLineAsync($"Submachine Gun: {Layout_Weapon_CheckBox_SelectedWeapon_SubmachineGun.IsChecked.Value}");
-				await sw.WriteLineAsync($"Assault Rifle: {Layout_Weapon_CheckBox_SelectedWeapon_AssaultRifle.IsChecked.Value}");
-				await sw.WriteLineAsync($"Heavy Machine Gun: {Layout_Weapon_CheckBox_SelectedWeapon_HeavyMachineGun.IsChecked.Value}");
-				await sw.WriteLineAsync($"Gatling Gun: {Layout_Weapon_CheckBox_SelectedWeapon_GatlingGun.IsChecked.Value}");
-				await sw.WriteLineAsync($"Egg Pistol: {Layout_Weapon_CheckBox_SelectedWeapon_EggPistol.IsChecked.Value}");
-				await sw.WriteLineAsync($"Light Shot: {Layout_Weapon_CheckBox_SelectedWeapon_LightShot.IsChecked.Value}");
-				await sw.WriteLineAsync($"Flash Shot: {Layout_Weapon_CheckBox_SelectedWeapon_FlashShot.IsChecked.Value}");
-				await sw.WriteLineAsync($"Ring Shot: {Layout_Weapon_CheckBox_SelectedWeapon_RingShot.IsChecked.Value}");
-				await sw.WriteLineAsync($"Heavy Shot: {Layout_Weapon_CheckBox_SelectedWeapon_HeavyShot.IsChecked.Value}");
-				await sw.WriteLineAsync($"Grenade Launcher: {Layout_Weapon_CheckBox_SelectedWeapon_GrenadeLauncher.IsChecked.Value}");
-				await sw.WriteLineAsync($"GUN Bazooka: {Layout_Weapon_CheckBox_SelectedWeapon_GUNBazooka.IsChecked.Value}");
-				await sw.WriteLineAsync($"Tank Cannon: {Layout_Weapon_CheckBox_SelectedWeapon_TankCannon.IsChecked.Value}");
-				await sw.WriteLineAsync($"Black Barrel: {Layout_Weapon_CheckBox_SelectedWeapon_BlackBarrel.IsChecked.Value}");
-				await sw.WriteLineAsync($"Big Barrel: {Layout_Weapon_CheckBox_SelectedWeapon_BigBarrel.IsChecked.Value}");
-				await sw.WriteLineAsync($"Egg Bazooka: {Layout_Weapon_CheckBox_SelectedWeapon_EggBazooka.IsChecked.Value}");
-				await sw.WriteLineAsync($"RPG: {Layout_Weapon_CheckBox_SelectedWeapon_RPG.IsChecked.Value}");
-				await sw.WriteLineAsync($"Four Shot: {Layout_Weapon_CheckBox_SelectedWeapon_FourShot.IsChecked.Value}");
-				await sw.WriteLineAsync($"Eight Shot: {Layout_Weapon_CheckBox_SelectedWeapon_EightShot.IsChecked.Value}");
-				await sw.WriteLineAsync($"Worm Shooter Black: {Layout_Weapon_CheckBox_SelectedWeapon_WormShooterBlack.IsChecked.Value}");
-				await sw.WriteLineAsync($"Worm Shooter Red: {Layout_Weapon_CheckBox_SelectedWeapon_WormShooterRed.IsChecked.Value}");
-				await sw.WriteLineAsync($"Worm Shooter Gold: {Layout_Weapon_CheckBox_SelectedWeapon_WormShooterGold.IsChecked.Value}");
-				await sw.WriteLineAsync($"Vacuum Pod: {Layout_Weapon_CheckBox_SelectedWeapon_VacuumPod.IsChecked.Value}");
-				await sw.WriteLineAsync($"Laser Rifle: {Layout_Weapon_CheckBox_SelectedWeapon_LaserRifle.IsChecked.Value}");
-				await sw.WriteLineAsync($"Splitter: {Layout_Weapon_CheckBox_SelectedWeapon_Splitter.IsChecked.Value}");
-				await sw.WriteLineAsync($"Refractor: {Layout_Weapon_CheckBox_SelectedWeapon_Refractor.IsChecked.Value}");
-				await sw.WriteLineAsync($"Knife: {Layout_Weapon_CheckBox_SelectedWeapon_Knife.IsChecked.Value}");
-				await sw.WriteLineAsync($"Black Sword: {Layout_Weapon_CheckBox_SelectedWeapon_BlackSword.IsChecked.Value}");
-				await sw.WriteLineAsync($"Dark Hammer: {Layout_Weapon_CheckBox_SelectedWeapon_DarkHammer.IsChecked.Value}");
-				await sw.WriteLineAsync($"Egg Lance: {Layout_Weapon_CheckBox_SelectedWeapon_EggLance.IsChecked.Value}");
-				await sw.WriteLineAsync($"Samurai Sword Lv1: {Layout_Weapon_CheckBox_SelectedWeapon_SamuraiSwordLv1.IsChecked.Value}");
-				await sw.WriteLineAsync($"Samurai Sword Lv2: {Layout_Weapon_CheckBox_SelectedWeapon_SamuraiSwordLv2.IsChecked.Value}");
-				await sw.WriteLineAsync($"Satellite Laser Lv1: {Layout_Weapon_CheckBox_SelectedWeapon_SatelliteLaserLv1.IsChecked.Value}");
-				await sw.WriteLineAsync($"Satellite Laser Lv2: {Layout_Weapon_CheckBox_SelectedWeapon_SatelliteLaserLv2.IsChecked.Value}");
-				await sw.WriteLineAsync($"Egg Vacuum Lv1: {Layout_Weapon_CheckBox_SelectedWeapon_EggVacuumLv1.IsChecked.Value}");
-				await sw.WriteLineAsync($"Egg Vacuum Lv2: {Layout_Weapon_CheckBox_SelectedWeapon_EggVacuumLv2.IsChecked.Value}");
-				await sw.WriteLineAsync($"Omochao Gun Lv1: {Layout_Weapon_CheckBox_SelectedWeapon_OmochaoGunLv1.IsChecked.Value}");
-				await sw.WriteLineAsync($"Omochao Gun Lv2: {Layout_Weapon_CheckBox_SelectedWeapon_OmochaoGunLv2.IsChecked.Value}");
-				await sw.WriteLineAsync($"Heal Cannon Lv1: {Layout_Weapon_CheckBox_SelectedWeapon_HealCannonLv1.IsChecked.Value}");
-				await sw.WriteLineAsync($"Heal Cannon Lv2: {Layout_Weapon_CheckBox_SelectedWeapon_HealCannonLv2.IsChecked.Value}");
-				await sw.WriteLineAsync($"Shadow Rifle: {Layout_Weapon_CheckBox_SelectedWeapon_ShadowRifle.IsChecked.Value}");
+				await sw.WriteLineAsync("-Selected Weapons-");
+				foreach (var wep in settings.Layout.Weapon.SelectedWeapons)
+					await sw.WriteLineAsync($"{wep}");
 			}
+
 			await sw.WriteLineAsync("--- Partner ---");
 			await sw.WriteLineAsync($"Partner Mode: {settings.Layout.Partner.Mode}");
 			await sw.WriteLineAsync($"Randomize Dark/Hero Affiliations: {settings.Layout.Partner.RandomizeAffiliations}");
@@ -3651,21 +3624,12 @@ public partial class MainView : UserControl
 			await sw.WriteLineAsync($"Only Selected Partners: {settings.Layout.Partner.OnlySelectedPartners}");
 			if (settings.Layout.Partner.OnlySelectedPartners)
 			{
-				await sw.WriteLineAsync($"Sonic: {Layout_Partner_CheckBox_SelectedPartner_Sonic.IsChecked.Value}");
-				await sw.WriteLineAsync($"Tails: {Layout_Partner_CheckBox_SelectedPartner_Tails.IsChecked.Value}");
-				await sw.WriteLineAsync($"Knuckles: {Layout_Partner_CheckBox_SelectedPartner_Knuckles.IsChecked.Value}");
-				await sw.WriteLineAsync($"Amy: {Layout_Partner_CheckBox_SelectedPartner_Amy.IsChecked.Value}");
-				await sw.WriteLineAsync($"Rouge: {Layout_Partner_CheckBox_SelectedPartner_Rouge.IsChecked.Value}");
-				await sw.WriteLineAsync($"Omega: {Layout_Partner_CheckBox_SelectedPartner_Omega.IsChecked.Value}");
-				await sw.WriteLineAsync($"Vector: {Layout_Partner_CheckBox_SelectedPartner_Vector.IsChecked.Value}");
-				await sw.WriteLineAsync($"Espio: {Layout_Partner_CheckBox_SelectedPartner_Espio.IsChecked.Value}");
-				await sw.WriteLineAsync($"Maria: {Layout_Partner_CheckBox_SelectedPartner_Maria.IsChecked.Value}");
-				await sw.WriteLineAsync($"Charmy: {Layout_Partner_CheckBox_SelectedPartner_Charmy.IsChecked.Value}");
-				await sw.WriteLineAsync($"Egg Monitor: {Layout_Partner_CheckBox_SelectedPartner_EggMonitor.IsChecked.Value}");
-				await sw.WriteLineAsync($"Doom's Eye: {Layout_Partner_CheckBox_SelectedPartner_DoomsEye.IsChecked.Value}");
+				await sw.WriteLineAsync("-Selected Partners-");
+				foreach (var partner in settings.Layout.Partner.SelectedPartners)
+					await sw.WriteLineAsync($"{partner}");
 			}
 		}
-			
+
 		await sw.WriteLineAsync("---- Subtitles ----");
 		await sw.WriteLineAsync($"Randomize Subtitles / Voicelines: {settings.Subtitles.Randomize}");
 		await sw.WriteLineAsync($"Only With Linked Audio: {settings.Subtitles.OnlyLinkedAudio}");
@@ -3675,23 +3639,9 @@ public partial class MainView : UserControl
 		await sw.WriteLineAsync($"Only Selected Characters: {settings.Subtitles.OnlySelectedCharacters}");
 		if (settings.Subtitles.OnlySelectedCharacters)
 		{
-			await sw.WriteLineAsync($"Shadow: {Subtitles_CheckBox_SelectedCharacter_Shadow.IsChecked.Value}");
-			await sw.WriteLineAsync($"Sonic: {Subtitles_CheckBox_SelectedCharacter_Sonic.IsChecked.Value}");
-			await sw.WriteLineAsync($"Tails: {Subtitles_CheckBox_SelectedCharacter_Tails.IsChecked.Value}");
-			await sw.WriteLineAsync($"Knuckles: {Subtitles_CheckBox_SelectedCharacter_Knuckles.IsChecked.Value}");
-			await sw.WriteLineAsync($"Amy: {Subtitles_CheckBox_SelectedCharacter_Amy.IsChecked.Value}");
-			await sw.WriteLineAsync($"Rouge: {Subtitles_CheckBox_SelectedCharacter_Rouge.IsChecked.Value}");
-			await sw.WriteLineAsync($"Omega: {Subtitles_CheckBox_SelectedCharacter_Omega.IsChecked.Value}");
-			await sw.WriteLineAsync($"Vector: {Subtitles_CheckBox_SelectedCharacter_Vector.IsChecked.Value}");
-			await sw.WriteLineAsync($"Espio: {Subtitles_CheckBox_SelectedCharacter_Espio.IsChecked.Value}");
-			await sw.WriteLineAsync($"Maria: {Subtitles_CheckBox_SelectedCharacter_Maria.IsChecked.Value}");
-			await sw.WriteLineAsync($"Charmy: {Subtitles_CheckBox_SelectedCharacter_Charmy.IsChecked.Value}");
-			await sw.WriteLineAsync($"Eggman: {Subtitles_CheckBox_SelectedCharacter_Eggman.IsChecked.Value}");
-			await sw.WriteLineAsync($"Black Doom: {Subtitles_CheckBox_SelectedCharacter_BlackDoom.IsChecked.Value}");
-			await sw.WriteLineAsync($"Cream: {Subtitles_CheckBox_SelectedCharacter_Cream.IsChecked.Value}");
-			await sw.WriteLineAsync($"Cheese: {Subtitles_CheckBox_SelectedCharacter_Cheese.IsChecked.Value}");
-			await sw.WriteLineAsync($"GUN Soldier: {Subtitles_CheckBox_SelectedCharacter_GUNSoldier.IsChecked.Value}");
-			await sw.WriteLineAsync($"GUN Commander: {Subtitles_CheckBox_SelectedCharacter_GUNCommander.IsChecked.Value}");
+			await sw.WriteLineAsync("-Selected Characters-");
+			foreach (var character in settings.Subtitles.SelectedCharacters)
+				await sw.WriteLineAsync($"{character}");
 		}
 
 		await sw.WriteLineAsync("---- Music ----");
