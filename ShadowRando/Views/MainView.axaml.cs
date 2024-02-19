@@ -1476,24 +1476,30 @@ public partial class MainView : UserControl
 
 		Dispatcher.UIThread.Post(() => UpdateProgressBar(25));
 
-		if (settings.Layout.Randomize) {
+		if (settings.Layout.Randomize)
+		{
 			var layoutResult = RandomizeLayouts(r);
 			if (layoutResult == 1)
-			{
-				Dispatcher.UIThread.Post(() => UpdateProgressBar(0));
 				return 1;
-			}
 		}
 
 		Dispatcher.UIThread.Post(() => UpdateProgressBar(50));
 
 		if (settings.Subtitles.Randomize)
-			RandomizeSubtitles(r);
+		{
+			var randomizeSubtitles = RandomizeSubtitles(r);
+			if (randomizeSubtitles == 1)
+				return 1;
+		}
 
 		Dispatcher.UIThread.Post(() => UpdateProgressBar(75));
 
 		if (settings.Models.Randomize)
-			RandomizeModels(r);
+		{
+			var	randomizeModelsResult = RandomizeModels(r);
+			if (randomizeModelsResult == 1)
+				return 1;
+		}
 
 		settings.Save();
 		File.WriteAllBytes(Path.Combine(settings.GamePath, "sys", "main.dol"), dolfile);
@@ -1517,13 +1523,20 @@ public partial class MainView : UserControl
 
 	private static void CopyDirectory(string srcDir, string dstDir, bool overwrite = false) => CopyDirectory(new DirectoryInfo(srcDir), dstDir, overwrite);
 
-	private void RandomizeSubtitles(Random r)
+	private int RandomizeSubtitles(Random r)
 	{
 		var fontAndAudioData = LoadFNTsAndAFS(true);
 		var fntRandomPool = new List<TableEntry>();
 		var uniqueAudioIDs = new Dictionary<int, bool>();
 		var uniqueSubtitles = new Dictionary<string, bool>();
 		MarkovTextModel markov = new MarkovTextModel(settings.Subtitles.MarkovLevel);
+
+		if (settings.Subtitles.OnlySelectedCharacters && settings.Subtitles.SelectedCharacters.Count == 0)
+		{
+			Dispatcher.UIThread.Post(() => Utils.ShowSimpleMessage("Subtitle/Voice Randomization Error", "Must select at least one character for subtitles", ButtonEnum.Ok, Icon.Error));
+			return 1;
+		}
+
 		if (settings.Subtitles.OnlyLinkedAudio || settings.Subtitles.NoDuplicates || settings.Subtitles.NoSystemMessages || settings.Subtitles.OnlySelectedCharacters)
 		{
 			for (int i = 0; i < fontAndAudioData.initialFntState.Count; i++)
@@ -1610,6 +1623,7 @@ public partial class MainView : UserControl
 			}
 		}
 		ExportChangedFNTs(fontAndAudioData.mutatedFnt, fontAndAudioData.initialFntState);
+		return 0;
 	}
 
 	private (List<FNT> mutatedFnt, List<FNT> initialFntState, AfsArchive afs) LoadFNTsAndAFS(bool loadAFS, string localeOverride = "EN")
@@ -2718,8 +2732,13 @@ public partial class MainView : UserControl
 		}
 	}
 
-	private void RandomizeModels(Random r)
+	private int RandomizeModels(Random r)
 	{
+		if (!Directory.Exists("RandoModels"))
+		{
+			Dispatcher.UIThread.Post(() => Utils.ShowSimpleMessage("Model Randomization Error", "Model Randomization error! Check README on Project Page to learn how to setup this feature.", ButtonEnum.Ok, Icon.Error));
+			return 1;
+		}
 		var mdls = Directory.GetFiles("RandoModels", "shadow.one", SearchOption.AllDirectories).Prepend(Path.Combine("backup", "character", "shadow.one")).ToArray();
 		var p1mdl = mdls[r.Next(mdls.Length)]; // pick a random p1 model
 		if (p1mdl.Contains("ModelPack")) // if the model belongs to a pack, copy all files from the pack and do nothing else
@@ -2768,6 +2787,7 @@ public partial class MainView : UserControl
 				}
 			}
 		}
+		return 0;
 	}
 
 	private static void Shuffle<T>(Random r, T[] array, int count)
