@@ -1,4 +1,5 @@
-﻿using Avalonia.Controls;
+﻿using System;
+using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using MsBox.Avalonia.Enums;
@@ -62,7 +63,7 @@ public partial class FirstScreen : UserControl
 			return;
 		}
 		
-		if (gamePath.EndsWith("\\files") || gamePath.EndsWith("\\sys")) {
+		if (gamePath.EndsWith("files") || gamePath.EndsWith("sys")) {
 			var parent = Directory.GetParent(gamePath);
 			if (parent != null)
 				gamePath = parent.FullName;
