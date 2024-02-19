@@ -815,11 +815,11 @@ public partial class MainView : UserControl
 							if (r.Next(100) < settings.LevelOrder.BackwardsJumpProbability && (i > 0 || settings.LevelOrder.BackwardsJumpProbability == 100))
 							{
 								min = Math.Max(i - settings.LevelOrder.MaxBackwardsJump, 0);
-								max = Math.Max(i, 0);
+								max = Math.Max(i - 1 + (settings.LevelOrder.AllowJumpsToSameLevel ? 0 : 1), 0);
 							}
 							else
 							{
-								min = i + 1;
+								min = i + (settings.LevelOrder.AllowJumpsToSameLevel ? 0 : 1);
 								max = Math.Min(i + settings.LevelOrder.MaxForwardsJump + 1, stagecount + 1);
 							}
 							stg.Neutral = stageids[r.Next(min, max)];
@@ -829,11 +829,11 @@ public partial class MainView : UserControl
 							if (r.Next(100) < settings.LevelOrder.BackwardsJumpProbability && (i > 0 || settings.LevelOrder.BackwardsJumpProbability == 100))
 							{
 								min = Math.Max(i - settings.LevelOrder.MaxBackwardsJump, 0);
-								max = Math.Max(i, 0);
+								max = Math.Max(i - 1 + (settings.LevelOrder.AllowJumpsToSameLevel ? 0 : 1), 0);
 							}
 							else
 							{
-								min = i + 1;
+								min = i + (settings.LevelOrder.AllowJumpsToSameLevel ? 0 : 1);
 								max = Math.Min(i + settings.LevelOrder.MaxForwardsJump + 1, stagecount + 1);
 							}
 							stg.Hero = stageids[r.Next(min, max)];
@@ -843,11 +843,11 @@ public partial class MainView : UserControl
 							if (r.Next(100) < settings.LevelOrder.BackwardsJumpProbability && (i > 0 || settings.LevelOrder.BackwardsJumpProbability == 100))
 							{
 								min = Math.Max(i - settings.LevelOrder.MaxBackwardsJump, 0);
-								max = Math.Max(i, 0);
+								max = Math.Max(i - 1 + (settings.LevelOrder.AllowJumpsToSameLevel ? 0 : 1), 0);
 							}
 							else
 							{
-								min = i + 1;
+								min = i + (settings.LevelOrder.AllowJumpsToSameLevel ? 0 : 1);
 								max = Math.Min(i + settings.LevelOrder.MaxForwardsJump + 1, stagecount + 1);
 							}
 							stg.Dark = stageids[r.Next(min, max)];
@@ -2827,11 +2827,6 @@ public partial class MainView : UserControl
 	private void LevelOrder_CheckBox_Random_Seed_Click(object? sender, RoutedEventArgs e)
 	{
 		UpdateUIEnabledState();
-	}
-
-	private void LevelOrder_CheckBox_AllowJumpsToSameLevel_Click(object? sender, RoutedEventArgs e)
-	{
-		LevelOrder_NumericUpDown_MaxBackwardsJump.Minimum = LevelOrder_NumericUpDown_MaxForwardsJump.Minimum = LevelOrder_CheckBox_AllowJumpsToSameLevel.IsChecked.Value ? 0 : 1;
 	}
 
 	private void Layout_Weapon_CheckBox_RandomWeaponsInWeaponBoxes_Click(object? sender, RoutedEventArgs e)
