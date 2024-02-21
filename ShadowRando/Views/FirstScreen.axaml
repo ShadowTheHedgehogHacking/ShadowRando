@@ -10,9 +10,8 @@
             <Label FontWeight="Bold" FontSize="16" HorizontalAlignment="Center">ShadowRando: A Shadow the Hedgehog Randomizer</Label>
             <Label HorizontalAlignment="Center" FontWeight="Bold">Created by dreamsyntax &amp; MainMemory</Label>
         </StackPanel>
-        <TextBlock Margin="10" xml:space="preserve" TextWrapping="Wrap">Click the button below and choose a Dolphin extracted Shadow the Hedgehog folder.
-The folder should have a 'files' and 'sys' folder inside of it.
-Using GCR and other game extraction methods are NOT supported, please follow the steps below.
+        <TextBlock Margin="10" xml:space="preserve" TextWrapping="Wrap">The extracted folder should have a 'files' and 'sys' folder inside of it.
+Using GCR and other game extraction methods are NOT supported, please follow the steps below instead (Dolphin extracted format method).
 
 ---Extraction of Game and Launching---
 1. Get the latest release or dev Dolphin
@@ -34,10 +33,13 @@ Using GCR and other game extraction methods are NOT supported, please follow the
 2. Select Advanced Tab
 3. In Memory Override section, check Enable Emulated Memory Size Override
 4. Slide MEM1 to 64 MB (maximum)
+
+---Reloaded 1.1 and earlier based ROMs---
+If you use the "Random Partners" option, you may be unable to complete certain missions. To fix this issue, download the 'missing_events_reloaded_based_roms' and merge these into your extracted game's events folder. It can be done before or after your randomization. See the README on the Project Page for details. 
         </TextBlock>
 		<StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-			<Button HorizontalAlignment="Center" VerticalContentAlignment="Center" Height="40" Margin="15,0,10,0" Click="LoadNewGameFolder_OnClick">Load New Extracted Shadow the Hedgehog Game</Button>
-			<Button HorizontalAlignment="Right" VerticalContentAlignment="Center" Height="40" Margin="30,0,0,0" Click="LoadPriorGameFolder_OnClick">Load Last Picked Game</Button>
+			<Button HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Height="40" Margin="15,0,10,0" Click="LoadNewGameFolder_OnClick">Pick Extracted Shadow the Hedgehog Game</Button>
+			<Button HorizontalAlignment="Right" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Height="40" Width="200" Margin="30,0,0,0" Click="LoadPriorGameFolder_OnClick">Load Last Picked Game</Button>
 		</StackPanel>
     </StackPanel>
 </UserControl>

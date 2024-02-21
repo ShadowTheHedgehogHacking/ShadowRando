@@ -267,7 +267,7 @@ public partial class MainView : UserControl
 
 	private string selectedFolderPath;
 	private bool avaloniaPreviewUI;
-	const string programVersion = "0.5.0-RC4";
+	const string programVersion = "0.5.0";
 	private bool programInitialized = false;
 	private bool randomizeProcessing = false;
 
@@ -3025,12 +3025,14 @@ public partial class MainView : UserControl
 	{
 		if (Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked.Value)
 			Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsChecked = false;
+		UpdateUIEnabledState();
 	}
 
 	private void Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles_Click(object? sender, RoutedEventArgs e)
 	{
 		if (Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsChecked.Value)
 			Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked = false;
+		UpdateUIEnabledState();
 	}
 
 	const int linespace = 8;
@@ -3995,9 +3997,9 @@ public partial class MainView : UserControl
 		Subtitles_CheckBox_NoSystemMessages.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
 		Subtitles_CheckBox_NoDuplicates.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
 		Subtitles_CheckBox_GenerateMessages.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
-		Subtitles_CheckBox_OnlySelectedCharacters.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
+		Subtitles_CheckBox_OnlySelectedCharacters.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value && !Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsChecked.Value && Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked.Value;
 		for (int i = 0; i < SubtitleCheckBoxes.Length; i++)
-			SubtitleCheckBoxes[i].IsEnabled = Subtitles_CheckBox_OnlySelectedCharacters.IsChecked.Value && Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
+			SubtitleCheckBoxes[i].IsEnabled = Subtitles_CheckBox_OnlySelectedCharacters.IsChecked.Value && Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value && !Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsChecked.Value && Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked.Value;
 		// Music
 		Music_CheckBox_SkipRankTheme.IsEnabled = Music_CheckBox_RandomizeMusic.IsChecked.Value;
 		Music_CheckBox_SkipChaosPowerUseJingles.IsEnabled = Music_CheckBox_RandomizeMusic.IsChecked.Value;
