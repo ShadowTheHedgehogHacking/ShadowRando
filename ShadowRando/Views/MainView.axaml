@@ -50,6 +50,7 @@
                         <ComboBoxItem>Branching Paths</ComboBoxItem>
                         <ComboBoxItem>Reverse Branching</ComboBoxItem>
                         <ComboBoxItem>Boss Rush</ComboBoxItem>
+                        <ComboBoxItem>Safe Wild</ComboBoxItem>
                         <ComboBoxItem>Wild</ComboBoxItem>
                     </ComboBox>
                     <Label Margin="0,5,0,0">Main Path</Label>

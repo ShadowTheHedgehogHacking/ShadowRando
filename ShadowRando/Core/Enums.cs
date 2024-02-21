@@ -41,7 +41,8 @@
 		BlackDoomCF,
 		BlackDoomFH,
 		SonicDiablonFH,
-		DevilDoom
+		DevilDoom,
+		Ending
 	}
 
 	public enum LevelOrderMode
@@ -53,6 +54,7 @@
 		BranchingPaths,
 		ReverseBranching,
 		BossRush,
+		SafeWild,
 		Wild
 	}
 

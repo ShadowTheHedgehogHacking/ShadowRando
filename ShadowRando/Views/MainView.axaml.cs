@@ -23,6 +23,7 @@ using ShadowRando.Core.SETMutations;
 using ShadowSET;
 using ShadowSET.SETIDBIN;
 using SkiaSharp;
+using static System.Net.Mime.MediaTypeNames;
 using TableEntry = ShadowFNT.Structures.TableEntry;
 
 namespace ShadowRando.Views;
@@ -160,10 +161,9 @@ public partial class MainView : UserControl
 			{ 44, 710 } // last boss
 	};
 
-	private const int totalstagecount = 40;
 	private static int stagecount = 40;
 	private int[] stageids;
-	private readonly Stage[] stages = new Stage[totalstagecount];
+	private readonly Stage[] stages = new Stage[(int)Levels.Ending];
 
 	private static readonly Dictionary<int, Tuple<string, int>> Nukkoro2EnemyCountStages = new()
 	{
@@ -763,8 +763,8 @@ public partial class MainView : UserControl
 		var seed = CalculateSeed(settings.Seed);
 		Random r = new Random(seed);
 		byte[] buf;
-		List<int> tmpids = new List<int>(totalstagecount + 1);
-		for (int i = 0; i < totalstagecount; i++)
+		List<int> tmpids = new List<int>((int)Levels.Ending + 1);
+		for (int i = 0; i < (int)Levels.Ending; i++)
 		{
 			stages[i] = new Stage(i);
 			buf = new byte[4];
@@ -812,7 +812,7 @@ public partial class MainView : UserControl
 			return 1;
 		}
 		stagecount = tmpids.Count;
-		tmpids.Add(totalstagecount);
+		tmpids.Add((int)Levels.Ending);
 		stageids = tmpids.ToArray();
 		switch (settings.LevelOrder.Mode)
 		{
@@ -956,9 +956,9 @@ public partial class MainView : UserControl
 							if (item.bossCount == 2)
 							{
 								stg.SetExit(0, neword[bossind]);
-								stages[neword[bossind++]].Neutral = totalstagecount;
+								stages[neword[bossind++]].Neutral = (int)Levels.Ending;
 								stg.SetExit(1, neword[bossind]);
-								stages[neword[bossind++]].Neutral = totalstagecount;
+								stages[neword[bossind++]].Neutral = (int)Levels.Ending;
 							}
 							else if (item.bossCount == 1)
 							{
@@ -1001,7 +1001,7 @@ public partial class MainView : UserControl
 										}
 										break;
 									case StageType.End:
-										bossstg.Neutral = totalstagecount;
+										bossstg.Neutral = (int)Levels.Ending;
 										break;
 								}
 								if (stg.HasNeutral)
@@ -1052,8 +1052,8 @@ public partial class MainView : UserControl
 										}
 										break;
 									case StageType.End:
-										stg.Hero = totalstagecount;
-										stg.Dark = totalstagecount;
+										stg.Hero = (int)Levels.Ending;
+										stg.Dark = (int)Levels.Ending;
 										break;
 								}
 							}
@@ -1150,8 +1150,8 @@ public partial class MainView : UserControl
 									}
 									break;
 								case StageType.End:
-									stg.Hero = totalstagecount;
-									stg.Dark = totalstagecount;
+									stg.Hero = (int)Levels.Ending;
+									stg.Dark = (int)Levels.Ending;
 									break;
 							}
 							++ind;
@@ -1163,7 +1163,7 @@ public partial class MainView : UserControl
 			case LevelOrderMode.BranchingPaths:
 				{
 					List<int> stagepool = new List<int>(stageids.Take(stagecount));
-					List<int> curset = new List<int>() { r.Next(stagecount) };
+					List<int> curset = new List<int>() { stageids[r.Next(stagecount)] };
 					stagepool.Remove(curset[0]);
 					List<int> ids2 = new List<int>() { curset[0] };
 					while (stagepool.Count > 0)
@@ -1213,11 +1213,11 @@ public partial class MainView : UserControl
 					}
 					foreach (Stage stg in curset.Select(a => stages[a]))
 					{
-						stg.SetExit(0, totalstagecount);
+						stg.SetExit(0, (int)Levels.Ending);
 						if (stg.HasHero)
-							stg.Hero = totalstagecount;
+							stg.Hero = (int)Levels.Ending;
 						if (stg.HasDark)
-							stg.Dark = totalstagecount;
+							stg.Dark = (int)Levels.Ending;
 					}
 					ids2.CopyTo(stageids);
 				}
@@ -1227,10 +1227,10 @@ public partial class MainView : UserControl
 					int exitcnt = stages.Sum(a => a.CountExits()) - stages.Count(a => a.CountExits() == 1);
 					Shuffle(r, stageids, stagecount);
 					Stack<int> stagepool = new Stack<int>(stageids.Take(stagecount));
-					List<int> usedstg = new List<int>(stagecount + 1) { totalstagecount };
+					List<int> usedstg = new List<int>(stagecount + 1) { (int)Levels.Ending };
 					List<int> orphans = new List<int>();
-					int[] stagedepths = new int[totalstagecount + 1];
-					List<List<int>> depthstages = new List<List<int>>() { new List<int>() { totalstagecount } };
+					int[] stagedepths = new int[(int)Levels.Ending + 1];
+					List<List<int>> depthstages = new List<List<int>>() { new List<int>() { (int)Levels.Ending } };
 					while (orphans.Count < exitcnt - stages[stagepool.Peek()].CountExits())
 					{
 						int stgid = stagepool.Pop();
@@ -1242,7 +1242,7 @@ public partial class MainView : UserControl
 						{
 							next = GetStageFromLists(r, orphans, usedstg, 2);
 						}
-						while (next != totalstagecount && l++ < 10 && !settings.LevelOrder.AllowBossToBoss && stg.IsBoss && stages[next].IsBoss);
+						while (next != (int)Levels.Ending && l++ < 10 && !settings.LevelOrder.AllowBossToBoss && stg.IsBoss && stages[next].IsBoss);
 						int depth = stagedepths[next] + 1;
 						stagedepths[stgid] = depth;
 						while (depthstages.Count <= depth)
@@ -1266,7 +1266,7 @@ public partial class MainView : UserControl
 							{
 								next = orphans[r.Next(orphans.Count)];
 							}
-							while (next != totalstagecount && l++ < 10 && !settings.LevelOrder.AllowBossToBoss && stg.IsBoss && stages[next].IsBoss);
+							while (next != (int)Levels.Ending && l++ < 10 && !settings.LevelOrder.AllowBossToBoss && stg.IsBoss && stages[next].IsBoss);
 							stg.Neutral = next;
 							orphans.Remove(next);
 							depth = stagedepths[next] + 1;
@@ -1304,7 +1304,7 @@ public partial class MainView : UserControl
 							{
 								next = pool[r.Next(pool.Count)];
 							}
-							while (next != totalstagecount && l++ < 10 && !settings.LevelOrder.AllowBossToBoss && stg.IsBoss && stages[next].IsBoss);
+							while (next != (int)Levels.Ending && l++ < 10 && !settings.LevelOrder.AllowBossToBoss && stg.IsBoss && stages[next].IsBoss);
 							stg.Neutral = next;
 						}
 						if (stg.HasHero && stg.Hero == -1)
@@ -1325,6 +1325,95 @@ public partial class MainView : UserControl
 				for (int i = 0; i < stagecount; i++)
 					stages[stageids[i]].Neutral = stageids[i + 1];
 				break;
+			case LevelOrderMode.SafeWild:
+				{
+					List<int> stagepool = new List<int>(stageids.Take(stagecount));
+					List<int> curset = new List<int>() { stageids[r.Next(stagecount)] };
+					stagepool.Remove(curset[0]);
+					List<int> ids2 = new List<int>() { curset[0] };
+					while (curset.Count > 0)
+					{
+						List<int> newset = new List<int>();
+						SortedSet<int> goodlevels = new SortedSet<int>();
+						int loopcnt = 0;
+						do
+						{
+							goodlevels.Clear();
+							for (int i = 0; i < curset.Count; i++)
+							{
+								Stage stg = stages[curset[i]];
+								int cnt = stg.CountExits();
+								for (int j = 0; j < cnt; j++)
+								{
+									int next;
+									do
+									{
+										next = stageids[r.Next(stageids.Length)];
+									}
+									while (next != (int)Levels.Ending && !settings.LevelOrder.AllowBossToBoss && stg.IsBoss && stages[next].IsBoss);
+									stg.SetExit(j, next);
+									if (stagepool.Contains(next))
+									{
+										if (!newset.Contains(next))
+											newset.Add(next);
+										goodlevels.Add(curset[i]);
+									}
+									else if (next == (int)Levels.Ending)
+										goodlevels.Add(curset[i]);
+								}
+							}
+						}
+						while (stagepool.Count > 0 && newset.Count == 0 && ++loopcnt < 10);
+						if (stagepool.Count > 0 && newset.Count == 0)
+						{
+							int en = r.Next(curset.Sum(a => stages[a].CountExits()));
+							foreach (int stgid in curset)
+							{
+								Stage stg = stages[stgid];
+								int cnt = stg.CountExits();
+								if (en < cnt)
+								{
+									int next = stagepool[r.Next(stagepool.Count)];
+									stg.SetExit(en, next);
+									newset.Add(next);
+									goodlevels.Add(stgid);
+									break;
+								}
+								else
+									en -= cnt;
+							}
+						}
+						for (int i = 0; i < curset.Count; i++)
+							while (!CheckStageGood(curset[i], goodlevels))
+							{
+								Stage stg = stages[curset[i]];
+								int cnt = stg.CountExits();
+								for (int j = 0; j < cnt; j++)
+								{
+									int next;
+									do
+									{
+										next = stageids[r.Next(stageids.Length)];
+									}
+									while (next != (int)Levels.Ending && !settings.LevelOrder.AllowBossToBoss && stg.IsBoss && stages[next].IsBoss);
+									stg.SetExit(j, next);
+									if (stagepool.Contains(next))
+									{
+										if (!newset.Contains(next))
+											newset.Add(next);
+										goodlevels.Add(curset[i]);
+									}
+									else if (next == (int)Levels.Ending)
+										goodlevels.Add(curset[i]);
+								}
+							}
+						stagepool.RemoveAll(newset.Contains);
+						curset = newset;
+						ids2.AddRange(newset);
+					}
+					ids2.CopyTo(stageids);
+				}
+				break;
 			case LevelOrderMode.Wild:
 				{
 					Queue<int> stgq = new Queue<int>();
@@ -1335,7 +1424,7 @@ public partial class MainView : UserControl
 						if (stgq.Count == 0)
 						{
 							foreach (var id in stageids.Except(neword))
-								if (id != totalstagecount)
+								if (id != (int)Levels.Ending)
 									stgq.Enqueue(id);
 						}
 						int i = stgq.Dequeue();
@@ -1344,19 +1433,19 @@ public partial class MainView : UserControl
 						if (stg.IsBoss || stg.HasNeutral)
 						{
 							stg.Neutral = stageids[r.Next(stagecount + 1)];
-							if (stg.Neutral != totalstagecount && !neword.Contains(stg.Neutral) && !stgq.Contains(stg.Neutral))
+							if (stg.Neutral != (int)Levels.Ending && !neword.Contains(stg.Neutral) && !stgq.Contains(stg.Neutral))
 								stgq.Enqueue(stg.Neutral);
 						}
 						if (stg.HasHero)
 						{
 							stg.Hero = stageids[r.Next(stagecount + 1)];
-							if (stg.Hero != totalstagecount && !neword.Contains(stg.Hero) && !stgq.Contains(stg.Hero))
+							if (stg.Hero != (int)Levels.Ending && !neword.Contains(stg.Hero) && !stgq.Contains(stg.Hero))
 								stgq.Enqueue(stg.Hero);
 						}
 						if (stg.HasDark)
 						{
 							stg.Dark = stageids[r.Next(stagecount + 1)];
-							if (stg.Dark != totalstagecount && !neword.Contains(stg.Dark) && !stgq.Contains(stg.Dark))
+							if (stg.Dark != (int)Levels.Ending && !neword.Contains(stg.Dark) && !stgq.Contains(stg.Dark))
 								stgq.Enqueue(stg.Dark);
 						}
 					}
@@ -1371,26 +1460,26 @@ public partial class MainView : UserControl
 			Array.Reverse(buf);
 			buf.CopyTo(dolfile, cutsceneEventDisablerOffset);
 			// end patch
-			for (int i = 0; i < totalstagecount; i++)
+			for (int i = 0; i < (int)Levels.Ending; i++)
 			{
 				Stage stg = stages[i];
 				if (stg.IsBoss && stg.Hero == -1 && stg.Dark == -1)
 					stg.Dark = stg.Hero = stg.Neutral;
 				if (stg.Dark != -1)
 				{
-					buf = BitConverter.GetBytes(stg.Dark == totalstagecount ? -2 : stg.Dark + stagefirst);
+					buf = BitConverter.GetBytes(stg.Dark == (int)Levels.Ending ? -2 : stg.Dark + stagefirst);
 					Array.Reverse(buf);
 					buf.CopyTo(dolfile, firstStageOffset + (i * stageOffset) + darkOffset);
 				}
 				if (stg.Neutral != -1)
 				{
-					buf = BitConverter.GetBytes(stg.Neutral == totalstagecount ? -2 : stg.Neutral + stagefirst);
+					buf = BitConverter.GetBytes(stg.Neutral == (int)Levels.Ending ? -2 : stg.Neutral + stagefirst);
 					Array.Reverse(buf);
 					buf.CopyTo(dolfile, firstStageOffset + (i * stageOffset) + neutOffset);
 				}
 				if (stg.Hero != -1)
 				{
-					buf = BitConverter.GetBytes(stg.Hero == totalstagecount ? -2 : stg.Hero + stagefirst);
+					buf = BitConverter.GetBytes(stg.Hero == (int)Levels.Ending ? -2 : stg.Hero + stagefirst);
 					Array.Reverse(buf);
 					buf.CopyTo(dolfile, firstStageOffset + (i * stageOffset) + heroOffset);
 				}
@@ -1411,7 +1500,7 @@ public partial class MainView : UserControl
 
 		if (settings.LevelOrder.ExpertMode)
 		{
-			var exids = Enumerable.Range(0, totalstagecount).Except(settings.LevelOrder.ExcludeLevels.Select(a => (int)a)).ToArray();
+			var exids = Enumerable.Range(0, (int)Levels.Ending).Except(settings.LevelOrder.ExcludeLevels.Select(a => (int)a)).ToArray();
 			Shuffle(r, exids);
 			for (int i = 0; i < exids.Length; i++)
 			{
@@ -1510,6 +1599,30 @@ public partial class MainView : UserControl
 			WriteLog(Path.Combine("logs", DateTime.Now.ToString("yyyy-MM-dd--HH-mm-ss") + ".txt"));
 		}
 		return 0;
+	}
+
+	private bool CheckStageGood(int stgid, SortedSet<int> goodlevels) => CheckStageGood(stgid, goodlevels, new Stack<int>());
+
+	private bool CheckStageGood(int stgid, SortedSet<int> goodlevels, Stack<int> stack)
+	{
+		if (stgid == (int)Levels.Ending || goodlevels.Contains(stgid))
+			return true;
+		if (stack.Contains(stgid))
+			return false;
+		stack.Push(stgid);
+		Stage stg = stages[stgid];
+		int cnt = stg.CountExits();
+		for (int j = 0; j < cnt; j++)
+		{
+			if (CheckStageGood(stg.GetExit(j), goodlevels, stack))
+			{
+				goodlevels.Add(stgid);
+				stack.Pop();
+				return true;
+			}
+		}
+		stack.Pop();
+		return false;
 	}
 
 	private static void CopyDirectory(DirectoryInfo srcDir, string dstDir, bool overwrite = false)
@@ -2814,28 +2927,28 @@ public partial class MainView : UserControl
 
 	private static string GetStageName(int id)
 	{
-		if (id == totalstagecount + 1)
+		if (id == (int)Levels.Ending + 1)
 			return "Start";
-		else if (id == totalstagecount)
+		else if (id == (int)Levels.Ending)
 			return "Ending";
 		return LevelNames[id];
 	}
 
-	private int[] FindShortestPath(int start)
+	private int[]? FindShortestPath(int start)
 	{
 		Stack<int> stack = new Stack<int>(stagecount);
 		stack.Push(start);
 		return FindShortestPath(stages[start], stack, null);
 	}
 
-	private int[] FindShortestPath(Stage stage, Stack<int> path, int[] shortestPath)
+	private int[]? FindShortestPath(Stage stage, Stack<int> path, int[]? shortestPath)
 	{
 		if (shortestPath != null && path.Count >= shortestPath.Length)
 			return shortestPath;
 		if (stage.Neutral != -1 && !path.Contains(stage.Neutral))
 		{
 			path.Push(stage.Neutral);
-			if (stage.Neutral == totalstagecount)
+			if (stage.Neutral == (int)Levels.Ending)
 			{
 				if (shortestPath == null || path.Count < shortestPath.Length)
 				{
@@ -2852,7 +2965,7 @@ public partial class MainView : UserControl
 		if (stage.Hero != -1 && !path.Contains(stage.Hero))
 		{
 			path.Push(stage.Hero);
-			if (stage.Hero == totalstagecount)
+			if (stage.Hero == (int)Levels.Ending)
 			{
 				if (shortestPath == null || path.Count < shortestPath.Length)
 				{
@@ -2869,7 +2982,7 @@ public partial class MainView : UserControl
 		if (stage.Dark != -1 && !path.Contains(stage.Dark))
 		{
 			path.Push(stage.Dark);
-			if (stage.Dark == totalstagecount)
+			if (stage.Dark == (int)Levels.Ending)
 			{
 				if (shortestPath == null || path.Count < shortestPath.Length)
 				{
@@ -2935,19 +3048,20 @@ public partial class MainView : UserControl
 
 		if (file is null)
 			return;
-		ChartNode[] levels = new ChartNode[totalstagecount + 2];
+		ChartNode[] levels = new ChartNode[(int)Levels.Ending + 2];
 		int gridmaxh = 0;
 		int gridmaxv = 0;
 		switch (settings.LevelOrder.Mode)
 		{
 			case LevelOrderMode.AllStagesWarps: // stages + warps
 			case LevelOrderMode.BossRush: // boss rush
+			case LevelOrderMode.SafeWild: // safe wild
 			case LevelOrderMode.Wild: // wild
 				gridmaxh = 1;
 				gridmaxv = stagecount + 2;
 				for (int i = 0; i <= stagecount; i++)
 					levels[stageids[i]] = new ChartNode(0, i + 1);
-				levels[totalstagecount + 1] = new ChartNode(0, 0);
+				levels[(int)Levels.Ending + 1] = new ChartNode(0, 0);
 				break;
 			case LevelOrderMode.BranchingPaths: // branching paths
 				{
@@ -2965,14 +3079,14 @@ public partial class MainView : UserControl
 						levels[stageids[i]] = new ChartNode(col++, row);
 						gridmaxh = Math.Max(col, gridmaxh);
 					}
-					levels[totalstagecount] = new ChartNode(0, ++row);
+					levels[(int)Levels.Ending] = new ChartNode(0, ++row);
 					gridmaxv = row + 1;
-					levels[totalstagecount + 1] = new ChartNode(0, 0);
+					levels[(int)Levels.Ending + 1] = new ChartNode(0, 0);
 				}
 				break;
 			case LevelOrderMode.ReverseBranching: // reverse branching
 				{
-					List<List<int>> depthstages = new List<List<int>>() { new List<int>() { totalstagecount } };
+					List<List<int>> depthstages = new List<List<int>>() { new List<int>() { (int)Levels.Ending } };
 					List<Stage> stages2 = new List<Stage>(stageids.Take(stagecount).Select(a => stages[a]));
 					while (stages2.Count > 0)
 					{
@@ -2980,7 +3094,7 @@ public partial class MainView : UserControl
 						depthstages.Add(next);
 						stages2.RemoveAll(a => next.Contains(a.ID));
 					}
-					depthstages.Add(new List<int>() { totalstagecount + 1 });
+					depthstages.Add(new List<int>() { (int)Levels.Ending + 1 });
 					depthstages.Reverse();
 					gridmaxh = depthstages.Max(a => a.Count);
 					gridmaxv = depthstages.Count;
@@ -3014,8 +3128,8 @@ public partial class MainView : UserControl
 								levels[stageids[ind++]] = new ChartNode(gridmaxh, bosses[i][j]);
 						gridmaxh++;
 					}
-					levels[totalstagecount] = new ChartNode(gridmaxh++, 5);
-					levels[totalstagecount + 1] = new ChartNode(0, 5);
+					levels[(int)Levels.Ending] = new ChartNode(gridmaxh++, 5);
+					levels[(int)Levels.Ending + 1] = new ChartNode(0, 5);
 				}
 				break;
 			case LevelOrderMode.VanillaStructureNoBosses:
@@ -3031,13 +3145,13 @@ public partial class MainView : UserControl
 							levels[stageids[ind++]] = new ChartNode(gridmaxh, y++);
 						gridmaxh++;
 					}
-					levels[totalstagecount] = new ChartNode(gridmaxh++, 2);
-					levels[totalstagecount + 1] = new ChartNode(0, 2);
+					levels[(int)Levels.Ending] = new ChartNode(gridmaxh++, 2);
+					levels[(int)Levels.Ending + 1] = new ChartNode(0, 2);
 				}
 				break;
 		}
-		levels[totalstagecount + 1].Connect(ConnectionType.Neutral, levels[stageids[0]]);
-		for (int i = 0; i < totalstagecount; i++)
+		levels[(int)Levels.Ending + 1].Connect(ConnectionType.Neutral, levels[stageids[0]]);
+		for (int i = 0; i < (int)Levels.Ending; i++)
 		{
 			ChartNode node = levels[i];
 			if (node == null)
@@ -3412,9 +3526,9 @@ public partial class MainView : UserControl
 			using (var dash = SKPathEffect.CreateDash([9, 3], 0))
 			{
 				gfx.Clear(SKColors.White);
-				List<int> stageorder = new List<int>(totalstagecount + 2)
+				List<int> stageorder = new List<int>((int)Levels.Ending + 2)
 				{
-					totalstagecount + 1
+					(int)Levels.Ending + 1
 				};
 				stageorder.AddRange(stageids);
 				stageorder.Reverse();
@@ -3424,7 +3538,7 @@ public partial class MainView : UserControl
 					int x = colwidth * node.GridX + hmargin;
 					int y = rowheight * node.GridY + vmargin;
 					gfx.DrawRect(x, y, textsz.Width, textsz.Height, rectPaint);
-					if (Spoilers_CheckBox_UseIcons.IsChecked.Value && id < totalstagecount)
+					if (Spoilers_CheckBox_UseIcons.IsChecked.Value && id < (int)Levels.Ending)
 						using (var asset = AssetLoader.Open(new Uri($"avares://ShadowRando/Assets/{GetStageName(id)}.png")))
 						using (var bmp = SKBitmap.Decode(asset))
 							gfx.DrawBitmap(bmp, new SKPoint(x, y));
@@ -3760,6 +3874,7 @@ public partial class MainView : UserControl
 				sb.AppendFormat("{1}Ending ({0} levels)", shortestPath.Length, Environment.NewLine);
 				break;
 			case LevelOrderMode.ReverseBranching:
+			case LevelOrderMode.SafeWild:
 				if (stg.Neutral != -1)
 					sb.AppendLine($"Neutral -> {GetStageName(stg.Neutral)}");
 				if (stg.Hero != -1)

@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System.Diagnostics;
+using System.Linq;
 
 namespace ShadowRando.Core
 {
@@ -19,6 +20,23 @@ namespace ShadowRando.Core
 			ID = id;
 		}
 
+		[DebuggerNonUserCode]
+		public int GetExit(int exit)
+		{
+			if (IsBoss)
+				return Neutral;
+			else
+			{
+				if (HasNeutral && exit-- == 0)
+					return Neutral;
+				else if (HasHero && exit-- == 0)
+					return Hero;
+				else
+					return Dark;
+			}
+		}
+
+		[DebuggerNonUserCode]
 		public void SetExit(int exit, int stage)
 		{
 			if (IsBoss)
@@ -34,6 +52,7 @@ namespace ShadowRando.Core
 			}
 		}
 
+		[DebuggerNonUserCode]
 		public int CountExits()
 		{
 			if (IsBoss)

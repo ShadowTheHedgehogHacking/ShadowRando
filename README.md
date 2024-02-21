@@ -40,6 +40,7 @@ I would pick that folder, not the `..\Desktop\ShadowExtracted\sys` folder, unlik
 * [**Branching Paths**](/RouteExamples/BranchingPaths.png): this mode makes each exit from a level send you to a different level, giving you multiple routes through the game on the same seed without getting stuck in a loop.
 * [**Reverse Branching**](/RouteExamples/ReverseBranching.png): this mode works like Branching Paths, but it constructs the level order in reverse, which allows for more freedom in how many paths there can be, and allows for exits to warp you forwards and backwards in the tree.
 * [**Boss Rush**](/RouteExamples/BossRush.png): play through all the game's bosses in a random order.
+* [**Safe Wild**](/RouteExamples/SafeWild.png): only two rules are enforced: all stages must be accessible from the starting stage, and all stages must be able to reach the ending eventually.
 * [**Wild**](/RouteExamples/Wild.png): no rules, any exit from a stage can lead to any other stage. The ending might not even be accessible!
 
 #### Main Path Options
