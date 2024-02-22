@@ -123,6 +123,8 @@ namespace ShadowRando.Core
 		public SettingsLayoutWeapon Weapon = new SettingsLayoutWeapon();
 		[IniAlwaysInclude]
 		public SettingsLayoutPartner Partner = new SettingsLayoutPartner();
+		[IniAlwaysInclude]
+		public SettingsLayoutMisc Misc = new SettingsLayoutMisc();
 	}
 
 	public class SettingsLayoutEnemy
@@ -170,6 +172,12 @@ namespace ShadowRando.Core
 		public bool OnlySelectedPartners;
 		[IniCollection(IniCollectionMode.SingleLine, Format = ", ")]
 		public List<Object0190_Partner.EPartner> SelectedPartners = [];
+	}
+
+	public class SettingsLayoutMisc
+	{
+		[IniAlwaysInclude]
+		public bool RandomItemCapsules;
 	}
 
 	public class SettingsSubtitles

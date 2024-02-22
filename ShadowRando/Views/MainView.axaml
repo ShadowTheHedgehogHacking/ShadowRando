@@ -42,7 +42,7 @@
                         </CheckBox>
                     </Grid>
                     <Label Margin="0,20,0,0">Mode</Label>
-                    <ComboBox x:Name="LevelOrder_ComboBox_Mode" SelectedIndex="1" MinWidth="225">
+                    <ComboBox x:Name="LevelOrder_ComboBox_Mode" SelectionChanged="Shared_ComboBox_OnSelectionChanged" SelectedIndex="1" MinWidth="225">
                         <ComboBoxItem>Default Order</ComboBoxItem>
                         <ComboBoxItem>Shuffle All Stages w/Warps</ComboBoxItem>
                         <ComboBoxItem>Vanilla Structure</ComboBoxItem>
@@ -682,7 +682,12 @@
                                 </Grid>
                             </StackPanel>
                         </TabItem>
-                    </TabControl>
+						<TabItem Header="Misc">
+							<StackPanel>
+								<CheckBox x:Name="Layout_Misc_CheckBox_RandomItemCapsules">Random Item Capsules</CheckBox>
+							</StackPanel>
+						</TabItem>
+					</TabControl>
                 </StackPanel>
             </TabItem>
             <TabItem Header="Subtitles">
@@ -796,7 +801,7 @@
             <TabItem Header="Models">
                 <StackPanel>
                     <CheckBox x:Name="Models_CheckBox_RandomizeModel">Randomize Player Model</CheckBox>
-                    <CheckBox x:Name="Models_CheckBox_ModelP2">Randomize Player 2's Model</CheckBox>
+                    <CheckBox x:Name="Models_CheckBox_ModelP2" IsEnabled ="False">Randomize Player 2's Model</CheckBox>
                 </StackPanel>
             </TabItem>
             <TabItem Header="Spoilers">

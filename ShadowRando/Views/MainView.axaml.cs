@@ -23,7 +23,6 @@ using ShadowRando.Core.SETMutations;
 using ShadowSET;
 using ShadowSET.SETIDBIN;
 using SkiaSharp;
-using static System.Net.Mime.MediaTypeNames;
 using TableEntry = ShadowFNT.Structures.TableEntry;
 
 namespace ShadowRando.Views;
@@ -513,6 +512,9 @@ public partial class MainView : UserControl
 		foreach (var par in settings.Layout.Partner.SelectedPartners)
 			PartnerCheckBoxes[(int)par - 1].IsChecked = true;
 
+		// Layout Misc
+		Layout_Misc_CheckBox_RandomItemCapsules.IsChecked = settings.Layout.Misc.RandomItemCapsules;
+
 		// Subtitles
 		Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked = settings.Subtitles.Randomize;
 		Subtitles_CheckBox_NoDuplicates.IsChecked = settings.Subtitles.NoDuplicates;
@@ -608,6 +610,9 @@ public partial class MainView : UserControl
 		for (int i = 0; i < PartnerCheckBoxes.Length; i++)
 			if (PartnerCheckBoxes[i].IsChecked == true)
 				settings.Layout.Partner.SelectedPartners.Add((Object0190_Partner.EPartner)(i + 1));
+
+		// Misc
+		settings.Layout.Misc.RandomItemCapsules = Layout_Misc_CheckBox_RandomItemCapsules.IsChecked.Value;
 
 		// Subtitles
 		settings.Subtitles.Randomize = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
@@ -2152,6 +2157,15 @@ public partial class MainView : UserControl
 					RandomizeEnvironmentWeaponDrops(ref ds1LayoutData, weaponsPool, r);
 			}
 
+			if (settings.Layout.Misc.RandomItemCapsules)
+			{
+				RandomizeItemCapsules(ref cmnLayoutData, r);
+				if (nrmLayoutData != null)
+					RandomizeItemCapsules(ref nrmLayoutData, r);
+				if (hrdLayoutData != null)
+					RandomizeItemCapsules(ref hrdLayoutData, r);
+			}
+
 			if (settings.Layout.Partner.Mode == LayoutPartnerMode.Wild)
 			{
 				MakeAllPartnersRandom(ref cmnLayoutData, settings.Layout.Partner.KeepAffiliationsAtSameLocation, darkPartners, heroPartners, r);
@@ -2705,6 +2719,21 @@ public partial class MainView : UserControl
 				continue; // skip Cryptic Castle Torch to prevent breaking mission
 			environmentWeapon.item.DropType = (Object012C_EnvironmentalWeapon.EDropType)weaponsPool[r.Next(weaponsPool.Count)];
 			setData[environmentWeapon.index] = environmentWeapon.item;
+		}
+	}
+
+	private static void RandomizeItemCapsules(ref List<SetObjectShadow> setData, Random r)
+	{
+		List<(Object0012_ItemCapsule item, int index)> itemCapsuleItems = setData
+			.Select((item, index) => new { Item = item, Index = index })
+			.Where(pair => pair.Item is Object0012_ItemCapsule)
+			.Select(pair => (Item: (Object0012_ItemCapsule)pair.Item, Index: pair.Index))
+			.ToList();
+
+		foreach (var capsule in itemCapsuleItems)
+		{
+			capsule.item.Item = (EItemShadow)r.Next(11);
+			setData[capsule.index] = capsule.item;
 		}
 	}
 
@@ -3965,6 +3994,12 @@ public partial class MainView : UserControl
 			return;
 		// Level Order
 		LevelOrder_TextBox_Seed.IsEnabled = !LevelOrder_CheckBox_Random_Seed.IsChecked.Value;
+		LevelOrder_ComboBox_MainPath.IsEnabled = (LevelOrderMode)LevelOrder_ComboBox_Mode.SelectedIndex == LevelOrderMode.AllStagesWarps;
+		LevelOrder_NumericUpDown_MaxBackwardsJump.IsEnabled = (LevelOrderMode)LevelOrder_ComboBox_Mode.SelectedIndex == LevelOrderMode.AllStagesWarps;
+		LevelOrder_NumericUpDown_MaxForwardsJump.IsEnabled = (LevelOrderMode)LevelOrder_ComboBox_Mode.SelectedIndex == LevelOrderMode.AllStagesWarps;
+		LevelOrder_NumericUpDown_BackwardsJumpProbability.IsEnabled = (LevelOrderMode)LevelOrder_ComboBox_Mode.SelectedIndex == LevelOrderMode.AllStagesWarps;
+		LevelOrder_CheckBox_AllowJumpsToSameLevel.IsEnabled = (LevelOrderMode)LevelOrder_ComboBox_Mode.SelectedIndex == LevelOrderMode.AllStagesWarps;
+		LevelOrder_CheckBox_AllowBossToBoss.IsEnabled = !((LevelOrderMode)LevelOrder_ComboBox_Mode.SelectedIndex == LevelOrderMode.BossRush) && !((LevelOrderMode)LevelOrder_ComboBox_Mode.SelectedIndex == LevelOrderMode.Wild);
 		// --Layout--
 		// Enemy
 		Layout_CheckBox_MakeCCSplinesVehicleCompatible.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
@@ -3990,6 +4025,8 @@ public partial class MainView : UserControl
 		Layout_Partner_CheckBox_OnlySelectedPartners.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value && (LayoutPartnerMode)Layout_Partner_ComboBox_Mode.SelectedIndex == LayoutPartnerMode.Wild;
 		for (int i = 0; i < PartnerCheckBoxes.Length; i++)
 			PartnerCheckBoxes[i].IsEnabled = Layout_Partner_CheckBox_OnlySelectedPartners.IsChecked.Value && Layout_CheckBox_RandomizeLayouts.IsChecked.Value && (LayoutPartnerMode)Layout_Partner_ComboBox_Mode.SelectedIndex == LayoutPartnerMode.Wild;
+		// Misc
+		Layout_Misc_CheckBox_RandomItemCapsules.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
 		// --End Layout--
 		// Subtitles
 		Subtitles_CheckBox_OnlyWithLinkedAudio.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;	
