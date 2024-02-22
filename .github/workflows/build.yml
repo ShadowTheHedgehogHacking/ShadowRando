@@ -1,0 +1,52 @@
+name: Build and Publish
+
+on:
+  push:
+    branches:
+      - '*'
+    tags:
+      - '*'
+  pull_request:
+    branches: [ master ]
+  workflow_dispatch:
+
+
+jobs:
+  build:
+    runs-on: windows-2022
+    defaults:
+      run:
+        shell: pwsh
+    
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+          submodules: 'recursive'
+    
+      # Required for C#10 features.
+      - name: Setup Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Setup MSVC
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Clear MSVC Redundant Environment Variables
+        run: echo "Platform=" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf-8 -Append
+
+      - name: Setup AutoChangelog
+        run: npm install -g auto-changelog
+
+      - name: Setup Dotnet SDK (8.0)
+        uses: actions/setup-dotnet@v2
+        with:
+          dotnet-version: '8.0.x'
+          include-prerelease: false
+
+      - name: Get Dotnet Info
+        run: dotnet --info
+
+      - name: Build app
+        run: dotnet publish ShadowRando.Desktop -c Release -r win-x64 --self-contained false /p:PublishSingleFile=true
