@@ -685,6 +685,7 @@
 						<TabItem Header="Misc">
 							<StackPanel>
 								<CheckBox x:Name="Layout_Misc_CheckBox_RandomItemCapsules">Random Item Capsules</CheckBox>
+								<CheckBox x:Name="Layout_Misc_CheckBox_RandomItemBalloons">Random Item Balloons</CheckBox>
 							</StackPanel>
 						</TabItem>
 					</TabControl>

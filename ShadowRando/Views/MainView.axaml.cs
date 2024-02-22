@@ -514,6 +514,7 @@ public partial class MainView : UserControl
 
 		// Layout Misc
 		Layout_Misc_CheckBox_RandomItemCapsules.IsChecked = settings.Layout.Misc.RandomItemCapsules;
+		Layout_Misc_CheckBox_RandomItemBalloons.IsChecked = settings.Layout.Misc.RandomItemBalloons;
 
 		// Subtitles
 		Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked = settings.Subtitles.Randomize;
@@ -613,6 +614,7 @@ public partial class MainView : UserControl
 
 		// Misc
 		settings.Layout.Misc.RandomItemCapsules = Layout_Misc_CheckBox_RandomItemCapsules.IsChecked.Value;
+		settings.Layout.Misc.RandomItemBalloons = Layout_Misc_CheckBox_RandomItemBalloons.IsChecked.Value;
 
 		// Subtitles
 		settings.Subtitles.Randomize = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
@@ -2166,6 +2168,15 @@ public partial class MainView : UserControl
 					RandomizeItemCapsules(ref hrdLayoutData, r);
 			}
 
+			if (settings.Layout.Misc.RandomItemBalloons)
+			{
+				RandomizeItemBalloons(ref cmnLayoutData, r);
+				if (nrmLayoutData != null)
+					RandomizeItemBalloons(ref nrmLayoutData, r);
+				if (hrdLayoutData != null)
+					RandomizeItemBalloons(ref hrdLayoutData, r);
+			}
+
 			if (settings.Layout.Partner.Mode == LayoutPartnerMode.Wild)
 			{
 				MakeAllPartnersRandom(ref cmnLayoutData, settings.Layout.Partner.KeepAffiliationsAtSameLocation, darkPartners, heroPartners, r);
@@ -2734,6 +2745,21 @@ public partial class MainView : UserControl
 		{
 			capsule.item.Item = (EItemShadow)r.Next(11);
 			setData[capsule.index] = capsule.item;
+		}
+	}
+
+	private static void RandomizeItemBalloons(ref List<SetObjectShadow> setData, Random r)
+	{
+		List<(Object0013_Balloon item, int index)> itemBalloonItems = setData
+			.Select((item, index) => new { Item = item, Index = index })
+			.Where(pair => pair.Item is Object0013_Balloon)
+			.Select(pair => (Item: (Object0013_Balloon)pair.Item, Index: pair.Index))
+			.ToList();
+
+		foreach (var balloon in itemBalloonItems)
+		{
+			balloon.item.Item = (EItemShadow)r.Next(11);
+			setData[balloon.index] = balloon.item;
 		}
 	}
 
@@ -4027,6 +4053,7 @@ public partial class MainView : UserControl
 			PartnerCheckBoxes[i].IsEnabled = Layout_Partner_CheckBox_OnlySelectedPartners.IsChecked.Value && Layout_CheckBox_RandomizeLayouts.IsChecked.Value && (LayoutPartnerMode)Layout_Partner_ComboBox_Mode.SelectedIndex == LayoutPartnerMode.Wild;
 		// Misc
 		Layout_Misc_CheckBox_RandomItemCapsules.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
+		Layout_Misc_CheckBox_RandomItemBalloons.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
 		// --End Layout--
 		// Subtitles
 		Subtitles_CheckBox_OnlyWithLinkedAudio.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;	
