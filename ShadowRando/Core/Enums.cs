@@ -121,9 +121,9 @@
 		Maria,
 		Charmy,
 		Eggman,
+		BlackDoom,
 		Cream,
 		Cheese,
-		BlackDoom,
 		GUNCommander,
 		GUNSoldier
 	}
