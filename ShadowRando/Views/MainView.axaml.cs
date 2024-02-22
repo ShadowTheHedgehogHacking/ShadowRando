@@ -2228,17 +2228,17 @@ public partial class MainView : UserControl
 				{
 					case 0:
 						var total = GetTotalGUNEnemies(cmnLayoutData, nrmLayoutData);
-						nukkoro2Stage.MissionCountDark.Success = total - (int)(total * (settings.Layout.Enemy.AdjustMissionCountsReductionPercent / 100));
+						nukkoro2Stage.MissionCountDark.Success = total - (int)(total * ((double)settings.Layout.Enemy.AdjustMissionCountsReductionPercent / 100));
 						break;
 					case 1:
 						total = GetTotalBlackArmsEnemies(cmnLayoutData, nrmLayoutData);
-						nukkoro2Stage.MissionCountHero.Success = total - (int)(total * (settings.Layout.Enemy.AdjustMissionCountsReductionPercent / 100));
+						nukkoro2Stage.MissionCountHero.Success = total - (int)(total * ((double)settings.Layout.Enemy.AdjustMissionCountsReductionPercent / 100));
 						break;
 					case 2:
 						total = GetTotalGUNEnemies(cmnLayoutData, nrmLayoutData);
-						nukkoro2Stage.MissionCountDark.Success = total - (int)(total * (settings.Layout.Enemy.AdjustMissionCountsReductionPercent / 100));
+						nukkoro2Stage.MissionCountDark.Success = total - (int)(total * ((double)settings.Layout.Enemy.AdjustMissionCountsReductionPercent / 100));
 						total = GetTotalBlackArmsEnemies(cmnLayoutData, nrmLayoutData);
-						nukkoro2Stage.MissionCountHero.Success = total - (int)(total * (settings.Layout.Enemy.AdjustMissionCountsReductionPercent / 100));
+						nukkoro2Stage.MissionCountHero.Success = total - (int)(total * ((double)settings.Layout.Enemy.AdjustMissionCountsReductionPercent / 100));
 						break;
 					default:
 						break;
