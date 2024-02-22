@@ -2758,7 +2758,7 @@ public partial class MainView : UserControl
 
 		foreach (var balloon in itemBalloonItems)
 		{
-			balloon.item.Item = (EItemShadow)r.Next(11);
+			balloon.item.Item = (EItemShadow)r.Next(10);
 			setData[balloon.index] = balloon.item;
 		}
 	}
