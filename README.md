@@ -61,7 +61,6 @@ If you use the "Random Partners" option, you may be unable to complete certain m
 `Make CC Splines Vehicle Compatible` - turns most splines in the game into Black Hawk / Black Volt compatible splines. Allows you to use them in areas you normally cannot. Note, very experimental - expect weirdness.
 
 `Adjust Mission Counts` - adjusts the mission counts based on the newly randomized enemies. Reduction % allows you to reduce the amount of enemies for a mission complete.
-``
 
 `Enemy - Keep Type` - keeps ground enemies mapped to ground enemies, and flying enemies mapped to flying enemies. Recommended.
 
@@ -95,6 +94,7 @@ The randomizer can select randomized models for Shadow and optionally the 2P Yel
  * `DefaultBON` - Suggested name for a folder containing models using the default bones.
  * `CustomBON` - Models in this folder use custom bones. If a P2 model uses the same bones as a P1 model, they must be together in the same subfolder.
  * `ModelPack` - Models in this folder are treated as a pack; any other files in the same folder will be copied to the ROM. Use this when a model requires edits to partners to avoid crashes. P2 randomization is ignored if one of these is picked for P1.
+
 Each model must be placed in its own folder, keeping the original file names (P1 models are `shadow.one`, P2 models are `shadow2py.one`). P1 and P2 models made as a set should be placed in the same folder, but can be selected independently of each other.
 
 ### Extraction of Game
