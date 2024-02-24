@@ -3112,7 +3112,6 @@ public partial class MainView : UserControl
 		{
 			case LevelOrderMode.AllStagesWarps: // stages + warps
 			case LevelOrderMode.BossRush: // boss rush
-			case LevelOrderMode.SafeWild: // safe wild
 			case LevelOrderMode.Wild: // wild
 				gridmaxh = 1;
 				gridmaxv = stagecount + 2;
@@ -3204,6 +3203,36 @@ public partial class MainView : UserControl
 					}
 					levels[(int)Levels.Ending] = new ChartNode(gridmaxh++, 2);
 					levels[(int)Levels.Ending + 1] = new ChartNode(0, 2);
+				}
+				break;
+			case LevelOrderMode.SafeWild: // safe wild
+				{
+					int row = 0;
+					int col = 0;
+					int? nextrow = stageids[0];
+					SortedSet<int> visited = [stageids[0]];
+					for (int i = 0; i < stagecount; i++)
+					{
+						if (stageids[i] == nextrow)
+						{
+							++row;
+							col = 0;
+							nextrow = null;
+						}
+							var cnt = stages[stageids[i]].CountExits();
+						for (int j = 0; j < cnt; j++)
+						{
+							var stg = stages[stageids[i]].GetExit(j);
+							if (nextrow == null && !visited.Contains(stg))
+								nextrow = stg;
+							visited.Add(stg);
+						}
+						levels[stageids[i]] = new ChartNode(col++, row);
+						gridmaxh = Math.Max(col, gridmaxh);
+					}
+					levels[(int)Levels.Ending] = new ChartNode(0, ++row);
+					gridmaxv = row + 1;
+					levels[(int)Levels.Ending + 1] = new ChartNode(0, 0);
 				}
 				break;
 		}
