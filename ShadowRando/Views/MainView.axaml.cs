@@ -3121,28 +3121,35 @@ public partial class MainView : UserControl
 				break;
 			case LevelOrderMode.BranchingPaths: // branching paths
 				{
-					int row = 0;
-					int col = 0;
 					int nextrow = stageids[0];
+					List<List<int>> depthstages = [[(int)Levels.Ending + 1]];
+					List<int> currow = [];
 					for (int i = 0; i < stagecount; i++)
 					{
 						if (stageids[i] == nextrow)
 						{
-							++row;
-							col = 0;
+							currow = [];
+							depthstages.Add(currow);
 							nextrow = stages[stageids[i]].Neutral;
 						}
-						levels[stageids[i]] = new ChartNode(col++, row);
-						gridmaxh = Math.Max(col, gridmaxh);
+						currow.Add(stageids[i]);
 					}
-					levels[(int)Levels.Ending] = new ChartNode(0, ++row);
-					gridmaxv = row + 1;
-					levels[(int)Levels.Ending + 1] = new ChartNode(0, 0);
+					depthstages.Add([(int)Levels.Ending]);
+					gridmaxh = depthstages.Max(a => a.Count);
+					gridmaxv = depthstages.Count;
+					int row = 0;
+					foreach (var ds in depthstages)
+					{
+						int col = (gridmaxh - ds.Count) / 2;
+						foreach (var id in ds)
+							levels[id] = new ChartNode(col++, row);
+						++row;
+					}
 				}
 				break;
 			case LevelOrderMode.ReverseBranching: // reverse branching
 				{
-					List<List<int>> depthstages = new List<List<int>>() { new List<int>() { (int)Levels.Ending } };
+					List<List<int>> depthstages = [[(int)Levels.Ending]];
 					List<Stage> stages2 = new List<Stage>(stageids.Take(stagecount).Select(a => stages[a]));
 					while (stages2.Count > 0)
 					{
@@ -3155,14 +3162,12 @@ public partial class MainView : UserControl
 					gridmaxh = depthstages.Max(a => a.Count);
 					gridmaxv = depthstages.Count;
 					int row = 0;
-					int col = 0;
 					foreach (var ds in depthstages)
 					{
+						int col = (gridmaxh - ds.Count) / 2;
 						foreach (var id in ds)
 							levels[id] = new ChartNode(col++, row);
-						gridmaxh = Math.Max(col, gridmaxh);
 						++row;
-						col = 0;
 					}
 				}
 				break;
@@ -3207,19 +3212,19 @@ public partial class MainView : UserControl
 				break;
 			case LevelOrderMode.SafeWild: // safe wild
 				{
-					int row = 0;
-					int col = 0;
 					int? nextrow = stageids[0];
 					SortedSet<int> visited = [stageids[0]];
+					List<List<int>> depthstages = [[(int)Levels.Ending + 1]];
+					List<int> currow = [];
 					for (int i = 0; i < stagecount; i++)
 					{
 						if (stageids[i] == nextrow)
 						{
-							++row;
-							col = 0;
+							currow = [];
+							depthstages.Add(currow);
 							nextrow = null;
 						}
-							var cnt = stages[stageids[i]].CountExits();
+						var cnt = stages[stageids[i]].CountExits();
 						for (int j = 0; j < cnt; j++)
 						{
 							var stg = stages[stageids[i]].GetExit(j);
@@ -3227,12 +3232,19 @@ public partial class MainView : UserControl
 								nextrow = stg;
 							visited.Add(stg);
 						}
-						levels[stageids[i]] = new ChartNode(col++, row);
-						gridmaxh = Math.Max(col, gridmaxh);
+						currow.Add(stageids[i]);
 					}
-					levels[(int)Levels.Ending] = new ChartNode(0, ++row);
-					gridmaxv = row + 1;
-					levels[(int)Levels.Ending + 1] = new ChartNode(0, 0);
+					depthstages.Add([(int)Levels.Ending]);
+					gridmaxh = depthstages.Max(a => a.Count);
+					gridmaxv = depthstages.Count;
+					int row = 0;
+					foreach (var ds in depthstages)
+					{
+						int col = (gridmaxh - ds.Count) / 2;
+						foreach (var id in ds)
+							levels[id] = new ChartNode(col++, row);
+						++row;
+					}
 				}
 				break;
 		}
