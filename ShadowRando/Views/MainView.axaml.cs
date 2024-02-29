@@ -266,7 +266,7 @@ public partial class MainView : UserControl
 
 	private string selectedFolderPath;
 	private bool avaloniaPreviewUI;
-	const string programVersion = "0.5.0";
+	const string programVersion = "0.5.1-dev";
 	private bool programInitialized = false;
 	private bool randomizeProcessing = false;
 
@@ -2179,9 +2179,9 @@ public partial class MainView : UserControl
 
 			if (settings.Layout.Partner.Mode == LayoutPartnerMode.Wild)
 			{
-				MakeAllPartnersRandom(ref cmnLayoutData, settings.Layout.Partner.KeepAffiliationsAtSameLocation, darkPartners, heroPartners, r);
+				MakeAllPartnersRandom(ref cmnLayoutData, settings.Layout.Partner.KeepAffiliationsAtSameLocation, darkPartners, heroPartners, stageId, r);
 				if (nrmLayoutData != null)
-					MakeAllPartnersRandom(ref nrmLayoutData, settings.Layout.Partner.KeepAffiliationsAtSameLocation, darkPartners, heroPartners, r);
+					MakeAllPartnersRandom(ref nrmLayoutData, settings.Layout.Partner.KeepAffiliationsAtSameLocation, darkPartners, heroPartners, stageId, r);
 			}
 
 			switch (enemyMode)
@@ -2442,7 +2442,7 @@ public partial class MainView : UserControl
 		eggmanStaticAssociation.CopyTo(dolfile, partnerAffiliationEggmanStaticAssociationPatchOffset);
 	}
 
-	private static void MakeAllPartnersRandom(ref List<SetObjectShadow> setData, bool keepOriginalObjectAffiliation, List<Object0190_Partner.EPartner> darkPartners, List<Object0190_Partner.EPartner> heroPartners, Random r)
+	private static void MakeAllPartnersRandom(ref List<SetObjectShadow> setData, bool keepOriginalObjectAffiliation, List<Object0190_Partner.EPartner> darkPartners, List<Object0190_Partner.EPartner> heroPartners, int stageId, Random r)
 	{
 		List<(Object0190_Partner item, int index)> partnerItems = setData
 			.Select((item, index) => new { Item = item, Index = index })
@@ -2460,10 +2460,21 @@ public partial class MainView : UserControl
 		{
 			if (keepOriginalObjectAffiliation)
 			{
-				if (partner.item.Partner is Object0190_Partner.EPartner.Eggman or Object0190_Partner.EPartner.DoomsEye) 
-					partner.item.Partner = darkPartners[r.Next(darkPartners.Count)];
+				if (stageId == 402)
+				{
+					if (partner.item.Partner is Object0190_Partner.EPartner.DoomsEye)
+						partner.item.Partner = darkPartners[r.Next(darkPartners.Count)];
+					else
+						partner.item.Partner = heroPartners[r.Next(heroPartners.Count)];
+				}
 				else
-					partner.item.Partner = heroPartners[r.Next(heroPartners.Count)];
+				{
+					if (partner.item.Partner is Object0190_Partner.EPartner.Eggman
+					    or Object0190_Partner.EPartner.DoomsEye)
+						partner.item.Partner = darkPartners[r.Next(darkPartners.Count)];
+					else
+						partner.item.Partner = heroPartners[r.Next(heroPartners.Count)];
+				}
 			}
 			else
 			{
