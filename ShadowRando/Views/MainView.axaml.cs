@@ -7,7 +7,9 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 using AFSLib;
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Platform;
 using Avalonia.Platform.Storage;
@@ -18,6 +20,7 @@ using HeroesONE_R.Utilities;
 using MsBox.Avalonia.Enums;
 using ShadowFNT;
 using ShadowFNT.Structures;
+using ShadowRando.Controls;
 using ShadowRando.Core;
 using ShadowRando.Core.SETMutations;
 using ShadowSET;
@@ -740,6 +743,7 @@ public partial class MainView : UserControl
 			randomizeProcessing = false;
 			return;
 		}
+		Tracker_ComboBox_Level.IsEnabled = true;
 		Spoilers_ListBox_LevelList.Items.Clear();
 		for (int i = 0; i < stagecount; i++)
 			Spoilers_ListBox_LevelList.Items.Add(GetStageName(stageids[i]));
@@ -4131,5 +4135,305 @@ public partial class MainView : UserControl
 	{
 		if (programInitialized)
 			UpdateUIEnabledState();
+	}
+
+	readonly Dictionary<int, TrackerLevelInfo> trackerLevels = [];
+	TrackerNode? trackerDragNode, trackerLineStart, trackerLineEnd;
+	Point trackerLastPoint;
+	ConnectionType trackerLineType;
+
+	private void Tracker_ComboBox_Level_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+	{
+		if (trackerLevels.ContainsKey(Tracker_ComboBox_Level.SelectedIndex))
+		{
+			Tracker_Button_AddLevel.IsEnabled = false;
+			Tracker_Button_RemoveLevel.IsEnabled = true;
+		}
+		else
+		{
+			Tracker_Button_AddLevel.IsEnabled = true;
+			Tracker_Button_RemoveLevel.IsEnabled = false;
+		}
+	}
+
+	private void Tracker_Button_AddLevel_Click(object? sender, RoutedEventArgs e)
+	{
+		TrackerLevelInfo info = new(stages[Tracker_ComboBox_Level.SelectedIndex]);
+		trackerLevels[Tracker_ComboBox_Level.SelectedIndex] = info;
+		Tracker_Canvas.Children.Add(info.Node);
+		Canvas.SetLeft(info.Node, -Tracker_ZoomBorder.OffsetX + Tracker_ZoomBorder.Bounds.Width / Tracker_ZoomBorder.ZoomX / 2d - 70);
+		Canvas.SetTop(info.Node, -Tracker_ZoomBorder.OffsetY + Tracker_ZoomBorder.Bounds.Height / Tracker_ZoomBorder.ZoomY / 2d - 50);
+		info.Node.BeginDrag += TrackerNode_BeginDrag;
+		info.Node.EndDrag += TrackerNode_EndDrag;
+		if (info.Node.ExitDark.IsVisible)
+			info.Node.ClickDark += TrackerNode_ClickDark;
+		if (info.Node.ExitNeutral.IsVisible)
+			info.Node.ClickNeutral += TrackerNode_ClickNeutral;
+		if (info.Node.ExitHero.IsVisible)
+			info.Node.ClickHero += TrackerNode_ClickHero;
+		info.Node.ClickStart += TrackerNode_ClickStart;
+		Tracker_Button_AddLevel.IsEnabled = false;
+		Tracker_Button_RemoveLevel.IsEnabled = true;
+	}
+
+	private void Tracker_Button_RemoveLevel_Click(object? sender, RoutedEventArgs e)
+	{
+		TrackerLevelInfo info = trackerLevels[Tracker_ComboBox_Level.SelectedIndex];
+		foreach (var line in info.IncomingLines)
+		{
+			Tracker_Canvas.Children.Remove(line.Line);
+			switch (line.Type)
+			{
+				case ConnectionType.Neutral:
+					line.Start.NeutralLine = null;
+					break;
+				case ConnectionType.Hero:
+					line.Start.HeroLine = null;
+					break;
+				case ConnectionType.Dark:
+					line.Start.DarkLine = null;
+					break;
+			}
+		}
+		if (info.DarkLine != null)
+		{
+			Tracker_Canvas.Children.Remove(info.DarkLine.Line);
+			info.DarkLine.End.IncomingLines.Remove(info.DarkLine);
+		}
+		if (info.NeutralLine != null)
+		{
+			Tracker_Canvas.Children.Remove(info.NeutralLine.Line);
+			info.NeutralLine.End.IncomingLines.Remove(info.NeutralLine);
+		}
+		if (info.HeroLine != null)
+		{
+			Tracker_Canvas.Children.Remove(info.HeroLine.Line);
+			info.HeroLine.End.IncomingLines.Remove(info.HeroLine);
+		}
+		Tracker_Canvas.Children.Remove(info.Node);
+		trackerLevels.Remove(Tracker_ComboBox_Level.SelectedIndex);
+		Tracker_Button_AddLevel.IsEnabled = true;
+		Tracker_Button_RemoveLevel.IsEnabled = false;
+	}
+
+	private void Tracker_Button_Reset_Click(object? sender, RoutedEventArgs e)
+	{
+		Tracker_Canvas.Children.Clear();
+		trackerLevels.Clear();
+		Tracker_Button_AddLevel.IsEnabled = Tracker_ComboBox_Level.SelectedIndex != -1;
+		Tracker_Button_RemoveLevel.IsEnabled = false;
+	}
+
+	private void Tracker_Canvas_PointerMoved(object? sender, PointerEventArgs e)
+	{
+		Point point = e.GetCurrentPoint(Tracker_Canvas).Position;
+		if (trackerDragNode != null && point != trackerLastPoint)
+		{
+			var diff = point - trackerLastPoint;
+			Canvas.SetLeft(trackerDragNode, Math.Min(Math.Max(Canvas.GetLeft(trackerDragNode) + diff.X, 0), Tracker_Canvas.Width - trackerDragNode.Bounds.Width));
+			Canvas.SetTop(trackerDragNode, Math.Min(Math.Max(Canvas.GetTop(trackerDragNode) + diff.Y, 0), Tracker_Canvas.Height - trackerDragNode.Bounds.Height));
+			var info = trackerLevels[trackerDragNode.Level];
+			if (info.DarkLine != null)
+				info.DarkLine.Line.StartPoint += diff;
+			if (info.NeutralLine != null)
+				info.NeutralLine.Line.StartPoint += diff;
+			if (info.HeroLine != null)
+				info.HeroLine.Line.StartPoint += diff;
+			foreach (var line in info.IncomingLines)
+				line.Line.EndPoint += diff;
+		}
+		trackerLastPoint = point;
+	}
+
+	private void TrackerNode_BeginDrag(object? sender, EventArgs e)
+	{
+		trackerDragNode = sender as TrackerNode;
+	}
+
+	private void TrackerNode_EndDrag(object? sender, EventArgs e)
+	{
+		trackerDragNode = null;
+	}
+
+	private void TrackerNode_ClickDark(object? sender, PointerPressedEventArgs e)
+	{
+		if (trackerLineStart != null)
+			switch (trackerLineType)
+			{
+				case ConnectionType.Neutral:
+					trackerLineStart.HighlightNeutral(false);
+					break;
+				case ConnectionType.Hero:
+					trackerLineStart.HighlightHero(false);
+					break;
+				case ConnectionType.Dark:
+					trackerLineStart.HighlightDark(false);
+					break;
+			}
+		TrackerNode? node = sender as TrackerNode;
+		if (e.GetCurrentPoint(node).Properties.IsRightButtonPressed)
+		{
+			var start = trackerLevels[node?.Level ?? 0];
+			if (start.DarkLine != null)
+			{
+				start.DarkLine.End.IncomingLines.Remove(start.DarkLine);
+				Tracker_Canvas.Children.Remove(start.DarkLine.Line);
+				start.DarkLine = null;
+			}
+		}
+		else
+		{
+			if (trackerLineStart != node || trackerLineType != ConnectionType.Dark)
+			{
+				trackerLineType = ConnectionType.Dark;
+				trackerLineStart = node;
+				trackerLineStart?.HighlightDark(true);
+				TrackerCheckLine();
+			}
+			else
+				trackerLineStart = null;
+		}
+	}
+
+	private void TrackerNode_ClickNeutral(object? sender, PointerPressedEventArgs e)
+	{
+		if (trackerLineStart != null)
+			switch (trackerLineType)
+			{
+				case ConnectionType.Neutral:
+					trackerLineStart.HighlightNeutral(false);
+					break;
+				case ConnectionType.Hero:
+					trackerLineStart.HighlightHero(false);
+					break;
+				case ConnectionType.Dark:
+					trackerLineStart.HighlightDark(false);
+					break;
+			}
+		TrackerNode? node = sender as TrackerNode;
+		if (e.GetCurrentPoint(node).Properties.IsRightButtonPressed)
+		{
+			var start = trackerLevels[node?.Level ?? 0];
+			if (start.NeutralLine != null)
+			{
+				start.NeutralLine.End.IncomingLines.Remove(start.NeutralLine);
+				Tracker_Canvas.Children.Remove(start.NeutralLine.Line);
+				start.NeutralLine = null;
+			}
+		}
+		else
+		{
+			if (trackerLineStart != node || trackerLineType != ConnectionType.Neutral)
+			{
+				trackerLineType = ConnectionType.Neutral;
+				trackerLineStart = node;
+				trackerLineStart?.HighlightNeutral(true);
+				TrackerCheckLine();
+			}
+			else
+				trackerLineStart = null;
+		}
+	}
+
+	private void TrackerNode_ClickHero(object? sender, PointerPressedEventArgs e)
+	{
+		if (trackerLineStart != null)
+			switch (trackerLineType)
+			{
+				case ConnectionType.Neutral:
+					trackerLineStart.HighlightNeutral(false);
+					break;
+				case ConnectionType.Hero:
+					trackerLineStart.HighlightHero(false);
+					break;
+				case ConnectionType.Dark:
+					trackerLineStart.HighlightDark(false);
+					break;
+			}
+		TrackerNode? node = sender as TrackerNode;
+		if (e.GetCurrentPoint(node).Properties.IsRightButtonPressed)
+		{
+			var start = trackerLevels[node?.Level ?? 0];
+			if (start.HeroLine != null)
+			{
+				start.HeroLine.End.IncomingLines.Remove(start.HeroLine);
+				Tracker_Canvas.Children.Remove(start.HeroLine.Line);
+				start.HeroLine = null;
+			}
+		}
+		else
+		{
+			if (trackerLineStart != node || trackerLineType != ConnectionType.Hero)
+			{
+				trackerLineType = ConnectionType.Hero;
+				trackerLineStart = node;
+				trackerLineStart?.HighlightHero(true);
+				TrackerCheckLine();
+			}
+			else
+				trackerLineStart = null;
+		}
+	}
+
+	private void TrackerNode_ClickStart(object? sender, EventArgs e)
+	{
+		trackerLineEnd?.HighlightStart(false);
+		if (trackerLineEnd != sender)
+		{
+			trackerLineEnd = sender as TrackerNode;
+			trackerLineEnd?.HighlightStart(true);
+			TrackerCheckLine();
+		}
+		else
+			trackerLineEnd = null;
+	}
+
+	private void TrackerCheckLine()
+	{
+		if (trackerLineStart != null && trackerLineEnd != null)
+		{
+			var start = trackerLevels[trackerLineStart.Level];
+			var end = trackerLevels[trackerLineEnd.Level];
+			var line = new TrackerLine(start, end, trackerLineType);
+			switch (trackerLineType)
+			{
+				case ConnectionType.Neutral:
+					if (start.NeutralLine != null)
+					{
+						start.NeutralLine.End.IncomingLines.Remove(start.NeutralLine);
+						Tracker_Canvas.Children.Remove(start.NeutralLine.Line);
+					}
+					trackerLineStart.HighlightNeutral(false);
+					start.NeutralLine = line;
+					line.Line.StartPoint = trackerLineStart.Bounds.TopLeft + trackerLineStart.ExitNeutral.Bounds.Center + new Point(3, 3);
+					break;
+				case ConnectionType.Hero:
+					if (start.HeroLine != null)
+					{
+						start.HeroLine.End.IncomingLines.Remove(start.HeroLine);
+						Tracker_Canvas.Children.Remove(start.HeroLine.Line);
+					}
+					trackerLineStart.HighlightHero(false);
+					start.HeroLine = line;
+					line.Line.StartPoint = trackerLineStart.Bounds.TopLeft + trackerLineStart.ExitHero.Bounds.Center + new Point(3, 3);
+					break;
+				case ConnectionType.Dark:
+					if (start.DarkLine != null)
+					{
+						start.DarkLine.End.IncomingLines.Remove(start.DarkLine);
+						Tracker_Canvas.Children.Remove(start.DarkLine.Line);
+					}
+					trackerLineStart.HighlightDark(false);
+					start.DarkLine = line;
+					line.Line.StartPoint = trackerLineStart.Bounds.TopLeft + trackerLineStart.ExitDark.Bounds.Center + new Point(3, 3);
+					break;
+			}
+			trackerLineEnd.HighlightStart(false);
+			end.IncomingLines.Add(line);
+			line.Line.EndPoint = trackerLineEnd.Bounds.TopLeft + trackerLineEnd.StartPoint.Bounds.Center + new Point(3, 3);
+			Tracker_Canvas.Children.Add(line.Line);
+			trackerLineStart = null;
+			trackerLineEnd = null;
+		}
 	}
 }

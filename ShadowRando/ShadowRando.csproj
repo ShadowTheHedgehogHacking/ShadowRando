@@ -13,6 +13,7 @@
   <ItemGroup>
     <PackageReference Include="AFSLib" Version="1.1.1" />
     <PackageReference Include="Avalonia" Version="11.0.9" />
+    <PackageReference Include="Avalonia.Controls.PanAndZoom" Version="11.0.0.3" />
     <PackageReference Include="Avalonia.Themes.Fluent" Version="11.0.9" />
     <PackageReference Include="Avalonia.Fonts.Inter" Version="11.0.9" />
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.2.2" />

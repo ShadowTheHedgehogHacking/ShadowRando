@@ -1,0 +1,19 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="140" d:DesignHeight="100"
+             x:Class="ShadowRando.Controls.TrackerNode" Cursor="SizeAll"
+             PointerPressed="UserControl_PointerPressed"
+             PointerReleased="UserControl_PointerReleased">
+  <Border Background="Gray" CornerRadius="6" Padding="3,3,3,6">
+    <Grid RowDefinitions="Auto,Auto,Auto,Auto" ColumnDefinitions="Auto,Auto,Auto">
+      <TextBlock x:Name="LevelName" Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3" HorizontalAlignment="Center" Text="Air Fleet" />
+      <Ellipse x:Name="StartPoint" Grid.Row="2" Fill="Gray" Stroke="Black" StrokeThickness="2" Width="16" Height="16" Cursor="Hand" />
+      <Image x:Name="LevelImage" Source="/Assets/Air Fleet.png" Grid.Row="1" Grid.Column="1" Grid.RowSpan="3" Margin="3,0,3,0" />
+      <Ellipse x:Name="ExitDark" Grid.Row="1" Grid.Column="2" Fill="Red" Stroke="Black" StrokeThickness="2" Width="16" Height="16" Cursor="Hand" />
+      <Ellipse x:Name="ExitNeutral" Grid.Row="2" Grid.Column="2" Fill="White" Stroke="Black" StrokeThickness="2" Width="16" Height="16" Cursor="Hand" />
+      <Ellipse x:Name="ExitHero" Grid.Row="3" Grid.Column="2" Fill="Blue" Stroke="Black" StrokeThickness="2" Width="16" Height="16" Cursor="Hand" />
+    </Grid>
+  </Border>
+</UserControl>

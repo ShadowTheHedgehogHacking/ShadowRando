@@ -3,6 +3,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="clr-namespace:ShadowRando.ViewModels"
+             xmlns:uc="clr-namespace:ShadowRando.Controls"
+             xmlns:paz="using:Avalonia.Controls.PanAndZoom"
              mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="750"
              x:Class="ShadowRando.Views.MainView"
              x:DataType="vm:MainViewModel"
@@ -805,6 +807,60 @@
                     <CheckBox x:Name="Models_CheckBox_ModelP2" IsEnabled ="False">Randomize Player 2's Model</CheckBox>
                 </StackPanel>
             </TabItem>
+          <TabItem Header="Tracker">
+            <Grid RowDefinitions="Auto,*">
+              <StackPanel Orientation="Horizontal" Grid.Row="0">
+                <ComboBox x:Name="Tracker_ComboBox_Level" IsEnabled="False" MinWidth="180" Margin="0,0,3,0" SelectionChanged="Tracker_ComboBox_Level_SelectionChanged">
+                  <ComboBoxItem>Westopolis</ComboBoxItem>
+                  <ComboBoxItem>Digital Circuit</ComboBoxItem>
+                  <ComboBoxItem>Glyphic Canyon</ComboBoxItem>
+                  <ComboBoxItem>Lethal Highway</ComboBoxItem>
+                  <ComboBoxItem>Cryptic Castle</ComboBoxItem>
+                  <ComboBoxItem>Prison Island</ComboBoxItem>
+                  <ComboBoxItem>Circus Park</ComboBoxItem>
+                  <ComboBoxItem>Central City</ComboBoxItem>
+                  <ComboBoxItem>The Doom</ComboBoxItem>
+                  <ComboBoxItem>Sky Troops</ComboBoxItem>
+                  <ComboBoxItem>Mad Matrix</ComboBoxItem>
+                  <ComboBoxItem>Death Ruins</ComboBoxItem>
+                  <ComboBoxItem>The ARK</ComboBoxItem>
+                  <ComboBoxItem>Air Fleet</ComboBoxItem>
+                  <ComboBoxItem>Iron Jungle</ComboBoxItem>
+                  <ComboBoxItem>Space Gadget</ComboBoxItem>
+                  <ComboBoxItem>Lost Impact</ComboBoxItem>
+                  <ComboBoxItem>GUN Fortress</ComboBoxItem>
+                  <ComboBoxItem>Black Comet</ComboBoxItem>
+                  <ComboBoxItem>Lava Shelter</ComboBoxItem>
+                  <ComboBoxItem>Cosmic Fall</ComboBoxItem>
+                  <ComboBoxItem>Final Haunt</ComboBoxItem>
+                  <ComboBoxItem>The Last Way</ComboBoxItem>
+                  <ComboBoxItem>Black Bull (LH)</ComboBoxItem>
+                  <ComboBoxItem>Egg Breaker (CC)</ComboBoxItem>
+                  <ComboBoxItem>Heavy Dog</ComboBoxItem>
+                  <ComboBoxItem>Egg Breaker (MM)</ComboBoxItem>
+                  <ComboBoxItem>Black Bull (DR)</ComboBoxItem>
+                  <ComboBoxItem>Blue Falcon</ComboBoxItem>
+                  <ComboBoxItem>Egg Breaker (IJ)</ComboBoxItem>
+                  <ComboBoxItem>Black Doom (GF)</ComboBoxItem>
+                  <ComboBoxItem>Sonic &amp; Diablon (GF)</ComboBoxItem>
+                  <ComboBoxItem>Egg Dealer (BC)</ComboBoxItem>
+                  <ComboBoxItem>Sonic &amp; Diablon (BC)</ComboBoxItem>
+                  <ComboBoxItem>Egg Dealer (LS)</ComboBoxItem>
+                  <ComboBoxItem>Egg Dealer (CF)</ComboBoxItem>
+                  <ComboBoxItem>Black Doom (CF)</ComboBoxItem>
+                  <ComboBoxItem>Black Doom (FH)</ComboBoxItem>
+                  <ComboBoxItem>Sonic &amp; Diablon (FH)</ComboBoxItem>
+                  <ComboBoxItem>Devil Doom</ComboBoxItem>
+                </ComboBox>
+                <Button x:Name="Tracker_Button_AddLevel" IsEnabled="False" Margin="0,0,3,0" Click="Tracker_Button_AddLevel_Click">Add</Button>
+                <Button x:Name="Tracker_Button_RemoveLevel" IsEnabled="False" Margin="0,0,3,0" Click="Tracker_Button_RemoveLevel_Click">Remove</Button>
+                <Button x:Name="Tracker_Button_Reset" Click="Tracker_Button_Reset_Click">Reset</Button>
+              </StackPanel>
+              <paz:ZoomBorder x:Name="Tracker_ZoomBorder" Grid.Row="1" Stretch="None" ZoomSpeed="1.2" ClipToBounds="True" Focusable="True" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" MinOffsetX="-5000" MinOffsetY="-2500" MaxOffsetX="0" MaxOffsetY="0">
+                <Canvas x:Name="Tracker_Canvas" HorizontalAlignment="Left" VerticalAlignment="Top" Width="5000" Height="2500" PointerMoved="Tracker_Canvas_PointerMoved" />
+              </paz:ZoomBorder>
+            </Grid>
+          </TabItem>
             <TabItem Header="Spoilers">
                 <Grid ColumnDefinitions="Auto,*">
                     <ListBox x:Name="Spoilers_ListBox_LevelList" Margin="0,0,0,70" MinWidth="200" Grid.Column="0"

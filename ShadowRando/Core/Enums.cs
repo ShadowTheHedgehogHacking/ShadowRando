@@ -128,7 +128,7 @@
 		GUNSoldier
 	}
 
-public enum StageType { Neutral, Hero, Dark, End }
+	public enum StageType { Neutral, Hero, Dark, End }
 
 	public enum ConnectionType { Neutral, Hero, Dark }
 
