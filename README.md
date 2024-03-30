@@ -131,3 +131,7 @@ Each model must be placed in its own folder, keeping the original file names (P1
 1. Right click the Extracted format game (0 filesize entry) and pick `Convert File...`
 2. The Convert window will appear, click "Convert..." and name it `game.iso` for Nintendont, or `ShadowRando.iso` for Dolphin
 3. Move/Save the ISO to the Path Dolphin detects your games. A new full-size entry should appear in your Dolphins game list. Use this when playing the game.
+
+### (Developers Only) How To Build Release Variant
+Tweak below with target platform in -r and adjust --self-contained to true if you want to embed .NET 8 Desktop Runtime in the output
+`dotnet publish ShadowRando.Desktop -c Release -r win-x64 --self-contained false /p:PublishSingleFile=true`
