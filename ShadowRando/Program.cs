@@ -2,7 +2,7 @@
 
 using Avalonia;
 
-namespace ShadowRando.Desktop;
+namespace ShadowRando;
 
 class Program
 {
