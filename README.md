@@ -1,5 +1,4 @@
-### Disclaimer
-This project is a work in progress
+# ShadowRando - Shadow the Hedgehog Randomizer
 
 ### Randomization Features
 * Level Order / Story Route Randomization with no deadlocking. You may warp back, but there is always a way forward! Keep trying! A detailed breakdown of Route Options is below.
@@ -98,7 +97,7 @@ The randomizer can select randomized models for Shadow and optionally the 2P Yel
 Each model must be placed in its own folder, keeping the original file names (P1 models are `shadow.one`, P2 models are `shadow2py.one`). P1 and P2 models made as a set should be placed in the same folder, but can be selected independently of each other.
 
 ### Extraction of Game
-1. Get the latest release or dev Dolphin - [5.0-21088 or newer recommended](https://dolphin-emu.org/download/)
+1. Get the latest release or dev Dolphin - [Dolphin 2407 or newer recommended](https://dolphin-emu.org/download/)
 2. (Optional: only do this step if you want to keep config separate) Before launching dolphin, create an empty file
    `portable.txt` in the same folder as Dolphin.exe
 3. Open Dolphin
@@ -134,4 +133,4 @@ Each model must be placed in its own folder, keeping the original file names (P1
 
 ### (Developers Only) How To Build Release Variant
 Tweak below with target platform in -r and adjust --self-contained to true if you want to embed .NET 8 Desktop Runtime in the output
-`dotnet publish ShadowRando.Desktop -c Release -r win-x64 --self-contained false /p:PublishSingleFile=true`
+`dotnet publish ShadowRando -c Release -r win-x64 --self-contained false /p:PublishSingleFile=true`
