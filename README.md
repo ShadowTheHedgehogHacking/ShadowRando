@@ -52,8 +52,9 @@ I would pick that folder, not the `..\Desktop\ShadowExtracted\sys` folder, unlik
 ----
 #### This feature requires setting Dolphin MEM1 to 64MB mode! Be aware of this if you choose to use Layout Randomization, otherwise your game will crash on level load.
 
-#### A Warning about Reloaded <= 1.1 & 2P-Reloaded <= 1.0b
+#### A Warning about Reloaded <= 1.1
 If you use the "Random Partners" option, you may be unable to complete certain missions. To fix this issue, download the '[missing_events_reloaded_based_roms](https://github.com/ShadowTheHedgehogHacking/ShadowRando/releases/download/0.4.0/missing_events_reloaded_based_roms.7z)' and merge these into your extracted game's `events` folder. It can be done before or after your randomization.
+If your extracted game has this issue detected, a warning will display.
 
 ----
 
