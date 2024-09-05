@@ -14,7 +14,7 @@
 Using GCR and other game extraction methods are NOT supported, please follow the steps below instead (Dolphin extracted format method).
 
 ---Extraction of Game and Launching---
-1. Get the latest release or dev Dolphin
+1. Get the latest release of Dolphin, such as "Dolphin 2409" or newer
 2. (Optional: only do this step if you want to keep config separate) Before launching dolphin, create an empty file `portable.txt` in the same folder as Dolphin
 3. Open Dolphin
 4. Set game path to your Shadow the Hedgehog NTSC-U ISO
@@ -33,9 +33,6 @@ Using GCR and other game extraction methods are NOT supported, please follow the
 2. Select Advanced Tab
 3. In Memory Override section, check Enable Emulated Memory Size Override
 4. Slide MEM1 to 64 MB (maximum)
-
----Reloaded 1.1 and earlier based ROMs---
-If you use the "Random Partners" option, you may be unable to complete certain missions. To fix this issue, download the 'missing_events_reloaded_based_roms' and merge these into your extracted game's events folder. It can be done before or after your randomization. See the README on the Project Page for details. 
         </TextBlock>
 		<StackPanel Orientation="Horizontal" Margin="0,10,0,0">
 			<Button HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Height="40" Margin="15,0,10,0" Click="LoadNewGameFolder_OnClick">Pick Extracted Shadow the Hedgehog Game</Button>
