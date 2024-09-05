@@ -1498,7 +1498,19 @@ public partial class MainView : UserControl
 
 			buf = BitConverter.GetBytes(0x38000000 | stageAssociationIDMap[stageids[0] + stagefirst]);
 			Array.Reverse(buf);
-			buf.CopyTo(dolfile, storyModeStartAddress);
+
+			// Check the ROM we're patching does not overwrite the Story Mode first stage (Mods using SX Timing)
+			if (dolfile[storyModeStartAddress] == 0x38 && dolfile[storyModeStartAddress + 1] == 0x0 &&
+			    dolfile[storyModeStartAddress + 2] == 0x0 && dolfile[storyModeStartAddress + 3] == 0x64)
+			{
+				buf.CopyTo(dolfile, storyModeStartAddress);
+			}
+			else
+			{
+				// If it does, we need to follow the branch and replace the initial instruction within the branch
+				// TODO: Read branch instruction, follow branch address, and write at matching
+				buf.CopyTo(dolfile, storyModeStartAddress);
+			}
 		}
 
 		Dispatcher.UIThread.Post(() => UpdateProgressBar(15));
