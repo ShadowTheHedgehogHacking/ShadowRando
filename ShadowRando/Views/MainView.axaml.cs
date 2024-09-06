@@ -1507,9 +1507,34 @@ public partial class MainView : UserControl
 			}
 			else
 			{
-				// If it does, we need to follow the branch and replace the initial instruction within the branch
-				// TODO: Read branch instruction, follow branch address, and write at matching
-				buf.CopyTo(dolfile, storyModeStartAddress);
+				// Reloaded 1.2
+				if (dolfile[storyModeStartAddress] == 0x4B && dolfile[storyModeStartAddress + 1] == 0xD3 &&
+				    dolfile[storyModeStartAddress + 2] == 0x25 && dolfile[storyModeStartAddress + 3] == 0xCC)
+				{
+					// 4BD325CC (jmp to 800046FC / 0x16FC)
+					buf.CopyTo(dolfile, 0x16FC);
+				}
+				// Reloaded 1.2 Widescreen
+				else if (dolfile[storyModeStartAddress] == 0x4B && dolfile[storyModeStartAddress + 1] == 0xD3 &&
+						 dolfile[storyModeStartAddress + 2] == 0x26 && dolfile[storyModeStartAddress + 3] == 0x34)
+				{
+					// 4BD32634 (jmp to 80004764 / 0x1764)
+					buf.CopyTo(dolfile, 0x1764);
+				}
+				/*// SX 1.1
+				else if (dolfile[storyModeStartAddress] == 0x4B && dolfile[storyModeStartAddress + 1] == 0x0 &&
+				         dolfile[storyModeStartAddress + 2] == 0x0 && dolfile[storyModeStartAddress + 3] == 0x0)
+				{
+				}
+				// SX 1.1 Widescreen
+				else if (dolfile[storyModeStartAddress] == 0x4B && dolfile[storyModeStartAddress + 1] == 0x0 &&
+				         dolfile[storyModeStartAddress + 2] == 0x0 && dolfile[storyModeStartAddress + 3] == 0x0)
+				{
+				}*/
+				else {
+					// TODO: Probably show a warning that there's an unexpected instruction/unsupported rom?
+					buf.CopyTo(dolfile, storyModeStartAddress);
+				}
 			}
 		}
 
