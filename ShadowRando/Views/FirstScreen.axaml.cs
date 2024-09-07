@@ -102,7 +102,7 @@ public partial class FirstScreen : UserControl
 		bool missingEventsDetected = reloaded_missing_event_names.Any(eventName => !File.Exists(Path.Combine(gamePath, "files", "event", eventName)));
 		if (missingEventsDetected)
 		{
-			await Utils.ShowSimpleMessage("Missing Events Detected", $"We have detected missing event files in your game.\n\nIf you use the \"Random Partners\" option, you may be unable to complete certain missions.{Environment.NewLine}{Environment.NewLine}To fix this issue, download the 'missing_events_reloaded_based_roms'{Environment.NewLine}and merge these into your extracted game's events folder.{Environment.NewLine}It can be done before or after your randomization.{Environment.NewLine}{Environment.NewLine}See the README on the Project Page for details.", ButtonEnum.Ok, Icon.Warning);
+			await Utils.ShowSimpleMessage("Missing Events Detected", $"We have detected missing event files in your game.{Environment.NewLine}{Environment.NewLine}If you use the \"Random Partners\" option, you may be unable to complete certain missions.{Environment.NewLine}{Environment.NewLine}To fix this issue, download the 'missing_events_reloaded_based_roms'{Environment.NewLine}and merge these into your extracted game's events folder.{Environment.NewLine}It can be done before or after your randomization.{Environment.NewLine}{Environment.NewLine}See the README on the Project Page for details.", ButtonEnum.Ok, Icon.Warning);
 		}
 
 		if (_settings.GamePath != gamePath && Directory.Exists("backup"))
