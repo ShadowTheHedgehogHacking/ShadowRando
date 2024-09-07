@@ -1521,23 +1521,19 @@ public partial class MainView : UserControl
 					// 4BD32634 (jmp to 80004764 / 0x1764)
 					buf.CopyTo(dolfile, 0x1764);
 				}
-				/*// SX 1.1
-				else if (dolfile[storyModeStartAddress] == 0x4B && dolfile[storyModeStartAddress + 1] == 0x0 &&
-				         dolfile[storyModeStartAddress + 2] == 0x0 && dolfile[storyModeStartAddress + 3] == 0x0)
+				// SX 1.1 & SX 1.1 Widescreen
+				else if (dolfile[storyModeStartAddress] == 0x4B && dolfile[storyModeStartAddress + 1] == 0xD3 &&
+				         dolfile[storyModeStartAddress + 2] == 0x2A && dolfile[storyModeStartAddress + 3] == 0xB4)
 				{
+					// 4BD32AB4 (jmp to 80004BE4 / 0x1BE4)
+					buf.CopyTo(dolfile, 0x1BE4);
 				}
-				// SX 1.1 Widescreen
-				else if (dolfile[storyModeStartAddress] == 0x4B && dolfile[storyModeStartAddress + 1] == 0x0 &&
-				         dolfile[storyModeStartAddress + 2] == 0x0 && dolfile[storyModeStartAddress + 3] == 0x0)
-				{
-				}*/
 				else {
-					// TODO: Probably show a warning that there's an unexpected instruction/unsupported rom?
 					buf.CopyTo(dolfile, storyModeStartAddress);
+					Dispatcher.UIThread.Post(() => Utils.ShowSimpleMessage("Unidentified ROM Error", $"The Story Mode Start instruction is unexpected.{Environment.NewLine}Undefined behavior may occur if using this ROM.", ButtonEnum.Ok, Icon.Error));
 				}
 			}
 		}
-
 		Dispatcher.UIThread.Post(() => UpdateProgressBar(15));
 
 		// patch the route menu to allow stg06xx+ to display next stages
