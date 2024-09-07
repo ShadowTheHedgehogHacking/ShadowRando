@@ -269,7 +269,7 @@ public partial class MainView : UserControl
 
 	private string selectedFolderPath;
 	private bool avaloniaPreviewUI;
-	const string programVersion = "0.6.0";
+	const string programVersion = "0.6.1-SHC2024";
 	private bool programInitialized = false;
 	private bool randomizeProcessing = false;
 
