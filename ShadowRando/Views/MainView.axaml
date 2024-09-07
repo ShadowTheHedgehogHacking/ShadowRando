@@ -29,7 +29,7 @@
                                HorizontalAlignment="Center">
                             ShadowRando
                         </Label>
-                        <Label FontWeight="Bold">Created by dreamsyntax &amp; MainMemory</Label>
+                        <Label FontWeight="Bold">Created by dreamsyntax &amp; MainMemory &amp; BlazinZzetti</Label>
                         <Button x:Name="LevelOrder_Button_ProjectPage" Margin="10,0,0,0"
                                 Click="LevelOrder_Button_ProjectPage_Click" HorizontalAlignment="Center">
                             Project Page

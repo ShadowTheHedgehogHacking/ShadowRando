@@ -8,7 +8,7 @@
     <StackPanel VerticalAlignment="Center">
         <StackPanel Margin="0,20,0,0" VerticalAlignment="Center" HorizontalAlignment="Center">
             <Label FontWeight="Bold" FontSize="16" HorizontalAlignment="Center">ShadowRando: A Shadow the Hedgehog Randomizer</Label>
-            <Label HorizontalAlignment="Center" FontWeight="Bold">Created by dreamsyntax &amp; MainMemory</Label>
+            <Label HorizontalAlignment="Center" FontWeight="Bold">Created by dreamsyntax &amp; MainMemory &amp; BlazinZzetti</Label>
         </StackPanel>
         <TextBlock Margin="10" xml:space="preserve" TextWrapping="Wrap">The extracted folder should have a 'files' and 'sys' folder inside of it.
 Using GCR and other game extraction methods are NOT supported, please follow the steps below instead (Dolphin extracted format method).
