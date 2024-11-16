@@ -688,6 +688,7 @@
 							<StackPanel>
 								<CheckBox x:Name="Layout_Misc_CheckBox_RandomItemCapsules">Random Item Capsules</CheckBox>
 								<CheckBox x:Name="Layout_Misc_CheckBox_RandomItemBalloons">Random Item Balloons</CheckBox>
+								<CheckBox x:Name="Layout_Misc_CheckBox_RandomCreamCheeseLocations">Random Cheese and Cream Locations</CheckBox>
 							</StackPanel>
 						</TabItem>
 					</TabControl>

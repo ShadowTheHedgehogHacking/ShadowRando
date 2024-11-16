@@ -180,6 +180,8 @@ namespace ShadowRando.Core
 		public bool RandomItemCapsules;
 		[IniAlwaysInclude]
 		public bool RandomItemBalloons;
+		[IniAlwaysInclude]
+		public bool RandomCreamCheeseLocations;
 	}
 
 	public class SettingsSubtitles
