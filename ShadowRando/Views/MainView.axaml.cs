@@ -2309,8 +2309,6 @@ public partial class MainView : UserControl
 
 			if (settings.Layout.MakeCCSplinesVehicleCompatible)
 			{
-				if (stageDataIdentifier == "stg0400" || stageDataIdentifier == "stg0700" || stageIdToModify >= 28)
-					continue;
 				var datOneFile = stageDataIdentifier + "_dat.one";
 				var datOneData = File.ReadAllBytes(Path.Combine("backup", "sets", stageDataIdentifier, datOneFile));
 				ONEArchiveType archiveType = ONEArchiveTester.GetArchiveType(ref datOneData);
