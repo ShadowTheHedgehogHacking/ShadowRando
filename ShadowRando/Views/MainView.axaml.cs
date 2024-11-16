@@ -518,6 +518,7 @@ public partial class MainView : UserControl
 		// Layout Misc
 		Layout_Misc_CheckBox_RandomItemCapsules.IsChecked = settings.Layout.Misc.RandomItemCapsules;
 		Layout_Misc_CheckBox_RandomItemBalloons.IsChecked = settings.Layout.Misc.RandomItemBalloons;
+		Layout_Misc_CheckBox_RandomCreamCheeseLocations.IsChecked = settings.Layout.Misc.RandomCreamCheeseLocations;
 
 		// Subtitles
 		Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked = settings.Subtitles.Randomize;
@@ -618,6 +619,7 @@ public partial class MainView : UserControl
 		// Misc
 		settings.Layout.Misc.RandomItemCapsules = Layout_Misc_CheckBox_RandomItemCapsules.IsChecked.Value;
 		settings.Layout.Misc.RandomItemBalloons = Layout_Misc_CheckBox_RandomItemBalloons.IsChecked.Value;
+		settings.Layout.Misc.RandomCreamCheeseLocations = Layout_Misc_CheckBox_RandomCreamCheeseLocations.IsChecked.Value;
 
 		// Subtitles
 		settings.Subtitles.Randomize = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
@@ -2214,6 +2216,15 @@ public partial class MainView : UserControl
 					RandomizeItemBalloons(ref hrdLayoutData, r);
 			}
 
+			if (settings.Layout.Misc.RandomCreamCheeseLocations)
+			{
+				if (stageId == 300)
+				{  // Cryptic Castle
+					if (nrmLayoutData != null)
+						PseudoRandomizeCreamAndCheeseLocations(ref nrmLayoutData, r);
+				}
+			}
+
 			if (settings.Layout.Partner.Mode == LayoutPartnerMode.Wild)
 			{
 				MakeAllPartnersRandom(ref cmnLayoutData, settings.Layout.Partner.KeepAffiliationsAtSameLocation, darkPartners, heroPartners, stageId, r);
@@ -2250,6 +2261,8 @@ public partial class MainView : UserControl
 					break;
 			}
 			
+			/// Special Object Additions
+
 			if (stageId == 400)
 			{
 				// add guaranteed vacuums for central city
@@ -2281,6 +2294,8 @@ public partial class MainView : UserControl
 				finalHauntVacuum4.Weapon = EWeapon.VacuumPod;
 				cmnLayoutData.Add(finalHauntVacuum4);
 			}
+
+			/// End Special Object Additions
 
 			LayoutEditorFunctions.SaveShadowLayout(cmnLayoutData, Path.Combine(settings.GamePath, "files", stageDataIdentifier, cmnLayout), false);
 			if (nrmLayoutData != null)
@@ -2831,6 +2846,63 @@ public partial class MainView : UserControl
 		}
 	}
 
+	private static void PseudoRandomizeCreamAndCheeseLocations(ref List<SetObjectShadow> setData, Random r)
+	{
+		(SetObjectShadow item, int index) cream = setData
+			.Select((item, index) => new { Item = item, Index = index })
+			.Where(pair => pair.Item.List == 0x0B && pair.Item.Type == 0xBD)
+			.Select(pair => (Item: pair.Item, Index: pair.Index))
+			.ToList()[0];
+
+		(Object0BBE_Chao item, int index) cheese = setData
+			.Select((item, index) => new { Item = item, Index = index })
+			.Where(pair => pair.Item is Object0BBE_Chao && ((Object0BBE_Chao)pair.Item).Chao == Object0BBE_Chao.EChao.Cheese)
+			.Select(pair => (Item: (Object0BBE_Chao)pair.Item, Index: pair.Index))
+			.ToList()[0];
+
+		var creamLocationChoice = r.Next(12);
+		var cheeseLocationChoice = r.Next(12);
+
+		var creamPositions = new List<SetObject>()
+		{
+			new SetObjectShadow() { PosX = -112.6123f, PosY = -1090f, PosZ = -7692.8460f, RotX = 0f, RotY = -135f, RotZ = 0f}, // default
+			new SetObjectShadow() { PosX = 104.5143f, PosY = -1090f, PosZ = -7479.0920f, RotX = 0f, RotY = 35f, RotZ = 0f}, // across wall
+			new SetObjectShadow() { PosX = 0f, PosY = 0f, PosZ = 85f, RotX = 0f, RotY = 0f, RotZ = 0f}, // stage start
+			new SetObjectShadow() { PosX = 4.2389f, PosY = -442.2750f, PosZ = -2166.0570f, RotX = 0f, RotY = 180f, RotZ = 0f}, // first balloon backtrack
+			new SetObjectShadow() { PosX = 353.0051f, PosY = -939.6697f, PosZ = -6270.1410f, RotX = 0f, RotY = -130f, RotZ = 0f}, // lower right 2nd lantern
+			new SetObjectShadow() { PosX = -94.0962f, PosY = -1330.0000f, PosZ = -19661.5600f, RotX = 0f, RotY = -35f, RotZ = 0f}, // 3rd balloon back left wall
+			new SetObjectShadow() { PosX = -565.1447f, PosY = -1171.0000f, PosZ = -20972.8800f, RotX = 0f, RotY = 90f, RotZ = 0f}, // wall crusher 1
+			new SetObjectShadow() { PosX = -1189.5440f, PosY = -930.0001f, PosZ = -20978.6300f, RotX = 0f, RotY = 180f, RotZ = 0f}, // shadowbox hidden area
+			new SetObjectShadow() { PosX = -3349.6850f, PosY = -1800.0000f, PosZ = -19964.9900f, RotX = 0f, RotY = 90f, RotZ = 0f}, // 4th flame dark route
+			new SetObjectShadow() { PosX = -4500.0800f, PosY = -1908.4160f, PosZ = -9063.2770f, RotX = 0f, RotY = 0f, RotZ = 0f}, // end of dark route
+			new SetObjectShadow() { PosX = -14169.9000f, PosY = -5290.0000f, PosZ = -20808.0700f, RotX = 0f, RotY = -125f, RotZ = 0f}, // end of neutral route
+			new SetObjectShadow() { PosX = 166.8942f, PosY = -1422.3400f, PosZ = -16144.5400f, RotX = 0f, RotY = -125f, RotZ = 0f}, // savepoint 4
+		};
+
+		var cheesePositions = new List<SetObject>()
+		{
+			new SetObjectShadow() { PosX = -3420f, PosY = -1821f, PosZ = -21462f, RotX = 0f, RotY = 0f, RotZ = 0f}, // default
+			new SetObjectShadow() { PosX = 0f, PosY = 0f, PosZ = 0f, RotX = 0f, RotY = 0f, RotZ = 0f }, // 
+			new SetObjectShadow() { PosX = 0f, PosY = 0f, PosZ = 0f, RotX = 0f, RotY = 0f, RotZ = 0f }, // 
+			new SetObjectShadow() { PosX = 0f, PosY = 0f, PosZ = 0f, RotX = 0f, RotY = 0f, RotZ = 0f }, // 
+			new SetObjectShadow() { PosX = 0f, PosY = 0f, PosZ = 0f, RotX = 0f, RotY = 0f, RotZ = 0f }, // 
+			new SetObjectShadow() { PosX = 0f, PosY = 0f, PosZ = 0f, RotX = 0f, RotY = 0f, RotZ = 0f }, //
+			new SetObjectShadow() { PosX = 0f, PosY = 0f, PosZ = 0f, RotX = 0f, RotY = 0f, RotZ = 0f }, //
+			new SetObjectShadow() { PosX = 0f, PosY = 0f, PosZ = 0f, RotX = 0f, RotY = 0f, RotZ = 0f }, //
+			new SetObjectShadow() { PosX = 0f, PosY = 0f, PosZ = 0f, RotX = 0f, RotY = 0f, RotZ = 0f }, //
+			new SetObjectShadow() { PosX = 0f, PosY = 0f, PosZ = 0f, RotX = 0f, RotY = 0f, RotZ = 0f }, //
+			new SetObjectShadow() { PosX = 0f, PosY = 0f, PosZ = 0f, RotX = 0f, RotY = 0f, RotZ = 0f }, //
+			new SetObjectShadow() { PosX = 0f, PosY = 0f, PosZ = 0f, RotX = 0f, RotY = 0f, RotZ = 0f }, //
+		};
+
+
+		// buff render dist* may be problematic with collision/falling...
+		cream.item.Rend = 10; // default 4
+		cheese.item.Rend = 10; // default 6
+
+		setData[cream.index] = cream.item;
+		setData[cheese.index] = cheese.item;
+	}
 
 	private static void SetHawksLinkedToSearchLightsUnmountable(ref List<SetObjectShadow> cmnSetData, ref List<SetObjectShadow> nrmSetData, ref List<SetObjectShadow> hrdSetData)
 	{
@@ -4058,6 +4130,11 @@ public partial class MainView : UserControl
 				foreach (var partner in settings.Layout.Partner.SelectedPartners)
 					await sw.WriteLineAsync($"{partner}");
 			}
+
+			await sw.WriteLineAsync("--- Misc ---");
+			await sw.WriteLineAsync($"Random Item Capsules: {settings.Layout.Misc.RandomItemCapsules}");
+			await sw.WriteLineAsync($"Random Item Balloons: {settings.Layout.Misc.RandomItemBalloons}");
+			await sw.WriteLineAsync($"Random Cream and Cheese Locations: {settings.Layout.Misc.RandomCreamCheeseLocations}");
 		}
 
 		await sw.WriteLineAsync("---- Subtitles ----");
@@ -4259,6 +4336,7 @@ public partial class MainView : UserControl
 		// Misc
 		Layout_Misc_CheckBox_RandomItemCapsules.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
 		Layout_Misc_CheckBox_RandomItemBalloons.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
+		Layout_Misc_CheckBox_RandomCreamCheeseLocations.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
 		// --End Layout--
 		// Subtitles
 		Subtitles_CheckBox_OnlyWithLinkedAudio.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;	
