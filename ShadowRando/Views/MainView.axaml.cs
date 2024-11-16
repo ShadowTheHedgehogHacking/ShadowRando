@@ -2238,6 +2238,13 @@ public partial class MainView : UserControl
 						WildRandomizeAllEnemiesWithTranslations(ref hrdLayoutData, allEnemies, groundEnemies, flyingEnemies, pathTypeFlyingEnemies, r);
 						DelinkVehicleObjects(ref hrdLayoutData);
 					}
+					if (stageId == 200)
+					{ // Digital Circuit
+						if (nrmLayoutData != null && hrdLayoutData != null)
+						{
+							SetHawksLinkedToSearchLightsUnmountable(ref cmnLayoutData, ref nrmLayoutData, ref hrdLayoutData);
+						}
+					}
 					break;
 				default:
 					break;
@@ -2821,6 +2828,117 @@ public partial class MainView : UserControl
 		{
 			vehicle.item.Link = 0;
 			setData[vehicle.index] = vehicle.item;
+		}
+	}
+
+
+	private static void SetHawksLinkedToSearchLightsUnmountable(ref List<SetObjectShadow> cmnSetData, ref List<SetObjectShadow> nrmSetData, ref List<SetObjectShadow> hrdSetData)
+	{
+		// Get all BlackHawks that are mountable with a LinkID other than 0
+		List<(Object008E_BkWingLarge item, int index)> blackHawksCmn = cmnSetData
+			.Select((item, index) => new { Item = item, Index = index })
+			.Where(pair => pair.Item is Object008E_BkWingLarge && pair.Item.Link != 0 && (((Object008E_BkWingLarge)pair.Item).BodyAndDeathType == Object008E_BkWingLarge.EBodyAndDeathType.BLACK_HAWK_FALL_ON_KILL || ((Object008E_BkWingLarge)pair.Item).BodyAndDeathType == Object008E_BkWingLarge.EBodyAndDeathType.BLACK_VOLT_FALL_ON_KILL))
+			.Select(pair => (Item: (Object008E_BkWingLarge)pair.Item, Index: pair.Index))
+			.ToList();
+
+		List<(Object008E_BkWingLarge item, int index)> blackHawksNrm = nrmSetData
+			.Select((item, index) => new { Item = item, Index = index })
+			.Where(pair => pair.Item is Object008E_BkWingLarge && pair.Item.Link != 0 && (((Object008E_BkWingLarge)pair.Item).BodyAndDeathType == Object008E_BkWingLarge.EBodyAndDeathType.BLACK_HAWK_FALL_ON_KILL || ((Object008E_BkWingLarge)pair.Item).BodyAndDeathType == Object008E_BkWingLarge.EBodyAndDeathType.BLACK_VOLT_FALL_ON_KILL))
+			.Select(pair => (Item: (Object008E_BkWingLarge)pair.Item, Index: pair.Index))
+			.ToList();
+
+		List<(Object008E_BkWingLarge item, int index)> blackHawksHrd = hrdSetData
+			.Select((item, index) => new { Item = item, Index = index })
+			.Where(pair => pair.Item is Object008E_BkWingLarge && pair.Item.Link != 0 && (((Object008E_BkWingLarge)pair.Item).BodyAndDeathType == Object008E_BkWingLarge.EBodyAndDeathType.BLACK_HAWK_FALL_ON_KILL || ((Object008E_BkWingLarge)pair.Item).BodyAndDeathType == Object008E_BkWingLarge.EBodyAndDeathType.BLACK_VOLT_FALL_ON_KILL))
+			.Select(pair => (Item: (Object008E_BkWingLarge)pair.Item, Index: pair.Index))
+			.ToList();
+
+		if (blackHawksCmn.Count == 0 && blackHawksNrm.Count == 0 && blackHawksHrd.Count == 0)
+		{
+			// if no rideable hawks, no change needed
+			return;
+		}
+
+		// Get all LinkIDs of Searchlights with SpotOnLinkID enabled
+		List<(Object07D1_Searchlight item, int index)> searchLightsCmn = cmnSetData
+			.Select((item, index) => new { Item = item, Index = index })
+			.Where(pair => pair.Item is Object07D1_Searchlight && ((Object07D1_Searchlight)pair.Item).SpotOnLinkID == ENoYes.Yes)
+			.Select(pair => (Item: (Object07D1_Searchlight)pair.Item, Index: pair.Index))
+			.ToList();
+
+		List<(Object07D1_Searchlight item, int index)> searchLightsNrm= nrmSetData
+			.Select((item, index) => new { Item = item, Index = index })
+			.Where(pair => pair.Item is Object07D1_Searchlight && ((Object07D1_Searchlight)pair.Item).SpotOnLinkID == ENoYes.Yes)
+			.Select(pair => (Item: (Object07D1_Searchlight)pair.Item, Index: pair.Index))
+			.ToList();
+
+		List<(Object07D1_Searchlight item, int index)> searchLightsHrd = hrdSetData
+			.Select((item, index) => new { Item = item, Index = index })
+			.Where(pair => pair.Item is Object07D1_Searchlight && ((Object07D1_Searchlight)pair.Item).SpotOnLinkID == ENoYes.Yes)
+			.Select(pair => (Item: (Object07D1_Searchlight)pair.Item, Index: pair.Index))
+			.ToList();
+
+		var searchLights = searchLightsCmn.Concat(searchLightsNrm).Concat(searchLightsHrd);
+		var linkIDs = searchLights.SelectMany(light => new[] { light.item.Link }).Distinct().ToList();
+
+		foreach (var blackHawk in blackHawksCmn)
+		{
+			if (!linkIDs.Contains(blackHawk.item.Link))
+			{
+				// if not linked to searchlight, no change needed.
+				continue;
+			}
+			if (blackHawk.item.BodyAndDeathType == Object008E_BkWingLarge.EBodyAndDeathType.BLACK_HAWK_FALL_ON_KILL)
+			{
+				// black hawk
+				blackHawk.item.BodyAndDeathType = Object008E_BkWingLarge.EBodyAndDeathType.BLACK_HAWK_DISAPPEAR_ON_KILL;
+			} 
+			else
+			{
+				// black volt
+				blackHawk.item.BodyAndDeathType = Object008E_BkWingLarge.EBodyAndDeathType.BLACK_VOLT_DISAPPEAR_ON_KILL;
+			}
+			cmnSetData[blackHawk.index] = blackHawk.item;
+		}
+
+		foreach (var blackHawk in blackHawksNrm)
+		{
+			if (!linkIDs.Contains(blackHawk.item.Link))
+			{
+				// if not linked to searchlight, no change needed.
+				continue;
+			}
+			if (blackHawk.item.BodyAndDeathType == Object008E_BkWingLarge.EBodyAndDeathType.BLACK_HAWK_FALL_ON_KILL)
+			{
+				// black hawk
+				blackHawk.item.BodyAndDeathType = Object008E_BkWingLarge.EBodyAndDeathType.BLACK_HAWK_DISAPPEAR_ON_KILL;
+			}
+			else
+			{
+				// black volt
+				blackHawk.item.BodyAndDeathType = Object008E_BkWingLarge.EBodyAndDeathType.BLACK_VOLT_DISAPPEAR_ON_KILL;
+			}
+			nrmSetData[blackHawk.index] = blackHawk.item;
+		}
+
+		foreach (var blackHawk in blackHawksHrd)
+		{
+			if (!linkIDs.Contains(blackHawk.item.Link))
+			{
+				// if not linked to searchlight, no change needed.
+				continue;
+			}
+			if (blackHawk.item.BodyAndDeathType == Object008E_BkWingLarge.EBodyAndDeathType.BLACK_HAWK_FALL_ON_KILL)
+			{
+				// black hawk
+				blackHawk.item.BodyAndDeathType = Object008E_BkWingLarge.EBodyAndDeathType.BLACK_HAWK_DISAPPEAR_ON_KILL;
+			}
+			else
+			{
+				// black volt
+				blackHawk.item.BodyAndDeathType = Object008E_BkWingLarge.EBodyAndDeathType.BLACK_VOLT_DISAPPEAR_ON_KILL;
+			}
+			hrdSetData[blackHawk.index] = blackHawk.item;
 		}
 	}
 
