@@ -171,6 +171,7 @@ public partial class MainView : UserControl
 	{
 			{ 100, Tuple.Create("City1",         2) }, // both
 			{ 201, Tuple.Create("Canyon1",       1) }, // hero
+			{ 300, Tuple.Create("HorrorCastle",  3) }, // special case - cream treasure hunt
 			{ 301, Tuple.Create("PrisonIsland",  0) }, // dark
 			{ 302, Tuple.Create("Circus",        0) }, // dark
 			{ 401, Tuple.Create("ARKPast1",      0) }, // dark
@@ -518,7 +519,8 @@ public partial class MainView : UserControl
 		// Layout Misc
 		Layout_Misc_CheckBox_RandomItemCapsules.IsChecked = settings.Layout.Misc.RandomItemCapsules;
 		Layout_Misc_CheckBox_RandomItemBalloons.IsChecked = settings.Layout.Misc.RandomItemBalloons;
-		Layout_Misc_CheckBox_RandomCreamCheeseLocations.IsChecked = settings.Layout.Misc.RandomCreamCheeseLocations;
+		Layout_Misc_CheckBox_PseudoRandomCreamCheeseLocations.IsChecked = settings.Layout.Misc.PseudoRandomCreamCheeseLocations;
+		Layout_Misc_CheckBox_PseudoRandomCreamCheeseLocationsTreasureHunt.IsChecked = settings.Layout.Misc.PseudoRandomCreamCheeseLocationsTreasureHunt;
 
 		// Subtitles
 		Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked = settings.Subtitles.Randomize;
@@ -619,7 +621,8 @@ public partial class MainView : UserControl
 		// Misc
 		settings.Layout.Misc.RandomItemCapsules = Layout_Misc_CheckBox_RandomItemCapsules.IsChecked.Value;
 		settings.Layout.Misc.RandomItemBalloons = Layout_Misc_CheckBox_RandomItemBalloons.IsChecked.Value;
-		settings.Layout.Misc.RandomCreamCheeseLocations = Layout_Misc_CheckBox_RandomCreamCheeseLocations.IsChecked.Value;
+		settings.Layout.Misc.PseudoRandomCreamCheeseLocations = Layout_Misc_CheckBox_PseudoRandomCreamCheeseLocations.IsChecked.Value;
+		settings.Layout.Misc.PseudoRandomCreamCheeseLocationsTreasureHunt = Layout_Misc_CheckBox_PseudoRandomCreamCheeseLocationsTreasureHunt.IsChecked.Value;
 
 		// Subtitles
 		settings.Subtitles.Randomize = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
@@ -2216,12 +2219,12 @@ public partial class MainView : UserControl
 					RandomizeItemBalloons(ref hrdLayoutData, r);
 			}
 
-			if (settings.Layout.Misc.RandomCreamCheeseLocations)
+			if (settings.Layout.Misc.PseudoRandomCreamCheeseLocations)
 			{
 				if (stageId == 300)
 				{  // Cryptic Castle
 					if (nrmLayoutData != null)
-						PseudoRandomizeCreamAndCheeseLocations(ref nrmLayoutData, r);
+						PseudoRandomizeCreamAndCheeseLocations(ref nrmLayoutData, r, settings.Layout.Misc.PseudoRandomCreamCheeseLocationsTreasureHunt);
 				}
 			}
 
@@ -2323,6 +2326,13 @@ public partial class MainView : UserControl
 						nukkoro2Stage.MissionCountDark.Success = total - (int)(total * ((double)settings.Layout.Enemy.AdjustMissionCountsReductionPercent / 100));
 						total = GetTotalBlackArmsEnemies(cmnLayoutData, nrmLayoutData);
 						nukkoro2Stage.MissionCountHero.Success = total - (int)(total * ((double)settings.Layout.Enemy.AdjustMissionCountsReductionPercent / 100));
+						break;
+					case 3:
+						if (settings.Layout.Misc.PseudoRandomCreamCheeseLocationsTreasureHunt)
+						{
+							var totalNewCheeseCream = 24;
+							nukkoro2Stage.MissionCountHero.Success = totalNewCheeseCream - (int)(totalNewCheeseCream * ((double)settings.Layout.Enemy.AdjustMissionCountsReductionPercent / 100));
+						}
 						break;
 					default:
 						break;
@@ -2846,7 +2856,7 @@ public partial class MainView : UserControl
 		}
 	}
 
-	private static void PseudoRandomizeCreamAndCheeseLocations(ref List<SetObjectShadow> setData, Random r)
+	private static void PseudoRandomizeCreamAndCheeseLocations(ref List<SetObjectShadow> setData, Random r, bool treasureHunt)
 	{
 		(SetObjectShadow item, int index) cream = setData
 			.Select((item, index) => new { Item = item, Index = index })
@@ -2859,9 +2869,6 @@ public partial class MainView : UserControl
 			.Where(pair => pair.Item is Object0BBE_Chao && ((Object0BBE_Chao)pair.Item).Chao == Object0BBE_Chao.EChao.Cheese)
 			.Select(pair => (Item: (Object0BBE_Chao)pair.Item, Index: pair.Index))
 			.ToList()[0];
-
-		var creamLocationChoice = r.Next(12);
-		var cheeseLocationChoice = r.Next(12);
 
 		var creamPositions = new List<SetObject>()
 		{
@@ -2882,26 +2889,70 @@ public partial class MainView : UserControl
 		var cheesePositions = new List<SetObject>()
 		{
 			new SetObjectShadow() { PosX = -3420f, PosY = -1821f, PosZ = -21462f, RotX = 0f, RotY = 0f, RotZ = 0f}, // default
-			new SetObjectShadow() { PosX = 0f, PosY = 0f, PosZ = 0f, RotX = 0f, RotY = 0f, RotZ = 0f }, // 
-			new SetObjectShadow() { PosX = 0f, PosY = 0f, PosZ = 0f, RotX = 0f, RotY = 0f, RotZ = 0f }, // 
-			new SetObjectShadow() { PosX = 0f, PosY = 0f, PosZ = 0f, RotX = 0f, RotY = 0f, RotZ = 0f }, // 
-			new SetObjectShadow() { PosX = 0f, PosY = 0f, PosZ = 0f, RotX = 0f, RotY = 0f, RotZ = 0f }, // 
-			new SetObjectShadow() { PosX = 0f, PosY = 0f, PosZ = 0f, RotX = 0f, RotY = 0f, RotZ = 0f }, //
-			new SetObjectShadow() { PosX = 0f, PosY = 0f, PosZ = 0f, RotX = 0f, RotY = 0f, RotZ = 0f }, //
-			new SetObjectShadow() { PosX = 0f, PosY = 0f, PosZ = 0f, RotX = 0f, RotY = 0f, RotZ = 0f }, //
-			new SetObjectShadow() { PosX = 0f, PosY = 0f, PosZ = 0f, RotX = 0f, RotY = 0f, RotZ = 0f }, //
-			new SetObjectShadow() { PosX = 0f, PosY = 0f, PosZ = 0f, RotX = 0f, RotY = 0f, RotZ = 0f }, //
-			new SetObjectShadow() { PosX = 0f, PosY = 0f, PosZ = 0f, RotX = 0f, RotY = 0f, RotZ = 0f }, //
-			new SetObjectShadow() { PosX = 0f, PosY = 0f, PosZ = 0f, RotX = 0f, RotY = 0f, RotZ = 0f }, //
+			new SetObjectShadow() { PosX = -172.2114f, PosY = -438.2748f, PosZ = -2067.9600f, RotX = 0f, RotY = 0f, RotZ = 0f }, // first balloon backtrack left
+			new SetObjectShadow() { PosX = -1.3321f, PosY = -470.0001f, PosZ = -3517.3590f, RotX = 0f, RotY = 0f, RotZ = 0f }, // expert shadow box 1
+			new SetObjectShadow() { PosX = -1.7362f, PosY = -730.0000f, PosZ = -5334.7870f, RotX = 0f, RotY = 0f, RotZ = 0f }, // second balloon
+			new SetObjectShadow() { PosX = -410.0299f, PosY = -940.0000f, PosZ = -6263.6050f, RotX = 0f, RotY = 0f, RotZ = 0f }, // lower left 2nd lantern
+			new SetObjectShadow() { PosX = 115.2704f, PosY = -742.1829f, PosZ = -7570.2910f, RotX = 0f, RotY = 0f, RotZ = 0f }, // 2nd lantern
+			new SetObjectShadow() { PosX = 199.7772f, PosY = -1330.0310f, PosZ = -17850.3100f, RotX = 0f, RotY = 0f, RotZ = 0f }, // secret key (61)
+			new SetObjectShadow() { PosX = -288.5612f, PosY = -1430.0300f, PosZ = -18115.2700f, RotX = 0f, RotY = 0f, RotZ = 0f }, // pit savepoint 5
+			new SetObjectShadow() { PosX = -102.7342f, PosY = -1330.0000f, PosZ = -19858.9000f, RotX = 0f, RotY = 0f, RotZ = 0f }, // in wall after savepoint 5
+			new SetObjectShadow() { PosX = 255.1505f, PosY = -1130.0000f, PosZ = -20972.6900f, RotX = 0f, RotY = 0f, RotZ = 0f }, // red ring hidden cave
+			new SetObjectShadow() { PosX = -473.9226f, PosY = -1150.0000f, PosZ = -21171.9100f, RotX = 0f, RotY = 0f, RotZ = 0f }, // crusher wall right side
+			new SetObjectShadow() { PosX = -2952.6390f, PosY = -1694.0000f, PosZ = -20744.4700f, RotX = 0f, RotY = 0f, RotZ = 0f }, // ceiling, chao room
 		};
 
+		if (treasureHunt)
+		{
+			// treasure hunt mode
+			for (int i = 1; i < creamPositions.Count; i++)
+			{
+				var newCream = LayoutEditorFunctions.CreateShadowObject(0x0B, 0xBD,
+					creamPositions[i].PosX, creamPositions[i].PosY, creamPositions[i].PosZ,
+					creamPositions[i].RotX, creamPositions[i].RotY, creamPositions[i].RotZ,
+					0, 10, new byte[] { 0x01, 0x20, 0x00, 0x80, 0x01, 0x20, 0x00, 0x00 });
+				setData.Add(newCream);
+			}
 
-		// buff render dist* may be problematic with collision/falling...
-		cream.item.Rend = 10; // default 4
-		cheese.item.Rend = 10; // default 6
+			for (int i = 1; i < cheesePositions.Count; i++)
+			{
+				var newCheese = (Object0BBE_Chao)LayoutEditorFunctions.CreateShadowObject(0x0B, 0xBE,
+					cheesePositions[i].PosX, cheesePositions[i].PosY, cheesePositions[i].PosZ,
+					cheesePositions[i].RotX, cheesePositions[i].RotY, cheesePositions[i].RotZ,
+					0, 10, new byte[] { 0x01, 0x20, 0x00, 0x80, 0x01, 0x20, 0x00, 0x00 });
+				newCheese.Chao = Object0BBE_Chao.EChao.Cheese;
+				newCheese.MoveRadius = 1;
+				newCheese.MoveSpeed = 1.1999997f;
+				setData.Add(newCheese);
+			}
+		}
+		else
+		{
+			// normal mode
+			var creamLocationChoice = creamPositions[r.Next(12)];
+			var cheeseLocationChoice = cheesePositions[r.Next(12)];
 
-		setData[cream.index] = cream.item;
-		setData[cheese.index] = cheese.item;
+			// buff render dist* may be problematic with collision/falling...
+			cream.item.Rend = 10; // default 4
+			cheese.item.Rend = 10; // default 6
+
+			cream.item.PosX = creamLocationChoice.PosX;
+			cream.item.PosY = creamLocationChoice.PosY;
+			cream.item.PosZ = creamLocationChoice.PosZ;
+			cream.item.RotX = creamLocationChoice.RotX;
+			cream.item.RotY = creamLocationChoice.RotY;
+			cream.item.RotZ = creamLocationChoice.RotZ;
+
+			cheese.item.PosX = cheeseLocationChoice.PosX;
+			cheese.item.PosY = cheeseLocationChoice.PosY;
+			cheese.item.PosZ = cheeseLocationChoice.PosZ;
+			cheese.item.RotX = cheeseLocationChoice.RotX;
+			cheese.item.RotY = cheeseLocationChoice.RotY;
+			cheese.item.RotZ = cheeseLocationChoice.RotZ;
+
+			setData[cream.index] = cream.item;
+			setData[cheese.index] = cheese.item;
+		}
 	}
 
 	private static void SetHawksLinkedToSearchLightsUnmountable(ref List<SetObjectShadow> cmnSetData, ref List<SetObjectShadow> nrmSetData, ref List<SetObjectShadow> hrdSetData)
@@ -4134,7 +4185,9 @@ public partial class MainView : UserControl
 			await sw.WriteLineAsync("--- Misc ---");
 			await sw.WriteLineAsync($"Random Item Capsules: {settings.Layout.Misc.RandomItemCapsules}");
 			await sw.WriteLineAsync($"Random Item Balloons: {settings.Layout.Misc.RandomItemBalloons}");
-			await sw.WriteLineAsync($"Random Cream and Cheese Locations: {settings.Layout.Misc.RandomCreamCheeseLocations}");
+			await sw.WriteLineAsync($"Pseudo-Random Cream and Cheese Locations: {settings.Layout.Misc.PseudoRandomCreamCheeseLocations}");
+			await sw.WriteLineAsync($"Pseudo-Random Cream and Cheese Locations Treasure Hunt: {settings.Layout.Misc.PseudoRandomCreamCheeseLocationsTreasureHunt}");
+
 		}
 
 		await sw.WriteLineAsync("---- Subtitles ----");
@@ -4336,7 +4389,8 @@ public partial class MainView : UserControl
 		// Misc
 		Layout_Misc_CheckBox_RandomItemCapsules.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
 		Layout_Misc_CheckBox_RandomItemBalloons.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
-		Layout_Misc_CheckBox_RandomCreamCheeseLocations.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
+		Layout_Misc_CheckBox_PseudoRandomCreamCheeseLocations.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
+		Layout_Misc_CheckBox_PseudoRandomCreamCheeseLocationsTreasureHunt.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value && Layout_Misc_CheckBox_PseudoRandomCreamCheeseLocations.IsChecked.Value;
 		// --End Layout--
 		// Subtitles
 		Subtitles_CheckBox_OnlyWithLinkedAudio.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;	
