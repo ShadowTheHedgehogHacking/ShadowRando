@@ -133,5 +133,6 @@ Each model must be placed in its own folder, keeping the original file names (P1
 3. Move/Save the ISO to the Path Dolphin detects your games. A new full-size entry should appear in your Dolphins game list. Use this when playing the game.
 
 ### (Developers Only) How To Build Release Variant
-Tweak below with target platform in -r and adjust --self-contained to true if you want to embed .NET 8 Desktop Runtime in the output
-`dotnet publish ShadowRando -c Release -r win-x64 --self-contained false /p:PublishSingleFile=true`
+Tweak below with target platform in -r and adjust --self-contained to false if you don't want to embed .NET 8 Desktop Runtime in the output
+
+`dotnet publish ShadowRando -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true`
