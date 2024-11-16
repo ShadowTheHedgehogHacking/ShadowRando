@@ -6,15 +6,19 @@ using System.Numerics;
 using HeroesONE_R.Structures.Substructures;
 using ShadowSET.Utilities;
 
-// Hacky file for lazy spline editing; Uses the inaccurate save version from HPP; Only good for editing core attributes!
-
+// Synced with HeroesPowerPlant commit https://github.com/igorseabra4/HeroesPowerPlant/commit/f6afdc8fd67cc5798f4eed3d615a6588608a475b
 namespace ShadowRando.Core
 {
-	public class ShadowSplineSec5Bytes
+	public class ShadowSplinePOF0
 	{
 		public byte slot1 { get; set; }
 		public byte slot2 { get; set; }
 		public bool noSlot2 { get; set; }
+
+		public override string ToString()
+		{
+			return $"S1: {slot1} | S2: {slot2} | noS2: {noSlot2}";
+		}
 	}
 	public class ShadowSplineVertex
 	{
@@ -75,12 +79,12 @@ namespace ShadowRando.Core
 		public byte Setting4 { get; set; }
 		public int SettingInt { get; set; }
 		public string Name { get; set; }
-		public ShadowSplineSec5Bytes[] UnknownSec5Bytes { get; set; }
+		public ShadowSplinePOF0 pof0 { get; set; }
 		public ShadowSplineVertex[] Vertices { get; set; }
 		public ShadowSpline()
 		{
 			Vertices = new ShadowSplineVertex[0];
-			UnknownSec5Bytes = new ShadowSplineSec5Bytes[0];
+			pof0 = new ShadowSplinePOF0();
 			Name = "NewSpline";
 		}
 		public IEnumerable<byte> ToByteArray(int startOffset)
@@ -156,6 +160,7 @@ namespace ShadowRando.Core
 
 			return new string(list.ToArray());
 		}
+
 		public static List<ShadowSpline> ReadShadowSplineFile(ArchiveFile pathPTP)
 		{
 			var splineReader = new EndianBinaryReader(new MemoryStream(pathPTP.DecompressThis().ToArray()), Endianness.Big);
@@ -232,11 +237,12 @@ namespace ShadowRando.Core
 				if (byte0 >= 0x80)
 				{
 					byte byte1 = splineReader.ReadByte();
-					splineList[i].UnknownSec5Bytes = new ShadowSplineSec5Bytes[1] { new ShadowSplineSec5Bytes { slot1 = byte0, slot2 = byte1, noSlot2 = false } };
+					splineList[i].pof0 = new ShadowSplinePOF0 { slot1 = byte0, slot2 = byte1, noSlot2 = false };
 				}
 				else
-					splineList[i].UnknownSec5Bytes = new ShadowSplineSec5Bytes[1] { new ShadowSplineSec5Bytes { slot1 = byte0, noSlot2 = true } };
-
+				{
+					splineList[i].pof0 = new ShadowSplinePOF0 { slot1 = byte0, noSlot2 = true };
+				}
 				splineReader.ReadByte();
 			}
 
@@ -248,7 +254,7 @@ namespace ShadowRando.Core
 		public static byte[] ShadowSplinesToByteArray(string shadowFolderNamePrefix, List<ShadowSpline> Splines)
 		{
 			List<byte> bytes = new List<byte>();
-
+			List<int> offsetLocations = new List<int>();
 			bytes.AddRange(BitConverter.GetBytes(0));
 			bytes.AddRange(BitConverter.GetBytes(0));
 			bytes.AddRange(BitConverter.GetBytes(0));
@@ -258,30 +264,31 @@ namespace ShadowRando.Core
 			bytes.AddRange(BitConverter.GetBytes(0));
 			bytes.AddRange(BitConverter.GetBytes(0));
 
-			// add 0x10 offset (breaks without this on stg0412)
-			// with this added offset, breaks stg0504, so for now just hardcode for 0412
-			if (shadowFolderNamePrefix == "stg0412")
+			// add forced offset if its already == 0 (-_-)
+			if (bytes.Count % 0x10 == 0)
 			{
 				for (int i = 0; i < 10; i++)
 					bytes.Add(0);
 			}
 
-			foreach (ShadowSpline s in Splines)
-				bytes.AddRange(BitConverter.GetBytes(0));
-
 			while (bytes.Count % 0x10 != 0)
 				bytes.Add(0);
+
+			foreach (ShadowSpline s in Splines)
+				bytes.AddRange(BitConverter.GetBytes(0));
 
 			List<int> offsets = new List<int>();
 
 			for (int i = 0; i < Splines.Count; i++)
 			{
+				offsetLocations.Add(bytes.Count - 0x20 + 0x8);
 				offsets.Add(bytes.Count - 0x20);
 				bytes.AddRange(Splines[i].ToByteArray(bytes.Count - 0x20));
 			}
 
 			for (int i = 0; i < Splines.Count; i++)
 			{
+				offsetLocations.Add(4 * i);
 				byte[] offsetBytes = BitConverter.GetBytes(offsets[i]);
 
 				bytes[0x20 + 4 * i + 0] = offsetBytes[3];
@@ -289,6 +296,8 @@ namespace ShadowRando.Core
 				bytes[0x20 + 4 * i + 2] = offsetBytes[1];
 				bytes[0x20 + 4 * i + 3] = offsetBytes[0];
 
+				offsetLocations.Add(offsets[i] + 0x2C);
+				offsets.Add(bytes.Count - 0x20);
 				byte[] nameOffset = BitConverter.GetBytes(bytes.Count - 0x20);
 
 				bytes[offsets[i] + 0x20 + 0x2C] = nameOffset[3];
@@ -305,25 +314,14 @@ namespace ShadowRando.Core
 			while (bytes.Count % 0x4 != 0)
 				bytes.Add(0);
 
-			int section5startOffset = bytes.Count - 0x20;
+			offsets.Add(bytes.Count - 0x20);
+			int pof0startOffset = bytes.Count - 0x20;
 
-			bytes.Add(0x40);
+			offsetLocations.Sort();
+			var pof0 = POF0.GenerateRawPOF0(offsetLocations);
+			bytes.AddRange(pof0);
 
-			for (int i = 1; i < Splines.Count; i++)
-				bytes.Add(0x41);
-
-			for (int i = 0; i < Splines.Count; i++)
-			{
-				bytes.Add(Splines[i].UnknownSec5Bytes[0].slot1);
-				if (!Splines[i].UnknownSec5Bytes[0].noSlot2)
-					bytes.Add(Splines[i].UnknownSec5Bytes[0].slot2);
-				bytes.Add(0x49);
-			}
-
-			while (bytes.Count % 0x4 != 0)
-				bytes.Add(0);
-
-			int section5length = bytes.Count - section5startOffset - 0x20;
+			int pof0Length = pof0.Length;
 
 			for (int i = 0; i < 8; i++)
 				bytes.Add(0);
@@ -331,8 +329,6 @@ namespace ShadowRando.Core
 			foreach (char c in ("o:\\PJS\\PJSart\\exportdata\\stage\\" + shadowFolderNamePrefix + "\\path"))
 				bytes.Add((byte)c);
 			bytes.Add(0);
-
-			// Inspect byte % 0x10
 
 			while (bytes.Count % 0x4 != 0)
 				bytes.Add(0);
@@ -344,14 +340,14 @@ namespace ShadowRando.Core
 			bytes[2] = aux[1];
 			bytes[3] = aux[0];
 
-			aux = BitConverter.GetBytes(section5startOffset);
+			aux = BitConverter.GetBytes(pof0startOffset);
 
 			bytes[4] = aux[3];
 			bytes[5] = aux[2];
 			bytes[6] = aux[1];
 			bytes[7] = aux[0];
 
-			aux = BitConverter.GetBytes(section5length);
+			aux = BitConverter.GetBytes(pof0Length);
 
 			bytes[8] = aux[3];
 			bytes[9] = aux[2];
