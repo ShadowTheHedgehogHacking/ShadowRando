@@ -270,7 +270,7 @@ public partial class MainView : UserControl
 
 	private string selectedFolderPath;
 	private bool avaloniaPreviewUI;
-	const string programVersion = "0.6.1-SHC2024";
+	const string programVersion = "0.6.x-dev";
 	private bool programInitialized = false;
 	private bool randomizeProcessing = false;
 
@@ -1535,7 +1535,7 @@ public partial class MainView : UserControl
 				}
 				else {
 					buf.CopyTo(dolfile, storyModeStartAddress);
-					Dispatcher.UIThread.Post(() => Utils.ShowSimpleMessage("Unidentified ROM Error", $"The Story Mode Start instruction is unexpected.{Environment.NewLine}Undefined behavior may occur if using this ROM.", ButtonEnum.Ok, Icon.Error));
+					Dispatcher.UIThread.Post(() => Utils.ShowSimpleMessage("Warning", $"The Story Mode Start instruction is unexpected.{Environment.NewLine}{Environment.NewLine}This is caused by attempting to randomize an already{Environment.NewLine}randomized gameor using an unsupported ROM.{Environment.NewLine}You can re-extract your original ROM, close this program,{Environment.NewLine}and try again if your ROM is supported.{Environment.NewLine}{Environment.NewLine}Undefined behavior may occur if using this ROM.", ButtonEnum.Ok, Icon.Error));
 				}
 			}
 		}
