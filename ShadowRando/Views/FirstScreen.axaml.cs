@@ -85,8 +85,10 @@ public partial class FirstScreen : UserControl
 			buttonProcessing = false;
 			return;
 		}
-		
-		if (gamePath.EndsWith("files") || gamePath.EndsWith("sys")) {
+
+		var multiPlatformSafeGamePathCompare = gamePath.Replace("\\", "").Replace("/", "");
+
+		if (multiPlatformSafeGamePathCompare.EndsWith("files") || multiPlatformSafeGamePathCompare.EndsWith("sys")) {
 			var parent = Directory.GetParent(gamePath);
 			if (parent != null)
 				gamePath = parent.FullName;
