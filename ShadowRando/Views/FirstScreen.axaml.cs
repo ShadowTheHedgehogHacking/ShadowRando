@@ -43,6 +43,10 @@ public partial class FirstScreen : UserControl
 		_mainWindow = mainWindow;
 		_settings = Settings.Load();
 		InitializeComponent();
+		if (_settings.GamePath != null && _settings.GamePath != "")
+		{
+			LoadLastPickedGameButton.IsEnabled = true;
+		}
 	}
 
 	private async void LoadNewGameFolder_OnClick(object? sender, RoutedEventArgs e)
@@ -69,7 +73,7 @@ public partial class FirstScreen : UserControl
 		ProcessGameFolder(selectedFolderPath);
 	}
 
-	private async void LoadPriorGameFolder_OnClick(object? sender, RoutedEventArgs e)
+	private void LoadPriorGameFolder_OnClick(object? sender, RoutedEventArgs e)
 	{
 		if (buttonProcessing)
 			return;
@@ -81,7 +85,7 @@ public partial class FirstScreen : UserControl
 	{
 		if (!Directory.Exists(gamePath))
 		{
-			_ = Utils.ShowSimpleMessage("Error", "Folder not found.", ButtonEnum.Ok, Icon.Error);
+			_ = Utils.ShowSimpleMessage("Error", "Folder not found or access denied", ButtonEnum.Ok, Icon.Error);
 			buttonProcessing = false;
 			return;
 		}
@@ -101,7 +105,7 @@ public partial class FirstScreen : UserControl
 
 		if (!File.Exists(Path.Combine(gamePath, "sys", "main.dol")) || !File.Exists(Path.Combine(gamePath, "sys", "bi2.bin")))
 		{
-			_ = Utils.ShowSimpleMessage("Error", "Not a valid Shadow the Hedgehog Extracted game.", ButtonEnum.Ok, Icon.Error);
+			_ = Utils.ShowSimpleMessage("Error", $"Not a valid Shadow the Hedgehog Extracted game.{Environment.NewLine}{Environment.NewLine}The correct format will have two folders:{Environment.NewLine}'sys' and 'files'.", ButtonEnum.Ok, Icon.Error);
 			buttonProcessing = false;
 			return;
 		}
