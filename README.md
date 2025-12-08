@@ -98,7 +98,7 @@ The randomizer can select randomized models for Shadow and optionally the 2P Yel
 Each model must be placed in its own folder, keeping the original file names (P1 models are `shadow.one`, P2 models are `shadow2py.one`). P1 and P2 models made as a set should be placed in the same folder, but can be selected independently of each other.
 
 ### Extraction of Game
-1. Get the latest release or dev Dolphin - [Dolphin 2407 or newer recommended](https://dolphin-emu.org/download/)
+1. Get the latest release or dev Dolphin - [Dolphin 2407 or newer](https://dolphin-emu.org/download/)
 2. (Optional: only do this step if you want to keep config separate) Before launching dolphin, create an empty file
    `portable.txt` in the same folder as Dolphin.exe
 3. Open Dolphin
@@ -133,6 +133,7 @@ Each model must be placed in its own folder, keeping the original file names (P1
 3. Move/Save the ISO to the Path Dolphin detects your games. A new full-size entry should appear in your Dolphins game list. Use this when playing the game.
 
 ### (Developers Only) How To Build Release Variant
-Tweak below with target platform in -r and adjust --self-contained to false if you don't want to embed .NET 8 Desktop Runtime in the output
+`dotnet publish -c Release -r win-x64`
+`dotnet publish -c Release -r linux-x64`
 
-`dotnet publish ShadowRando -c Release -r win-x64 --self-contained true /p:PublishSingleFile=true`
+
