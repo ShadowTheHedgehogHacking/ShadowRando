@@ -8,34 +8,34 @@
     <StackPanel VerticalAlignment="Center">
         <StackPanel Margin="0,20,0,0" VerticalAlignment="Center" HorizontalAlignment="Center">
             <Label FontWeight="Bold" FontSize="16" HorizontalAlignment="Center">ShadowRando: A Shadow the Hedgehog Randomizer</Label>
-            <Label HorizontalAlignment="Center" FontWeight="Bold">Created by dreamsyntax &amp; MainMemory &amp; BlazinZzetti</Label>
+			<Button x:Name="FirstScreen_Button_ProjectPage" Margin="10,0,0,0" Click="FirstScreen_Button_ProjectPage_Click" HorizontalAlignment="Center">Project Page</Button>
         </StackPanel>
         <TextBlock Margin="10" xml:space="preserve" TextWrapping="Wrap">The extracted folder should have a 'files' and 'sys' folder inside of it.
-Using GCR and other game extraction methods are NOT supported, please follow the steps below instead (Dolphin extracted format method).
+Using GCR and other game extraction methods are NOT supported. Follow the steps below to properly extract your game.
 
 ---Extraction of Game and Launching---
-1. Get the latest release of Dolphin, such as "Dolphin 2506a" or newer
-2. (Optional: only do this step if you want to keep config separate) Before launching Dolphin, create an empty file `portable.txt` in the same folder as Dolphin
+1. Get the latest release of Dolphin, such as 'Dolphin 2509'
+2. (Optional: only do this step if you want to keep config separate) Before launching Dolphin, create an empty file 'portable.txt' in the same folder as Dolphin
 3. Open Dolphin
 4. Set game path to your Shadow the Hedgehog NTSC-U ISO
-5. Right-click `Shadow The Hedgehog` in the game list
-6. Select `Properties`
-7. Select `Filesystem` Tab
-8. Right-click `Disc`
-9. Select `Extract Entire Disc...`
-10. Select a new folder where you will store the game content
-11. Select Config, select Paths Tab, select "Add"
-12. Navigate to the folder where you extracted the game, Open the sys folder, and select "Select Folder"
-13. Close the Config window. Now your games list should have a new 0 filesize game of Shadow The Hedgehog. The 0 filesize entry is the Extracted game, which you can launch
+5. Right-click 'Shadow The Hedgehog' in the game list
+6. Select 'Properties'
+7. Select 'Filesystem' Tab
+8. Right-click 'Disc'
+9. Select 'Extract Entire Disc...'
+10. Select a new folder where you will store the game content. Close the Properties window after extraction is complete
+11. In the main Dolphin Window, select 'Config', select 'Paths', select 'Add...'
+12. Navigate to the folder where you extracted the game, Open the 'sys' folder, and select 'Select Folder'
+13. Close the Config window. Now your games list should have a new 0 filesize game of Shadow The Hedgehog. The 0 filesize entry is the Extracted game
 
----Setting Dolphin MEM1 to 64MB (Required for Layout Randomization)---
-1. Select Config
-2. Select Advanced Tab
-3. In Memory Override section, check Enable Emulated Memory Size Override
-4. Slide MEM1 to 64 MB (maximum)	
---Optional: Setting Dolphin CPU Clock (Optional, Recommended for Better Framerate)--
-5. In Clock Override section, check Enable Emulated CPU Clock Override
-If your CPU can handle it, you want to set a higher CPU clock rate to get a consistent 60 FPS. Try: 132%, 150%, 200%, or 250%. The higher the better.
+--Setting Dolphin MEM1 to 64MB (Required for Layout Randomization)--
+1. In the main Dolphin Window, Select 'Config', select 'Advanced'
+2. In 'Memory Override', check 'Enable Emulated Memory Size Override'
+3. Slide 'MEM1' to 64 MB (maximum)	
+
+--Setting Dolphin CPU Clock (Optional, Recommended for Better Framerate)--
+4. In 'Clock Override' section, check 'Enable Emulated CPU Clock Override'
+If your CPU can handle it, set a higher CPU clock rate to get more consistent 60 FPS. Try: 150%, 200%, or 250% to start. The higher the better. If you experience audio distortion the value is too high
         </TextBlock>
 		<StackPanel Orientation="Horizontal" Margin="0,10,0,0">
 			<Button HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Height="40" Margin="15,0,10,0" Click="LoadNewGameFolder_OnClick">Pick Extracted Shadow the Hedgehog Game</Button>

@@ -1,9 +1,10 @@
-﻿using System;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using Avalonia.Interactivity;
 using Avalonia.Platform.Storage;
 using MsBox.Avalonia.Enums;
 using ShadowRando.Core;
+using System;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 
@@ -134,5 +135,10 @@ public partial class FirstScreen : UserControl
 		}
 
 		_mainWindow.LoadMainView(gamePath, _settings);
+	}
+
+	private void FirstScreen_Button_ProjectPage_Click(object? sender, RoutedEventArgs e)
+	{
+		Process.Start(new ProcessStartInfo("https://github.com/ShadowTheHedgehogHacking/ShadowRando") { UseShellExecute = true });
 	}
 }
