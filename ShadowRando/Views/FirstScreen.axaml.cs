@@ -90,8 +90,13 @@ public partial class FirstScreen : UserControl
 
 		if (multiPlatformSafeGamePathCompare.EndsWith("files") || multiPlatformSafeGamePathCompare.EndsWith("sys")) {
 			var parent = Directory.GetParent(gamePath);
-			if (parent != null)
+			if (parent != null && File.Exists(Path.Combine(parent.FullName, "sys", "main.dol")) && File.Exists(Path.Combine(parent.FullName, "sys", "bi2.bin")))
+			{
 				gamePath = parent.FullName;
+			} else
+			{
+				gamePath = parent?.Parent?.FullName ?? gamePath;
+			}
 		}
 
 		if (!File.Exists(Path.Combine(gamePath, "sys", "main.dol")) || !File.Exists(Path.Combine(gamePath, "sys", "bi2.bin")))
