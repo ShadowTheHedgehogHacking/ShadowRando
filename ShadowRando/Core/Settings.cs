@@ -167,7 +167,7 @@ namespace ShadowRando.Core
 		[IniAlwaysInclude]
 		public bool RandomizeAffiliations = true;
 		[IniAlwaysInclude]
-		public bool KeepAffiliationsAtSameLocation = true;
+		public bool KeepAffiliationsAtOriginalLocation = true;
 		[IniAlwaysInclude]
 		public bool OnlySelectedPartners;
 		[IniCollection(IniCollectionMode.SingleLine, Format = ", ")]

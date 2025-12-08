@@ -510,7 +510,7 @@ public partial class MainView : UserControl
 		// Partner
 		Layout_Partner_ComboBox_Mode.SelectedIndex = (int)settings.Layout.Partner.Mode;
 		Layout_Partner_CheckBox_RandomizeAffiliations.IsChecked = settings.Layout.Partner.RandomizeAffiliations;
-		Layout_Partner_CheckBox_KeepAffiliationsAtSameLocation.IsChecked = settings.Layout.Partner.KeepAffiliationsAtSameLocation;
+		Layout_Partner_CheckBox_KeepAffiliationsAtOriginalLocation.IsChecked = settings.Layout.Partner.KeepAffiliationsAtOriginalLocation;
 		Layout_Partner_CheckBox_OnlySelectedPartners.IsChecked = settings.Layout.Partner.OnlySelectedPartners;
 		
 		foreach (var par in settings.Layout.Partner.SelectedPartners)
@@ -610,7 +610,7 @@ public partial class MainView : UserControl
 		// Partner
 		settings.Layout.Partner.Mode = (LayoutPartnerMode)Layout_Partner_ComboBox_Mode.SelectedIndex;
 		settings.Layout.Partner.RandomizeAffiliations = Layout_Partner_CheckBox_RandomizeAffiliations.IsChecked.Value;
-		settings.Layout.Partner.KeepAffiliationsAtSameLocation = Layout_Partner_CheckBox_KeepAffiliationsAtSameLocation.IsChecked.Value;
+		settings.Layout.Partner.KeepAffiliationsAtOriginalLocation = Layout_Partner_CheckBox_KeepAffiliationsAtOriginalLocation.IsChecked.Value;
 		settings.Layout.Partner.OnlySelectedPartners = Layout_Partner_CheckBox_OnlySelectedPartners.IsChecked.Value;
 
 		settings.Layout.Partner.SelectedPartners = [];
@@ -2230,9 +2230,9 @@ public partial class MainView : UserControl
 
 			if (settings.Layout.Partner.Mode == LayoutPartnerMode.Wild)
 			{
-				MakeAllPartnersRandom(ref cmnLayoutData, settings.Layout.Partner.KeepAffiliationsAtSameLocation, darkPartners, heroPartners, stageId, r);
+				MakeAllPartnersRandom(ref cmnLayoutData, settings.Layout.Partner.KeepAffiliationsAtOriginalLocation, darkPartners, heroPartners, stageId, r);
 				if (nrmLayoutData != null)
-					MakeAllPartnersRandom(ref nrmLayoutData, settings.Layout.Partner.KeepAffiliationsAtSameLocation, darkPartners, heroPartners, stageId, r);
+					MakeAllPartnersRandom(ref nrmLayoutData, settings.Layout.Partner.KeepAffiliationsAtOriginalLocation, darkPartners, heroPartners, stageId, r);
 			}
 
 			switch (enemyMode)
@@ -4173,7 +4173,7 @@ public partial class MainView : UserControl
 			await sw.WriteLineAsync("--- Partner ---");
 			await sw.WriteLineAsync($"Partner Mode: {settings.Layout.Partner.Mode}");
 			await sw.WriteLineAsync($"Randomize Dark/Hero Affiliations: {settings.Layout.Partner.RandomizeAffiliations}");
-			await sw.WriteLineAsync($"Keep Affiliations At Same Locations: {settings.Layout.Partner.KeepAffiliationsAtSameLocation}");
+			await sw.WriteLineAsync($"Keep Affiliations At Original Locations: {settings.Layout.Partner.KeepAffiliationsAtOriginalLocation}");
 			await sw.WriteLineAsync($"Only Selected Partners: {settings.Layout.Partner.OnlySelectedPartners}");
 			if (settings.Layout.Partner.OnlySelectedPartners)
 			{
@@ -4307,6 +4307,18 @@ public partial class MainView : UserControl
 			stg.IsChecked = value;
 	}
 
+	private void Layout_Weapon_Button_ToggleAll_Click(object? sender, RoutedEventArgs e)
+	{
+		bool value = !WeaponCheckBoxes.Any(a => a != null && a.IsChecked.Value);
+		foreach (var weapon in WeaponCheckBoxes)
+		{
+			if (weapon != null)
+			{
+				weapon.IsChecked = value;
+			}
+		}
+	}
+
 	Levels[] bossLevels = [
 		Levels.BlackBullDR,
 		Levels.BlackBullLH,
@@ -4382,7 +4394,7 @@ public partial class MainView : UserControl
 		// Partner
 		Layout_Partner_ComboBox_Mode.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
 		Layout_Partner_CheckBox_RandomizeAffiliations.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value && (LayoutPartnerMode)Layout_Partner_ComboBox_Mode.SelectedIndex == LayoutPartnerMode.Wild;
-		Layout_Partner_CheckBox_KeepAffiliationsAtSameLocation.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value && (LayoutPartnerMode)Layout_Partner_ComboBox_Mode.SelectedIndex == LayoutPartnerMode.Wild;
+		Layout_Partner_CheckBox_KeepAffiliationsAtOriginalLocation.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value && (LayoutPartnerMode)Layout_Partner_ComboBox_Mode.SelectedIndex == LayoutPartnerMode.Wild;
 		Layout_Partner_CheckBox_OnlySelectedPartners.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value && (LayoutPartnerMode)Layout_Partner_ComboBox_Mode.SelectedIndex == LayoutPartnerMode.Wild;
 		for (int i = 0; i < PartnerCheckBoxes.Length; i++)
 			PartnerCheckBoxes[i].IsEnabled = Layout_Partner_CheckBox_OnlySelectedPartners.IsChecked.Value && Layout_CheckBox_RandomizeLayouts.IsChecked.Value && (LayoutPartnerMode)Layout_Partner_ComboBox_Mode.SelectedIndex == LayoutPartnerMode.Wild;
