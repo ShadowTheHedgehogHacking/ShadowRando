@@ -695,6 +695,7 @@
 								<CheckBox x:Name="Layout_Misc_CheckBox_PseudoRandomCreamCheeseLocations" Click="Shared_CheckBox_UIUpdate_OnClick">Pseudo-Random Cream and Cheese Locations</CheckBox>
 								<CheckBox x:Name="Layout_Misc_CheckBox_PseudoRandomCreamCheeseLocationsTreasureHunt" Click="Shared_CheckBox_UIUpdate_OnClick">Pseudo-Random Cream and Cheese Treasure Hunt</CheckBox>
 								<CheckBox x:Name="Layout_Misc_CheckBox_DestructiblesToEnemies" Click="Shared_CheckBox_UIUpdate_OnClick">Destructibles To Enemies (Experimental)</CheckBox>
+								<CheckBox x:Name="Layout_Misc_CheckBox_MadMatrixRandomizedBombLocations" Click="Shared_CheckBox_UIUpdate_OnClick">Mad Matrix Randomized Bomb Locations (Experimental)</CheckBox>
 							</StackPanel>
 						</TabItem>
 					</TabControl>

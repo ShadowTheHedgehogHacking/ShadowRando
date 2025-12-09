@@ -186,6 +186,8 @@ namespace ShadowRando.Core
 		public bool PseudoRandomCreamCheeseLocationsTreasureHunt;
 		[IniAlwaysInclude]
 		public bool DestructiblesToEnemies;
+		[IniAlwaysInclude]
+		public bool MadMatrixRandomizedBombLocations;
 	}
 
 	public class SettingsSubtitles

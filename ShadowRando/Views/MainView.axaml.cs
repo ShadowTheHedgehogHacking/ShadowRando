@@ -522,6 +522,7 @@ public partial class MainView : UserControl
 		Layout_Misc_CheckBox_PseudoRandomCreamCheeseLocations.IsChecked = settings.Layout.Misc.PseudoRandomCreamCheeseLocations;
 		Layout_Misc_CheckBox_PseudoRandomCreamCheeseLocationsTreasureHunt.IsChecked = settings.Layout.Misc.PseudoRandomCreamCheeseLocationsTreasureHunt;
 		Layout_Misc_CheckBox_DestructiblesToEnemies.IsChecked = settings.Layout.Misc.DestructiblesToEnemies;
+		Layout_Misc_CheckBox_MadMatrixRandomizedBombLocations.IsChecked = settings.Layout.Misc.MadMatrixRandomizedBombLocations;
 
 		// Subtitles
 		Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked = settings.Subtitles.Randomize;
@@ -625,6 +626,7 @@ public partial class MainView : UserControl
 		settings.Layout.Misc.PseudoRandomCreamCheeseLocations = Layout_Misc_CheckBox_PseudoRandomCreamCheeseLocations.IsChecked.Value;
 		settings.Layout.Misc.PseudoRandomCreamCheeseLocationsTreasureHunt = Layout_Misc_CheckBox_PseudoRandomCreamCheeseLocationsTreasureHunt.IsChecked.Value;
 		settings.Layout.Misc.DestructiblesToEnemies = Layout_Misc_CheckBox_DestructiblesToEnemies.IsChecked.Value;
+		settings.Layout.Misc.MadMatrixRandomizedBombLocations = Layout_Misc_CheckBox_MadMatrixRandomizedBombLocations.IsChecked.Value;
 
 		// Subtitles
 		settings.Subtitles.Randomize = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
@@ -2278,6 +2280,32 @@ public partial class MainView : UserControl
 					break;
 			}
 			
+			/// Mad Matrix Bomb Locations Special Case
+			if (stageId == 403 && settings.Layout.Misc.MadMatrixRandomizedBombLocations)
+			{
+				var datOneFile = stageDataIdentifier + "_dat.one";
+				var datOneData = File.ReadAllBytes(Path.Combine("backup", "sets", stageDataIdentifier, datOneFile));
+				ONEArchiveType archiveType = ONEArchiveTester.GetArchiveType(ref datOneData);
+				var datOneDataContent = Archive.FromONEFile(ref datOneData);
+				var splinesToReference = new List<ShadowSpline>();
+				if (datOneDataContent.Files[0].Name == "PATH.PTP")
+				{
+					var splines = SplineReader.ReadShadowSplineFile(datOneDataContent.Files[0]);
+					foreach (var spline in splines)
+					{
+						if (spline.Name.Contains("_cc_"))
+						{
+							continue;
+						}
+						splinesToReference.Add(spline);
+					}
+				}
+				if (splinesToReference.Count > 0 && nrmLayoutData != null)
+				{
+					RandomizeMadMatrixBombLocations(ref nrmLayoutData, splinesToReference, r);
+				}
+			}
+
 			/// Special Object Additions
 
 			if (stageId == 400)
@@ -2993,6 +3021,30 @@ public partial class MainView : UserControl
 			setData[cheese.index] = cheese.item;
 		}
 	}
+	
+	private static void RandomizeMadMatrixBombLocations(ref List<SetObjectShadow> setData, List<ShadowSpline> splines, Random r)
+	{
+		// 07 DC - Matrix Bomb
+		List<(SetObjectShadow item, int index)> matrixBombs = setData
+			.Select((item, index) => new { Item = item, Index = index })
+			.Where(pair => pair.Item.List == 0x07 && pair.Item.Type == 0xDC)
+			.Select(pair => (Item: pair.Item, Index: pair.Index))
+			.ToList();
+
+		foreach (var matrixBomb in matrixBombs)
+		{
+			var donorSpline = splines[r.Next(splines.Count)];
+			var donorVertex = donorSpline.Vertices[r.Next(donorSpline.Vertices.Length)];
+
+			// TODO: Update PosX/PosY/PosZ to use r.random to lerped a float between donorVertex and donorVertexIndex+1. If It is the last vertex in the list, then donorVertexIndex-1. If none are around it, then just donorVertex is used with no lerp.
+			matrixBomb.item.PosX = donorVertex.PositionX;
+			matrixBomb.item.PosY = donorVertex.PositionY;
+			matrixBomb.item.PosZ = donorVertex.PositionZ;
+			setData[matrixBomb.index] = matrixBomb.item;
+		}
+	}
+
+	
 
 	private static void SetHawksLinkedToSearchLightsUnmountable(ref List<SetObjectShadow> cmnSetData, ref List<SetObjectShadow> nrmSetData, ref List<SetObjectShadow> hrdSetData)
 	{
@@ -4252,6 +4304,7 @@ public partial class MainView : UserControl
 			await sw.WriteLineAsync($"Pseudo-Random Cream and Cheese Locations: {settings.Layout.Misc.PseudoRandomCreamCheeseLocations}");
 			await sw.WriteLineAsync($"Pseudo-Random Cream and Cheese Locations Treasure Hunt: {settings.Layout.Misc.PseudoRandomCreamCheeseLocationsTreasureHunt}");
 			await sw.WriteLineAsync($"Destructibles To Enemies: {settings.Layout.Misc.DestructiblesToEnemies}");
+			await sw.WriteLineAsync($"Mad Matrix Randomized Bomb Locations: {settings.Layout.Misc.MadMatrixRandomizedBombLocations}");
 		}
 
 		await sw.WriteLineAsync("---- Subtitles ----");
