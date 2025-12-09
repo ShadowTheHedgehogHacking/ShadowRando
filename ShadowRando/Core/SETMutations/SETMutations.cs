@@ -143,4 +143,9 @@ public static class SETMutations
 			EnemySETMutations.ToBkNinja(index, ref setData, r);
 		}
 	}
+
+	public static void SetUnknownBytesForIndex(int index, byte[] bytes, ref List<SetObjectShadow> setData)
+	{
+		setData[index].UnkBytes = bytes;
+	}
 }

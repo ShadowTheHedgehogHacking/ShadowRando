@@ -521,6 +521,7 @@ public partial class MainView : UserControl
 		Layout_Misc_CheckBox_RandomItemBalloons.IsChecked = settings.Layout.Misc.RandomItemBalloons;
 		Layout_Misc_CheckBox_PseudoRandomCreamCheeseLocations.IsChecked = settings.Layout.Misc.PseudoRandomCreamCheeseLocations;
 		Layout_Misc_CheckBox_PseudoRandomCreamCheeseLocationsTreasureHunt.IsChecked = settings.Layout.Misc.PseudoRandomCreamCheeseLocationsTreasureHunt;
+		Layout_Misc_CheckBox_DestructiblesToEnemies.IsChecked = settings.Layout.Misc.DestructiblesToEnemies;
 
 		// Subtitles
 		Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked = settings.Subtitles.Randomize;
@@ -623,6 +624,7 @@ public partial class MainView : UserControl
 		settings.Layout.Misc.RandomItemBalloons = Layout_Misc_CheckBox_RandomItemBalloons.IsChecked.Value;
 		settings.Layout.Misc.PseudoRandomCreamCheeseLocations = Layout_Misc_CheckBox_PseudoRandomCreamCheeseLocations.IsChecked.Value;
 		settings.Layout.Misc.PseudoRandomCreamCheeseLocationsTreasureHunt = Layout_Misc_CheckBox_PseudoRandomCreamCheeseLocationsTreasureHunt.IsChecked.Value;
+		settings.Layout.Misc.DestructiblesToEnemies = Layout_Misc_CheckBox_DestructiblesToEnemies.IsChecked.Value;
 
 		// Subtitles
 		settings.Subtitles.Randomize = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
@@ -2252,6 +2254,10 @@ public partial class MainView : UserControl
 						WildRandomizeAllEnemiesWithTranslations(ref hrdLayoutData, allEnemies, groundEnemies, flyingEnemies, pathTypeFlyingEnemies, r);
 						DelinkVehicleObjects(ref hrdLayoutData);
 					}
+					if (ds1LayoutData != null && settings.Layout.Misc.DestructiblesToEnemies)
+					{
+						WildRandomizeDestructiblesToEnemies(ref ds1LayoutData, allEnemies, r);
+					}
 					if (stageId == 200)
 					{ // Digital Circuit
 						if (nrmLayoutData != null && hrdLayoutData != null)
@@ -2314,17 +2320,17 @@ public partial class MainView : UserControl
 				switch (nukkoro2StageString.Item2)
 				{
 					case 0:
-						var total = GetTotalGUNEnemies(cmnLayoutData, nrmLayoutData);
+						var total = GetTotalGUNEnemies(cmnLayoutData, nrmLayoutData, ds1LayoutData, settings.Layout.Misc.DestructiblesToEnemies);
 						nukkoro2Stage.MissionCountDark.Success = total - (int)(total * ((double)settings.Layout.Enemy.AdjustMissionCountsReductionPercent / 100));
 						break;
 					case 1:
-						total = GetTotalBlackArmsEnemies(cmnLayoutData, nrmLayoutData);
+						total = GetTotalBlackArmsEnemies(cmnLayoutData, nrmLayoutData, ds1LayoutData, settings.Layout.Misc.DestructiblesToEnemies);
 						nukkoro2Stage.MissionCountHero.Success = total - (int)(total * ((double)settings.Layout.Enemy.AdjustMissionCountsReductionPercent / 100));
 						break;
 					case 2:
-						total = GetTotalGUNEnemies(cmnLayoutData, nrmLayoutData);
+						total = GetTotalGUNEnemies(cmnLayoutData, nrmLayoutData, ds1LayoutData, settings.Layout.Misc.DestructiblesToEnemies);
 						nukkoro2Stage.MissionCountDark.Success = total - (int)(total * ((double)settings.Layout.Enemy.AdjustMissionCountsReductionPercent / 100));
-						total = GetTotalBlackArmsEnemies(cmnLayoutData, nrmLayoutData);
+						total = GetTotalBlackArmsEnemies(cmnLayoutData, nrmLayoutData, ds1LayoutData, settings.Layout.Misc.DestructiblesToEnemies);
 						nukkoro2Stage.MissionCountHero.Success = total - (int)(total * ((double)settings.Layout.Enemy.AdjustMissionCountsReductionPercent / 100));
 						break;
 					case 3:
@@ -2412,16 +2418,21 @@ public partial class MainView : UserControl
 		return 0;
 	}
 
-	private static int GetTotalGUNEnemies(IReadOnlyList<SetObjectShadow> cmn, IReadOnlyList<SetObjectShadow>? nrm = null)
+	private static int GetTotalGUNEnemies(IReadOnlyList<SetObjectShadow> cmn, IReadOnlyList<SetObjectShadow>? nrm = null, IReadOnlyList<SetObjectShadow>? ds1 = null, bool countDS1 = false)
 	{
 		int total = cmn.Count(setObject => setObject is { List: 0x00, Type: >= 0x64 and <= 0x68 });
-		if (nrm == null) return total;
-		
-		total += nrm.Count(setObject => setObject is { List: 0x00, Type: >= 0x64 and <= 0x68 });
+		if (nrm != null)
+		{
+			total += nrm.Count(setObject => setObject is { List: 0x00, Type: >= 0x64 and <= 0x68 });
+		}
+		if (ds1 != null && countDS1)
+		{
+			total += ds1.Count(setObject => setObject is { List: 0x00, Type: >= 0x64 and <= 0x68 });
+		}
 		return total;
 	}
 
-	private static int GetTotalBlackArmsEnemies(IReadOnlyList<SetObjectShadow> cmn, IReadOnlyList<SetObjectShadow>? nrm = null)
+	private static int GetTotalBlackArmsEnemies(IReadOnlyList<SetObjectShadow> cmn, IReadOnlyList<SetObjectShadow>? nrm = null, IReadOnlyList<SetObjectShadow>? ds1 = null, bool countDS1 = false)
 	{
 		int total = 0;
 
@@ -2440,18 +2451,38 @@ public partial class MainView : UserControl
 			}
 		}
 
-		if (nrm == null) return total;
-		foreach (var setObject in nrm)
+		if (nrm != null)
 		{
-			if (setObject is { List: 0x00, Type: >= 0x8C and <= 0x93 })
+			foreach (var setObject in nrm)
 			{
-				if (setObject.Type == 0x91) // BkLarva
+				if (setObject is { List: 0x00, Type: >= 0x8C and <= 0x93 })
 				{
-					total += ((Object0091_BkLarva)setObject).NumberOfLarva;
+					if (setObject.Type == 0x91) // BkLarva
+					{
+						total += ((Object0091_BkLarva)setObject).NumberOfLarva;
+					}
+					else
+					{
+						total++;
+					}
 				}
-				else
+			}
+		}
+
+		if (ds1 != null && countDS1)
+		{
+			foreach (var setObject in ds1)
+			{
+				if (setObject is { List: 0x00, Type: >= 0x8C and <= 0x93 })
 				{
-					total++;
+					if (setObject.Type == 0x91) // BkLarva
+					{
+						total += ((Object0091_BkLarva)setObject).NumberOfLarva;
+					}
+					else
+					{
+						total++;
+					}
 				}
 			}
 		}
@@ -3184,6 +3215,31 @@ public partial class MainView : UserControl
 				randomEnemyType = allEnemies[randomEnemy];
 			}
 			SETMutations.MutateObjectAtIndex(i, randomEnemyType, ref setData, true, r);
+		}
+	}
+
+	private void WildRandomizeDestructiblesToEnemies(ref List<SetObjectShadow> setData, IReadOnlyList<Type> allEnemies, Random r)
+	{
+		for (int i = 0; i < setData.Count; i++)
+		{
+			Type randomEnemyType;
+			int randomEnemy;
+			if (setData[i].Link == 0 || setData[i].Link == 50)  // Only randomize if LinkID = 0 or 50, for safety
+			{
+				randomEnemy = r.Next(allEnemies.Count);
+				randomEnemyType = allEnemies[randomEnemy];
+				SETMutations.MutateObjectAtIndex(i, randomEnemyType, ref setData, true, r);
+				var bytesDonor = new byte[8];
+				bytesDonor[0] = 0x01;
+				bytesDonor[1] = 0x10;
+				bytesDonor[2] = 0x00;
+				bytesDonor[3] = 0x80;
+				bytesDonor[4] = 0x01;
+				bytesDonor[5] = 0x10;
+				bytesDonor[6] = 0x00;
+				bytesDonor[7] = 0x00;
+				SETMutations.SetUnknownBytesForIndex(i, bytesDonor, ref setData);
+			}
 		}
 	}
 
@@ -4187,7 +4243,7 @@ public partial class MainView : UserControl
 			await sw.WriteLineAsync($"Random Item Balloons: {settings.Layout.Misc.RandomItemBalloons}");
 			await sw.WriteLineAsync($"Pseudo-Random Cream and Cheese Locations: {settings.Layout.Misc.PseudoRandomCreamCheeseLocations}");
 			await sw.WriteLineAsync($"Pseudo-Random Cream and Cheese Locations Treasure Hunt: {settings.Layout.Misc.PseudoRandomCreamCheeseLocationsTreasureHunt}");
-
+			await sw.WriteLineAsync($"Destructibles To Enemies: {settings.Layout.Misc.DestructiblesToEnemies}");
 		}
 
 		await sw.WriteLineAsync("---- Subtitles ----");
@@ -4403,6 +4459,7 @@ public partial class MainView : UserControl
 		Layout_Misc_CheckBox_RandomItemBalloons.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
 		Layout_Misc_CheckBox_PseudoRandomCreamCheeseLocations.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value;
 		Layout_Misc_CheckBox_PseudoRandomCreamCheeseLocationsTreasureHunt.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value && Layout_Misc_CheckBox_PseudoRandomCreamCheeseLocations.IsChecked.Value;
+		Layout_Misc_CheckBox_DestructiblesToEnemies.IsEnabled = Layout_CheckBox_RandomizeLayouts.IsChecked.Value && (LayoutEnemyMode)Layout_Enemy_ComboBox_Mode.SelectedIndex == LayoutEnemyMode.Wild;
 		// --End Layout--
 		// Subtitles
 		Subtitles_CheckBox_OnlyWithLinkedAudio.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;	
