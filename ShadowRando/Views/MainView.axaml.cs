@@ -743,7 +743,15 @@ public partial class MainView : UserControl
 		ProgressBar_RandomizationProgress.Value = 5;
 
 		UpdateSettings();
-		int result = await Task.Run(RandomizationProcess);
+		int result = 1;
+		try
+		{
+			result = await Task.Run(RandomizationProcess);
+		} catch (Exception ex)
+		{
+			result = -1;
+			await Utils.ShowSimpleMessage("Error", $"An error occurred during randomization. Please report this with the seed used.{Environment.NewLine}{Environment.NewLine}{ex}", ButtonEnum.Ok, Icon.Error);
+		}
 		if (result != 0)
 		{
 			ProgressBar_RandomizationProgress.Value = 0;
@@ -776,7 +784,7 @@ public partial class MainView : UserControl
 		CopyDirectory(Path.Combine("backup", "sets"), Path.Combine(settings.GamePath, "files"), true);
 
 		Dispatcher.UIThread.Post(() => UpdateProgressBar(10));
-		
+
 		dolfile = File.ReadAllBytes(Path.Combine("backup", "main.dol"));
 		var seed = CalculateSeed(settings.Seed);
 		Random r = new Random(seed);
