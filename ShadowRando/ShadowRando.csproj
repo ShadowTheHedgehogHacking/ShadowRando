@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<OutputType>WinExe</OutputType>
 		<TargetFramework>net8.0</TargetFramework>
-		<LangVersion>latest</LangVersion>
+		<LangVersion>13.0</LangVersion>
 		<Nullable>enable</Nullable>
 		<SelfContained>true</SelfContained>
 		<PublishTrimmed>true</PublishTrimmed>
