@@ -2294,7 +2294,8 @@ public partial class MainView : UserControl
 					var splines = SplineReader.ReadShadowSplineFile(datOneDataContent.Files[0]);
 					foreach (var spline in splines)
 					{
-						if (spline.Name.Contains("_cc_"))
+						// Skip CC splines and the initial spawn area splines
+						if (spline.Name.Contains("_cc_") || spline.Name.Equals("path501_jn") || spline.Name.Equals("path502_jn") || spline.Name.Equals("path503_jn"))
 						{
 							continue;
 						}
@@ -2383,7 +2384,7 @@ public partial class MainView : UserControl
 							if (nrmLayoutData != null)
 							{
 								var matrixBombCount = GetTotalMatrixBombs(nrmLayoutData);
-								nukkoro2Stage.MissionCountDark.Success = matrixBombCount - (int)(matrixBombCount * ((double)settings.Layout.Enemy.AdjustMissionCountsReductionPercent / 100));
+								nukkoro2Stage.MissionCountDark.Success = matrixBombCount; // TEMP full count - (int)(matrixBombCount * ((double)settings.Layout.Enemy.AdjustMissionCountsReductionPercent / 100));
 							}
 						}
 						break;
@@ -3043,7 +3044,8 @@ public partial class MainView : UserControl
 	{
 
 		// add a bunch of extra matrix bombs for extra chaos (to be randomized/toggled later)
-		for (int i = 0; i < 20; i++) // 20, 500, etc
+		var extraBombs = r.Next(70, 300);
+		for (int i = 0; i < extraBombs; i++) // 20, 500, etc
 		{
 			var extraMatrixBomb = LayoutEditorFunctions.CreateShadowObject(
 			0x07, 0xDC, 0f, 0f, 0f, 0f, 0f, 0f, 0, 60, [0x01, 0x20, 0x00, 0x80, 0x01, 0x20, 0x00, 0x00]);
@@ -3056,6 +3058,30 @@ public partial class MainView : UserControl
 			.Where(pair => pair.Item.List == 0x07 && pair.Item.Type == 0xDC)
 			.Select(pair => (Item: pair.Item, Index: pair.Index))
 			.ToList();
+
+		// Mad Matrix has hardcoded duplicate PosX inverse splines for every non-'64' setting2 spline
+		List<ShadowSpline> invertedSplines = new List<ShadowSpline>();
+		foreach (var spline in splines)
+		{
+			if (spline.Setting2 != 64) {
+				continue;
+			}
+			var invertedSpline = new ShadowSpline();
+			invertedSpline.Vertices = new ShadowSplineVertex[spline.Vertices.Length];
+			for (int i = 0; i < spline.Vertices.Length; i++)
+			{
+				var srcV = spline.Vertices[i];
+				invertedSpline.Vertices[i] = new ShadowSplineVertex
+				{
+					Position = srcV.Position,
+					Rotation = srcV.Rotation,
+					AngularAttachmentToleranceInt = srcV.AngularAttachmentToleranceInt
+				};
+				invertedSpline.Vertices[i].PositionX = -invertedSpline.Vertices[i].PositionX;
+			}
+			invertedSplines.Add(invertedSpline);
+		}
+		splines.AddRange(invertedSplines);
 
 		foreach (var matrixBomb in matrixBombs)
 		{
