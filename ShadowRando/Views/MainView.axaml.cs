@@ -175,6 +175,7 @@ public partial class MainView : UserControl
 			{ 301, Tuple.Create("PrisonIsland",  0) }, // dark
 			{ 302, Tuple.Create("Circus",        0) }, // dark
 			{ 401, Tuple.Create("ARKPast1",      0) }, // dark
+			{ 403, Tuple.Create("eWorld",		 4) }, // special case - mad matrix bombs
 			{ 404, Tuple.Create("Ruins",         1) }, // hero
 			{ 501, Tuple.Create("Sky",           1) }, // hero
 			{ 502, Tuple.Create("Jungle",        0) }, // dark
@@ -2376,6 +2377,16 @@ public partial class MainView : UserControl
 							nukkoro2Stage.MissionCountHero.Success = totalNewCheeseCream - (int)(totalNewCheeseCream * ((double)settings.Layout.Enemy.AdjustMissionCountsReductionPercent / 100));
 						}
 						break;
+					case 4:
+						if (settings.Layout.Misc.MadMatrixRandomizedBombLocations)
+						{
+							if (nrmLayoutData != null)
+							{
+								var matrixBombCount = GetTotalMatrixBombs(nrmLayoutData);
+								nukkoro2Stage.MissionCountDark.Success = matrixBombCount - (int)(matrixBombCount * ((double)settings.Layout.Enemy.AdjustMissionCountsReductionPercent / 100));
+							}
+						}
+						break;
 					default:
 						break;
 				}
@@ -2452,6 +2463,12 @@ public partial class MainView : UserControl
 		}
 
 		return 0;
+	}
+
+	private static int GetTotalMatrixBombs(IReadOnlyList<SetObjectShadow> layout)
+	{
+		int total = layout.Count(setObject => setObject is { List: 0x07, Type: 0xDC });
+		return total;
 	}
 
 	private static int GetTotalGUNEnemies(IReadOnlyList<SetObjectShadow> cmn, IReadOnlyList<SetObjectShadow>? nrm = null, IReadOnlyList<SetObjectShadow>? ds1 = null, bool countDS1 = false)
