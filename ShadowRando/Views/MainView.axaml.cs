@@ -3024,6 +3024,15 @@ public partial class MainView : UserControl
 	
 	private static void RandomizeMadMatrixBombLocations(ref List<SetObjectShadow> setData, List<ShadowSpline> splines, Random r)
 	{
+
+		// add a bunch of extra matrix bombs for extra chaos (to be randomized/toggled later)
+		for (int i = 0; i < 20; i++) // 20, 500, etc
+		{
+			var extraMatrixBomb = LayoutEditorFunctions.CreateShadowObject(
+			0x07, 0xDC, 0f, 0f, 0f, 0f, 0f, 0f, 0, 60, [0x01, 0x20, 0x00, 0x80, 0x01, 0x20, 0x00, 0x00]);
+			setData.Add(extraMatrixBomb);
+		}
+
 		// 07 DC - Matrix Bomb
 		List<(SetObjectShadow item, int index)> matrixBombs = setData
 			.Select((item, index) => new { Item = item, Index = index })
@@ -3034,12 +3043,31 @@ public partial class MainView : UserControl
 		foreach (var matrixBomb in matrixBombs)
 		{
 			var donorSpline = splines[r.Next(splines.Count)];
-			var donorVertex = donorSpline.Vertices[r.Next(donorSpline.Vertices.Length)];
+			var donorVertexIndex = r.Next(donorSpline.Vertices.Length);
+			var donorVertex = donorSpline.Vertices[donorVertexIndex];
 
-			// TODO: Update PosX/PosY/PosZ to use r.random to lerped a float between donorVertex and donorVertexIndex+1. If It is the last vertex in the list, then donorVertexIndex-1. If none are around it, then just donorVertex is used with no lerp.
-			matrixBomb.item.PosX = donorVertex.PositionX;
-			matrixBomb.item.PosY = donorVertex.PositionY;
-			matrixBomb.item.PosZ = donorVertex.PositionZ;
+			// Update PosX/PosY/PosZ to use r.random to lerped a float between donorVertex and donorVertexIndex+1. If It is the last vertex in the list, then donorVertexIndex-1. If none are around it, then just donorVertex is used with no lerp.
+			// Determine neighbour vertex for lerp. If only one vertex exists or neighbour not available, no lerp.
+			int neighborIndex = donorVertexIndex;
+			if (donorSpline.Vertices.Length > 1)
+			{
+				if (donorVertexIndex == donorSpline.Vertices.Length - 1)
+					neighborIndex = donorVertexIndex - 1; // last vertex -> use previous
+				else
+					neighborIndex = donorVertexIndex + 1; // otherwise use next
+			}
+			var neighborVertex = donorSpline.Vertices[neighborIndex];
+
+			float t = 0f;
+			if (neighborIndex != donorVertexIndex)
+			{
+				t = (float)r.NextDouble();
+			}
+
+			matrixBomb.item.PosX = donorVertex.PositionX * (1 - t) + neighborVertex.PositionX * t;
+			matrixBomb.item.PosY = donorVertex.PositionY * (1 - t) + neighborVertex.PositionY * t;
+			matrixBomb.item.PosZ = donorVertex.PositionZ * (1 - t) + neighborVertex.PositionZ * t;
+
 			setData[matrixBomb.index] = matrixBomb.item;
 		}
 	}
