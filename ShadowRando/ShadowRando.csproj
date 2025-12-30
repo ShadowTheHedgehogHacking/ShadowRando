@@ -5,8 +5,9 @@
 		<LangVersion>13.0</LangVersion>
 		<Nullable>enable</Nullable>
 		<SelfContained>true</SelfContained>
-		<PublishTrimmed>true</PublishTrimmed>
-		<PublishAot>true</PublishAot>
+		<PublishTrimmed>false</PublishTrimmed>
+		<PublishSingleFile>true</PublishSingleFile>
+		<PublishAot>false</PublishAot>
 		<AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
 		<ApplicationIcon>Assets\logo.ico</ApplicationIcon>
 	</PropertyGroup>
@@ -21,17 +22,17 @@
 
 	<ItemGroup>
 		<PackageReference Include="AFSLib" Version="1.1.2" />
-		<PackageReference Include="Avalonia" Version="11.3.9" />
-		<PackageReference Include="Avalonia.Desktop" Version="11.3.9" />
-		<PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.9" />
-		<PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.9" />
+		<PackageReference Include="Avalonia" Version="11.3.10" />
+		<PackageReference Include="Avalonia.Desktop" Version="11.3.10" />
+		<PackageReference Include="Avalonia.Themes.Fluent" Version="11.3.10" />
+		<PackageReference Include="Avalonia.Fonts.Inter" Version="11.3.10" />
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
 		<PackageReference Include="PanAndZoom" Version="11.3.6" />
 		<PackageReference Include="ShadowFNT" Version="2.0.1" />
 		<PackageReference Include="SkiaSharp" Version="3.119.1" />
 		<!--Condition below is needed to remove Avalonia.Diagnostics package from build output in Release configuration.-->
 		<PackageReference Condition="'$(Configuration)' == 'Debug'" Include="Avalonia.Diagnostics" Version="11.3.9" />
-		<PackageReference Include="MessageBox.Avalonia" Version="3.3.1" />
+		<PackageReference Include="MessageBox.Avalonia" Version="3.3.1.1" />
 	</ItemGroup>
 
 	<ItemGroup>

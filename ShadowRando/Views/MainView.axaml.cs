@@ -2294,8 +2294,8 @@ public partial class MainView : UserControl
 					var splines = SplineReader.ReadShadowSplineFile(datOneDataContent.Files[0]);
 					foreach (var spline in splines)
 					{
-						// Skip CC splines and the initial spawn area splines
-						if (spline.Name.Contains("_cc_") || spline.Name.Equals("path501_jn") || spline.Name.Equals("path502_jn") || spline.Name.Equals("path503_jn"))
+						// Only process the default Matrix Spline area
+						if (spline.Setting2 != 64)
 						{
 							continue;
 						}
@@ -2384,7 +2384,7 @@ public partial class MainView : UserControl
 							if (nrmLayoutData != null)
 							{
 								var matrixBombCount = GetTotalMatrixBombs(nrmLayoutData);
-								nukkoro2Stage.MissionCountDark.Success = matrixBombCount; // TEMP full count - (int)(matrixBombCount * ((double)settings.Layout.Enemy.AdjustMissionCountsReductionPercent / 100));
+								nukkoro2Stage.MissionCountDark.Success = matrixBombCount - (int)(matrixBombCount * (double)10 / 100); // TEMP 10% reduction ; || count - (int)(matrixBombCount * ((double)settings.Layout.Enemy.AdjustMissionCountsReductionPercent / 100));
 							}
 						}
 						break;
@@ -3042,24 +3042,35 @@ public partial class MainView : UserControl
 	
 	private static void RandomizeMadMatrixBombLocations(ref List<SetObjectShadow> setData, List<ShadowSpline> splines, Random r)
 	{
+		// remove the default positions for MatrixBombs
+		List<(SetObjectShadow item, int index)> defaultMatrixBombs = setData
+			.Select((item, index) => new { Item = item, Index = index })
+			.Where(pair => pair.Item.List == 0x07 && pair.Item.Type == 0xDC)
+			.Select(pair => (pair.Item, pair.Index))
+			.ToList();
+
+		foreach (var matrixBomb in defaultMatrixBombs)
+		{
+			setData.Remove(matrixBomb.item);
+		}
 
 		// add a bunch of extra matrix bombs for extra chaos (to be randomized/toggled later)
-		var extraBombs = r.Next(70, 300);
-		for (int i = 0; i < extraBombs; i++) // 20, 500, etc
+		var generatedBombs = 1000; // r.Next(100, 1030);
+		for (int i = 0; i < generatedBombs; i++)
 		{
-			var extraMatrixBomb = LayoutEditorFunctions.CreateShadowObject(
+			var generatedMatrixBomb = LayoutEditorFunctions.CreateShadowObject(
 			0x07, 0xDC, 0f, 0f, 0f, 0f, 0f, 0f, 0, 60, [0x01, 0x20, 0x00, 0x80, 0x01, 0x20, 0x00, 0x00]);
-			setData.Add(extraMatrixBomb);
+			setData.Add(generatedMatrixBomb);
 		}
 
 		// 07 DC - Matrix Bomb
 		List<(SetObjectShadow item, int index)> matrixBombs = setData
 			.Select((item, index) => new { Item = item, Index = index })
 			.Where(pair => pair.Item.List == 0x07 && pair.Item.Type == 0xDC)
-			.Select(pair => (Item: pair.Item, Index: pair.Index))
+			.Select(pair => (pair.Item, pair.Index))
 			.ToList();
 
-		// Mad Matrix has hardcoded duplicate PosX inverse splines for every non-'64' setting2 spline
+		// Mad Matrix has hardcoded duplicate PosX inverse splines for every '64' setting2 spline
 		List<ShadowSpline> invertedSplines = new List<ShadowSpline>();
 		foreach (var spline in splines)
 		{
