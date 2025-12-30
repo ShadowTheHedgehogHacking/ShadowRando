@@ -3074,7 +3074,7 @@ public partial class MainView : UserControl
 		List<ShadowSpline> invertedSplines = new List<ShadowSpline>();
 		foreach (var spline in splines)
 		{
-			if (spline.Setting2 != 64) {
+			if (spline.Setting2 != 64) { // technically redundant, but keeping it incase we want to re-add the other splines as valid generation spots
 				continue;
 			}
 			var invertedSpline = new ShadowSpline();
@@ -3364,6 +3364,23 @@ public partial class MainView : UserControl
 	{
 		for (int i = 0; i < setData.Count; i++)
 		{
+			/*     OBJS to Skip  
+				00 62 Local Lighting
+				07 E0 Lightspeed Entrance
+				25 8A Effect1 (maybe - considering keeping this out later)	
+				25 97 SetSeLoop
+				25 98 SetSeOneShot		
+			*/
+			if (
+				(setData[i].List == 0x00 && setData[i].Type == 0x62) ||
+				(setData[i].List == 0x07 && setData[i].Type == 0xE0) ||
+			    (setData[i].List == 0x25 && (setData[i].Type == 0x8A || setData[i].Type == 0x97 || setData[i].Type == 0x98))
+			){
+				// skip these objects
+				continue;
+			}
+
+
 			Type randomEnemyType;
 			int randomEnemy;
 			if (setData[i].Link == 0 || setData[i].Link == 50)  // Only randomize if LinkID = 0 or 50, for safety
