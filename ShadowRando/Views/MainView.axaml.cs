@@ -2267,7 +2267,7 @@ public partial class MainView : UserControl
 					}
 					if (ds1LayoutData != null && settings.Layout.Misc.DestructiblesToEnemies)
 					{
-						WildRandomizeDestructiblesToEnemies(ref ds1LayoutData, allEnemies, r);
+						WildRandomizeDestructiblesToEnemies(ref ds1LayoutData, stageId, allEnemies, r);
 					}
 					if (stageId == 200)
 					{ // Digital Circuit
@@ -3100,7 +3100,7 @@ public partial class MainView : UserControl
 			var donorVertexIndex = r.Next(donorSpline.Vertices.Length);
 			var donorVertex = donorSpline.Vertices[donorVertexIndex];
 
-			// Update PosX/PosY/PosZ to use r.random to lerped a float between donorVertex and donorVertexIndex+1. If It is the last vertex in the list, then donorVertexIndex-1. If none are around it, then just donorVertex is used with no lerp.
+			// Update PosX/PosY/PosZ to use r.random to lerp a float between donorVertex and donorVertexIndex+1. If It is the last vertex in the list, then donorVertexIndex-1. If none are around it, then just donorVertex is used with no lerp.
 			// Determine neighbour vertex for lerp. If only one vertex exists or neighbour not available, no lerp.
 			int neighborIndex = donorVertexIndex;
 			if (donorSpline.Vertices.Length > 1)
@@ -3360,26 +3360,127 @@ public partial class MainView : UserControl
 		}
 	}
 
-	private void WildRandomizeDestructiblesToEnemies(ref List<SetObjectShadow> setData, IReadOnlyList<Type> allEnemies, Random r)
+	private void WildRandomizeDestructiblesToEnemies(ref List<SetObjectShadow> setData, int stageId, IReadOnlyList<Type> allEnemies, Random r)
 	{
 		for (int i = 0; i < setData.Count; i++)
 		{
-			/*     OBJS to Skip  
+			// Stage Specific OBJs to skip
+			switch (stageId)
+			{
+				case 0400: // Central City
+					if (setData[i].List == 0x25 && setData[i].Type == 0x88)
+					{
+						switch (((Object2588_Decoration1)setData[i]).DecorationType)
+						{
+							case 1: // acid visual
+							case 2: // acid visual 2
+							case 3: // acid visual 3
+							case 4: // acid visual 4
+								continue;
+							default:
+								break;
+						}
+					}
+					break;
+				case 0404: // Death Ruins
+					if (setData[i].List == 0x25 && setData[i].Type == 0x88)
+					{
+						switch (((Object2588_Decoration1)setData[i]).DecorationType)
+						{
+							case 2: // dark spin visual
+							case 10: // dark spin visual 2
+							case 11: // dark spin visual 3
+							case 14: // dark spline grindable rail
+							case 15: // dark spline grindable rail (secret door)
+									 // case 16 is the water in death ruins - leaving it removed because its amusing
+								continue;
+							default:
+								break;
+						}
+					}
+					break;
+				case 0501: // Air Fleet
+					if (setData[i].List == 0x25 && setData[i].Type == 0x88)
+					{
+						switch (((Object2588_Decoration1)setData[i]).DecorationType)
+						{
+							case 8: // dark spin visual 2
+							case 10: // dark spin visual
+								continue;
+							default:
+								break;
+						}
+					}
+					break;
+				case 0602: // Lava Shelter
+					if (setData[i].List == 0x25 && setData[i].Type == 0x88)
+					{
+						switch (((Object2588_Decoration1)setData[i]).DecorationType)
+						{
+							case 7: // pole visual
+							case 9: // pole visual (long)
+								continue;
+							default:
+								break;
+						}
+					}
+					else if (
+						setData[i].List == 0x25 && setData[i].Type == 0x90)
+					{
+						// NOTE: not a typo, we use the same type as 2588 for 2590.
+						switch (((Object2588_Decoration1)setData[i]).DecorationType)
+						{
+							// 0-15 are lava visuals
+							case 0:
+							case 1: 
+							case 2: 
+							case 3: 
+							case 4: 
+							case 5: 
+							case 6: 
+							case 7: 
+							case 8: 
+							case 9: 
+							case 10:
+							case 11:
+							case 12:
+							case 13:
+							case 14:
+							case 15:
+								continue;
+							default:
+								break;
+						}
+					}
+					else if (setData[i].List == 0x18 && setData[i].Type == 0x39)
+					{
+						// Rising Lava obj
+						continue;
+					}
+					break;
+				default:
+					break;
+			}
+
+
+			/*     OBJs to skip
+			    00 50 Trigger
 				00 62 Local Lighting
+				07 D5 Lightspeed Rising Block
+				07 DF Lightspeed Firewall
 				07 E0 Lightspeed Entrance
 				25 8A Effect1 (maybe - considering keeping this out later)	
 				25 97 SetSeLoop
 				25 98 SetSeOneShot		
 			*/
 			if (
-				(setData[i].List == 0x00 && setData[i].Type == 0x62) ||
-				(setData[i].List == 0x07 && setData[i].Type == 0xE0) ||
+				(setData[i].List == 0x00 && (setData[i].Type == 0x50 || setData[i].Type == 0x62)) ||
+				(setData[i].List == 0x07 && (setData[i].Type == 0xD5 || setData[i].Type == 0xDF || setData[i].Type == 0xE0)) ||
 			    (setData[i].List == 0x25 && (setData[i].Type == 0x8A || setData[i].Type == 0x97 || setData[i].Type == 0x98))
 			){
 				// skip these objects
 				continue;
 			}
-
 
 			Type randomEnemyType;
 			int randomEnemy;
