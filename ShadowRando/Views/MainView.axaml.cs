@@ -86,6 +86,11 @@ public partial class MainView : UserControl
 	private const int cutsceneEventDisablerPatchValue = 0x60000000;
 	private const int routeMenu6xxStagePreviewBlockerOffset = 0xB48B8;
 	private const int routeMenu6xxStagePreviewPatchValue = 0x48000110;
+	private const int layoutFilesizeCapExtendedPatch1Offset = 0xC52DC; // 0x800CBA1C = 0xC52DC
+	private const int layoutFilesizeCapExtendedPatch1Value = 0x38600C84;
+	private const int layoutFilesizeCapExtendedPatch2Offset = 0xC49D0; // 0x800CB110 = 0xC49D0
+	private const int layoutFilesizeCapExtendedPatch2Value = 0x3C600003;
+
 	private const int storyModeStartAddress = 0x2CB9F0;
 	private const int firstStageOffset = 0x4C1BA8;
 	private const int modeOffset = 8;
@@ -1558,6 +1563,15 @@ public partial class MainView : UserControl
 		buf = BitConverter.GetBytes(routeMenu6xxStagePreviewPatchValue);
 		Array.Reverse(buf);
 		buf.CopyTo(dolfile, routeMenu6xxStagePreviewBlockerOffset);
+		// end patch
+
+		// patch the hardcoded memory limits for allow for extra large layout files (cmn, ds1, nrm, hrd)
+		buf = BitConverter.GetBytes(layoutFilesizeCapExtendedPatch1Value);
+		Array.Reverse(buf);
+		buf.CopyTo(dolfile, layoutFilesizeCapExtendedPatch1Offset);
+		buf = BitConverter.GetBytes(layoutFilesizeCapExtendedPatch2Value);
+		Array.Reverse(buf);
+		buf.CopyTo(dolfile, layoutFilesizeCapExtendedPatch2Offset);
 		// end patch
 
 		if (settings.LevelOrder.ExpertMode)
