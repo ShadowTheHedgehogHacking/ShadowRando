@@ -354,7 +354,12 @@
                                           Click="Shared_CheckBox_UIUpdate_OnClick">
                                     Only Selected Enemy Types
                                 </CheckBox>
-                                <Label Margin="0,10,0,0">Selected Enemy Types</Label>
+								<StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                    <Label Margin="0,5,0,0">Selected Enemy Types</Label>
+									<Button x:Name="Layout_Enemy_Button_ToggleAll" Margin="10,0,0,0" Click="Layout_Enemy_Button_ToggleAll_Click">
+										Toggle All
+									</Button>
+								</StackPanel>
                                 <Grid ColumnDefinitions="*, *, *" RowDefinitions="*, *, *, *, *">
                                     <CheckBox Grid.Column="0" Grid.Row="0" Margin="0,0,5,0"
                                               x:Name="Layout_Enemy_CheckBox_SelectedEnemy_GUNSoldier">
@@ -635,8 +640,13 @@
                                           Click="Shared_CheckBox_UIUpdate_OnClick">
                                     Only Selected Partners
                                 </CheckBox>
-                                <Label Margin="0,10,0,0">Selected Partners</Label>
-                                <Grid ColumnDefinitions="*, *, *" RowDefinitions="*, *, *, *">
+								<StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+									<Label Margin="0,5,0,0">Selected Partners</Label>
+									<Button x:Name="Layout_Partner_Button_ToggleAll" Margin="10,0,0,0" Click="Layout_Partner_Button_ToggleAll_Click">
+										Toggle All
+									</Button>
+								</StackPanel>
+								<Grid ColumnDefinitions="*, *, *" RowDefinitions="*, *, *, *">
                                     <CheckBox Grid.Column="0" Grid.Row="0" Margin="0,0,5,0"
                                               x:Name="Layout_Partner_CheckBox_SelectedPartner_Sonic">
                                         Sonic
@@ -727,7 +737,12 @@
                               Click="Shared_CheckBox_UIUpdate_OnClick">
                         Only Selected Characters
                     </CheckBox>
-                    <Label Margin="0,10,0,0">Selected Characters</Label>
+					<StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+						<Label Margin="0,5,0,0">Selected Characters</Label>
+						<Button x:Name="Subtitles_SelectedCharacter_Button_ToggleAll" Margin="10,0,0,0" Click="Subtitles_SelectedCharacter_Button_ToggleAll_Click">
+							Toggle All
+						</Button>
+					</StackPanel>
                     <Grid ColumnDefinitions="*, *, *, *" RowDefinitions="*, *, *, *, *">
                         <CheckBox Grid.Column="0" Grid.Row="0" Margin="0,0,5,0"
                                   x:Name="Subtitles_CheckBox_SelectedCharacter_Shadow">

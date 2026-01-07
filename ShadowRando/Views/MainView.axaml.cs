@@ -271,7 +271,7 @@ public partial class MainView : UserControl
 
 	private string selectedFolderPath;
 	private bool avaloniaPreviewUI;
-	const string programVersion = "0.7.1";
+	const string programVersion = "2026.01";
 	private bool programInitialized = false;
 	private bool randomizeProcessing = false;
 
@@ -4623,6 +4623,18 @@ public partial class MainView : UserControl
 		foreach (var stg in LevelCheckBoxes)
 			stg.IsChecked = value;
 	}
+	
+	private void Layout_Enemy_Button_ToggleAll_Click(object? sender, RoutedEventArgs e)
+	{
+		bool value = !EnemyCheckBoxes.Any(a => a != null && a.IsChecked.Value);
+		foreach (var enemy in EnemyCheckBoxes)
+		{
+			if (enemy != null)
+			{
+				enemy.IsChecked = value;
+			}
+		}
+	}
 
 	private void Layout_Weapon_Button_ToggleAll_Click(object? sender, RoutedEventArgs e)
 	{
@@ -4635,6 +4647,32 @@ public partial class MainView : UserControl
 			}
 		}
 	}
+
+	private void Layout_Partner_Button_ToggleAll_Click(object? sender, RoutedEventArgs e)
+	{
+		bool value = !PartnerCheckBoxes.Any(a => a != null && a.IsChecked.Value);
+		foreach (var partner in PartnerCheckBoxes)
+		{
+			if (partner != null)
+			{
+				partner.IsChecked = value;
+			}
+		}
+	}
+
+	private void Subtitles_SelectedCharacter_Button_ToggleAll_Click(object? sender, RoutedEventArgs e)
+	{
+		bool value = !SubtitleCheckBoxes.Any(a => a != null && a.IsChecked.Value);
+		foreach (var partner in SubtitleCheckBoxes)
+		{
+			if (partner != null)
+			{
+				partner.IsChecked = value;
+			}
+		}
+	}
+
+	
 
 	Levels[] bossLevels = [
 		Levels.BlackBullDR,
