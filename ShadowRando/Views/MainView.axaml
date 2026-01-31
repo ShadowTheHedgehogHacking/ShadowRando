@@ -7,15 +7,8 @@
              xmlns:paz="using:Avalonia.Controls.PanAndZoom"
              mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="750"
              x:Class="ShadowRando.Views.MainView"
-             x:DataType="vm:MainViewModel"
              Loaded="UserControl_Loaded"
              Unloaded="UserControl_Unloaded">
-    <Design.DataContext>
-        <!-- This only sets the DataContext for the previewer in an IDE,
-         to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
-        <vm:MainViewModel />
-    </Design.DataContext>
-
     <Grid RowDefinitions="*, Auto">
         <Label x:Name="LoadingDataIndicator" IsVisible="False" FontSize="40" HorizontalAlignment="Center"
                VerticalAlignment="Center" Foreground="DarkRed" Margin="10,20,0,0">
