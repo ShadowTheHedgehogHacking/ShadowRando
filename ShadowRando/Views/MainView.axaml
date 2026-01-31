@@ -719,6 +719,7 @@
                               Click="Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles_Click">
                         Give Audio to No Linked Audio Subtitles
                     </CheckBox>
+                    <CheckBox x:Name="Subtitles_CheckBox_ShutUpCharmy" IsChecked="False">No Yapping (No Subtitles/Audio)</CheckBox>
                     <CheckBox x:Name="Subtitles_CheckBox_NoSystemMessages" IsChecked="True">No System Messages</CheckBox>
                     <CheckBox x:Name="Subtitles_CheckBox_NoDuplicates" IsChecked="True">No Duplicates</CheckBox>
                     <StackPanel Orientation="Horizontal">

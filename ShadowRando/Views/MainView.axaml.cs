@@ -534,6 +534,7 @@ public partial class MainView : UserControl
 		Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked = settings.Subtitles.Randomize;
 		Subtitles_CheckBox_NoDuplicates.IsChecked = settings.Subtitles.NoDuplicates;
 		Subtitles_CheckBox_NoSystemMessages.IsChecked = settings.Subtitles.NoSystemMessages;
+		Subtitles_CheckBox_ShutUpCharmy.IsChecked = settings.Subtitles.ShutUpCharmy;
 		Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked = settings.Subtitles.OnlyLinkedAudio;
 		Subtitles_CheckBox_OnlySelectedCharacters.IsChecked = settings.Subtitles.OnlySelectedCharacters;
 		Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsChecked = settings.Subtitles.GiveAudioToNoLinkedAudio;
@@ -638,6 +639,7 @@ public partial class MainView : UserControl
 		settings.Subtitles.Randomize = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
 		settings.Subtitles.NoDuplicates = Subtitles_CheckBox_NoDuplicates.IsChecked.Value;
 		settings.Subtitles.NoSystemMessages = Subtitles_CheckBox_NoSystemMessages.IsChecked.Value;
+		settings.Subtitles.ShutUpCharmy = Subtitles_CheckBox_ShutUpCharmy.IsChecked.Value;
 		settings.Subtitles.OnlyLinkedAudio = Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked.Value;
 		settings.Subtitles.OnlySelectedCharacters = Subtitles_CheckBox_OnlySelectedCharacters.IsChecked.Value;
 		settings.Subtitles.GiveAudioToNoLinkedAudio = Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsChecked.Value;
@@ -1755,8 +1757,12 @@ public partial class MainView : UserControl
 			}
 			// customized fnt pool built; begin applying
 			if (settings.Subtitles.GenerateMessages)
+			{
 				foreach (var a in fntRandomPool)
+				{
 					markov.AddString(a.subtitle);
+				}
+			}
 			for (int i = 0; i < fontAndAudioData.mutatedFnt.Count; i++)
 			{
 				for (int j = 0; j < fontAndAudioData.mutatedFnt[i].GetEntryTableCount(); j++)
@@ -1783,9 +1789,11 @@ public partial class MainView : UserControl
 		else
 		{
 			if (settings.Subtitles.GenerateMessages)
+			{
 				foreach (var a in fontAndAudioData.initialFntState)
 					foreach (var b in a.GetEntryTable())
 						markov.AddString(b.subtitle);
+			}
 			for (int i = 0; i < fontAndAudioData.mutatedFnt.Count; i++)
 			{
 				for (int j = 0; j < fontAndAudioData.mutatedFnt[i].GetEntryTableCount(); j++)
@@ -1808,6 +1816,23 @@ public partial class MainView : UserControl
 					else
 						fontAndAudioData.mutatedFnt[i].SetEntrySubtitle(j, fontAndAudioData.initialFntState[donorFNTIndex].GetEntrySubtitle(donorFNTEntryIndex));
 					fontAndAudioData.mutatedFnt[i].SetEntrySubtitleActiveTime(j, fontAndAudioData.initialFntState[donorFNTIndex].GetEntrySubtitleActiveTime(donorFNTEntryIndex));
+				}
+			}
+		}
+		if (settings.Subtitles.ShutUpCharmy)
+		{
+			for (int i = 0; i < fontAndAudioData.mutatedFnt.Count; i++)
+			{
+				for (int j = 0; j < fontAndAudioData.mutatedFnt[i].GetEntryTableCount(); j++)
+				{
+					var entryType = fontAndAudioData.mutatedFnt[i].GetEntryEntryType(j);
+					if (entryType == EntryType.CUTSCENE || entryType == EntryType.MENU)
+					{
+						continue; // we don't want to delete the funny save/intro message, any menus, and mission complete audio
+					}
+					fontAndAudioData.mutatedFnt[i].SetEntrySubtitle(j, "");
+					fontAndAudioData.mutatedFnt[i].SetEntryAudioId(j, -1);
+					fontAndAudioData.mutatedFnt[i].SetEntrySubtitleActiveTime(j, 0);
 				}
 			}
 		}
@@ -4527,6 +4552,7 @@ public partial class MainView : UserControl
 		await sw.WriteLineAsync($"Give Audio to No Linked Audio Subtitles: {settings.Subtitles.GiveAudioToNoLinkedAudio}");
 		await sw.WriteLineAsync($"No System Messages: {settings.Subtitles.NoSystemMessages}");
 		await sw.WriteLineAsync($"No Duplicates: {settings.Subtitles.NoDuplicates}");
+		await sw.WriteLineAsync($"No Yapping (No Subtitles/Audio) {settings.Subtitles.ShutUpCharmy}");
 		await sw.WriteLineAsync($"Only Selected Characters: {settings.Subtitles.OnlySelectedCharacters}");
 		if (settings.Subtitles.OnlySelectedCharacters)
 		{
@@ -4778,6 +4804,7 @@ public partial class MainView : UserControl
 		Subtitles_CheckBox_OnlyWithLinkedAudio.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;	
 		Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
 		Subtitles_CheckBox_NoSystemMessages.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
+		Subtitles_CheckBox_ShutUpCharmy.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
 		Subtitles_CheckBox_NoDuplicates.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
 		Subtitles_CheckBox_GenerateMessages.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value;
 		Subtitles_CheckBox_OnlySelectedCharacters.IsEnabled = Subtitles_CheckBox_RandomizeSubtitlesVoicelines.IsChecked.Value && !Subtitles_CheckBox_GiveAudioToNoLinkedAudioSubtitles.IsChecked.Value && Subtitles_CheckBox_OnlyWithLinkedAudio.IsChecked.Value;

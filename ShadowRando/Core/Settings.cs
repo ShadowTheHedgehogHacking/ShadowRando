@@ -199,6 +199,8 @@ namespace ShadowRando.Core
 		[IniAlwaysInclude]
 		public bool NoSystemMessages = true;
 		[IniAlwaysInclude]
+		public bool ShutUpCharmy;
+		[IniAlwaysInclude]
 		public bool OnlyLinkedAudio = true;
 		[IniAlwaysInclude]
 		public bool OnlySelectedCharacters;
