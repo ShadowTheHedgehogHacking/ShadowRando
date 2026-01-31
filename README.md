@@ -133,7 +133,9 @@ Each model must be placed in its own folder, keeping the original file names (P1
 3. Move/Save the ISO to the Path Dolphin detects your games. A new full-size entry should appear in your Dolphins game list. Use this when playing the game.
 
 ### (Developers Only) How To Build Release Variant
+
 `dotnet publish -c Release -r win-x64`
+
 `dotnet publish -c Release -r linux-x64`
 
 
