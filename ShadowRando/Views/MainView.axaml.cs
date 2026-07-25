@@ -4908,12 +4908,20 @@ public partial class MainView : UserControl
 		Tracker_Button_RemoveLevel.IsEnabled = false;
 	}
 
-	private void Tracker_Button_Reset_Click(object? sender, RoutedEventArgs e)
+	private async void Tracker_Button_Reset_Click(object? sender, RoutedEventArgs e)
 	{
+		var result = await Utils.ShowSimpleMessage("Reset Tracker", "Are you sure? This will delete all of your tracker nodes.", ButtonEnum.YesNo, Icon.Warning);
+		if (result != ButtonResult.Yes)
+			return;
 		Tracker_Canvas.Children.Clear();
 		trackerLevels.Clear();
 		Tracker_Button_AddLevel.IsEnabled = Tracker_ComboBox_Level.SelectedIndex != -1;
 		Tracker_Button_RemoveLevel.IsEnabled = false;
+	}
+
+	private void Tracker_Button_RestoreView_Click(object? sender, RoutedEventArgs e)
+	{
+		Tracker_ZoomBorder.ResetMatrix();
 	}
 
 	private void Tracker_Canvas_PointerMoved(object? sender, PointerEventArgs e)
