@@ -276,7 +276,7 @@ public partial class MainView : UserControl
 
 	private string selectedFolderPath;
 	private bool avaloniaPreviewUI;
-	const string programVersion = "2026.01.30";
+	const string programVersion = "2026.07.25";
 	private bool programInitialized = false;
 	private bool randomizeProcessing = false;
 
@@ -3908,20 +3908,21 @@ public partial class MainView : UserControl
 		if (Spoilers_CheckBox_UseIcons.IsChecked.Value)
 			textsz = new SKSizeI(88, 69);
 		else
-			using (var g = new SKPaint())
+		using (var g = new SKPaint())
+		using (var font = new SKFont())
+		{
+			foreach (string item in LevelNames)
 			{
-				foreach (string item in LevelNames)
-				{
-					SKRect bounds = default;
-					g.MeasureText(item, ref bounds);
-					if (bounds.Width > textsz.Width)
-						textsz.Width = (int)bounds.Width;
-					if (bounds.Height > textsz.Height)
-						textsz.Height = (int)bounds.Height;
-				}
-				textsz.Width += 6;
-				textsz.Height += 6;
+				SKRect bounds = default;
+				font.MeasureText(item, out bounds, g);
+				if (bounds.Width > textsz.Width)
+					textsz.Width = (int)bounds.Width;
+				if (bounds.Height > textsz.Height)
+					textsz.Height = (int)bounds.Height;
 			}
+			textsz.Width += 6;
+			textsz.Height += 6;
+		}
 		List<(ChartNode src, ChartConnection con)> shortcons = new List<(ChartNode src, ChartConnection con)>();
 		List<ChartConnection>[] vcons = new List<ChartConnection>[gridmaxh * 2];
 		for (int i = 0; i < gridmaxh * 2; i++)
@@ -4260,7 +4261,8 @@ public partial class MainView : UserControl
 		{
 			SKCanvas gfx = surface.Canvas;
 			using (SKPaint rectPaint = new SKPaint() { Color = SKColors.Black, Style = SKPaintStyle.Stroke, StrokeWidth = 1 })
-			using (SKPaint textPaint = new SKPaint() { Color = SKColors.Black, Style = SKPaintStyle.Stroke, StrokeWidth = 1, TextAlign = SKTextAlign.Center, IsAntialias = true })
+			using (SKPaint textPaint = new SKPaint() { Color = SKColors.Black, Style = SKPaintStyle.Stroke, StrokeWidth = 1, IsAntialias = true })
+			using (SKFont textFont = new SKFont())
 			using (SKPaint linePaint = new SKPaint() { Color = SKColors.Black, Style = SKPaintStyle.Stroke, StrokeWidth = 3 })
 			using (SKPaint triPaint = new SKPaint() { Color = SKColors.Black, Style = SKPaintStyle.Fill, IsAntialias = true })
 			using (var dash = SKPathEffect.CreateDash([9, 3], 0))
@@ -4283,7 +4285,7 @@ public partial class MainView : UserControl
 						using (var bmp = SKBitmap.Decode(asset))
 							gfx.DrawBitmap(bmp, new SKPoint(x, y));
 					else
-						gfx.DrawText(GetStageName(id), x + textsz.Width / 2, y + textsz.Height / 2 + textPaint.FontMetrics.XHeight / 2, textPaint);
+						gfx.DrawText(GetStageName(id), x + textsz.Width / 2, y + textsz.Height / 2 + textFont.Metrics.XHeight / 2, SKTextAlign.Center, textFont, textPaint);
 					foreach (var (dir, list) in node.OutgoingConnections)
 						foreach (var con in list)
 						{

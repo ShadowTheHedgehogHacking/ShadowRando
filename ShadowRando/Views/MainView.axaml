@@ -2,7 +2,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:ShadowRando.ViewModels"
              xmlns:uc="clr-namespace:ShadowRando.Controls"
              xmlns:paz="using:Avalonia.Controls.PanAndZoom"
              mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="750"

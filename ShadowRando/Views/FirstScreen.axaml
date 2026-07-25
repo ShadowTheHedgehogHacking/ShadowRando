@@ -14,7 +14,7 @@
 Using GCR and other game extraction methods are NOT supported. Follow the steps below to properly extract your game.
 
 ---Extraction of Game and Launching---
-1. Get the latest release of Dolphin, such as 'Dolphin 2509'
+1. Get the latest release of Dolphin, such as 'Dolphin 2606'
 2. (Optional: only do this step if you want to keep config separate) Before launching Dolphin, create an empty file 'portable.txt' in the same folder as Dolphin
 3. Open Dolphin
 4. Set game path to your Shadow the Hedgehog NTSC-U ISO
